@@ -16,6 +16,6 @@ import org.springframework.stereotype.Component;
  */
 @Component("cdss.CDSSConfig")
 public class CDSSConfig {
-
-    public final static String MODULE_PRIVILEGE = "CDSS Privilege";
+	
+	public final static String MODULE_PRIVILEGE = "CDSS Privilege";
 }

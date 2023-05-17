@@ -17,21 +17,29 @@ import org.openmrs.module.BaseModuleActivator;
  * This class contains the logic that is run every time this module is either started or shutdown
  */
 public class CDSSActivator extends BaseModuleActivator {
-
-    private Log log = LogFactory.getLog(this.getClass());
-
-    /**
-     * @see #started()
-     */
-    public void started() {
-        log.info("Started CDSS");
-    }
-
-    /**
-     * @see #shutdown()
-     */
-    public void shutdown() {
-        log.info("Shutdown CDSS");
-    }
-
+	
+	private Log log = LogFactory.getLog(this.getClass());
+	
+	/**
+	 * @see #started()
+	 */
+	@Override
+	public void started() {
+		log.info("Started CDSS");
+	}
+	
+	/**
+	 * @see #stopped()
+	 */
+	@Override
+	public void stopped() {
+		log.info("Stopped CDSS");
+	}
+	
+	@Override
+	public void contextRefreshed() {
+		log.info("Refreshing CDSS");
+		
+	}
+	
 }
