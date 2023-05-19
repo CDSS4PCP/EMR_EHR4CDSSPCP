@@ -1,0 +1,1 @@
+This directory will contain common code for the OpenEMR adapter

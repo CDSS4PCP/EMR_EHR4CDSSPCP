@@ -1,0 +1,1 @@
+This directory will contain common code that will be shared bewteen EHR adapters
