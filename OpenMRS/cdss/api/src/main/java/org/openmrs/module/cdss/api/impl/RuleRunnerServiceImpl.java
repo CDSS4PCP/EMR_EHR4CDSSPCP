@@ -8,7 +8,6 @@ import org.openmrs.api.UserService;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.cdss.Item;
 import org.openmrs.module.cdss.RunnerResult;
-import org.openmrs.module.cdss.api.CDSSService;
 import org.openmrs.module.cdss.api.RuleRunnerService;
 import org.openmrs.module.cdss.api.dao.CDSSDao;
 
@@ -17,7 +16,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
-public class RuleRunnerImpl extends BaseOpenmrsService implements RuleRunnerService {
+public class RuleRunnerServiceImpl extends BaseOpenmrsService implements RuleRunnerService {
 	
 	CDSSDao dao;
 	
@@ -89,9 +88,12 @@ public class RuleRunnerImpl extends BaseOpenmrsService implements RuleRunnerServ
 		int status = random.nextInt(2);
 		
 		if (status == 0) {
-			result.setMessage("No further action needed");
+			//			result.setAction("No further action needed");
+			result.setAction(null);
 		} else {
-			result.setMessage("New dose needs to be administered");
+			//			result.setAction("New dose needs to be administered");
+			result.setAction(null);
+			
 		}
 		result.setStatus(status);
 		return result;

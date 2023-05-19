@@ -18,4 +18,8 @@
   </c:forEach>
 </table>
 
+
+<hr>
+<h4>Runner Service Working? <span>${runnerServiceWorking}</span></h4>
+
 <%@ include file="/WEB-INF/template/footer.jsp"%>

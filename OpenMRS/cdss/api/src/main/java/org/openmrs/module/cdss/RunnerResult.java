@@ -1,11 +1,12 @@
 package org.openmrs.module.cdss;
 
 import org.openmrs.Patient;
+import org.openmrs.module.cdss.api.data.Action;
 
 public class RunnerResult {
 	
 	// Message to be displayed to clinician.
-	private String message;
+	private Action action;
 	
 	// The patient that this result is for
 	private Patient patient;
@@ -17,12 +18,12 @@ public class RunnerResult {
 	// Otherwise, some action needs to be taken as instructed by message
 	private int status;
 	
-	public String getMessage() {
-		return message;
+	public Action getAction() {
+		return action;
 	}
 	
-	public void setMessage(String message) {
-		this.message = message;
+	public void setAction(Action action) {
+		this.action = action;
 	}
 	
 	public Patient getPatient() {

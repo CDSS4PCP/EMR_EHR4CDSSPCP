@@ -3,26 +3,28 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/. OpenMRS is also distributed under
  * the terms of the Healthcare Disclaimer located at http://openmrs.org/license.
- *
+ * <p>
  * Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
  * graphic logo is a trademark of OpenMRS Inc.
  */
 package org.openmrs.module.cdss.web.controller;
 
-import java.util.List;
-
-import javax.servlet.http.HttpSession;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.User;
 import org.openmrs.api.UserService;
+import org.openmrs.api.context.Context;
+import org.openmrs.module.cdss.api.RuleRunnerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
+
+import javax.servlet.http.HttpSession;
+import java.util.List;
 
 /**
  * This class configured as controller using annotation and mapped with the URL of
@@ -32,13 +34,17 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @RequestMapping(value = "module/cdss/cdss.form")
 public class CDSSController {
 	
-	/** Logger for this class and subclasses */
+	/**
+	 * Logger for this class and subclasses
+	 */
 	protected final Log log = LogFactory.getLog(getClass());
 	
 	@Autowired
 	UserService userService;
 	
-	/** Success form view name */
+	/**
+	 * Success form view name
+	 */
 	private final String VIEW = "/module/cdss/cdss";
 	
 	/**
@@ -47,8 +53,13 @@ public class CDSSController {
 	 * @return String form view name
 	 */
 	@RequestMapping(method = RequestMethod.GET)
-	public String onGet() {
-		return VIEW;
+	public ModelAndView onGet() {
+		
+		RuleRunnerService service = Context.getService(RuleRunnerService.class);
+		
+		ModelAndView mv = new ModelAndView(VIEW);
+		mv.addObject("runnerServiceWorking", service != null);
+		return mv;
 	}
 	
 	/**

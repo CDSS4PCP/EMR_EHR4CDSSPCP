@@ -3,11 +3,11 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/. OpenMRS is also distributed under
  * the terms of the Healthcare Disclaimer located at http://openmrs.org/license.
- *
+ * <p>
  * Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
  * graphic logo is a trademark of OpenMRS Inc.
  */
-package org.openmrs.module.cdss.api;
+package org.openmrs.module.cdss;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -16,12 +16,13 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.openmrs.User;
 import org.openmrs.api.UserService;
-import org.openmrs.module.cdss.Item;
 import org.openmrs.module.cdss.api.dao.CDSSDao;
-import org.openmrs.module.cdss.api.impl.CDSSServiceImpl;
-import static org.mockito.Mockito.*;
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
+import org.openmrs.module.cdss.api.impl.RuleRunnerServiceImpl;
+
+import static org.hamcrest.Matchers.hasProperty;
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.when;
 
 /**
  * This is a unit test, which verifies logic in CDSSService. It doesn't extend
@@ -30,7 +31,7 @@ import static org.junit.Assert.*;
 public class CDSSServiceTest {
 	
 	@InjectMocks
-	CDSSServiceImpl basicModuleService;
+	RuleRunnerServiceImpl basicModuleService;
 	
 	@Mock
 	CDSSDao dao;
