@@ -18,6 +18,14 @@
             <version>8.7</version>
             <scope>compile</scope>
         </dependency>
+
+<!--		Necessary for proper parsing of XML files-->
+		<dependency>
+			<groupId>net.sf.saxon</groupId>
+			<artifactId>saxon-dom</artifactId>
+			<version>8.7</version>
+			<scope>compile</scope>
+		</dependency>
     </dependencies>
 
 </project>
