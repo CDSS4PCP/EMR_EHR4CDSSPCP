@@ -11,6 +11,10 @@ package org.openmrs.module.cdss;
 
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 /**
  * Contains module's config.
  */
@@ -18,4 +22,7 @@ import org.springframework.stereotype.Component;
 public class CDSSConfig {
 	
 	public final static String MODULE_PRIVILEGE = "CDSS Privilege";
+	
+	public static final List<String> VACCINE_CODES = Collections.unmodifiableList(Arrays.asList("MMR", "HPV"));
+	
 }

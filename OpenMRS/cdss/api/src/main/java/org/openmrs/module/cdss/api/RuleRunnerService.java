@@ -24,18 +24,6 @@ public interface RuleRunnerService extends CDSSService {
 	@Transactional(readOnly = true)
 	Item getItemByUuid(String uuid) throws APIException;
 	
-	/**
-	 * Saves an item. Sets the owner to superuser, if it is not set. It can be called by users with
-	 * this module's privilege. It is executed in a transaction.
-	 * 
-	 * @param item
-	 * @return
-	 * @throws APIException
-	 */
-	@Authorized(CDSSConfig.MODULE_PRIVILEGE)
-	@Transactional
-	Item saveItem(Item item) throws APIException;
-	
 	RunnerResult getResult(Patient patient, String vaccine);
 	
 	List<String> getLoadedVaccineRulesets();

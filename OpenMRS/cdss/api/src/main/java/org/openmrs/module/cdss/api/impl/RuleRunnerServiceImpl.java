@@ -6,13 +6,14 @@ import org.openmrs.Patient;
 import org.openmrs.api.APIException;
 import org.openmrs.api.UserService;
 import org.openmrs.api.impl.BaseOpenmrsService;
+import org.openmrs.module.cdss.CDSSConfig;
 import org.openmrs.module.cdss.Item;
 import org.openmrs.module.cdss.RunnerResult;
 import org.openmrs.module.cdss.api.RuleRunnerService;
 import org.openmrs.module.cdss.api.dao.CDSSDao;
+import org.openmrs.module.cdss.api.data.Action;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -41,7 +42,6 @@ public class RuleRunnerServiceImpl extends BaseOpenmrsService implements RuleRun
 		return dao.getItemByUuid(uuid);
 	}
 	
-	@Override
 	public Item saveItem(Item item) throws APIException {
 		if (item.getOwner() == null) {
 			item.setOwner(userService.getUser(1));
@@ -49,8 +49,6 @@ public class RuleRunnerServiceImpl extends BaseOpenmrsService implements RuleRun
 		
 		return dao.saveItem(item);
 	}
-	
-	private static final List<String> vaccineCodes = Arrays.asList("MMR", "HPV");
 	
 	protected final Log log = LogFactory.getLog(getClass());
 	
@@ -66,6 +64,10 @@ public class RuleRunnerServiceImpl extends BaseOpenmrsService implements RuleRun
 	 * @return A list of results. Each entry corresponds to a vaccine.
 	 */
 	public List<RunnerResult> getAllResults(Patient patient) {
+		if (patient == null) {
+			log.error("CDSS Runner ERROR: Running getAllResults() on null patient! \n Returning null.");
+			return null;
+		}
 		List<String> rulesets = getLoadedVaccineRulesets();
 		ArrayList<RunnerResult> results = new ArrayList<RunnerResult>(rulesets.size());
 		for (String vaccine : rulesets) {
@@ -82,18 +84,26 @@ public class RuleRunnerServiceImpl extends BaseOpenmrsService implements RuleRun
 	 * @return A single result given patient and a specific vaccine.
 	 */
 	public RunnerResult getResult(Patient patient, String vaccine) {
+		if (patient == null || vaccine == null) {
+			
+			log.error("CDSS Runner ERROR: Running getResult() on null patient or null vaccine! \n Returning null.");
+			return null;
+		}
 		RunnerResult result = new RunnerResult();
 		result.setPatient(patient);
 		result.setVaccine(vaccine);
 		int status = random.nextInt(2);
-		
+
+		Action action = new Action();
+
 		if (status == 0) {
 			//			result.setAction("No further action needed");
-			result.setAction(null);
+			action.setDisplayString("No further action needed");
+			result.setAction(action);
 		} else {
 			//			result.setAction("New dose needs to be administered");
-			result.setAction(null);
-			
+			action.setDisplayString("New dose needs to be administered");
+			result.setAction(action);
 		}
 		result.setStatus(status);
 		return result;
@@ -106,7 +116,7 @@ public class RuleRunnerServiceImpl extends BaseOpenmrsService implements RuleRun
 	 *         "HPV"].
 	 */
 	public List<String> getLoadedVaccineRulesets() {
-		return vaccineCodes;
+		return CDSSConfig.VACCINE_CODES;
 	}
 	
 	/**

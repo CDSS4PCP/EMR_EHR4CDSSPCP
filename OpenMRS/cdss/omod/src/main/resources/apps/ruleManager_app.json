@@ -1,0 +1,28 @@
+[  {
+  "id": "cdss.RuleManager",
+  "description": "An decision support system for vaccines.",
+  "order": 10,
+  "extensions": [
+    {
+      "id": "${project.parent.artifactId}.launcheManager",
+      "extensionPointId": "systemAdministration.apps",
+      "type": "link",
+      "order": 10,
+      "label": "CDSS",
+      "url": "module/cdss/rules.form",
+      "icon": "icon-cogs",
+      "requiredPrivilege": "Task: Chart Search"
+    },
+    {
+      "id": "${project.parent.artifactId}.launcheManager",
+      "extensionPointId": "org.openmrs.referenceapplication.homepageLink",
+      "type": "link",
+      "order": 10,
+      "label": "CDSS Rule Manager",
+      "url": "module/cdss/rules.form",
+      "icon": "icon-cogs",
+      "requiredPrivilege": "Task: Chart Search"
+    }
+  ]
+}
+]

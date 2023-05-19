@@ -1,0 +1,22 @@
+[
+  {
+    "id": "cdss.patientWidget",
+    "label": "CDSS Patient Widget",
+    "icon": "icon-stethoscope",
+    "order": 10,
+    "extensions": [
+      {
+        "id": "org.openmrs.module.coreapps.diagnoses.clinicianDashboardSecondColumn",
+        "appId": "cdss.patientWidget",
+        "extensionPointId": "patientDashboard.secondColumnFragments",
+        "type": "link",
+        "url": "module/cdss/results.form?patientId={{patient.uuid}}&visitId={{visit.uuid}}",
+        "label": "CDSS Patient Widget",
+        "extensionParams": {
+          "provider": "cdss",
+          "fragment": "patientWidget"
+        }
+      }
+    ]
+  }
+]

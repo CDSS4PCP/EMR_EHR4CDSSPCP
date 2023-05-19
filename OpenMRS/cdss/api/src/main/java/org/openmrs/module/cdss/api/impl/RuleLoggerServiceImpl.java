@@ -1,9 +1,16 @@
 package org.openmrs.module.cdss.api.impl;
 
+import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.Patient;
 import org.openmrs.api.impl.BaseOpenmrsService;
+import org.openmrs.module.cdss.CDSSConfig;
 import org.openmrs.module.cdss.api.RuleLoggerService;
+import org.openmrs.module.cdss.api.data.Action;
+
+import java.util.Date;
+import java.util.List;
 
 public class RuleLoggerServiceImpl extends BaseOpenmrsService implements RuleLoggerService {
 	
@@ -24,5 +31,15 @@ public class RuleLoggerServiceImpl extends BaseOpenmrsService implements RuleLog
 	public void onShutdown() {
 		log.info("CDSS Vaccine Logger service stopped...");
 		
+	}
+	
+	@Override
+	public void recordRuleHit(Date date, Patient patient, int ruleId, String vaccine, Action action, Boolean actionTaken) {
+		throw new NotImplementedException("This method is not finished yet!");
+	}
+	
+	@Override
+	public List<String> getLoadedVaccineRulesets() {
+		return CDSSConfig.VACCINE_CODES;
 	}
 }

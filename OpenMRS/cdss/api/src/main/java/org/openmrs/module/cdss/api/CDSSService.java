@@ -11,10 +11,13 @@ package org.openmrs.module.cdss.api;
 
 import org.openmrs.api.OpenmrsService;
 
+import java.util.List;
+
 /**
  * The main service of this module, which is exposed for other modules. See
  * moduleApplicationContext.xml on how it is wired up.
  */
 public interface CDSSService extends OpenmrsService {
 	
+	List<String> getLoadedVaccineRulesets();
 }

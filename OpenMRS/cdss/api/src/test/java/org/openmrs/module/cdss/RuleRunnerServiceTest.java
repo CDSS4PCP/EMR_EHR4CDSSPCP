@@ -23,4 +23,17 @@ public class RuleRunnerServiceTest extends BaseModuleContextSensitiveTest {
 		RuleRunnerService serv = Context.getService(RuleRunnerService.class);
 		assertThat(Arrays.asList("MMR", "HPV"), is(serv.getLoadedVaccineRulesets()));
 	}
+	
+	@Test
+	public void checkNullPatient() {
+		RuleRunnerService serv = Context.getService(RuleRunnerService.class);
+		assertThat(null, is(serv.getAllResults(null)));
+	}
+	
+	@Test
+	public void checkNullPatientNullVaccine() {
+		RuleRunnerService serv = Context.getService(RuleRunnerService.class);
+		assertThat(null, is(serv.getResult(null, null)));
+	}
+	
 }
