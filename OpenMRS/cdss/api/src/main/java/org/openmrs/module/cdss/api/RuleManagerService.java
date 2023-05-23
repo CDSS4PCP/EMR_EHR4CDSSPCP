@@ -15,5 +15,5 @@ public interface RuleManagerService extends CDSSService {
 	
 	@Authorized
 	@Transactional
-	Boolean addRule();
+	Integer addRule();
 }

@@ -1,1 +1,1 @@
-This directory will contain common code for the OpenEMR adapter
+This directory will contain common code for the OpenMRS adapter

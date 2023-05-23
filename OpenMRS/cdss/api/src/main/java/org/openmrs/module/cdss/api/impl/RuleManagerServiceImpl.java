@@ -49,7 +49,7 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
 	@Override
 	@Transactional
 	@Authorized
-	public Boolean addRule() {
+	public Integer addRule() {
 		throw new NotImplementedException("This method is not finished yet!");
 	}
 	

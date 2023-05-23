@@ -16,7 +16,7 @@ public class RunnerResult {
 	
 	// Status of the result. if zero, then no action is needed by clinician.
 	// Otherwise, some action needs to be taken as instructed by message
-	private int status;
+	private Integer status;
 	
 	public Action getAction() {
 		return action;

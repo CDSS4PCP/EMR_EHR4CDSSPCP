@@ -4,11 +4,16 @@ import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Patient;
+import org.openmrs.User;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.cdss.CDSSConfig;
 import org.openmrs.module.cdss.api.RuleLoggerService;
 import org.openmrs.module.cdss.api.data.Action;
 
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -34,12 +39,15 @@ public class RuleLoggerServiceImpl extends BaseOpenmrsService implements RuleLog
 	}
 	
 	@Override
-	public void recordRuleHit(Date date, Patient patient, int ruleId, String vaccine, Action action, Boolean actionTaken) {
-		throw new NotImplementedException("This method is not finished yet!");
+	public List<String> getLoadedVaccineRulesets() {
+		return CDSSConfig.VACCINE_CODES;
 	}
 	
 	@Override
-	public List<String> getLoadedVaccineRulesets() {
-		return CDSSConfig.VACCINE_CODES;
+	public void recordRuleHit(ZonedDateTime time, Patient patient, int ruleId, String vaccine, Action action,
+	        Boolean actionTaken, User userInitiated, User userActionAdministered) {
+		Instant i = Instant.now();
+		
+		throw new NotImplementedException("This method is not finished yet!");
 	}
 }

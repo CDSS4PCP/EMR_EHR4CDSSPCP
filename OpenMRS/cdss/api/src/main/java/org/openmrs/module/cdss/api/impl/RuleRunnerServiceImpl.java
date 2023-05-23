@@ -93,9 +93,9 @@ public class RuleRunnerServiceImpl extends BaseOpenmrsService implements RuleRun
 		result.setPatient(patient);
 		result.setVaccine(vaccine);
 		int status = random.nextInt(2);
-
+		
 		Action action = new Action();
-
+		
 		if (status == 0) {
 			//			result.setAction("No further action needed");
 			action.setDisplayString("No further action needed");
