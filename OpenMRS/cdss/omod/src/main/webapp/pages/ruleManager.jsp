@@ -14,9 +14,11 @@
     </thead>
     <tbody>
     <c:forEach var="ruleset" items="${rulesets}">
+<%--        <%@ include file="/WEB-INF/view/module/cdss/fragments/ruleWidget.gsp" rule="${ruleset}" %>--%>
+
         <tr>
-            <td>${ruleset}</td>
-            <td>0</td>
+            <td>${ruleset.getId()}</td>
+            <td>${ruleset.getVaccine()}</td>
         </tr>
     </c:forEach>
     </tbody>

@@ -23,7 +23,7 @@ public class RuleManagerController {
 	/**
 	 * Rule manager view name
 	 */
-	private final String VIEW = "/module/cdss/pages/ruleManager";
+	private static final String VIEW = "/module/cdss/pages/ruleManager";
 	
 	/**
 	 * This method executes when the form is requested with an HTTP Get request. It displays the
@@ -36,7 +36,7 @@ public class RuleManagerController {
 		
 		RuleManagerService vc = Context.getService(RuleManagerService.class);
 		ModelAndView mv = new ModelAndView(VIEW);
-		mv.addObject("rulesets", vc.getLoadedVaccineRulesets());
+		mv.addObject("rulesets", vc.getRulesByVaccine("MMR"));
 		return mv;
 		
 	}

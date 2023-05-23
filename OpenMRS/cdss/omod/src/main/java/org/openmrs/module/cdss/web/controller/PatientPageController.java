@@ -30,7 +30,7 @@ public class PatientPageController {
 	/**
 	 * Patient results view name
 	 */
-	private final String VIEW = "/module/cdss/pages/patientPage";
+	private static final String VIEW = "/module/cdss/pages/patientPage";
 	
 	/**
 	 * This method executes on an HTTP Get request. It needs patientId to know which patient

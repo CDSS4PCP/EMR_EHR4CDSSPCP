@@ -7,8 +7,10 @@ import org.openmrs.annotation.Authorized;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.cdss.CDSSConfig;
 import org.openmrs.module.cdss.api.RuleManagerService;
+import org.openmrs.module.cdss.api.data.Rule;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleManagerService {
@@ -51,6 +53,19 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
 	@Authorized
 	public Integer addRule() {
 		throw new NotImplementedException("This method is not finished yet!");
+	}
+	
+	@Override
+	public List<Rule> getRulesByVaccine(String vaccine) {
+		ArrayList<Rule> rules = new ArrayList<Rule>();
+		
+		rules.add(new Rule(1, "MMR"));
+		rules.add(new Rule(2, "MMR"));
+		rules.add(new Rule(3, "MMR"));
+		rules.add(new Rule(4, "HPV"));
+		rules.add(new Rule(5, "HPV"));
+		
+		return rules;
 	}
 	
 	@Override

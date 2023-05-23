@@ -45,7 +45,7 @@ public class CDSSController {
 	/**
 	 * Success form view name
 	 */
-	private final String VIEW = "/module/cdss/cdss";
+	private static final String VIEW = "/module/cdss/cdss";
 	
 	/**
 	 * Initially called after the getUsers method to get the landing form name
