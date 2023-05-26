@@ -1,7 +1,6 @@
 package org.openmrs.module.cdss.fragment.controller;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 import org.openmrs.Patient;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
@@ -18,7 +17,7 @@ import java.util.List;
  */
 public class PatientWidgetFragmentController {
 	
-	protected final Log log = LogFactory.getLog(getClass());
+	private final Logger log = Logger.getLogger(getClass());
 	
 	/**
 	 * The controller method for the widget. The corresponding view file is

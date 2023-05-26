@@ -7,10 +7,9 @@
  * Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
  * graphic logo is a trademark of OpenMRS Inc.
  */
-package org.openmrs.module.cdss.web.controller;
+package org.openmrs.module.cdss.page.controller;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 import org.openmrs.User;
 import org.openmrs.api.UserService;
 import org.openmrs.api.context.Context;
@@ -37,7 +36,7 @@ public class CDSSController {
 	/**
 	 * Logger for this class and subclasses
 	 */
-	protected final Log log = LogFactory.getLog(getClass());
+	private final Logger log = Logger.getLogger(getClass());
 	
 	@Autowired
 	UserService userService;

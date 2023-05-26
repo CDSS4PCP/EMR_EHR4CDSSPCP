@@ -4,22 +4,22 @@
 
 <h2><spring:message code="cdss-omod.title" /></h2>
 
-<br/>
-<table>
-  <tr>
-   <th>User Id</th>
-   <th>Username</th>
-  </tr>
-  <c:forEach var="user" items="${users}">
-      <tr>
-        <td>${user.userId}</td>
-        <td>${user.systemId}</td>
-      </tr>		
-  </c:forEach>
-</table>
+<%--<br/>--%>
+<%--<table>--%>
+<%--  <tr>--%>
+<%--   <th>User Id</th>--%>
+<%--   <th>Username</th>--%>
+<%--  </tr>--%>
+<%--  <c:forEach var="user" items="${users}">--%>
+<%--      <tr>--%>
+<%--        <td>${user.userId}</td>--%>
+<%--        <td>${user.systemId}</td>--%>
+<%--      </tr>		--%>
+<%--  </c:forEach>--%>
+<%--</table>--%>
 
 
-<hr>
+<%--<hr>--%>
 <h4>Runner Service Working? <span>${runnerServiceWorking}</span></h4>
 
 <%@ include file="/WEB-INF/template/footer.jsp"%>

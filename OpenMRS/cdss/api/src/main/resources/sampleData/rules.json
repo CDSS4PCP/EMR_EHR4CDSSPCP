@@ -1,0 +1,53 @@
+[
+  {
+    "vaccine": "MMR",
+    "min_age": 0,
+    "max_age": 12,
+    "special_condition": null,
+    "medical_conditions": [],
+    "previous_record": null,
+    "actions": [
+      "Schedule 1st dose 12-15 mon of age",
+      "Schedule 2nd dose 4-6 yr of age"
+    ]
+  },
+  {
+    "vaccine": "MMR",
+    "min_age": 12,
+    "max_age": 47,
+    "special_condition": null,
+    "medical_conditions": [],
+    "previous_record": null,
+    "actions": [
+      "Admin 1 dose",
+      "Schedule 2nd dose 4-6 yr of age"
+    ]
+  },
+  {
+    "vaccine": "MMR",
+    "min_age": 47,
+    "max_age": 218,
+    "special_condition": null,
+    "medical_conditions": [],
+    "previous_record": null,
+    "actions": [
+      "Admin 1 dose",
+      "Schedule 2nd dose > = 4 wk of 1st dose"
+    ]
+  },
+  {
+    "vaccine": "MMR",
+    "min_age": 12,
+    "max_age": 36,
+    "special_condition": null,
+    "medical_conditions": [],
+    "previous_record": {
+      "num_doses": 1,
+      "last_dose": "12-15 mon of age"
+    },
+    "actions": [
+      "Admin 1 dose",
+      "Schedule 2nd dose > = 4 wk of 1st dose"
+    ]
+  }
+]

@@ -49,4 +49,9 @@ public class Action extends BaseOpenmrsData {
 	public void setDisplayString(String displayString) {
 		this.displayString = displayString;
 	}
+	
+	@Override
+	public String toString() {
+		return "Action{" + "id=" + id + ", priority=" + priority + ", displayString='" + displayString + '\'' + '}';
+	}
 }

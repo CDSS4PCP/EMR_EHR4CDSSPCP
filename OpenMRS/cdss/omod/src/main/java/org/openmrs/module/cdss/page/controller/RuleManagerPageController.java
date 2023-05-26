@@ -1,14 +1,17 @@
-package org.openmrs.module.cdss.web.controller;
+package org.openmrs.module.cdss.page.controller;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.cdss.CDSSWebConfig;
 import org.openmrs.module.cdss.api.RuleManagerService;
+import org.openmrs.module.cdss.api.data.Rule;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.ModelAndView;
+
+import java.util.List;
 
 /**
  * This is a web controller for the rule manager form
@@ -16,9 +19,9 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller()
 // Url for the rule editor page. It is defined in CdssConfig and by default it is module/cdss/rules.form
 @RequestMapping(value = CDSSWebConfig.RULE_MANAGER_URL)
-public class RuleManagerController {
+public class RuleManagerPageController {
 	
-	protected final Log log = LogFactory.getLog(getClass());
+	private final Logger log = Logger.getLogger(getClass());
 	
 	/**
 	 * Rule manager view name
@@ -32,12 +35,20 @@ public class RuleManagerController {
 	 * @return Returns a ModelAndView with a list of vaccines keyed by "rulesets"
 	 */
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView onGet() {
-		
+	public ModelAndView onGet(WebRequest request) {
 		RuleManagerService vc = Context.getService(RuleManagerService.class);
-		ModelAndView mv = new ModelAndView(VIEW);
-		mv.addObject("rulesets", vc.getRulesByVaccine("MMR"));
-		return mv;
+		
+		ModelAndView model = new ModelAndView(VIEW);
+		String vaccine = "MMR";
+		List<Rule> rules = vc.getRulesByVaccine(vaccine);
+		rules.sort(new Rule.RuleVaccineComparator());
+		
+		model.addObject("rulesets", rules);
+		model.addObject("vaccines", vc.getLoadedVaccineRulesets());
+		
+		model.addObject("clarifyVaccineNeeded", true);
+		
+		return model;
 		
 	}
 	
@@ -49,9 +60,19 @@ public class RuleManagerController {
 	 * @return Returns same as onGet.
 	 */
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView onPost() {
+	public ModelAndView onPost(WebRequest request) {
 		
-		return onGet();
+		RuleManagerService vc = Context.getService(RuleManagerService.class);
+		ModelAndView model = new ModelAndView(VIEW);
+		
+		String vaccine = request.getParameter("vaccine");
+		List<Rule> rules = vc.getRulesByVaccine(vaccine);
+		rules.sort(new Rule.RuleVaccineComparator());
+		
+		model.addObject("rulesets", rules);
+		model.addObject("clarifyVaccineNeeded", false);
+		model.addObject("vaccines", vc.getLoadedVaccineRulesets());
+		return model;
 	}
 	
 }

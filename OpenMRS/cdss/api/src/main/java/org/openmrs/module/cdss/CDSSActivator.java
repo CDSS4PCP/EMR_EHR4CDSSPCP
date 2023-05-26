@@ -9,16 +9,19 @@
  */
 package org.openmrs.module.cdss;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 import org.openmrs.module.BaseModuleActivator;
+
+import java.io.UnsupportedEncodingException;
 
 /**
  * This class contains the logic that is run every time this module is either started or shutdown
  */
 public class CDSSActivator extends BaseModuleActivator {
 	
-	private Log log = LogFactory.getLog(this.getClass());
+	private static SampleData sampleData;
+	
+	private final Logger log = Logger.getLogger(getClass());
 	
 	/**
 	 * @see #started()
@@ -26,6 +29,14 @@ public class CDSSActivator extends BaseModuleActivator {
 	@Override
 	public void started() {
 		log.info("Started CDSS");
+		sampleData = new SampleData();
+		try {
+			sampleData.loadSampleDataJson();
+		}
+		catch (UnsupportedEncodingException e) {
+			throw new RuntimeException(e);
+		}
+		
 	}
 	
 	/**
@@ -42,4 +53,7 @@ public class CDSSActivator extends BaseModuleActivator {
 		
 	}
 	
+	public static SampleData getSampleData() {
+		return sampleData;
+	}
 }

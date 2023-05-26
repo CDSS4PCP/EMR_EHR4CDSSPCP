@@ -1,10 +1,10 @@
 package org.openmrs.module.cdss.api.impl;
 
 import org.apache.commons.lang.NotImplementedException;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 import org.openmrs.annotation.Authorized;
 import org.openmrs.api.impl.BaseOpenmrsService;
+import org.openmrs.module.cdss.CDSSActivator;
 import org.openmrs.module.cdss.CDSSConfig;
 import org.openmrs.module.cdss.api.RuleManagerService;
 import org.openmrs.module.cdss.api.data.Rule;
@@ -15,7 +15,7 @@ import java.util.List;
 
 public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleManagerService {
 	
-	protected final Log log = LogFactory.getLog(getClass());
+	private final Logger log = Logger.getLogger(getClass());
 	
 	/**
 	 * Logic that is run when this service is started. At the moment, this method is not used.
@@ -59,11 +59,11 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
 	public List<Rule> getRulesByVaccine(String vaccine) {
 		ArrayList<Rule> rules = new ArrayList<Rule>();
 		
-		rules.add(new Rule(1, "MMR"));
-		rules.add(new Rule(2, "MMR"));
-		rules.add(new Rule(3, "MMR"));
-		rules.add(new Rule(4, "HPV"));
-		rules.add(new Rule(5, "HPV"));
+		for (Rule rule : CDSSActivator.getSampleData().getRules()) {
+			if (rule.getVaccine().equals(vaccine)) {
+				rules.add(rule);
+			}
+		}
 		
 		return rules;
 	}

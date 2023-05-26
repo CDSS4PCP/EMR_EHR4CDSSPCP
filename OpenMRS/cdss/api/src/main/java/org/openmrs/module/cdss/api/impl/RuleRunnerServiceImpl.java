@@ -2,6 +2,7 @@ package org.openmrs.module.cdss.api.impl;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 import org.openmrs.Patient;
 import org.openmrs.api.APIException;
 import org.openmrs.api.UserService;
@@ -50,7 +51,7 @@ public class RuleRunnerServiceImpl extends BaseOpenmrsService implements RuleRun
 		return dao.saveItem(item);
 	}
 	
-	protected final Log log = LogFactory.getLog(getClass());
+	private final Logger log = Logger.getLogger(getClass());
 	
 	// Random is used to generate random vaccine results for simply displaying VaccineRunnerService's functionality.
 	// In the future, this will replace by database queries for a more deterministic and accurate outcome.

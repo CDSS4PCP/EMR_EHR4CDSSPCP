@@ -1,3 +1,3 @@
 package org.openmrs.module.cdss;
 
-public class RuleLoggerServiceTest {}
+public class RuleLoggerServiceTest extends RuleRunnerServiceTest {}

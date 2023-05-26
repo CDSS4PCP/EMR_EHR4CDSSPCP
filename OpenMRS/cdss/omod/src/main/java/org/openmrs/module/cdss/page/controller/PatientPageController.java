@@ -1,7 +1,6 @@
-package org.openmrs.module.cdss.web.controller;
+package org.openmrs.module.cdss.page.controller;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 import org.openmrs.Patient;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
@@ -25,7 +24,7 @@ import java.util.List;
 @RequestMapping(value = CDSSWebConfig.RESULTS_URL)
 public class PatientPageController {
 	
-	protected final Log log = LogFactory.getLog(getClass());
+	private final Logger log = Logger.getLogger(getClass());
 	
 	/**
 	 * Patient results view name

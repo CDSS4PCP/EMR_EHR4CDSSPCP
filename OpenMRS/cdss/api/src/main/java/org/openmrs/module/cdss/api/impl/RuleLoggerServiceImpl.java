@@ -1,8 +1,8 @@
 package org.openmrs.module.cdss.api.impl;
 
 import org.apache.commons.lang.NotImplementedException;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+
+import org.apache.log4j.Logger;
 import org.openmrs.Patient;
 import org.openmrs.User;
 import org.openmrs.api.impl.BaseOpenmrsService;
@@ -19,7 +19,7 @@ import java.util.List;
 
 public class RuleLoggerServiceImpl extends BaseOpenmrsService implements RuleLoggerService {
 	
-	protected final Log log = LogFactory.getLog(getClass());
+	private final Logger log = Logger.getLogger(getClass());
 	
 	/**
 	 * Logic that is run when this service is started. At the moment, this method is not used.
