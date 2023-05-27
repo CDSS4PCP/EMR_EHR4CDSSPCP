@@ -9,7 +9,7 @@
       "type": "link",
       "order": 10,
       "label": "CDSS Rule Manager",
-      "url": "module/cdss/rules.form",
+      "url": "cdss/ruleManager.page",
       "icon": "icon-cogs",
       "requiredPrivilege": "Task: Chart Search"
     }

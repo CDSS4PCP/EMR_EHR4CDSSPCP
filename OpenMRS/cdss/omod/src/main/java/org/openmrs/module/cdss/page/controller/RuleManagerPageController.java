@@ -1,24 +1,21 @@
 package org.openmrs.module.cdss.page.controller;
 
 import org.apache.log4j.Logger;
-import org.openmrs.api.context.Context;
-import org.openmrs.module.cdss.CDSSWebConfig;
 import org.openmrs.module.cdss.api.RuleManagerService;
 import org.openmrs.module.cdss.api.data.Rule;
+import org.openmrs.ui.framework.annotation.SpringBean;
+import org.openmrs.ui.framework.page.PageModel;
+import org.openmrs.ui.framework.page.PageRequest;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.context.request.WebRequest;
-import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
 
 /**
  * This is a web controller for the rule manager form
  */
-@Controller()
+@Controller
 // Url for the rule editor page. It is defined in CdssConfig and by default it is module/cdss/rules.form
-@RequestMapping(value = CDSSWebConfig.RULE_MANAGER_URL)
+//@RequestMapping(value = CDSSWebConfig.RULE_MANAGER_URL)
 public class RuleManagerPageController {
 	
 	private final Logger log = Logger.getLogger(getClass());
@@ -34,23 +31,23 @@ public class RuleManagerPageController {
 	 * 
 	 * @return Returns a ModelAndView with a list of vaccines keyed by "rulesets"
 	 */
-	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView onGet(WebRequest request) {
-		RuleManagerService vc = Context.getService(RuleManagerService.class);
-		
-		ModelAndView model = new ModelAndView(VIEW);
-		String vaccine = "MMR";
-		List<Rule> rules = vc.getRulesByVaccine(vaccine);
-		rules.sort(new Rule.RuleVaccineComparator());
-		
-		model.addObject("rulesets", rules);
-		model.addObject("vaccines", vc.getLoadedVaccineRulesets());
-		
-		model.addObject("clarifyVaccineNeeded", true);
-		
-		return model;
-		
-	}
+	//    @RequestMapping(method = RequestMethod.GET)
+	//    public ModelAndView onGet(FragmentConfiguration config, FragmentModel model) {
+	//        RuleManagerService vc = Context.getService(RuleManagerService.class);
+	//
+	//        ModelAndView model = new ModelAndView(VIEW);
+	//        String vaccine = "MMR";
+	//        List<Rule> rules = vc.getRulesByVaccine(vaccine);
+	//        rules.sort(new Rule.RuleVaccineComparator());
+	//
+	//        model.addObject("rulesets", rules);
+	//        model.addObject("vaccines", vc.getLoadedVaccineRulesets());
+	//
+	//        model.addObject("clarifyVaccineNeeded", true);
+	//
+	//        return model;
+	//
+	//    }
 	
 	/**
 	 * This method executes when the form is requested with an HTTP Post request. It displays the
@@ -59,20 +56,44 @@ public class RuleManagerPageController {
 	 * 
 	 * @return Returns same as onGet.
 	 */
+	/*
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView onPost(WebRequest request) {
-		
+
 		RuleManagerService vc = Context.getService(RuleManagerService.class);
 		ModelAndView model = new ModelAndView(VIEW);
-		
+
 		String vaccine = request.getParameter("vaccine");
 		List<Rule> rules = vc.getRulesByVaccine(vaccine);
 		rules.sort(new Rule.RuleVaccineComparator());
-		
+
 		model.addObject("rulesets", rules);
 		model.addObject("clarifyVaccineNeeded", false);
 		model.addObject("vaccines", vc.getLoadedVaccineRulesets());
 		return model;
 	}
+	*/
+	//	@RequestMapping(method = RequestMethod.GET)
+	public String get(PageModel model, @SpringBean("cdss.RuleManagerServiceImpl") RuleManagerService service) {
+		//https://wiki.openmrs.org/display/docs/Flexible%20Method%20Signatures%20for%20UI%20Framework%20Controller%20and%20Action%20Methods
+		
+		List<String> vaccines = service.getLoadedVaccineRulesets();
+		
+		model.addAttribute("vaccines", vaccines);
+		
+		model.addAttribute("clarifyVaccineNeeded", true);
+		
+		return null;
+	}
 	
+	public String post(PageModel model, PageRequest request,
+	        @SpringBean("cdss.RuleManagerServiceImpl") RuleManagerService service) {
+		String vaccine = (String) request.getAttribute("vaccine");
+		List<Rule> rules = service.getRulesByVaccine(vaccine);
+		
+		model.addAttribute("rulesets", rules);
+		model.addAttribute("clarifyVaccineNeeded", false);
+		return null;
+		
+	}
 }
