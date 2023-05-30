@@ -29,6 +29,10 @@ public class CDSSActivator extends BaseModuleActivator {
 	@Override
 	public void started() {
 		log.info("Started CDSS");
+		
+		CDSSConfig.VACCINE_CODES.add("MMR");
+		CDSSConfig.VACCINE_CODES.add("HPV");
+		
 		sampleData = new SampleData();
 		try {
 			sampleData.loadSampleDataJson();
