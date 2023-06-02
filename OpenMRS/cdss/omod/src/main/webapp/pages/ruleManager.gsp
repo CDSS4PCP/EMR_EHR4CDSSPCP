@@ -36,7 +36,7 @@
 
 <% } else { %>
 
-<button class="button confirm">Add rule</button>
+<a class="button confirm" href="newRule.page">Add rule</a>
 <table class="table table-sm table-responsive-sm table-responsive-md table-responsive-lg table-responsive-xl rule-table">
     <thead>
     <tr>
