@@ -7,6 +7,7 @@ import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.cdss.CDSSActivator;
 import org.openmrs.module.cdss.CDSSConfig;
 import org.openmrs.module.cdss.api.RuleManagerService;
+import org.openmrs.module.cdss.api.data.Action;
 import org.openmrs.module.cdss.api.data.Rule;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -69,12 +70,22 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
 	}
 	
 	@Override
-	public boolean registerNewVaccine(String vaccine) {
+	public boolean addVaccine(String vaccine) {
 		if (CDSSConfig.VACCINE_CODES.contains(vaccine)) {
 			return false;
 		}
-		log.debug("attempting new vaccine " + vaccine);
+		
 		return CDSSConfig.VACCINE_CODES.add(vaccine);
+	}
+	
+	@Override
+	public List<Action> getAllActions() {
+		return CDSSActivator.getSampleData().getActions();
+	}
+	
+	@Override
+	public boolean addAction(Action action) {
+		return CDSSActivator.getSampleData().addAction(action);
 	}
 	
 	@Override

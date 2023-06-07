@@ -1,6 +1,7 @@
 package org.openmrs.module.cdss.api;
 
 import org.openmrs.annotation.Authorized;
+import org.openmrs.module.cdss.api.data.Action;
 import org.openmrs.module.cdss.api.data.Rule;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,5 +27,13 @@ public interface RuleManagerService extends CDSSService {
 	
 	@Authorized
 	@Transactional
-	boolean registerNewVaccine(String vaccine);
+	boolean addVaccine(String vaccine);
+	
+	@Authorized
+	@Transactional
+	List<Action> getAllActions();
+	
+	@Authorized
+	@Transactional
+	boolean addAction(Action action);
 }

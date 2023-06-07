@@ -3,9 +3,11 @@ package org.openmrs.module.cdss;
 import org.junit.Test;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.cdss.api.RuleManagerService;
+import org.openmrs.module.cdss.api.data.Action;
 import org.openmrs.module.cdss.api.data.Rule;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,7 +43,7 @@ public class RuleManagerServiceTest extends BaseModuleContextSensitiveTest {
 	public void checkAddingNewVaccine() {
 		RuleManagerService serv = Context.getService(RuleManagerService.class);
 		
-		serv.registerNewVaccine("Polio");
+		serv.addVaccine("Polio");
 		
 		List<String> expected = new ArrayList<String>();
 		expected.add("MMR");
@@ -54,4 +56,19 @@ public class RuleManagerServiceTest extends BaseModuleContextSensitiveTest {
 		
 	}
 	
+	//    @Test
+	//    public void checkActions() {
+	//        SampleData sampleData = new SampleData();
+	//        try {
+	//            sampleData.loadSampleDataJson();
+	//        } catch (UnsupportedEncodingException e) {
+	//            throw new RuntimeException(e);
+	//        }
+	//        RuleManagerService serv = Context.getService(RuleManagerService.class);
+	//        List<Action> actions = serv.getAllActions();
+	//
+	//        assertThat(actions.size(), is(4));
+	//
+	//
+	//    }
 }

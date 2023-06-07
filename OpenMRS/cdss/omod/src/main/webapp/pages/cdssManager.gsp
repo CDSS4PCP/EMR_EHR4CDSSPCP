@@ -23,7 +23,7 @@
     Indications and Conditions
 </a>
 
-<a class="btn btn-default btn-lg button app big align-self-center">
+<a class="btn btn-default btn-lg button app big align-self-center" href="actionManager.page">
     <i class="fas fa-fw icon-double-angle-right"></i>
     Action Management
 </a>

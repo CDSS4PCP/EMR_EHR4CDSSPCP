@@ -1,36 +1,33 @@
 package org.openmrs.module.cdss.page.controller;
 
 import org.apache.log4j.Logger;
+import org.openmrs.module.cdss.CDSSWebConfig;
 import org.openmrs.module.cdss.api.RuleManagerService;
 import org.openmrs.module.cdss.api.data.Action;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.page.PageModel;
 import org.openmrs.ui.framework.page.PageRequest;
 
-import java.util.List;
-
-public class NewRulePageController {
+public class NewActionPageController {
 	
 	private final Logger log = Logger.getLogger(getClass());
 	
 	public String get(PageModel model, @SpringBean("cdss.RuleManagerServiceImpl") RuleManagerService service) {
-		List<String> vaccines = service.getLoadedVaccineRulesets();
-		List<Action> actions = service.getAllActions();
-		
-		model.addAttribute("vaccines", vaccines);
-		model.addAttribute("actions", actions);
 		
 		return null;
 	}
 	
 	public String post(PageModel model, PageRequest request,
 	        @SpringBean("cdss.RuleManagerServiceImpl") RuleManagerService service) {
-		List<String> vaccines = service.getLoadedVaccineRulesets();
-		List<Action> actions = service.getAllActions();
+		String message = (String) request.getAttribute("text");
+		Integer priority = Integer.parseInt((String) request.getAttribute("priority"));
 		
-		model.addAttribute("vaccines", vaccines);
-		model.addAttribute("actions", actions);
+		Action newAction = new Action();
+		newAction.setDisplayString(message);
+		newAction.setPriority(priority);
 		
-		return null;
+		service.addAction(newAction);
+		
+		return "redirect:" + CDSSWebConfig.ACTION_MANAGER_URL;
 	}
 }

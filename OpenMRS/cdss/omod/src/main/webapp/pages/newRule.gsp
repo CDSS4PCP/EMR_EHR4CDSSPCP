@@ -135,12 +135,10 @@
 
     <label>Actions
         <select multiple>
-            <option>
-                Schedule
-            </option>
-            <option>
-                Administer
-            </option>
+            <% actions.each { action -> %>
+            <option value="${action.getId()}">${action.getDisplayString()}</option>
+
+            <% } %>
         </select>
     </label>
 </form>
