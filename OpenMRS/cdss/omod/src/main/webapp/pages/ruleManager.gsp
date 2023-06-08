@@ -36,6 +36,9 @@
 
 <% } else { %>
 
+
+
+
 <a class="button confirm" href="newRule.page">Add rule</a>
 <table class="table table-sm table-responsive-sm table-responsive-md table-responsive-lg table-responsive-xl rule-table">
     <thead>
@@ -44,6 +47,8 @@
         <th>Vaccine</th>
         <th>Minimum Age (in weeks)</th>
         <th>Maximum Age (in weeks)</th>
+        <th>Actions</th>
+
         <th></th>
     </tr>
     </thead>

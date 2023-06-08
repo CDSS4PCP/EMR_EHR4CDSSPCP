@@ -37,6 +37,28 @@
 
 </script>
 
+
+
+<% if (ruleAddedError) { %>
+
+
+<div class="toast-container">
+    <div class="toast-item-wrapper">
+        <div class="toast-item toast-type-error">
+            <div class="toast-item-image toast-item-image-error"></div>
+
+            <div class="toast-item-close"></div>
+
+            <p>Could not add rule. <br>
+                Please check the input values.
+            </p>
+        </div>
+    </div>
+</div>
+
+<% } %>
+
+
 <form method="post">
     <label for="vaccine-selector">
         Vaccine:
@@ -52,7 +74,7 @@
 
 
     <label>Minimum Age
-        <input type="number">
+        <input type="number" name="min-age" min="0" max="99999">
         Unit
         <select name="min-age-unit" required>
             <option value="year">year</option>
@@ -66,7 +88,7 @@
 
     <br>
     <label>Maximum Age
-        <input type="number">
+        <input type="number" name="max-age" min="0" max="99999">
         Unit
         <select name="max-age-unit" required>
             <option value="year">year</option>
@@ -87,22 +109,22 @@
 
         <article id="special-condition-section" class="d-none">
             <label>Special Condition
-                <input type="text">
+                <input type="text" name="special-condition">
             </label>
             <label>Outbreak Condition
-                <input type="text">
+                <input type="text" name="outbreak-condition">
             </label>
             <label>
                 College Student
-                <input type="checkbox">
+                <input type="checkbox" name="college-student">
             </label>
             <label>
                 Works in Military
-                <input type="checkbox">
+                <input type="checkbox" name="military-worker">
             </label>
             <label>
                 Travel
-                <input type="checkbox">
+                <input type="checkbox" name="travel-condition">
             </label>
         </article>
     </div>
@@ -134,11 +156,16 @@
     </label>
 
     <label>Actions
-        <select multiple>
+
+        <select multiple name="actions">
             <% actions.each { action -> %>
             <option value="${action.getId()}">${action.getDisplayString()}</option>
 
             <% } %>
         </select>
     </label>
+
+
+
+    <input type="submit" class="btn confirm">
 </form>

@@ -64,6 +64,17 @@ public class Rule {
 		}
 	}
 	
+	public Rule(String vaccine, Integer minimumAge, Integer maximumAge, Action... actions) {
+		this.id = nextIndex;
+		this.vaccine = vaccine;
+		this.minimumAge = minimumAge;
+		this.maximumAge = maximumAge;
+		this.actions = actions;
+		
+		nextIndex++;
+		
+	}
+	
 	public Integer getId() {
 		return id;
 	}

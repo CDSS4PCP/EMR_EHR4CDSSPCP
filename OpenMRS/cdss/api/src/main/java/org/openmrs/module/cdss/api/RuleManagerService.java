@@ -19,7 +19,7 @@ public interface RuleManagerService extends CDSSService {
 	
 	@Authorized
 	@Transactional
-	Integer addRule();
+	Boolean addRule(Rule rule);
 	
 	@Authorized
 	@Transactional
@@ -36,4 +36,9 @@ public interface RuleManagerService extends CDSSService {
 	@Authorized
 	@Transactional
 	boolean addAction(Action action);
+	
+	@Authorized
+	@Transactional
+	Action getActionById(Integer id);
+	
 }

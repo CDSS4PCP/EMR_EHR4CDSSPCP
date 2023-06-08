@@ -21,6 +21,10 @@ public class CDSSConfig {
 	
 	public final static String MODULE_PRIVILEGE = "CDSS Privilege";
 	
+	public static final int RULE_MINIMUM_AGE = 0;
+	
+	public static final int RULE_MAXIMUM_AGE = 99999;
+	
 	public static final ArrayList<String> VACCINE_CODES = new ArrayList<String>();
 	
 }

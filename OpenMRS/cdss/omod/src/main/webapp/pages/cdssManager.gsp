@@ -27,3 +27,8 @@
     <i class="fas fa-fw icon-double-angle-right"></i>
     Action Management
 </a>
+
+<a class="btn btn-default btn-lg button app big align-self-center" href="reportManager.page">
+    <i class="fas fa-fw icon-file-alt"></i>
+    Reports
+</a>

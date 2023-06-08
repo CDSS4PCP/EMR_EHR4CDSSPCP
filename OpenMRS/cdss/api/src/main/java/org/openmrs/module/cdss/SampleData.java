@@ -109,4 +109,18 @@ public class SampleData {
 		}
 		return null;
 	}
+	
+	public Action getActionById(Integer id) {
+		List<Action> actions = getActions();
+		for (Action action : actions) {
+			if (action.getId().equals(id)) {
+				return action;
+			}
+		}
+		return null;
+	}
+	
+	public boolean addRule(Rule rule) {
+		return rules.add(rule);
+	}
 }

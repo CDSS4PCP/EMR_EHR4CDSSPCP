@@ -52,8 +52,8 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
 	@Override
 	@Transactional
 	@Authorized
-	public Integer addRule() {
-		throw new NotImplementedException("This method is not finished yet!");
+	public Boolean addRule(Rule rule) {
+		return CDSSActivator.getSampleData().addRule(rule);
 	}
 	
 	@Override
@@ -86,6 +86,12 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
 	@Override
 	public boolean addAction(Action action) {
 		return CDSSActivator.getSampleData().addAction(action);
+	}
+	
+	@Override
+	public Action getActionById(Integer id) {
+		
+		return CDSSActivator.getSampleData().getActionById(id);
 	}
 	
 	@Override
