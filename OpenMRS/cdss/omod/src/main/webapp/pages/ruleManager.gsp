@@ -47,6 +47,11 @@
         <th>Vaccine</th>
         <th>Minimum Age (in weeks)</th>
         <th>Maximum Age (in weeks)</th>
+        <th>Special Condition</th>
+        <th>Num Previous Doses</th>
+        <th>Medical Indications</th>
+
+
         <th>Actions</th>
 
         <th></th>

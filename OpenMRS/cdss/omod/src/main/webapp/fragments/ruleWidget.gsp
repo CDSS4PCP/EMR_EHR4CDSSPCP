@@ -1,9 +1,21 @@
 <tr>
 
-    <td>${config.rule.getId()}</td>
-    <td>${config.rule.getVaccine()}</td>
-    <td>${config.rule.getMinimumAge()}</td>
-    <td>${config.rule.getMaximumAge()}</td>
+    <td>${ui.format(config.rule.getId())}</td>
+    <td>${ui.format(config.rule.getVaccine())}</td>
+    <td>${ui.format(config.rule.getMinimumAge())}</td>
+    <td>${ui.format(config.rule.getMaximumAge())}</td>
+    <td>${ui.format(config.rule.getSpecialCondition())}</td>
+    <td>${ui.format(config.rule.getPreviousRecord())}</td>
+    <td>
+
+        <ul>
+            <% config.rule.getMedicalConditions().each { condition -> %>
+
+            <li>${condition}</li>
+            <% } %>
+        </ul>
+    </td>
+
     <td>
         <ul>
             <% config.rule.getActions().each { action -> %>

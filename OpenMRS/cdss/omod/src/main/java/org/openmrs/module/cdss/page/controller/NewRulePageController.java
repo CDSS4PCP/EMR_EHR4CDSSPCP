@@ -47,11 +47,20 @@ public class NewRulePageController {
 		Integer maxAge = maxAgeString.length() == 0 ? CDSSConfig.RULE_MAXIMUM_AGE : Integer.parseInt(maxAgeString);
 		String maxAgeUnit = (String) request.getAttribute("max-age-unit");
 		
+		Boolean specialConditionExists = parseCheckboxValue((String) request.getAttribute("special-condition-exists"));
+		
 		String specialCondition = (String) request.getAttribute("special-condition");
 		String outbreakCondition = (String) request.getAttribute("outbreak-condition");
 		Boolean collegeStudent = Boolean.parseBoolean((String) request.getAttribute("college-student"));
 		Boolean militaryWorker = Boolean.parseBoolean((String) request.getAttribute("military-worker"));
 		Boolean travelCondition = Boolean.parseBoolean((String) request.getAttribute("travel-condition"));
+		
+		Boolean immunizationRecordExists = parseCheckboxValue((String) request.getAttribute("immunization-record-exists"));
+		
+		String numPrevDosesString = (String) request.getAttribute("num-prev-doses");
+		Integer numPrevDoses = numPrevDosesString.length() == 0 ? 0 : Integer.parseInt(numPrevDosesString);
+		
+		String[] selectedIndicationStrings = request.getRequest().getParameterValues("indications");
 		
 		String[] selectedActionStrings = request.getRequest().getParameterValues("actions");
 		
@@ -63,6 +72,16 @@ public class NewRulePageController {
 			}
 			
 			Rule newRule = new Rule(vaccine, minAge, maxAge, selectedActions);
+			
+			if (specialConditionExists)
+				newRule.setSpecialCondition(specialCondition);
+			
+			if (immunizationRecordExists)
+				newRule.setPreviousRecord(numPrevDoses + "");
+			
+			if (selectedIndicationStrings != null && selectedIndicationStrings.length > 0)
+				newRule.setMedicalConditions(selectedIndicationStrings);
+			
 			Boolean success = !service.addRule(newRule);
 			model.addAttribute("ruleAddedError", success);
 			
@@ -76,5 +95,14 @@ public class NewRulePageController {
 		}
 		
 		return "redirect:" + CDSSWebConfig.RULE_MANAGER_URL;
+	}
+	
+	private Boolean parseCheckboxValue(String value) {
+		
+		if (value.toLowerCase().trim().equals("on") || value.toLowerCase().trim().equals("true")) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 }

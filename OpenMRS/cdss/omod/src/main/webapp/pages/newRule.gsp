@@ -66,7 +66,6 @@
     <select id="vaccine-selector" name="vaccine" required>
         <% vaccines.each { vaccine -> %>
         <option value="${vaccine}">${vaccine}</option>
-
         <% } %>
     </select>
 
@@ -104,7 +103,7 @@
     <div>
         <label>
             Special Condition
-            <input type="checkbox" onchange="specialConditionToggle()">
+            <input type="checkbox" onchange="specialConditionToggle()" name="special-condition-exists">
         </label>
 
         <article id="special-condition-section" class="d-none">
@@ -133,19 +132,19 @@
     <div>
         <label>
             Immunization Record Exists
-            <input type="checkbox" onchange="immunizationRecordConditionToggle()">
+            <input type="checkbox" onchange="immunizationRecordConditionToggle()" name="immunization-record-exists">
         </label>
 
         <article id="immunization-record-condition-section" class="d-none">
             <label>Number of Doses Completed
-                <input type="text">
+                <input type="text" name="num-prev-doses">
             </label>
 
         </article>
     </div>
 
     <label>Medical Indications
-        <select multiple>
+        <select multiple name="indications">
             <option value="immunocompromised">
                 Immunocompromised
             </option>

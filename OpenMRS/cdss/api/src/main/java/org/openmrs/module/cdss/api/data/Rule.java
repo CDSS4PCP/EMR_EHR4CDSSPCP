@@ -42,7 +42,7 @@ public class Rule {
 	
 	private String specialCondition;
 	
-	private String medicalCondition;
+	private String[] medicalConditions;
 	
 	private String previousRecord;
 	
@@ -111,12 +111,12 @@ public class Rule {
 		this.specialCondition = specialCondition;
 	}
 	
-	public String getMedicalCondition() {
-		return medicalCondition;
+	public String[] getMedicalConditions() {
+		return medicalConditions;
 	}
 	
-	public void setMedicalCondition(String medicalCondition) {
-		this.medicalCondition = medicalCondition;
+	public void setMedicalConditions(String... medicalConditions) {
+		this.medicalConditions = medicalConditions;
 	}
 	
 	public String getPreviousRecord() {
@@ -144,14 +144,15 @@ public class Rule {
 		Rule rule = (Rule) o;
 		return id.equals(rule.id) && vaccine.equals(rule.vaccine) && minimumAge.equals(rule.minimumAge)
 		        && maximumAge.equals(rule.maximumAge) && specialCondition.equals(rule.specialCondition)
-		        && medicalCondition.equals(rule.medicalCondition) && previousRecord.equals(rule.previousRecord)
+		        && medicalConditions.equals(rule.medicalConditions) && previousRecord.equals(rule.previousRecord)
 		        && Arrays.equals(actions, rule.actions);
 	}
 	
 	@Override
 	public String toString() {
 		return "Rule{" + "id=" + id + ", vaccine='" + vaccine + '\'' + ", minimumAge=" + minimumAge + ", maximumAge="
-		        + maximumAge + ", specialCondition='" + specialCondition + '\'' + ", medicalCondition='" + medicalCondition
-		        + '\'' + ", previousRecord='" + previousRecord + '\'' + ", actions=" + Arrays.toString(actions) + '}';
+		        + maximumAge + ", specialCondition='" + specialCondition + '\'' + ", medicalConditions='"
+		        + Arrays.toString(medicalConditions) + '\'' + ", previousRecord='" + previousRecord + '\'' + ", actions="
+		        + Arrays.toString(actions) + '}';
 	}
 }
