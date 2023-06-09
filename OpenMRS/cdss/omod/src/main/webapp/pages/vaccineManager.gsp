@@ -1,5 +1,5 @@
 <%
-    ui.decorateWith("appui", "standardEmrPage", [title: "CDSS Rule Manager"])
+    ui.decorateWith("appui", "standardEmrPage", [title: "CDSS Vaccine Manager"])
     ui.includeCss("cdss", "style.css")
 
 %>

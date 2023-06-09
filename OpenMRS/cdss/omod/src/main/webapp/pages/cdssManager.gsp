@@ -18,7 +18,7 @@
     Rule Management
 </a>
 
-<a class="btn btn-default btn-lg button app big align-self-center">
+<a class="btn btn-default btn-lg button app big align-self-center" href="indicationsManager.page">
     <i class="fas fa-fw fa-exclamation"></i>
     Indications and Conditions
 </a>
@@ -29,6 +29,6 @@
 </a>
 
 <a class="btn btn-default btn-lg button app big align-self-center" href="reportManager.page">
-    <i class="fas fa-fw icon-file-alt"></i>
+    <i class="fas fa-fw fa-file-alt"></i>
     Reports
 </a>
