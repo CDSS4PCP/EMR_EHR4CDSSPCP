@@ -16,7 +16,11 @@ public class NewRulePageController {
 	
 	private final Logger log = Logger.getLogger(getClass());
 	
-	public String get(PageModel model, @SpringBean("cdss.RuleManagerServiceImpl") RuleManagerService service) {
+	public String get(PageModel model, PageRequest request,
+	        @SpringBean("cdss.RuleManagerServiceImpl") RuleManagerService service) {
+		Integer editRuleId = request.getAttribute("editRuleId") != null ? Integer.parseInt((String) request
+		        .getAttribute("editRuleId")) : null;
+		
 		List<String> vaccines = service.getLoadedVaccineRulesets();
 		List<Action> actions = service.getAllActions();
 		
@@ -25,11 +29,30 @@ public class NewRulePageController {
 		model.addAttribute("selectedActions", "");
 		model.addAttribute("ruleAddedError", false);
 		
+		if (editRuleId != null) {
+			Rule rule = service.getRuleById(editRuleId);
+			String vaccine = rule.getVaccine();
+			Integer minAge = rule.getMinimumAge();
+			Integer maxAge = rule.getMaximumAge();
+			String specialCondition = rule.getSpecialCondition();
+			String immunizationCondition = rule.getPreviousRecord();
+			
+			model.addAttribute("presetVaccine", vaccine);
+			model.addAttribute("presetMinAge", minAge);
+			model.addAttribute("presetMaxAge", maxAge);
+			model.addAttribute("presetSpecialCondition", specialCondition);
+			model.addAttribute("presetImmunizationCondition", immunizationCondition);
+		} else {
+			setNoEditModAttributes(model);
+		}
+		
 		return null;
 	}
 	
 	public String post(PageModel model, PageRequest request,
 	        @SpringBean("cdss.RuleManagerServiceImpl") RuleManagerService service) {
+		
+		Integer editRuleId = (Integer) request.getAttribute("editRuleId");
 		
 		List<String> vaccines = service.getLoadedVaccineRulesets();
 		List<Action> actions = service.getAllActions();
@@ -99,10 +122,23 @@ public class NewRulePageController {
 	
 	private Boolean parseCheckboxValue(String value) {
 		
+		if (value == null) {
+			return false;
+		}
 		if (value.toLowerCase().trim().equals("on") || value.toLowerCase().trim().equals("true")) {
 			return true;
 		} else {
 			return false;
 		}
+	}
+	
+	private PageModel setNoEditModAttributes(PageModel model) {
+		
+		model.addAttribute("presetVaccine", null);
+		model.addAttribute("presetMinAge", null);
+		model.addAttribute("presetMaxAge", null);
+		model.addAttribute("presetSpecialCondition", null);
+		model.addAttribute("presetImmunizationCondition", null);
+		return model;
 	}
 }

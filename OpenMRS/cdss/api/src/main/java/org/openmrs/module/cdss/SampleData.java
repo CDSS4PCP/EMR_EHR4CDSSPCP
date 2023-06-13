@@ -88,6 +88,16 @@ public class SampleData {
 		return rules;
 	}
 	
+	public Rule getRuleById(Integer id) {
+		List<Rule> rules = getRules();
+		for (Rule rule : rules) {
+			if (rule.getId().equals(id)) {
+				return rule;
+			}
+		}
+		return null;
+	}
+	
 	public List<Action> getActions() {
 		
 		return actions;

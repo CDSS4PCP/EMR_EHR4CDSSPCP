@@ -18,13 +18,10 @@
     <form method="post">
         <label>Vaccine:
             <select id="vaccine-dropdown" name="vaccine">
-
                 <% vaccines.each { vaccine -> %>
-
                 <option value="${vaccine}">
                     ${vaccine}
                 </option>
-
                 <% } %>
 
             </select>
@@ -60,11 +57,7 @@
     <tbody>
 
     <% rulesets.each { rule -> %>
-
     ${ui.includeFragment('cdss', 'ruleWidget', [rule: rule])}
-
-
-
     <% } %>
 
     </tbody>

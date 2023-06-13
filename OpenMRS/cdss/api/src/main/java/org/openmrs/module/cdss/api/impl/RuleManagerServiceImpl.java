@@ -57,6 +57,11 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
 	}
 	
 	@Override
+	public Rule getRuleById(Integer id) {
+		return CDSSActivator.getSampleData().getRuleById(id);
+	}
+	
+	@Override
 	public List<Rule> getRulesByVaccine(String vaccine) {
 		ArrayList<Rule> rules = new ArrayList<Rule>();
 		

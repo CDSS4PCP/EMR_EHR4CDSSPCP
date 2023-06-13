@@ -23,6 +23,10 @@ public interface RuleManagerService extends CDSSService {
 	
 	@Authorized
 	@Transactional
+	Rule getRuleById(Integer id);
+	
+	@Authorized
+	@Transactional
 	List<Rule> getRulesByVaccine(String vaccine);
 	
 	@Authorized
