@@ -40,7 +40,7 @@ public class Rule {
 	
 	private Integer maximumAge;
 	
-	private String specialCondition;
+	private SpecialCondition specialCondition;
 	
 	private String[] medicalConditions;
 	
@@ -103,12 +103,16 @@ public class Rule {
 		this.maximumAge = maximumAge;
 	}
 	
-	public String getSpecialCondition() {
+	public SpecialCondition getSpecialCondition() {
 		return specialCondition;
 	}
 	
-	public void setSpecialCondition(String specialCondition) {
+	public void setSpecialCondition(SpecialCondition specialCondition) {
 		this.specialCondition = specialCondition;
+	}
+	
+	public void setSpecialCondition(String label) {
+		this.specialCondition = new SpecialCondition(label);
 	}
 	
 	public String[] getMedicalConditions() {

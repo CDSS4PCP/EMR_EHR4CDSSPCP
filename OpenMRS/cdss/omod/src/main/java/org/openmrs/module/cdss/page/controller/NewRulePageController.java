@@ -6,6 +6,7 @@ import org.openmrs.module.cdss.CDSSWebConfig;
 import org.openmrs.module.cdss.api.RuleManagerService;
 import org.openmrs.module.cdss.api.data.Action;
 import org.openmrs.module.cdss.api.data.Rule;
+import org.openmrs.module.cdss.api.data.SpecialCondition;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.page.PageModel;
 import org.openmrs.ui.framework.page.PageRequest;
@@ -34,13 +35,14 @@ public class NewRulePageController {
 			String vaccine = rule.getVaccine();
 			Integer minAge = rule.getMinimumAge();
 			Integer maxAge = rule.getMaximumAge();
-			String specialCondition = rule.getSpecialCondition();
+			SpecialCondition specialCondition = rule.getSpecialCondition();
+			
 			String immunizationCondition = rule.getPreviousRecord();
 			
 			model.addAttribute("presetVaccine", vaccine);
 			model.addAttribute("presetMinAge", minAge);
 			model.addAttribute("presetMaxAge", maxAge);
-			model.addAttribute("presetSpecialCondition", specialCondition);
+			model.addAttribute("presetSpecialCondition", specialCondition.getLabel());
 			model.addAttribute("presetImmunizationCondition", immunizationCondition);
 		} else {
 			setNoEditModAttributes(model);
@@ -72,12 +74,16 @@ public class NewRulePageController {
 		
 		Boolean specialConditionExists = parseCheckboxValue((String) request.getAttribute("special-condition-exists"));
 		
-		String specialCondition = (String) request.getAttribute("special-condition");
+		String specialConditionLabel = (String) request.getAttribute("special-condition");
 		String outbreakCondition = (String) request.getAttribute("outbreak-condition");
-		Boolean collegeStudent = Boolean.parseBoolean((String) request.getAttribute("college-student"));
-		Boolean militaryWorker = Boolean.parseBoolean((String) request.getAttribute("military-worker"));
-		Boolean travelCondition = Boolean.parseBoolean((String) request.getAttribute("travel-condition"));
+		Boolean collegeStudent = parseCheckboxValue((String) request.getAttribute("college-student"));
+		Boolean militaryWorker = parseCheckboxValue((String) request.getAttribute("military-worker"));
+		Boolean travelCondition = parseCheckboxValue((String) request.getAttribute("travel-condition"));
 		
+		SpecialCondition specialCondition = new SpecialCondition(specialConditionLabel, collegeStudent, militaryWorker,
+		        travelCondition);
+		
+		log.debug("SpecialCondition: " + specialCondition);
 		Boolean immunizationRecordExists = parseCheckboxValue((String) request.getAttribute("immunization-record-exists"));
 		
 		String numPrevDosesString = (String) request.getAttribute("num-prev-doses");
