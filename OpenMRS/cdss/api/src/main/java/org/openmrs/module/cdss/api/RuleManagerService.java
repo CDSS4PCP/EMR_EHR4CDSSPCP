@@ -11,7 +11,7 @@ public interface RuleManagerService extends CDSSService {
 	
 	@Authorized
 	@Transactional
-	Boolean modifyRule(int ruleId);
+	Boolean modifyRule(int ruleId, Rule rule);
 	
 	@Authorized
 	@Transactional

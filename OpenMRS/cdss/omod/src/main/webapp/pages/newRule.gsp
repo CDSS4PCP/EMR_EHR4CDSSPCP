@@ -136,15 +136,27 @@
             </label>
             <label>
                 College Student
+                <% if (presetSpecialConditionCollegeStudent != null && presetSpecialConditionCollegeStudent) { %>
+                <input type="checkbox" name="college-student" checked>
+                <% } else { %>
                 <input type="checkbox" name="college-student">
+                <% } %>
             </label>
             <label>
                 Works in Military
+                <% if (presetSpecialConditionMilitaryWorker != null && presetSpecialConditionMilitaryWorker) { %>
+                <input type="checkbox" name="military-worker" checked>
+                <% } else { %>
                 <input type="checkbox" name="military-worker">
+                <% } %>
             </label>
             <label>
                 Travel
+                <% if (presetSpecialConditionTravel != null && presetSpecialConditionTravel) { %>
+                <input type="checkbox" name="travel-condition" checked>
+                <% } else { %>
                 <input type="checkbox" name="travel-condition">
+                <% } %>
             </label>
         </article>
     </div>
@@ -174,12 +186,28 @@
 
     <label>Medical Indications
         <select multiple name="indications">
+
+            <% if (presetIndications != null && presetIndications.contains("immunocompromised")) { %>
+            <option value="immunocompromised" selected>
+                Immunocompromised
+            </option>
+            <% } else { %>
             <option value="immunocompromised">
                 Immunocompromised
             </option>
+            <% } %>
+
+
+            <% if (presetIndications != null && presetIndications.contains("allergy")) { %>
+            <option value="allergy" selected>
+                Allergies
+            </option>
+            <% } else { %>
             <option value="allergy">
                 Allergies
             </option>
+            <% } %>
+
         </select>
     </label>
 
@@ -188,6 +216,12 @@
         <select multiple name="actions">
             <% actions.each { action -> %>
             <option value="${action.getId()}">${action.getDisplayString()}</option>
+
+            <% if (presetActions != null && presetActions.contains(action)) { %>
+            <option value="${action.getId()}" selected>${action.getDisplayString()}</option>
+            <% } else { %>
+            <option value="${action.getId()}">${action.getDisplayString()}</option>
+            <% } %>
             <% } %>
         </select>
     </label>

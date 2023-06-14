@@ -133,4 +133,18 @@ public class SampleData {
 	public boolean addRule(Rule rule) {
 		return rules.add(rule);
 	}
+	
+	public Boolean modifyRule(int ruleId, Rule rule) {
+		int index = -1;
+		for (int i = 0; i < rules.size(); i++) {
+			Rule prevRule = rules.get(i);
+			if (prevRule.getId() == ruleId) {
+				index = i;
+			}
+		}
+		if (index > -1) {
+			return rules.set(index, rule) != null;
+		}
+		return false;
+	}
 }

@@ -36,14 +36,23 @@ public class NewRulePageController {
 			Integer minAge = rule.getMinimumAge();
 			Integer maxAge = rule.getMaximumAge();
 			SpecialCondition specialCondition = rule.getSpecialCondition();
-			
 			String immunizationCondition = rule.getPreviousRecord();
+			
+			String[] conditions = rule.getMedicalConditions();
+			Action[] presetActions = rule.getActions();
 			
 			model.addAttribute("presetVaccine", vaccine);
 			model.addAttribute("presetMinAge", minAge);
 			model.addAttribute("presetMaxAge", maxAge);
 			model.addAttribute("presetSpecialCondition", specialCondition.getLabel());
-			model.addAttribute("presetImmunizationCondition", immunizationCondition);
+			model.addAttribute("presetSpecialConditionCollegeStudent", specialCondition.getCollegeStudent());
+			model.addAttribute("presetSpecialConditionMilitaryWorker", specialCondition.getMilitaryWorker());
+			model.addAttribute("presetSpecialConditionTravel", specialCondition.getTravel());
+			model.addAttribute("presetImmunizationCondition",
+			    immunizationCondition == null ? null : Integer.parseInt(immunizationCondition));
+			model.addAttribute("presetActions", presetActions);
+			model.addAttribute("presetIndications", conditions);
+			
 		} else {
 			setNoEditModAttributes(model);
 		}
@@ -54,7 +63,8 @@ public class NewRulePageController {
 	public String post(PageModel model, PageRequest request,
 	        @SpringBean("cdss.RuleManagerServiceImpl") RuleManagerService service) {
 		
-		Integer editRuleId = (Integer) request.getAttribute("editRuleId");
+		Integer editRuleId = request.getAttribute("editRuleId") != null ? Integer.parseInt((String) request
+		        .getAttribute("editRuleId")) : null;
 		
 		List<String> vaccines = service.getLoadedVaccineRulesets();
 		List<Action> actions = service.getAllActions();
@@ -111,7 +121,11 @@ public class NewRulePageController {
 			if (selectedIndicationStrings != null && selectedIndicationStrings.length > 0)
 				newRule.setMedicalConditions(selectedIndicationStrings);
 			
-			Boolean success = !service.addRule(newRule);
+			Boolean success;
+			if (editRuleId == null)
+				success = !service.addRule(newRule);
+			else
+				success = !service.modifyRule(editRuleId, newRule);
 			model.addAttribute("ruleAddedError", success);
 			
 			if (success) {
@@ -144,7 +158,13 @@ public class NewRulePageController {
 		model.addAttribute("presetMinAge", null);
 		model.addAttribute("presetMaxAge", null);
 		model.addAttribute("presetSpecialCondition", null);
+		model.addAttribute("presetSpecialConditionCollegeStudent", null);
+		model.addAttribute("presetSpecialConditionMilitaryWorker", null);
+		model.addAttribute("presetSpecialConditionTravel", null);
 		model.addAttribute("presetImmunizationCondition", null);
+		model.addAttribute("presetActions", null);
+		model.addAttribute("presetIndications", null);
+		
 		return model;
 	}
 }
