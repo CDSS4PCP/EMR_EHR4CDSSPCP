@@ -5,6 +5,7 @@ import org.openmrs.module.cdss.CDSSConfig;
 import org.openmrs.module.cdss.CDSSWebConfig;
 import org.openmrs.module.cdss.api.RuleManagerService;
 import org.openmrs.module.cdss.api.data.Action;
+import org.openmrs.module.cdss.api.data.ImmunizationRecordCondition;
 import org.openmrs.module.cdss.api.data.Rule;
 import org.openmrs.module.cdss.api.data.SpecialCondition;
 import org.openmrs.ui.framework.annotation.SpringBean;
@@ -30,17 +31,19 @@ public class NewRulePageController {
 		model.addAttribute("selectedActions", "");
 		model.addAttribute("ruleAddedError", false);
 		
+		// Editing rule
 		if (editRuleId != null) {
 			Rule rule = service.getRuleById(editRuleId);
 			String vaccine = rule.getVaccine();
 			Integer minAge = rule.getMinimumAge();
 			Integer maxAge = rule.getMaximumAge();
 			SpecialCondition specialCondition = rule.getSpecialCondition();
-			String immunizationCondition = rule.getPreviousRecord();
+			ImmunizationRecordCondition immunizationCondition = rule.getPreviousRecord();
 			
 			String[] conditions = rule.getMedicalConditions();
 			Action[] presetActions = rule.getActions();
 			
+			// Previous rule values
 			model.addAttribute("presetVaccine", vaccine);
 			model.addAttribute("presetMinAge", minAge);
 			model.addAttribute("presetMaxAge", maxAge);
@@ -49,11 +52,12 @@ public class NewRulePageController {
 			model.addAttribute("presetSpecialConditionMilitaryWorker", specialCondition.getMilitaryWorker());
 			model.addAttribute("presetSpecialConditionTravel", specialCondition.getTravel());
 			model.addAttribute("presetImmunizationCondition",
-			    immunizationCondition == null ? null : Integer.parseInt(immunizationCondition));
+			    immunizationCondition == null ? null : immunizationCondition.getNumberDoses());
 			model.addAttribute("presetActions", presetActions);
 			model.addAttribute("presetIndications", conditions);
 			
 		} else {
+			// Not editing Rule
 			setNoEditModAttributes(model);
 		}
 		
@@ -99,6 +103,7 @@ public class NewRulePageController {
 		String numPrevDosesString = (String) request.getAttribute("num-prev-doses");
 		Integer numPrevDoses = numPrevDosesString.length() == 0 ? 0 : Integer.parseInt(numPrevDosesString);
 		
+		ImmunizationRecordCondition immunizationRecordCondition = new ImmunizationRecordCondition(vaccine, numPrevDoses);
 		String[] selectedIndicationStrings = request.getRequest().getParameterValues("indications");
 		
 		String[] selectedActionStrings = request.getRequest().getParameterValues("actions");
@@ -116,7 +121,7 @@ public class NewRulePageController {
 				newRule.setSpecialCondition(specialCondition);
 			
 			if (immunizationRecordExists)
-				newRule.setPreviousRecord(numPrevDoses + "");
+				newRule.setPreviousRecord(immunizationRecordCondition);
 			
 			if (selectedIndicationStrings != null && selectedIndicationStrings.length > 0)
 				newRule.setMedicalConditions(selectedIndicationStrings);
