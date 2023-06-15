@@ -35,6 +35,9 @@
 
 
 
+<% if (deleteRuleId != null) { %>
+${ui.includeFragment('cdss', 'confirmation', [title: "Are you sure?", message: "Are you sure you want to delete this rule?", confirmHref: "ruleManager.page?confirmDeleteRuleId=" + deleteRuleId, cancelHref: "ruleManager.page"])}
+<% } %>
 
 <a class="button confirm" href="newRule.page">Add rule</a>
 <table class="table table-sm table-responsive-sm table-responsive-md table-responsive-lg table-responsive-xl rule-table">

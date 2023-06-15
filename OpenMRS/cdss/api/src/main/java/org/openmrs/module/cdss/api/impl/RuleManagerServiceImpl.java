@@ -1,6 +1,5 @@
 package org.openmrs.module.cdss.api.impl;
 
-import org.apache.commons.lang.NotImplementedException;
 import org.apache.log4j.Logger;
 import org.openmrs.annotation.Authorized;
 import org.openmrs.api.impl.BaseOpenmrsService;
@@ -46,7 +45,7 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
 	@Transactional
 	@Authorized
 	public Boolean deleteRule(int ruleId) {
-		throw new NotImplementedException("This method is not finished yet!");
+		return CDSSActivator.getSampleData().deleteRule(ruleId);
 	}
 	
 	@Override

@@ -74,25 +74,79 @@ public class RuleManagerPageController {
 	}
 	*/
 	//	@RequestMapping(method = RequestMethod.GET)
-	public String get(PageModel model, @SpringBean("cdss.RuleManagerServiceImpl") RuleManagerService service) {
+	public String get(PageModel model, PageRequest request,
+	        @SpringBean("cdss.RuleManagerServiceImpl") RuleManagerService service) {
 		//https://wiki.openmrs.org/display/docs/Flexible%20Method%20Signatures%20for%20UI%20Framework%20Controller%20and%20Action%20Methods
-		
 		List<String> vaccines = service.getLoadedVaccineRulesets();
 		
 		model.addAttribute("vaccines", vaccines);
 		
-		model.addAttribute("clarifyVaccineNeeded", true);
-		
-		return null;
+		Integer deleteRuleId = request.getAttribute("deleteRuleId") == null ? null : Integer.parseInt((String) request
+		        .getAttribute("deleteRuleId"));
+		if (deleteRuleId == null) {
+			
+			model.addAttribute("clarifyVaccineNeeded", true);
+			model.addAttribute("deleteRuleId", null);
+			return null;
+		} else {
+			
+			if (request.getAttribute("confirmDeleteRuleId") != null) {
+				Integer confirmDeleteRuleId = request.getAttribute("confirmDeleteRuleId") == null ? null : Integer
+				        .parseInt((String) request.getAttribute("confirmDeleteRuleId"));
+				Rule rule = service.getRuleById(confirmDeleteRuleId);
+				
+				String vaccine = rule.getVaccine();
+				
+				log.debug("Attempting deleting rule " + confirmDeleteRuleId);
+				Boolean success = service.deleteRule(confirmDeleteRuleId);
+				
+				List<Rule> rules = service.getRulesByVaccine(vaccine);
+				model.addAttribute("rulesets", rules);
+				
+				model.addAttribute("clarifyVaccineNeeded", false);
+				model.addAttribute("deleteRuleId", null);
+				
+				return null;
+				
+			} else {
+				Rule rule = service.getRuleById(deleteRuleId);
+				
+				String vaccine = rule.getVaccine();
+				
+				//            service.deleteRule(deleteRuleId);
+				
+				List<Rule> rules = service.getRulesByVaccine(vaccine);
+				model.addAttribute("rulesets", rules);
+				
+				model.addAttribute("clarifyVaccineNeeded", false);
+				model.addAttribute("deleteRuleId", deleteRuleId);
+				
+				//            return "redirect:" + CDSSWebConfig.RULE_MANAGER_URL;
+				return null;
+			}
+		}
 	}
 	
 	public String post(PageModel model, PageRequest request,
 	        @SpringBean("cdss.RuleManagerServiceImpl") RuleManagerService service) {
 		String vaccine = (String) request.getAttribute("vaccine");
+		
+		if (request.getAttribute("confirmDeleteRuleId") != null) {
+			Integer confirmDeleteRuleId = request.getAttribute("confirmDeleteRuleId") == null ? null : Integer
+			        .parseInt((String) request.getAttribute("confirmDeleteRuleId"));
+			
+			Rule rule = service.getRuleById(confirmDeleteRuleId);
+			vaccine = rule.getVaccine();
+			
+			Boolean success = service.deleteRule(confirmDeleteRuleId);
+			log.debug("Attempting deleting rule " + confirmDeleteRuleId + " success: " + success);
+			
+		}
 		List<Rule> rules = service.getRulesByVaccine(vaccine);
+		model.addAttribute("clarifyVaccineNeeded", false);
+		model.addAttribute("deleteRuleId", null);
 		
 		model.addAttribute("rulesets", rules);
-		model.addAttribute("clarifyVaccineNeeded", false);
 		return null;
 		
 	}

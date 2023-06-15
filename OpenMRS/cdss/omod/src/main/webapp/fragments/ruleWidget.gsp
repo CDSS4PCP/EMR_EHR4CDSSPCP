@@ -60,7 +60,7 @@
                 Edit
             </a>
 
-            <a class="button cancel" style="margin: 2px;">
+            <a class="button cancel" style="margin: 2px;" href="ruleManager.page?deleteRuleId=${config.rule.getId()}">
                 <i class="icon-trash"></i>
                 Delete
             </a>

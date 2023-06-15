@@ -147,4 +147,19 @@ public class SampleData {
 		}
 		return false;
 	}
+	
+	public Boolean deleteRule(int ruleId) {
+		int index = -1;
+		for (int i = 0; i < rules.size(); i++) {
+			Rule prevRule = rules.get(i);
+			if (prevRule.getId() == ruleId) {
+				index = i;
+			}
+		}
+		if (index > -1) {
+			
+			return rules.remove(index) == null;
+		}
+		return false;
+	}
 }
