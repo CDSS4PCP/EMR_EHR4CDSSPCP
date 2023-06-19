@@ -34,6 +34,27 @@
 
     }
 
+
+    function numPrevDosesChanged(e) {
+        let section = document.getElementById("prev-record-time-intervals-section");
+        let elem = document.getElementById("num-prev-doses");
+
+        let numDoses = elem.value;
+        console.log(numDoses);
+
+        section.innerHTML = "";
+        for (let i = 1; i <= numDoses; i++) {
+            let label = document.createElement("label");
+            label.style.cssText = "border: dotted 1px; margin-left: 20px;";
+            if (i !== numDoses)
+                label.innerHTML = "Time between doses " + i + " and  " + (i + 1) + " <input name=\"time-interval-" + i + "\" type=\"number\" required> <br>Unit <select name=\"time-interval-" + i + "-unit\" required> <option value=\"year\">year</option><option value=\"month\">month</option><option value=\"week\">week</option><option value=\"day\">day</option><option value=\"hour\">hour</option><option value=\"minute\">minute</option></select> Inclusive <input id=\"time-interval-" + i + "-inclusive\" type=\"checkbox\">";
+            else
+                label.innerHTML = "Time between doses " + i + " and  action to be taken " + " <input name=\"time-interval-" + i + "\" type=\"number\" required> <br>Unit <select name=\"time-interval-" + i + "-unit\" required> <option value=\"year\">year</option><option value=\"month\">month</option><option value=\"week\">week</option><option value=\"day\">day</option><option value=\"hour\">hour</option><option value=\"minute\">minute</option></select> Inclusive <input id=\"time-interval-" + i + "-inclusive\" type=\"checkbox\">";
+            section.appendChild(label);
+        }
+
+    }
+
 </script>
 
 
@@ -171,16 +192,20 @@
 
         <article id="immunization-record-condition-section"
                  class="${presetImmunizationCondition != null ? "d-block" : "d-none"}">
-            <label>Number of Doses Completed
+            <label>Number of Previous Doses Completed
 
             <% if (presetImmunizationCondition != null) { %>
-                <input type="text" name="num-prev-doses" value="${presetImmunizationCondition}">
+                <input id="num-prev-doses" type="text" name="num-prev-doses" value="${presetImmunizationCondition}"
+                       onchange="numPrevDosesChanged()">
                 <% } else { %>
-                <input type="text" name="num-prev-doses">
+                <input id="num-prev-doses" type="text" name="num-prev-doses" onchange="numPrevDosesChanged()">
                 <% } %>
 
             </label>
 
+            <div id="prev-record-time-intervals-section">
+
+            </div>
         </article>
     </div>
 

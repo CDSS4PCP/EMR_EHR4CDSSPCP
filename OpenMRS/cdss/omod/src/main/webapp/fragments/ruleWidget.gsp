@@ -33,7 +33,27 @@
 
         </ul>
     </td>
-    <td>${ui.format(config.rule.getPreviousRecord())}</td>
+    <td>
+        <% if (config.rule.getPreviousRecord() != null) { %>
+        <ul>
+            <li>Previous Doses: ${ui.format(config.rule.getPreviousRecord().getNumberDoses())}</li>
+        </ul>
+
+        <div class="tooltip-text">
+            <ul>
+
+                <% for (i in 0..<config.rule.getPreviousRecord().getNumberDoses()) { %>
+                <li>
+                    Between dose ${ui.format(i)} and ${ui.format(i + 1)}: ${ui.format(config.rule.getPreviousRecord().getIntervalAfterDose(i))} wks
+
+                </li>
+
+                <% } %>
+
+            </ul>
+        </div>
+        <% } %>
+    </td>
     <td>
 
         <ul>

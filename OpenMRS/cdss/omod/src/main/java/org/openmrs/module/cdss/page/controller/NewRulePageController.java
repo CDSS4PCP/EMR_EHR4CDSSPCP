@@ -51,7 +51,7 @@ public class NewRulePageController {
 			model.addAttribute("presetSpecialConditionCollegeStudent", specialCondition.getCollegeStudent());
 			model.addAttribute("presetSpecialConditionMilitaryWorker", specialCondition.getMilitaryWorker());
 			model.addAttribute("presetSpecialConditionTravel", specialCondition.getTravel());
-			model.addAttribute("presetImmunizationCondition",
+			model.addAttribute("presetImmunizationCondition", // TODO change this property
 			    immunizationCondition == null ? null : immunizationCondition.getNumberDoses());
 			model.addAttribute("presetActions", presetActions);
 			model.addAttribute("presetIndications", conditions);
@@ -97,13 +97,24 @@ public class NewRulePageController {
 		SpecialCondition specialCondition = new SpecialCondition(specialConditionLabel, collegeStudent, militaryWorker,
 		        travelCondition);
 		
-		log.debug("SpecialCondition: " + specialCondition);
 		Boolean immunizationRecordExists = parseCheckboxValue((String) request.getAttribute("immunization-record-exists"));
 		
 		String numPrevDosesString = (String) request.getAttribute("num-prev-doses");
 		Integer numPrevDoses = numPrevDosesString.length() == 0 ? 0 : Integer.parseInt(numPrevDosesString);
 		
 		ImmunizationRecordCondition immunizationRecordCondition = new ImmunizationRecordCondition(vaccine, numPrevDoses);
+		
+		for (int doseIndex = 1; doseIndex <= numPrevDoses; doseIndex++) {
+			String value = (String) request.getAttribute("time-interval-" + doseIndex);
+			if (value == null) {
+				throw new RuntimeException("User provided " + numPrevDoses
+				        + " previous doses and did not provide time between dose " + doseIndex + " and " + (doseIndex + 1));
+			}
+			Integer time = Integer.parseInt((String) request.getAttribute("time-interval-" + doseIndex));
+			immunizationRecordCondition.setIntervalAfterDose(doseIndex, time);
+			
+		}
+		
 		String[] selectedIndicationStrings = request.getRequest().getParameterValues("indications");
 		
 		String[] selectedActionStrings = request.getRequest().getParameterValues("actions");

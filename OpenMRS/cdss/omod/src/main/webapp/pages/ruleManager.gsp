@@ -48,7 +48,7 @@ ${ui.includeFragment('cdss', 'confirmation', [title: "Are you sure?", message: "
         <th>Minimum Age (in weeks)</th>
         <th>Maximum Age (in weeks)</th>
         <th>Special Condition</th>
-        <th>Num Previous Doses</th>
+        <th>Immunization Record</th>
         <th>Medical Indications</th>
 
 
