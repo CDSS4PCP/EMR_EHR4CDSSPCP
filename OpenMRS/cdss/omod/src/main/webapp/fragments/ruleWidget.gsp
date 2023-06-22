@@ -39,19 +39,19 @@
             <li>Previous Doses: ${ui.format(config.rule.getPreviousRecord().getNumberDoses())}</li>
         </ul>
 
-        <div class="tooltip-text">
+        <% def count = config.rule.getPreviousRecord().getNumberDoses() %>
+
+        <% if (count > 0) { %>
+        <div>
             <ul>
 
-                <% for (i in 0..<config.rule.getPreviousRecord().getNumberDoses()) { %>
-                <li>
-                    Between dose ${ui.format(i)} and ${ui.format(i + 1)}: ${ui.format(config.rule.getPreviousRecord().getIntervalAfterDose(i))} wks
-
-                </li>
-
+                <% (1..count).toList().each { c -> %>
+                <li>After dose ${c} : ${config.rule.getPreviousRecord().getIntervalAfterDose(c)} weeks</li>
                 <% } %>
 
             </ul>
         </div>
+        <% } %>
         <% } %>
     </td>
     <td>
