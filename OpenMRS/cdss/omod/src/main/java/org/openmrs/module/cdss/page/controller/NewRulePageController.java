@@ -34,6 +34,9 @@ public class NewRulePageController {
 		// Editing rule
 		if (editRuleId != null) {
 			Rule rule = service.getRuleById(editRuleId);
+			if (rule == null) {
+				throw new RuntimeException("Rule with id " + editRuleId + " is null!");
+			}
 			String vaccine = rule.getVaccine();
 			Integer minAge = rule.getMinimumAge();
 			Integer maxAge = rule.getMaximumAge();
@@ -47,12 +50,24 @@ public class NewRulePageController {
 			model.addAttribute("presetVaccine", vaccine);
 			model.addAttribute("presetMinAge", minAge);
 			model.addAttribute("presetMaxAge", maxAge);
-			model.addAttribute("presetSpecialCondition", specialCondition.getLabel());
-			model.addAttribute("presetSpecialConditionCollegeStudent", specialCondition.getCollegeStudent());
-			model.addAttribute("presetSpecialConditionMilitaryWorker", specialCondition.getMilitaryWorker());
-			model.addAttribute("presetSpecialConditionTravel", specialCondition.getTravel());
+			model.addAttribute("presetSpecialCondition", specialCondition == null ? null : specialCondition.getLabel());
+			model.addAttribute("presetSpecialConditionCollegeStudent",
+			    specialCondition == null ? null : specialCondition.getCollegeStudent());
+			model.addAttribute("presetSpecialConditionMilitaryWorker",
+			    specialCondition == null ? null : specialCondition.getMilitaryWorker());
+			model.addAttribute("presetSpecialConditionTravel",
+			    specialCondition == null ? null : specialCondition.getTravel());
 			model.addAttribute("presetImmunizationCondition", // TODO change this property
+			    immunizationCondition != null);
+			model.addAttribute("presetNumPrevDoses",
 			    immunizationCondition == null ? null : immunizationCondition.getNumberDoses());
+			
+			if (immunizationCondition != null) {
+				for (int i = 1; i <= immunizationCondition.getNumberDoses(); i++) {
+					model.addAttribute("presetTimeInterval" + i, immunizationCondition.getIntervalAfterDose(i));
+					
+				}
+			}
 			model.addAttribute("presetActions", presetActions);
 			model.addAttribute("presetIndications", conditions);
 			

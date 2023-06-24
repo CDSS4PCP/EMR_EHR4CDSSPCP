@@ -187,7 +187,7 @@
         <label>
             Immunization Record Exists
             <input id="immunization-record-exists" type="checkbox" onchange="immunizationRecordConditionToggle()"
-                   name="immunization-record-exists" ${presetImmunizationCondition != null ? "checked" : ""}>
+                   name="immunization-record-exists" ${presetImmunizationCondition == true ? "checked" : ""}>
         </label>
 
         <article id="immunization-record-condition-section"
@@ -195,7 +195,7 @@
             <label>Number of Previous Doses Completed
 
             <% if (presetImmunizationCondition != null) { %>
-                <input id="num-prev-doses" type="text" name="num-prev-doses" value="${presetImmunizationCondition}"
+                <input id="num-prev-doses" type="text" name="num-prev-doses" value="${presetNumPrevDoses}"
                        onchange="numPrevDosesChanged()">
                 <% } else { %>
                 <input id="num-prev-doses" type="text" name="num-prev-doses" onchange="numPrevDosesChanged()">
