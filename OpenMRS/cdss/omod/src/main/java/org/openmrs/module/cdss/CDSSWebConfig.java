@@ -9,4 +9,7 @@ public class CDSSWebConfig {
 	public final static String VACCINE_MANAGER_URL = "cdss/vaccineManager.page";
 	
 	public static final String RESULTS_URL = "module/cdss/results.form";
+	
+	public final static String ERROR_URL = "cdss/error.page";
+	
 }

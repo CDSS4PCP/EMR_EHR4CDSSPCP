@@ -32,6 +32,10 @@ public class NewRulePageController {
 		
 		if (editRuleId != null) {
 			Rule rule = service.getRuleById(editRuleId);
+			if (rule == null) {
+				return "redirect:" + CDSSWebConfig.ERROR_URL + "?nonExistentRuleId=" + editRuleId;
+				
+			}
 			String vaccine = rule.getVaccine();
 			Integer minAge = rule.getMinimumAge();
 			Integer maxAge = rule.getMaximumAge();

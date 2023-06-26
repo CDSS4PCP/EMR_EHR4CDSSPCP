@@ -1,6 +1,7 @@
 package org.openmrs.module.cdss.page.controller;
 
 import org.apache.log4j.Logger;
+import org.openmrs.module.cdss.CDSSWebConfig;
 import org.openmrs.module.cdss.api.RuleManagerService;
 import org.openmrs.module.cdss.api.data.Rule;
 import org.openmrs.ui.framework.annotation.SpringBean;
@@ -110,6 +111,10 @@ public class RuleManagerPageController {
 				
 			} else {
 				Rule rule = service.getRuleById(deleteRuleId);
+				if (rule == null) {
+					return "redirect:" + CDSSWebConfig.ERROR_URL + "?nonExistentRuleId=" + deleteRuleId;
+					
+				}
 				
 				String vaccine = rule.getVaccine();
 				
@@ -136,6 +141,10 @@ public class RuleManagerPageController {
 			        .parseInt((String) request.getAttribute("confirmDeleteRuleId"));
 			
 			Rule rule = service.getRuleById(confirmDeleteRuleId);
+			if (rule == null) {
+				return "redirect:" + CDSSWebConfig.ERROR_URL + "?nonExistentRuleId=" + confirmDeleteRuleId;
+				
+			}
 			vaccine = rule.getVaccine();
 			
 			Boolean success = service.deleteRule(confirmDeleteRuleId);
