@@ -35,6 +35,7 @@
 
 
 
+
 <% if (deleteRuleId != null) { %>
 ${ui.includeFragment('cdss', 'confirmation', [title: "Are you sure?", message: "Are you sure you want to delete this rule?", confirmHref: "ruleManager.page?confirmDeleteRuleId=" + deleteRuleId, cancelHref: "ruleManager.page"])}
 <% } %>
