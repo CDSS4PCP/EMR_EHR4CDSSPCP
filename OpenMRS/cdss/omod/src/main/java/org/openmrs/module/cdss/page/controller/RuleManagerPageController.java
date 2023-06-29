@@ -77,9 +77,19 @@ public class RuleManagerPageController {
 	public String get(PageModel model, PageRequest request,
 	        @SpringBean("cdss.RuleManagerServiceImpl") RuleManagerService service) {
 		//https://wiki.openmrs.org/display/docs/Flexible%20Method%20Signatures%20for%20UI%20Framework%20Controller%20and%20Action%20Methods
-		List<String> vaccines = service.getLoadedVaccineRulesets();
 		
-		model.addAttribute("vaccines", vaccines);
+		if (request.getAttribute("vaccine") == null) {
+			
+			List<String> vaccines = service.getLoadedVaccineRulesets();
+			model.addAttribute("clarifyVaccineNeeded", true);
+			
+			model.addAttribute("vaccines", vaccines);
+		} else {
+			
+			model.addAttribute("clarifyVaccineNeeded", false);
+			
+			model.addAttribute("vaccines", null);
+		}
 		
 		Integer deleteRuleId = request.getAttribute("deleteRuleId") == null ? null : Integer.parseInt((String) request
 		        .getAttribute("deleteRuleId"));
@@ -129,7 +139,22 @@ public class RuleManagerPageController {
 	
 	public String post(PageModel model, PageRequest request,
 	        @SpringBean("cdss.RuleManagerServiceImpl") RuleManagerService service) {
+		model.addAttribute("clarifyVaccineNeeded", false);
+		
 		String vaccine = (String) request.getAttribute("vaccine");
+		
+		if (request.getAttribute("vaccine") == null) {
+			
+			List<String> vaccines = service.getLoadedVaccineRulesets();
+			model.addAttribute("clarifyVaccineNeeded", true);
+			
+			model.addAttribute("vaccines", vaccines);
+		} else {
+			
+			model.addAttribute("clarifyVaccineNeeded", false);
+			
+			model.addAttribute("vaccines", null);
+		}
 		
 		if (request.getAttribute("confirmDeleteRuleId") != null) {
 			Integer confirmDeleteRuleId = request.getAttribute("confirmDeleteRuleId") == null ? null : Integer
@@ -150,4 +175,5 @@ public class RuleManagerPageController {
 		return null;
 		
 	}
+	
 }

@@ -35,6 +35,7 @@
 
 
 
+
 <% if (deleteRuleId != null) { %>
 ${ui.includeFragment('cdss', 'confirmation', [title: "Are you sure?", message: "Are you sure you want to delete this rule?", confirmHref: "ruleManager.page?confirmDeleteRuleId=" + deleteRuleId, cancelHref: "ruleManager.page"])}
 <% } %>
@@ -48,7 +49,7 @@ ${ui.includeFragment('cdss', 'confirmation', [title: "Are you sure?", message: "
         <th>Minimum Age (in weeks)</th>
         <th>Maximum Age (in weeks)</th>
         <th>Special Condition</th>
-        <th>Immunization Record</th>
+        <th>Num Previous Doses</th>
         <th>Medical Indications</th>
 
 

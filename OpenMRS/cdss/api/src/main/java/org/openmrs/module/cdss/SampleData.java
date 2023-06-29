@@ -5,6 +5,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 import org.openmrs.module.cdss.api.data.Action;
+import org.openmrs.module.cdss.api.data.ImmunizationRecordCondition;
 import org.openmrs.module.cdss.api.data.Rule;
 
 import java.io.InputStream;
@@ -44,8 +45,8 @@ public class SampleData {
 			        .getJSONObject(i).get("special_condition") : null;
 			//            String medicalConditions =  source.getJSONObject(i).get("medical_conditions") != JSONObject.NULL ? (String)source.getJSONObject(i).get("medical_conditions") : null;
 			
-			//            JSONObject previousRecord = source.getJSONObject(i).get("previous_record") != JSONObject.NULL ? source.getJSONObject(i).getJSONObject("previous_record") : null;
-			
+			ImmunizationRecordCondition previousRecord = parsePreviousCondition(
+			    source.getJSONObject(i).get("previous_record"), vaccine);
 			JSONArray actionsJsonArray = source.getJSONObject(i).getJSONArray("actions");
 			HashSet<String> actionSet = new HashSet<String>();
 			Action[] actionsForRule = new Action[actionsJsonArray.length()];
@@ -75,12 +76,48 @@ public class SampleData {
 			rule.setMaximumAge(maxAge);
 			rule.setSpecialCondition(specialCondition);
 			//            rule.setMedicalCondition(null);
-			//            rule.setPreviousRecord(null);
+			rule.setPreviousRecord(previousRecord);
 			rule.setActions(actionsForRule);
 			
 			rules.add(rule);
 			
 		}
+		
+	}
+	
+	private ImmunizationRecordCondition parsePreviousCondition(Object obj, String vaccine) {
+		if (obj == null || obj == JSONObject.NULL) {
+			return null;
+		}
+		return parsePreviousCondition((JSONObject) obj, vaccine);
+		
+	}
+	
+	private ImmunizationRecordCondition parsePreviousCondition(JSONObject object, String vaccine) {
+		
+		Integer numDoses = object.getInt("num_doses");
+		JSONArray doses = object.getJSONArray("doses");
+		ImmunizationRecordCondition recordCondition = new ImmunizationRecordCondition(vaccine, numDoses);
+		
+		for (int i = 0; i < numDoses; i++) {
+			JSONObject doseObject = (JSONObject) doses.get(i);
+			Object minAgeObject = doseObject.get("administered_min_age");
+			Object maxAgeObject = doseObject.get("administered_max_age");
+			Object timePeriodObject = doseObject.get("timePeriod");
+			
+			if (minAgeObject != null && timePeriodObject != JSONObject.NULL) {
+				recordCondition.setDoseMinAge(i, (Integer) minAgeObject);
+			}
+			
+			if (maxAgeObject != null && timePeriodObject != JSONObject.NULL) {
+				recordCondition.setDoseMaxAge(i, (Integer) maxAgeObject);
+			}
+			
+			if (timePeriodObject != null && timePeriodObject != JSONObject.NULL) {
+				recordCondition.setDoseTimePeriod(i, (Integer) timePeriodObject);
+			}
+		}
+		return recordCondition;
 		
 	}
 	

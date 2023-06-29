@@ -43,7 +43,13 @@
     "medical_conditions": [],
     "previous_record": {
       "num_doses": 1,
-      "last_dose": "12-15 mon of age"
+      "doses": [
+        {
+          "administered_min_age": 12,
+          "administered_max_age": 15,
+          "timePeriod": null
+        }
+      ]
     },
     "actions": [
       "Admin 1 dose",

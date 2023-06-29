@@ -64,7 +64,7 @@ public class NewRulePageController {
 			
 			if (immunizationCondition != null) {
 				for (int i = 1; i <= immunizationCondition.getNumberDoses(); i++) {
-					model.addAttribute("presetTimeInterval" + i, immunizationCondition.getIntervalAfterDose(i));
+					model.addAttribute("presetTimeInterval" + i, immunizationCondition.getDoseTimePeriod(i));
 					
 				}
 			}
@@ -126,7 +126,7 @@ public class NewRulePageController {
 				        + " previous doses and did not provide time between dose " + doseIndex + " and " + (doseIndex + 1));
 			}
 			Integer time = Integer.parseInt((String) request.getAttribute("time-interval-" + doseIndex));
-			immunizationRecordCondition.setIntervalAfterDose(doseIndex, time);
+			immunizationRecordCondition.setDoseTimePeriod(doseIndex, time);
 			
 		}
 		

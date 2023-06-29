@@ -46,7 +46,7 @@
             <ul>
 
                 <% (1..count).toList().each { c -> %>
-                <li>After dose ${c} : ${config.rule.getPreviousRecord().getIntervalAfterDose(c)} weeks</li>
+                <li>After dose ${c} : ${config.rule.getPreviousRecord().getDoseTimePeriod(c)} weeks</li>
                 <% } %>
 
             </ul>
