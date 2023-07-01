@@ -16,7 +16,7 @@ import java.util.List;
 
 public class SampleData {
 	
-	private final Logger log = Logger.getLogger(getClass());
+	//	private final Logger log = Logger.getLogger(getClass());
 	
 	private JSONArray source;
 	
@@ -105,11 +105,11 @@ public class SampleData {
 			Object maxAgeObject = doseObject.get("administered_max_age");
 			Object timePeriodObject = doseObject.get("timePeriod");
 			
-			if (minAgeObject != null && timePeriodObject != JSONObject.NULL) {
+			if (minAgeObject != null && minAgeObject != JSONObject.NULL) {
 				recordCondition.setDoseMinAge(i, (Integer) minAgeObject);
 			}
 			
-			if (maxAgeObject != null && timePeriodObject != JSONObject.NULL) {
+			if (maxAgeObject != null && maxAgeObject != JSONObject.NULL) {
 				recordCondition.setDoseMaxAge(i, (Integer) maxAgeObject);
 			}
 			
@@ -117,6 +117,7 @@ public class SampleData {
 				recordCondition.setDoseTimePeriod(i, (Integer) timePeriodObject);
 			}
 		}
+		
 		return recordCondition;
 		
 	}

@@ -43,6 +43,12 @@ public class ImmunizationRecordCondition {
 		public boolean isAgeBased() {
 			return maxAdministerAge != null || minAdministerAge != null;
 		}
+		
+		@Override
+		public String toString() {
+			return "Dose{" + "timePeriod=" + timePeriod + ", minAdministerAge=" + minAdministerAge + ", maxAdministerAge="
+			        + maxAdministerAge + '}';
+		}
 	}
 	
 	String vaccine;
@@ -54,7 +60,7 @@ public class ImmunizationRecordCondition {
 	public ImmunizationRecordCondition(String vaccine, Integer numberDoses) {
 		this.vaccine = vaccine;
 		this.numberDoses = numberDoses;
-		this.doses = new Dose[numberDoses + 1];
+		this.doses = new Dose[numberDoses];
 	}
 	
 	public String getVaccine() {
@@ -71,10 +77,6 @@ public class ImmunizationRecordCondition {
 	
 	public void setNumberDoses(Integer numberDoses) {
 		this.numberDoses = numberDoses;
-	}
-	
-	public Dose getDose(Integer doseIndex) {
-		return doses[doseIndex];
 	}
 	
 	public Integer getDoseTimePeriod(Integer doseIndex) {
@@ -115,9 +117,21 @@ public class ImmunizationRecordCondition {
 		doses[doseIndex].maxAdministerAge = maxAdministerAge;
 	}
 	
+	public Boolean isDoseTimePeriodBased(Integer doseIndex) {
+		if (doses[doseIndex] == null)
+			doses[doseIndex] = new Dose();
+		return doses[doseIndex].isTimePeriodBased();
+	}
+	
+	public Boolean isDoseAgeBased(Integer doseIndex) {
+		if (doses[doseIndex] == null)
+			doses[doseIndex] = new Dose();
+		return doses[doseIndex].isAgeBased();
+	}
+	
 	@Override
 	public String toString() {
-		return "ImmunizationRecordCondition{" + "vaccine='" + vaccine + '\'' + ", numberDoses=" + numberDoses
-		        + ", intervals=" + Arrays.toString(doses) + '}';
+		return "ImmunizationRecordCondition{" + "vaccine='" + vaccine + '\'' + ", numberDoses=" + numberDoses + ", doses="
+		        + Arrays.toString(doses) + '}';
 	}
 }

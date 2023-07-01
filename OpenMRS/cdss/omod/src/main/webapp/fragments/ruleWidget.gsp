@@ -36,7 +36,7 @@
     <td>
         <% if (config.rule.getPreviousRecord() != null) { %>
         <ul>
-            <li>Previous Doses: ${ui.format(config.rule.getPreviousRecord().getNumberDoses())}</li>
+            <li><strong>Previous Doses: ${ui.format(config.rule.getPreviousRecord().getNumberDoses())}</strong></li>
         </ul>
 
         <% def count = config.rule.getPreviousRecord().getNumberDoses() %>
@@ -45,14 +45,27 @@
         <div>
             <ul>
 
-                <% (1..count).toList().each { c -> %>
-                <li>After dose ${c} : ${config.rule.getPreviousRecord().getDoseTimePeriod(c)} weeks</li>
+                <% (0..count - 1).toList().each { c -> %>
+                <li>
+                    <p>Dose ${c + 1}</p>
+                    <% if (config.rule.getPreviousRecord().isDoseTimePeriodBased(c)) { %>
+                    <p>Time before next dose : ${config.rule.getPreviousRecord().getDoseTimePeriod(c)} weeks</p>
+
+                    <% } %>
+
+                    <% if (config.rule.getPreviousRecord().isDoseAgeBased(c)) { %>
+                    <p>Minimum Age: ${config.rule.getPreviousRecord().getDoseMinAge(c)} weeks</p>
+
+                    <p>Maximum Age: ${config.rule.getPreviousRecord().getDoseMaxAge(c)} weeks</p>
+                    <% } %>
+                    <% } %>
+                </li>
                 <% } %>
 
             </ul>
         </div>
         <% } %>
-        <% } %>
+
     </td>
     <td>
 
