@@ -1,7 +1,5 @@
 package org.openmrs.module.cdss.api.impl;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.Logger;
 import org.openmrs.Patient;
 import org.openmrs.api.APIException;
@@ -10,11 +8,17 @@ import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.cdss.CDSSConfig;
 import org.openmrs.module.cdss.Item;
 import org.openmrs.module.cdss.RunnerResult;
+import org.openmrs.module.cdss.api.RuleManagerService;
 import org.openmrs.module.cdss.api.RuleRunnerService;
 import org.openmrs.module.cdss.api.dao.CDSSDao;
 import org.openmrs.module.cdss.api.data.Action;
+import org.openmrs.module.cdss.api.data.Rule;
+import org.openmrs.module.cdss.api.util.TimeUnit;
+import org.openmrs.module.cdss.api.util.TimeUtil;
+import org.openmrs.ui.framework.annotation.SpringBean;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
@@ -64,7 +68,8 @@ public class RuleRunnerServiceImpl extends BaseOpenmrsService implements RuleRun
 	 * @param patient Patient to get results for.
 	 * @return A list of results. Each entry corresponds to a vaccine.
 	 */
-	public List<RunnerResult> getAllResults(Patient patient) {
+	public List<RunnerResult> getAllResults(Patient patient,
+	        @SpringBean("cdss.RuleManagerServiceImpl") RuleManagerService service) {
 		if (patient == null) {
 			log.error("CDSS Runner ERROR: Running getAllResults() on null patient! \n Returning null.");
 			return null;
@@ -72,7 +77,7 @@ public class RuleRunnerServiceImpl extends BaseOpenmrsService implements RuleRun
 		List<String> rulesets = getLoadedVaccineRulesets();
 		ArrayList<RunnerResult> results = new ArrayList<RunnerResult>(rulesets.size());
 		for (String vaccine : rulesets) {
-			results.add(getResult(patient, vaccine));
+			results.add(getResult(patient, vaccine, service));
 		}
 		return results;
 	}
@@ -84,30 +89,41 @@ public class RuleRunnerServiceImpl extends BaseOpenmrsService implements RuleRun
 	 * @param vaccine A string that is a valid vaccine code.
 	 * @return A single result given patient and a specific vaccine.
 	 */
-	public RunnerResult getResult(Patient patient, String vaccine) {
+	public RunnerResult getResult(Patient patient, String vaccine,
+	        @SpringBean("cdss.RuleManagerServiceImpl") RuleManagerService service) {
 		if (patient == null || vaccine == null) {
 			
 			log.error("CDSS Runner ERROR: Running getResult() on null patient or null vaccine! \n Returning null.");
 			return null;
 		}
-		RunnerResult result = new RunnerResult();
-		result.setPatient(patient);
-		result.setVaccine(vaccine);
-		int status = random.nextInt(2);
 		
-		Action action = new Action();
+		List<Rule> rules = service.getRulesByVaccine(vaccine);
+		List<Rule> applicableRules = new ArrayList<Rule>();
+		// Check Medical Indications
+		// Check Special Condition
+		// Check Prexisting Record
+		// Check Age
+		applicableRules = checkAge(patient, rules);
 		
-		if (status == 0) {
-			//			result.setAction("No further action needed");
-			action.setDisplayString("No further action needed");
-			result.setAction(action);
-		} else {
-			//			result.setAction("New dose needs to be administered");
-			action.setDisplayString("New dose needs to be administered");
-			result.setAction(action);
+		if (applicableRules.size() > 0) {
+			Action[] actions = applicableRules.get(0).getActions();
+			RunnerResult result = new RunnerResult();
+			result.setPatient(patient);
+			result.setVaccine(vaccine);
+			result.setStatus(1);
+			result.setActions(actions);
+			
+			return result;
 		}
-		result.setStatus(status);
-		return result;
+		RunnerResult test = new RunnerResult();
+		Action action = new Action();
+		action.setDisplayString("Testing....");
+		action.setPriority(2);
+		test.setPatient(patient);
+		test.setVaccine(vaccine);
+		test.setActions(action);
+		test.setStatus(0);
+		return test;
 	}
 	
 	/**
@@ -135,5 +151,30 @@ public class RuleRunnerServiceImpl extends BaseOpenmrsService implements RuleRun
 	public void onShutdown() {
 		log.info("CDSS Vaccine Runner service stopped...");
 		
+	}
+	
+	private List<Rule> checkAge(Patient patient, List<Rule> rules) {
+		Date birthdate = patient.getBirthdate();
+		Integer numMonths = TimeUtil.getNumberOfMonths(TimeUtil.getCurrentTime(), birthdate);
+		Integer numDays = TimeUtil.getNumberOfDays(TimeUtil.getCurrentTime(), birthdate);
+		List<Rule> applicableRules = new ArrayList<Rule>();
+		
+		for (Rule rule : rules) {
+			applicableRules.add(rule);
+			
+			//			Integer ruleMinAge = rule.getMinimumAge();
+			//			Integer ruleMaxAge = rule.getMaximumAge();
+			//
+			//			if (rule.getAgeUnit() == TimeUnit.Day) {
+			//				if (numDays > ruleMinAge && numDays < ruleMaxAge) {
+			//					applicableRules.add(rule);
+			//				}
+			//			} else if (rule.getAgeUnit() == TimeUnit.Month) {
+			//				if (numMonths > ruleMinAge && numMonths < ruleMaxAge) {
+			//					applicableRules.add(rule);
+			//				}
+			//			}
+		}
+		return applicableRules;
 	}
 }

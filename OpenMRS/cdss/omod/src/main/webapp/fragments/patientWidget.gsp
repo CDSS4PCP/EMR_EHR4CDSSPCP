@@ -21,17 +21,35 @@
 
             <% results.each { res -> %>
 
+            <% if (res != null) { %>
             <tr>
 
-                <% if (res.getStatus() == 0) { %>
+                <% if (res.getStatus() != null && res.getStatus() == 0) { %>
                 <td>${res.getVaccine()}</td>
-                <td>${res.getAction().getDisplayString()}</td>
+                <td>
+                    <% res.getActions().each { act -> %>
+
+                    <p>
+                        ${act.getDisplayString()}
+                    </p>
+
+
+                    <% } %>
+
+                </td>
 
                 <% } else { %>
                 <td style="color: red;">${res.getVaccine()}</td>
-                <td style="color: red;">${res.getAction().getDisplayString()}</td>
+                <td style="color: red;">
+                    <% res.getActions().each { act -> %>
+                    <p>
+                        ${act.getDisplayString()}
+                    </p>
+                    <% } %>
+            </td>
                 <% } %>
             </tr>
+            <% } %>
             <% } %>
             </tbody>
         </table>

@@ -24,13 +24,13 @@ public class RuleRunnerServiceTest extends BaseModuleContextSensitiveTest {
 	@Test
 	public void checkNullPatient() {
 		RuleRunnerService serv = Context.getService(RuleRunnerService.class);
-		assertThat(null, is(serv.getAllResults(null)));
+		assertThat(null, is(serv.getAllResults(null, null)));
 	}
 	
 	@Test
 	public void checkNullPatientNullVaccine() {
 		RuleRunnerService serv = Context.getService(RuleRunnerService.class);
-		assertThat(null, is(serv.getResult(null, null)));
+		assertThat(null, is(serv.getResult(null, null, null)));
 	}
 	
 }
