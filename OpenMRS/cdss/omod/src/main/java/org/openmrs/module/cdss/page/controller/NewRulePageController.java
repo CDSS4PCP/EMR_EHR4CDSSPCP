@@ -58,15 +58,23 @@ public class NewRulePageController {
 			model.addAttribute("presetSpecialConditionTravel",
 			    specialCondition == null ? null : specialCondition.getTravel());
 			model.addAttribute("presetImmunizationCondition", // TODO change this property
-			    immunizationCondition != null);
+			    immunizationCondition == null ? null : true);
 			model.addAttribute("presetNumPrevDoses",
 			    immunizationCondition == null ? null : immunizationCondition.getNumberDoses());
 			
 			if (immunizationCondition != null) {
-				for (int i = 1; i <= immunizationCondition.getNumberDoses(); i++) {
-					model.addAttribute("presetTimeInterval" + i, immunizationCondition.getDoseTimePeriod(i));
+				Integer[] timeIntervals = new Integer[immunizationCondition.getNumberDoses()];
+				for (int i = 0; i < immunizationCondition.getNumberDoses(); i++) {
+					//					model.addAttribute("presetTimeInterval" + i, immunizationCondition.getDoseTimePeriod(i));
+					timeIntervals[i] = immunizationCondition.getDoseTimePeriod(i);
 					
 				}
+
+				model.addAttribute("presetTimeInterval", timeIntervals);
+				
+			} else {
+				model.addAttribute("presetTimeInterval", null);
+				
 			}
 			model.addAttribute("presetActions", presetActions);
 			model.addAttribute("presetIndications", conditions);

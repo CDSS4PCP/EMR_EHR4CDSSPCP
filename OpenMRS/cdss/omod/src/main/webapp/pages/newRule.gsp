@@ -35,23 +35,34 @@
     }
 
 
-    function numPrevDosesChanged(e) {
+    function addDoseInput(index, numDoses) {
+        let label = document.createElement("label");
+        label.style.cssText = "border: dotted 1px; margin-left: 20px;";
+
+        let presetTimeInterval = ${presetTimeInterval};
+        if (index !== numDoses)
+            label.innerHTML = "Time between doses " + index + " and  " + (index + 1) + " <input name=\"time-interval-" + index + "\" type=\"number\" required> <br>Unit <select name=\"time-interval-" + index + "-unit\" required> <option value=\"year\">year</option><option value=\"month\">month</option><option value=\"week\">week</option><option value=\"day\">day</option><option value=\"hour\">hour</option><option value=\"minute\">minute</option></select> Inclusive <input id=\"time-interval-" + index + "-inclusive\" type=\"checkbox\">";
+        else
+            label.innerHTML = "Time between doses " + index + " and  action to be taken " + " <input name=\"time-interval-" + index + "\" type=\"number\" required> <br>Unit <select name=\"time-interval-" + index + "-unit\" required> <option value=\"year\">year</option><option value=\"month\">month</option><option value=\"week\">week</option><option value=\"day\">day</option><option value=\"hour\">hour</option><option value=\"minute\">minute</option></select> Inclusive <input id=\"time-interval-" + index + "-inclusive\" type=\"checkbox\">";
+        return label;
+    }
+
+    function addDoseInputs(numDoses) {
         let section = document.getElementById("prev-record-time-intervals-section");
+        section.innerHTML = "";
+        for (let i = 1; i <= numDoses; i++) {
+            let label = addDoseInput(i, numDoses);
+            section.appendChild(label);
+        }
+    }
+
+    function numPrevDosesChanged(e) {
         let elem = document.getElementById("num-prev-doses");
 
         let numDoses = elem.value;
         console.log(numDoses);
+        addDoseInputs(numDoses);
 
-        section.innerHTML = "";
-        for (let i = 1; i <= numDoses; i++) {
-            let label = document.createElement("label");
-            label.style.cssText = "border: dotted 1px; margin-left: 20px;";
-            if (i !== numDoses)
-                label.innerHTML = "Time between doses " + i + " and  " + (i + 1) + " <input name=\"time-interval-" + i + "\" type=\"number\" required> <br>Unit <select name=\"time-interval-" + i + "-unit\" required> <option value=\"year\">year</option><option value=\"month\">month</option><option value=\"week\">week</option><option value=\"day\">day</option><option value=\"hour\">hour</option><option value=\"minute\">minute</option></select> Inclusive <input id=\"time-interval-" + i + "-inclusive\" type=\"checkbox\">";
-            else
-                label.innerHTML = "Time between doses " + i + " and  action to be taken " + " <input name=\"time-interval-" + i + "\" type=\"number\" required> <br>Unit <select name=\"time-interval-" + i + "-unit\" required> <option value=\"year\">year</option><option value=\"month\">month</option><option value=\"week\">week</option><option value=\"day\">day</option><option value=\"hour\">hour</option><option value=\"minute\">minute</option></select> Inclusive <input id=\"time-interval-" + i + "-inclusive\" type=\"checkbox\">";
-            section.appendChild(label);
-        }
 
     }
 
@@ -206,6 +217,11 @@
             <div id="prev-record-time-intervals-section">
 
             </div>
+
+
+            <script>
+
+            </script>
         </article>
     </div>
 
