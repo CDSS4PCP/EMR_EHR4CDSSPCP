@@ -39,11 +39,94 @@
         let label = document.createElement("label");
         label.style.cssText = "border: dotted 1px; margin-left: 20px;";
 
-        let presetTimeInterval = ${presetTimeInterval};
+
         if (index !== numDoses)
-            label.innerHTML = "Time between doses " + index + " and  " + (index + 1) + " <input name=\"time-interval-" + index + "\" type=\"number\" required> <br>Unit <select name=\"time-interval-" + index + "-unit\" required> <option value=\"year\">year</option><option value=\"month\">month</option><option value=\"week\">week</option><option value=\"day\">day</option><option value=\"hour\">hour</option><option value=\"minute\">minute</option></select> Inclusive <input id=\"time-interval-" + index + "-inclusive\" type=\"checkbox\">";
+
+
+            label.innerHTML = "<br>Time between doses " + index + " and  " + (index + 1) +
+                " <input name=\"time-interval-" + index + "\" type=\"number\" > " +
+                "<br>Unit " +
+                "<select name=\"time-interval-" + index + "-unit\" > " +
+                "<option value=\"year\">year</option>" +
+                "<option value=\"month\">month</option>" +
+                "<option value=\"week\">week</option>" +
+                "<option value=\"day\">day</option>" +
+                "<option value=\"hour\">hour</option>" +
+                "<option value=\"minute\">minute</option>" +
+                "</select> " +
+                "Inclusive " +
+                "<input id=\"time-interval-" + index + "-inclusive\" type=\"checkbox\"> " +
+                "<br> " +
+                "OR " +
+                "<br>  " +
+                "<input type=\"number\" name=\"time-interval-" + index + "-min-age\" min=\"0\"" +
+                "               max=\"99999\">" +
+                "        Unit" +
+                "        <select name=\"time-interval-" + index + "-min-age-unit\" >" +
+                "            <option value=\"year\">year</option>" +
+                "            <option value=\"month\">month</option>" +
+                "            <option value=\"week\">week</option>" +
+                "            <option value=\"day\">day</option>" +
+                "            <option value=\"hour\">hour</option>" +
+                "            <option value=\"minute\">minute</option>" +
+                "        </select>" +
+                "    </label>" +
+                "<br>  " +
+                "<input type=\"number\" name=\"time-interval-" + index + "-max-age\"  min=\"0\"" +
+                "               max=\"99999\">" +
+                "        Unit" +
+                "        <select name=\"time-interval-" + index + "-max-age-unit\" >" +
+                "            <option value=\"year\">year</option>" +
+                "            <option value=\"month\">month</option>" +
+                "            <option value=\"week\">week</option>" +
+                "            <option value=\"day\">day</option>" +
+                "            <option value=\"hour\">hour</option>" +
+                "            <option value=\"minute\">minute</option>" +
+                "        </select>" +
+                "    </label>";
         else
-            label.innerHTML = "Time between doses " + index + " and  action to be taken " + " <input name=\"time-interval-" + index + "\" type=\"number\" required> <br>Unit <select name=\"time-interval-" + index + "-unit\" required> <option value=\"year\">year</option><option value=\"month\">month</option><option value=\"week\">week</option><option value=\"day\">day</option><option value=\"hour\">hour</option><option value=\"minute\">minute</option></select> Inclusive <input id=\"time-interval-" + index + "-inclusive\" type=\"checkbox\">";
+            label.innerHTML = "<br>Time between doses " + index + " and  action to be taken " +
+                " <input name=\"time-interval-" + index + "\" type=\"number\" > " +
+                "<br>Unit " +
+                "<select name=\"time-interval-" + index + "-unit\" > " +
+                "<option value=\"year\">year</option>" +
+                "<option value=\"month\">month</option>" +
+                "<option value=\"week\">week</option>" +
+                "<option value=\"day\">day</option>" +
+                "<option value=\"hour\">hour</option>" +
+                "<option value=\"minute\">minute</option>" +
+                "</select> " +
+                "Inclusive " +
+                "<input id=\"time-interval-" + index + "-inclusive\" type=\"checkbox\"> " +
+                "<br> " +
+                "OR " +
+                "<br>  " +
+                "<input type=\"number\" name=\"time-interval-" + index + "-min-age\" min=\"0\"" +
+                "               max=\"99999\">" +
+                "        Unit" +
+                "        <select name=\"time-interval-" + index + "-min-age-unit\" >" +
+                "            <option value=\"year\">year</option>" +
+                "            <option value=\"month\">month</option>" +
+                "            <option value=\"week\">week</option>" +
+                "            <option value=\"day\">day</option>" +
+                "            <option value=\"hour\">hour</option>" +
+                "            <option value=\"minute\">minute</option>" +
+                "        </select>" +
+                "    </label>" +
+                "<br>  " +
+                "<input type=\"number\" name=\"time-interval-" + index + "-max-age\"  min=\"0\"" +
+                "               max=\"99999\">" +
+                "        Unit" +
+                "        <select name=\"time-interval-" + index + "-max-age-unit\" >" +
+                "            <option value=\"year\">year</option>" +
+                "            <option value=\"month\">month</option>" +
+                "            <option value=\"week\">week</option>" +
+                "            <option value=\"day\">day</option>" +
+                "            <option value=\"hour\">hour</option>" +
+                "            <option value=\"minute\">minute</option>" +
+                "        </select>" +
+                "    </label>";
+
         return label;
     }
 
@@ -219,9 +302,8 @@
             </div>
 
 
-            <script>
 
-            </script>
+
         </article>
     </div>
 

@@ -60,7 +60,11 @@ public class ImmunizationRecordCondition {
 	public ImmunizationRecordCondition(String vaccine, Integer numberDoses) {
 		this.vaccine = vaccine;
 		this.numberDoses = numberDoses;
-		this.doses = new Dose[numberDoses];
+		this.doses = new Dose[numberDoses + 10];
+		
+		for (int i = 0; i < doses.length; i++) {
+			doses[i] = new Dose();
+		}
 	}
 	
 	public String getVaccine() {
@@ -80,52 +84,52 @@ public class ImmunizationRecordCondition {
 	}
 	
 	public Integer getDoseTimePeriod(Integer doseIndex) {
-		if (doses[doseIndex] == null)
-			doses[doseIndex] = new Dose();
+		//		if (doses[doseIndex] == null)
+		//			doses[doseIndex] = new Dose();
 		
-		return doses[doseIndex].timePeriod;
+		return doses[doseIndex].getTimePeriod();
 	}
 	
 	public Integer getDoseMinAge(Integer doseIndex) {
-		if (doses[doseIndex] == null)
-			doses[doseIndex] = new Dose();
+		//		if (doses[doseIndex] == null)
+		//			doses[doseIndex] = new Dose();
 		
-		return doses[doseIndex].timePeriod;
+		return doses[doseIndex].getMinAdministerAge();
 	}
 	
 	public Integer getDoseMaxAge(Integer doseIndex) {
-		if (doses[doseIndex] == null)
-			doses[doseIndex] = new Dose();
-		return doses[doseIndex].maxAdministerAge;
+		//		if (doses[doseIndex] == null)
+		//			doses[doseIndex] = new Dose();
+		return doses[doseIndex].getMaxAdministerAge();
 	}
 	
 	public void setDoseTimePeriod(Integer doseIndex, Integer timePeriod) {
-		if (doses[doseIndex] == null)
-			doses[doseIndex] = new Dose();
-		doses[doseIndex].timePeriod = timePeriod;
+		//		if (doses[doseIndex] == null)
+		//			doses[doseIndex] = new Dose();
+		doses[doseIndex].setTimePeriod(timePeriod);
 	}
 	
 	public void setDoseMinAge(Integer doseIndex, Integer minAdministerAge) {
-		if (doses[doseIndex] == null)
-			doses[doseIndex] = new Dose();
-		doses[doseIndex].minAdministerAge = minAdministerAge;
+		//		if (doses[doseIndex] == null)
+		//			doses[doseIndex] = new Dose();
+		doses[doseIndex].setMinAdministerAge(minAdministerAge);
 	}
 	
 	public void setDoseMaxAge(Integer doseIndex, Integer maxAdministerAge) {
-		if (doses[doseIndex] == null)
-			doses[doseIndex] = new Dose();
-		doses[doseIndex].maxAdministerAge = maxAdministerAge;
+		//		if (doses[doseIndex] == null)
+		//			doses[doseIndex] = new Dose();
+		doses[doseIndex].setMaxAdministerAge(maxAdministerAge);
 	}
 	
 	public Boolean isDoseTimePeriodBased(Integer doseIndex) {
-		if (doses[doseIndex] == null)
-			doses[doseIndex] = new Dose();
+		//		if (doses[doseIndex] == null)
+		//			doses[doseIndex] = new Dose();
 		return doses[doseIndex].isTimePeriodBased();
 	}
 	
 	public Boolean isDoseAgeBased(Integer doseIndex) {
-		if (doses[doseIndex] == null)
-			doses[doseIndex] = new Dose();
+		//		if (doses[doseIndex] == null)
+		//			doses[doseIndex] = new Dose();
 		return doses[doseIndex].isAgeBased();
 	}
 	

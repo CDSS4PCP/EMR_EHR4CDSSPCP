@@ -69,7 +69,7 @@ public class NewRulePageController {
 					timeIntervals[i] = immunizationCondition.getDoseTimePeriod(i);
 					
 				}
-
+				
 				model.addAttribute("presetTimeInterval", timeIntervals);
 				
 			} else {
@@ -128,14 +128,31 @@ public class NewRulePageController {
 		ImmunizationRecordCondition immunizationRecordCondition = new ImmunizationRecordCondition(vaccine, numPrevDoses);
 		
 		for (int doseIndex = 1; doseIndex <= numPrevDoses; doseIndex++) {
-			String value = (String) request.getAttribute("time-interval-" + doseIndex);
-			if (value == null) {
-				throw new RuntimeException("User provided " + numPrevDoses
-				        + " previous doses and did not provide time between dose " + doseIndex + " and " + (doseIndex + 1));
-			}
-			Integer time = Integer.parseInt((String) request.getAttribute("time-interval-" + doseIndex));
-			immunizationRecordCondition.setDoseTimePeriod(doseIndex, time);
+			String doseTimeInterval = (String) request.getAttribute("time-interval-" + doseIndex);
+			String doseMinAge = (String) request.getAttribute("time-interval-" + doseIndex + "-min-age");
+			String doseMaxAge = (String) request.getAttribute("time-interval-" + doseIndex + "-max-age");
 			
+			Boolean doseTimeIntervalEmpty = doseTimeInterval == null || doseTimeInterval.trim().equals("");
+			Boolean doseMinAgeEmpty = doseMinAge == null || doseMinAge.trim().equals("");
+			Boolean doseMaxAgeEmpty = doseMaxAge == null || doseMaxAge.trim().equals("");
+			
+			if (doseTimeIntervalEmpty && doseMinAgeEmpty && doseMaxAgeEmpty) {
+				throw new RuntimeException("Dose " + doseIndex
+				        + " does not have any constraints, namely time interval, min age, max age");
+			}
+			
+			if (!doseTimeIntervalEmpty) {
+				Integer time = Integer.parseInt(doseTimeInterval);
+				immunizationRecordCondition.setDoseTimePeriod(doseIndex - 1, time);
+			}
+			if (!doseMinAgeEmpty) {
+				Integer time = Integer.parseInt(doseMinAge);
+				immunizationRecordCondition.setDoseMinAge(doseIndex - 1, time);
+			}
+			if (!doseMaxAgeEmpty) {
+				Integer time = Integer.parseInt(doseMaxAge);
+				immunizationRecordCondition.setDoseMaxAge(doseIndex - 1, time);
+			}
 		}
 		
 		String[] selectedIndicationStrings = request.getRequest().getParameterValues("indications");
@@ -154,8 +171,10 @@ public class NewRulePageController {
 			if (specialConditionExists)
 				newRule.setSpecialCondition(specialCondition);
 			
-			if (immunizationRecordExists)
+			if (immunizationRecordExists) {
+				log.debug(immunizationRecordCondition);
 				newRule.setPreviousRecord(immunizationRecordCondition);
+			}
 			
 			if (selectedIndicationStrings != null && selectedIndicationStrings.length > 0)
 				newRule.setMedicalConditions(selectedIndicationStrings);
