@@ -9,24 +9,28 @@
 
 
 
-<% if (clarifyVaccineNeeded) { %>
-<div>
-    <h2>
-        Select a vaccine
-    </h2>
 
-    <form method="post">
-        <label>Vaccine:
-            <select id="vaccine-dropdown" name="vaccine">
+<script>
+    function redirectToFilteredVaccine(evt) {
+        let vaccine = evt.target.value;
+        window.location.replace("ruleManager.page?filterVaccine=" + vaccine);
+    }
+</script>
+<% if (param.filterVaccine == null) { %>
+<div>
+    <form>
+        <label>
+            Select a vaccine
+
+            <select onclick="redirectToFilteredVaccine(event)">
                 <% vaccines.each { vaccine -> %>
                 <option value="${vaccine}">
                     ${vaccine}
                 </option>
-                <% } %>
 
+
+                <% } %>
             </select>
-            <br>
-            <input type="submit" class="btn confirm">
         </label>
     </form>
 </div>
@@ -34,10 +38,32 @@
 <% } else { %>
 
 
+<div>
+    <form>
+        <label>
+            Filter by vaccine
 
+            <select onchange="redirectToFilteredVaccine(event)">
+                <% vaccines.each { vaccine -> %>
+                <% if (param.filterVaccine == vaccine) { %>
+                <option value="${vaccine}" selected>
+                    ${vaccine}
+                </option>
+                <% } else { %>
+                <option value="${vaccine}">
+                    ${vaccine}
+                </option>
+                <% } %>
+                <% } %>
+            </select>
+        </label>
+    </form>
+</div>
 
-<% if (deleteRuleId != null) { %>
-${ui.includeFragment('cdss', 'confirmation', [title: "Are you sure?", message: "Are you sure you want to delete this rule?", confirmHref: "ruleManager.page?confirmDeleteRuleId=" + deleteRuleId, cancelHref: "ruleManager.page"])}
+<% filterVaccine = param.filterVaccine %>
+
+<% if (param.deleteRuleId != null) { %>
+${ui.includeFragment ( 'cdss', 'confirmation', [ title : "Are you sure?", message: "Are you sure you want to delete this rule?", confirmHref: "ruleManager.page?confirmDeleteRuleId=" + deleteRuleId + "&filterVaccine=" + filterVaccine [ 0 ], cancelHref: "ruleManager.page?filterVaccine=" + filterVaccine [ 0 ] ] )}
 <% } %>
 
 <a class="button confirm" href="newRule.page">Add rule</a>

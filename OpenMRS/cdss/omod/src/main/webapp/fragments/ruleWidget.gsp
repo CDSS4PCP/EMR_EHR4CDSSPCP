@@ -93,7 +93,8 @@
                 Edit
             </a>
 
-            <a class="button cancel" style="margin: 2px;" href="ruleManager.page?deleteRuleId=${config.rule.getId()}">
+            <a class="button cancel" style="margin: 2px;"
+               href="ruleManager.page?deleteRuleId=${config.rule.getId()}&filterVaccine=${config.rule.getVaccine()}">
                 <i class="icon-trash"></i>
                 Delete
             </a>
