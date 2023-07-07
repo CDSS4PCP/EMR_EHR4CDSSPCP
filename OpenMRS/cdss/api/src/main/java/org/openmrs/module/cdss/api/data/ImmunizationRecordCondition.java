@@ -60,7 +60,7 @@ public class ImmunizationRecordCondition {
 	public ImmunizationRecordCondition(String vaccine, Integer numberDoses) {
 		this.vaccine = vaccine;
 		this.numberDoses = numberDoses;
-		this.doses = new Dose[numberDoses + 10];
+		this.doses = new Dose[numberDoses + 1];
 		
 		for (int i = 0; i < doses.length; i++) {
 			doses[i] = new Dose();

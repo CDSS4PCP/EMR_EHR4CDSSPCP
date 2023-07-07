@@ -180,7 +180,7 @@
     </label>
     <select id="vaccine-selector" name="vaccine" required>
         <% vaccines.each { vaccine -> %>
-        <option value="${vaccine}">${vaccine}</option>
+        <option value="${vaccine}" ${presetVaccine != null && presetVaccine.equals(vaccine) ? "selected" : ""}>${vaccine}</option>
         <% } %>
     </select>
 
@@ -188,11 +188,13 @@
 
 
     <label>Minimum Age
-
-
+    <% if (presetMinAge != null) { %>
+        <input type="number" name="min-age" min="0"
+               max="99999" value="${presetMinAge}">
+        <% } else { %>
         <input type="number" name="min-age" min="0"
                max="99999">
-
+        <% } %>
 
         Unit
         <select name="min-age-unit" required>
@@ -208,9 +210,13 @@
     <br>
     <label>Maximum Age
 
-
+    <% if (presetMaxAge != null) { %>
+        <input type="number" name="max-age" min="0"
+               max="99999" value="${presetMaxAge}">
+        <% } else { %>
         <input type="number" name="max-age" min="0"
                max="99999">
+        <% } %>
 
         Unit
         <select name="max-age-unit" required>
@@ -229,33 +235,44 @@
             Special Condition
 
             <input id="special-condition-exists" type="checkbox" onchange="specialConditionToggle()"
-                   name="special-condition-exists">
+                   name="special-condition-exists" ${presetSpecialCondition != null ? "checked" : ""}>
         </label>
 
-        <article id="special-condition-section" class="d-none">
+        <article id="special-condition-section" class="${presetSpecialCondition != null ? "d-block" : "d-none"}">
             <label>Special Condition
 
-
+            <% if (presetSpecialCondition != null) { %>
+                <input type="text" name="special-condition" value="${presetSpecialCondition}">
+                <% } else { %>
                 <input type="text" name="special-condition">
-
+                <% } %>
             </label>
             <label>Outbreak Condition
                 <input type="text" name="outbreak-condition">
             </label>
             <label>
                 College Student
-
+                <% if (presetSpecialConditionCollegeStudent != null && presetSpecialConditionCollegeStudent) { %>
+                <input type="checkbox" name="college-student" checked>
+                <% } else { %>
                 <input type="checkbox" name="college-student">
+                <% } %>
             </label>
             <label>
                 Works in Military
-
+                <% if (presetSpecialConditionMilitaryWorker != null && presetSpecialConditionMilitaryWorker) { %>
+                <input type="checkbox" name="military-worker" checked>
+                <% } else { %>
                 <input type="checkbox" name="military-worker">
+                <% } %>
             </label>
             <label>
                 Travel
-
+                <% if (presetSpecialConditionTravel != null && presetSpecialConditionTravel) { %>
+                <input type="checkbox" name="travel-condition" checked>
+                <% } else { %>
                 <input type="checkbox" name="travel-condition">
+                <% } %>
             </label>
         </article>
     </div>
@@ -265,15 +282,19 @@
         <label>
             Immunization Record Exists
             <input id="immunization-record-exists" type="checkbox" onchange="immunizationRecordConditionToggle()"
-                   name="immunization-record-exists">
+                   name="immunization-record-exists" ${presetImmunizationCondition == true ? "checked" : ""}>
         </label>
 
         <article id="immunization-record-condition-section"
-                 class="d-none">
+                 class="${presetImmunizationCondition != null ? "d-block" : "d-none"}">
             <label>Number of Previous Doses Completed
 
-
+            <% if (presetImmunizationCondition != null) { %>
+                <input id="num-prev-doses" type="text" name="num-prev-doses" value="${presetNumPrevDoses}"
+                       onchange="numPrevDosesChanged()">
+                <% } else { %>
                 <input id="num-prev-doses" type="text" name="num-prev-doses" onchange="numPrevDosesChanged()">
+                <% } %>
 
             </label>
 
@@ -281,22 +302,35 @@
 
             </div>
 
+
+
+
         </article>
     </div>
 
     <label>Medical Indications
         <select multiple name="indications">
 
+            <% if (presetIndications != null && presetIndications.contains("immunocompromised")) { %>
+            <option value="immunocompromised" selected>
+                Immunocompromised
+            </option>
+            <% } else { %>
             <option value="immunocompromised">
                 Immunocompromised
             </option>
+            <% } %>
 
 
-
-
+            <% if (presetIndications != null && presetIndications.contains("allergy")) { %>
+            <option value="allergy" selected>
+                Allergies
+            </option>
+            <% } else { %>
             <option value="allergy">
                 Allergies
             </option>
+            <% } %>
 
         </select>
     </label>
@@ -307,8 +341,11 @@
             <% actions.each { action -> %>
             <option value="${action.getId()}">${action.getDisplayString()}</option>
 
-
+            <% if (presetActions != null && presetActions.contains(action)) { %>
+            <option value="${action.getId()}" selected>${action.getDisplayString()}</option>
+            <% } else { %>
             <option value="${action.getId()}">${action.getDisplayString()}</option>
+            <% } %>
             <% } %>
         </select>
     </label>

@@ -88,7 +88,7 @@
 
     <td>
         <div class="button-group">
-            <a class="button" style="margin: 2px;" href="newRule.page?editRuleId=${config.rule.getId()}">
+            <a class="button" style="margin: 2px;" href="editRule.page?editRuleId=${config.rule.getId()}">
                 <i class="icon-pencil"></i>
                 Edit
             </a>
