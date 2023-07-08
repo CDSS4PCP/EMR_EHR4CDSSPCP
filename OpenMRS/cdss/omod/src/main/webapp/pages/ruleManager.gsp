@@ -22,7 +22,7 @@
         <label>
             Select a vaccine
 
-            <select onclick="redirectToFilteredVaccine(event)">
+            <select onclick="redirectToFilteredVaccine(event)" name="filterVaccine">
                 <% vaccines.each { vaccine -> %>
                 <option value="${vaccine}">
                     ${vaccine}
@@ -32,6 +32,7 @@
                 <% } %>
             </select>
         </label>
+        <input type="submit" class="button confirm">
     </form>
 </div>
 

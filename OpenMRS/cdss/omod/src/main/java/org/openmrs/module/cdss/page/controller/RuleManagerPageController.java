@@ -89,7 +89,13 @@ public class RuleManagerPageController {
 	public String post(PageModel model, PageRequest request,
 	        @SpringBean("cdss.RuleManagerServiceImpl") RuleManagerService service) {
 		
-		return get(model, request, service);
+		String filterVaccine = (String) request.getAttribute("filterVaccine");
+		
+		if (filterVaccine == null) {
+			return get(model, request, service);
+		} else {
+			return "redirect:" + CDSSWebConfig.RULE_MANAGER_URL + "?filterVaccine=" + filterVaccine;
+		}
 	}
 	
 }

@@ -38,7 +38,7 @@
     function addDoseInput(index, numDoses) {
 
         <% record = rule.getPreviousRecord()  %>
-        let label = document.createElement("label");
+        let label = document.createElement("div");
         label.style.cssText = "border: dotted 1px; margin-left: 20px;";
 
 
@@ -49,8 +49,10 @@
         }
 
 
-        label.innerHTML = "<br>" + labelText +
-            " <input name=\"time-interval-" + index + "\" type=\"number\" > " +
+        label.innerHTML = "<label>" + labelText +
+            "<input name=\"time-interval-" + index + "\" type=\"number\" > " +
+            "</label>" +
+            "<label>" +
             "<br>Unit " +
             "<select name=\"time-interval-" + index + "-unit\" > " +
             "<option value=\"year\">year</option>" +
@@ -60,11 +62,14 @@
             "<option value=\"hour\">hour</option>" +
             "<option value=\"minute\">minute</option>" +
             "</select> " +
+            "</label>" +
+            "<label>" +
             "Inclusive " +
             "<input id=\"time-interval-" + index + "-inclusive\" type=\"checkbox\"> " +
-            "<br> " +
+            "</label> " +
             "OR " +
-            "<br>  Minimum Administer Age" +
+            "<label>" +
+            " Minimum Administer Age" +
 
             "<input type=\"number\" name=\"time-interval-" + index + "-min-age\" min=\"0\"" +
             "               max=\"99999\">" +
@@ -78,7 +83,8 @@
             "            <option value=\"minute\">minute</option>" +
             "        </select>" +
             "    </label>" +
-            "<br>  Maximum Administer Age" +
+            "<label>" +
+            " Maximum Administer Age" +
             "<input type=\"number\" name=\"time-interval-" + index + "-max-age\"  min=\"0\"" +
             "               max=\"99999\">" +
             "        Unit" +
@@ -91,7 +97,6 @@
             "            <option value=\"minute\">minute</option>" +
             "        </select>" +
             "    </label>";
-
 
         return label;
     }
@@ -228,7 +233,7 @@
 
 
     <div>
-        <% record = rule.getPreviousRecord()  %>
+        <% record = rule.getPreviousRecord() %>
         <% if (record != null) { %>
         <% numDoses = record.getNumberDoses(); %>
 
@@ -261,7 +266,7 @@
 
                 <div>
                     <label>
-                        <br> time Interval Between Doses
+                        <br> ${labelText}
                         <input name=${"time-interval-" + i} type="number"
                                value='${ui.format(record.getDoseTimePeriod(i))}'>
                     </label>
