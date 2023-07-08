@@ -50,6 +50,7 @@ public class RuleManagerPageController {
 			rulesets = service.getRulesByVaccine(filterVaccine);
 			model.addAttribute("rulesets", rulesets);
 			model.addAttribute("filterVaccine", filterVaccine);
+
 		}
 		
 		if (confirmDeleteRuleId != null) {
@@ -57,18 +58,11 @@ public class RuleManagerPageController {
 			Rule rule = service.getRuleById(confirmDeleteRuleId);
 			
 			String vaccine = rule.getVaccine();
-			
-			Boolean success = service.deleteRule(confirmDeleteRuleId);
-			log.debug("Attempting deleting rule " + confirmDeleteRuleId + "    successfully? " + success);
-			
-			List<Rule> rules = service.getRulesByVaccine(vaccine);
-			model.addAttribute("rulesets", rules);
-			model.addAttribute("filterVaccine", filterVaccine);
-			model.addAttribute("deleteRuleId", null);
-			
-			return "redirect:" + CDSSWebConfig.RULE_MANAGER_URL + "?filterVaccine=" + filterVaccine;
-			
-		} else if (deleteRuleId != null) {
+			if (rule == null) {
+				return "redirect:" + CDSSWebConfig.ERROR_URL + "?nonExistentRuleId=" + confirmDeleteRuleId;
+				
+			}
+    } else if (deleteRuleId != null) {
 			Rule rule = service.getRuleById(deleteRuleId);
 			
 			String vaccine = rule.getVaccine();

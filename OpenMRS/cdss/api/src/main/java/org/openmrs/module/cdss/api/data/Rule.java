@@ -1,5 +1,7 @@
 package org.openmrs.module.cdss.api.data;
 
+import org.openmrs.module.cdss.api.util.TimeUnit;
+
 import java.util.Arrays;
 import java.util.Comparator;
 
@@ -40,6 +42,8 @@ public class Rule {
 	
 	private Integer maximumAge;
 	
+	private TimeUnit ageUnit;
+	
 	private SpecialCondition specialCondition;
 	
 	private String[] medicalConditions;
@@ -57,6 +61,7 @@ public class Rule {
 		this.vaccine = vaccine;
 		this.minimumAge = minimumAge;
 		this.maximumAge = maximumAge;
+		this.ageUnit = TimeUnit.Day;
 		this.actions = actions;
 		
 		if (id == nextIndex) {
@@ -69,6 +74,7 @@ public class Rule {
 		this.vaccine = vaccine;
 		this.minimumAge = minimumAge;
 		this.maximumAge = maximumAge;
+		this.ageUnit = TimeUnit.Day;
 		this.actions = actions;
 		
 		nextIndex++;
@@ -101,6 +107,14 @@ public class Rule {
 	
 	public void setMaximumAge(Integer maximumAge) {
 		this.maximumAge = maximumAge;
+	}
+	
+	public TimeUnit getAgeUnit() {
+		return ageUnit;
+	}
+	
+	public void setAgeUnit(TimeUnit ageUnit) {
+		this.ageUnit = ageUnit;
 	}
 	
 	public SpecialCondition getSpecialCondition() {

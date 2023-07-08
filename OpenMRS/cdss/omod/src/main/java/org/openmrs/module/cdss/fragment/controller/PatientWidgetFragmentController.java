@@ -5,6 +5,7 @@ import org.openmrs.Patient;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.cdss.RunnerResult;
+import org.openmrs.module.cdss.api.RuleManagerService;
 import org.openmrs.module.cdss.api.RuleRunnerService;
 import org.openmrs.ui.framework.annotation.FragmentParam;
 import org.openmrs.ui.framework.annotation.SpringBean;
@@ -29,12 +30,13 @@ public class PatientWidgetFragmentController {
 	 * @param patientService OpenMRS's patient service to be able to get patient data based on id.
 	 */
 	public void controller(@FragmentParam(value = "patientId", required = true) Integer patientId, FragmentModel model,
-	        @SpringBean("patientService") PatientService patientService) {
+	        @SpringBean("patientService") PatientService patientService,
+	        @SpringBean("cdss.RuleManagerServiceImpl") RuleManagerService service) {
 		
 		Patient p = patientService.getPatient(patientId);
 		RuleRunnerService vc = Context.getService(RuleRunnerService.class);
 		
-		List<RunnerResult> res = vc.getAllResults(p);
+		List<RunnerResult> res = vc.getAllResults(p, service);
 		
 		model.addAttribute("results", res);
 		model.addAttribute("patientUuid", p.getUuid());

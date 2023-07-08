@@ -3,10 +3,12 @@ package org.openmrs.module.cdss;
 import org.openmrs.Patient;
 import org.openmrs.module.cdss.api.data.Action;
 
+import java.util.Arrays;
+
 public class RunnerResult {
 	
 	// Message to be displayed to clinician.
-	private Action action;
+	private Action[] actions;
 	
 	// The patient that this result is for
 	private Patient patient;
@@ -18,12 +20,17 @@ public class RunnerResult {
 	// Otherwise, some action needs to be taken as instructed by message
 	private Integer status;
 	
-	public Action getAction() {
-		return action;
+	public Action[] getActions() {
+		return actions;
 	}
 	
-	public void setAction(Action action) {
-		this.action = action;
+	public void setActions(Action action) {
+		actions = new Action[1];
+		actions[0] = action;
+	}
+	
+	public void setActions(Action[] actions) {
+		this.actions = actions;
 	}
 	
 	public Patient getPatient() {
@@ -48,5 +55,11 @@ public class RunnerResult {
 	
 	public void setStatus(int status) {
 		this.status = status;
+	}
+	
+	@Override
+	public String toString() {
+		return "RunnerResult{" + "actions=" + Arrays.toString(actions) + ", patient=" + patient.getId() + ", vaccine='"
+		        + vaccine + '\'' + ", status=" + status + '}';
 	}
 }

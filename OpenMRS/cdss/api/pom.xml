@@ -42,6 +42,11 @@
             <artifactId>json</artifactId>
             <version>20230227</version>
         </dependency>
+        <dependency>
+            <groupId>org.openmrs.module</groupId>
+            <artifactId>uiframework-api</artifactId>
+            <scope>compile</scope>
+        </dependency>
 
     </dependencies>
 </project>
