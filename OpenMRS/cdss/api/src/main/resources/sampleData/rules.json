@@ -3,6 +3,8 @@
     "vaccine": "MMR",
     "min_age": 0,
     "max_age": 12,
+    "min_age_unit": "month",
+    "max_age_unit": "month",
     "special_condition": null,
     "medical_conditions": [],
     "previous_record": null,
@@ -15,6 +17,8 @@
     "vaccine": "MMR",
     "min_age": 12,
     "max_age": 47,
+    "min_age_unit": "month",
+    "max_age_unit": "month",
     "special_condition": null,
     "medical_conditions": [],
     "previous_record": null,
@@ -27,8 +31,10 @@
     "vaccine": "MMR",
     "min_age": 47,
     "max_age": 218,
+    "min_age_unit": "month",
+    "max_age_unit": "month",
     "special_condition": null,
-    "medical_conditions": [],
+    "medical_conditions": null,
     "previous_record": null,
     "actions": [
       "Admin 1 dose",
@@ -39,11 +45,19 @@
     "vaccine": "MMR",
     "min_age": 12,
     "max_age": 36,
+    "min_age_unit": "month",
+    "max_age_unit": "month",
     "special_condition": null,
-    "medical_conditions": [],
+    "medical_conditions": null,
     "previous_record": {
       "num_doses": 1,
-      "last_dose": "12-15 mon of age"
+      "doses": [
+        {
+          "administered_min_age": 12,
+          "administered_max_age": 15,
+          "timePeriod": null
+        }
+      ]
     },
     "actions": [
       "Admin 1 dose",

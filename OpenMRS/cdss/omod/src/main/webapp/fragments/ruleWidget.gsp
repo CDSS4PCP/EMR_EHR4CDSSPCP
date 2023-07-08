@@ -33,7 +33,40 @@
 
         </ul>
     </td>
-    <td>${ui.format(config.rule.getPreviousRecord())}</td>
+    <td>
+        <% if (config.rule.getPreviousRecord() != null) { %>
+        <ul>
+            <li><strong>Previous Doses: ${ui.format(config.rule.getPreviousRecord().getNumberDoses())}</strong></li>
+        </ul>
+
+        <% def count = config.rule.getPreviousRecord().getNumberDoses() %>
+
+        <% if (count > 0) { %>
+        <div>
+            <ul>
+
+                <% (0..count - 1).toList().each { c -> %>
+                <li>
+                    <p>Dose ${c + 1}</p>
+                    <% if (config.rule.getPreviousRecord().isDoseTimePeriodBased(c)) { %>
+                    <p>Time before next dose : ${config.rule.getPreviousRecord().getDoseTimePeriod(c)} weeks</p>
+
+                    <% } %>
+
+                    <% if (config.rule.getPreviousRecord().isDoseAgeBased(c)) { %>
+                    <p>Minimum Age: ${config.rule.getPreviousRecord().getDoseMinAge(c)} weeks</p>
+
+                    <p>Maximum Age: ${config.rule.getPreviousRecord().getDoseMaxAge(c)} weeks</p>
+                    <% } %>
+                    <% } %>
+                </li>
+                <% } %>
+
+            </ul>
+        </div>
+        <% } %>
+
+    </td>
     <td>
 
         <ul>
@@ -55,12 +88,13 @@
 
     <td>
         <div class="button-group">
-            <a class="button" style="margin: 2px;" href="newRule.page?editRuleId=${config.rule.getId()}">
+            <a class="button" style="margin: 2px;" href="editRule.page?editRuleId=${config.rule.getId()}">
                 <i class="icon-pencil"></i>
                 Edit
             </a>
 
-            <a class="button cancel" style="margin: 2px;" href="ruleManager.page?deleteRuleId=${config.rule.getId()}">
+            <a class="button cancel" style="margin: 2px;"
+               href="ruleManager.page?deleteRuleId=${config.rule.getId()}&filterVaccine=${config.rule.getVaccine()}">
                 <i class="icon-trash"></i>
                 Delete
             </a>

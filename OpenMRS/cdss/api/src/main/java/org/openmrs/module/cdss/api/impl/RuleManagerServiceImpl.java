@@ -74,6 +74,11 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
 	}
 	
 	@Override
+	public List<Rule> getAllRules() {
+		return CDSSActivator.getSampleData().getRules();
+	}
+	
+	@Override
 	public boolean addVaccine(String vaccine) {
 		if (CDSSConfig.VACCINE_CODES.contains(vaccine)) {
 			return false;

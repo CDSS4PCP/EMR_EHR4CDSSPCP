@@ -14,26 +14,37 @@ import org.openmrs.ui.framework.page.PageRequest;
 
 import java.util.List;
 
-public class NewRulePageController {
+public class EditRulePageController {
 	
 	private final Logger log = Logger.getLogger(getClass());
 	
 	public String get(PageModel model, PageRequest request,
 	        @SpringBean("cdss.RuleManagerServiceImpl") RuleManagerService service) {
+		Integer editRuleId = request.getAttribute("editRuleId") != null ? Integer.parseInt((String) request
+		        .getAttribute("editRuleId")) : null;
+		
+		if (editRuleId == null) {
+			return "redirect:" + CDSSWebConfig.RULE_MANAGER_URL;
+		}
 		
 		List<String> vaccines = service.getLoadedVaccineRulesets();
 		List<Action> actions = service.getAllActions();
 		
+		Rule rule = service.getRuleById(editRuleId);
+		
+		model.addAttribute("rule", rule);
 		model.addAttribute("vaccines", vaccines);
 		model.addAttribute("actions", actions);
-		model.addAttribute("selectedActions", "");
-		model.addAttribute("ruleAddedError", false);
 		
 		return null;
+		
 	}
 	
 	public String post(PageModel model, PageRequest request,
 	        @SpringBean("cdss.RuleManagerServiceImpl") RuleManagerService service) {
+		
+		Integer editRuleId = request.getAttribute("editRuleId") != null ? Integer.parseInt((String) request
+		        .getAttribute("editRuleId")) : null;
 		
 		List<String> vaccines = service.getLoadedVaccineRulesets();
 		List<Action> actions = service.getAllActions();
@@ -122,7 +133,10 @@ public class NewRulePageController {
 				newRule.setMedicalConditions(selectedIndicationStrings);
 			
 			Boolean success;
-			success = !service.addRule(newRule);
+			if (editRuleId == null)
+				success = !service.addRule(newRule);
+			else
+				success = !service.modifyRule(editRuleId, newRule);
 			model.addAttribute("ruleAddedError", success);
 			
 			if (success) {
@@ -134,7 +148,7 @@ public class NewRulePageController {
 			
 		}
 		
-		return "redirect:" + CDSSWebConfig.RULE_MANAGER_URL + "?filterVaccine=" + vaccine;
+		return "redirect:" + CDSSWebConfig.RULE_MANAGER_URL;
 	}
 	
 	private Boolean parseCheckboxValue(String value) {

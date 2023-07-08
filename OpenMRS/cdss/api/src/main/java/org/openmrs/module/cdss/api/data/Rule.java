@@ -48,7 +48,7 @@ public class Rule {
 	
 	private String[] medicalConditions;
 	
-	private String previousRecord;
+	private ImmunizationRecordCondition previousRecord;
 	
 	private Action[] actions;
 	
@@ -137,11 +137,11 @@ public class Rule {
 		this.medicalConditions = medicalConditions;
 	}
 	
-	public String getPreviousRecord() {
+	public ImmunizationRecordCondition getPreviousRecord() {
 		return previousRecord;
 	}
 	
-	public void setPreviousRecord(String previousRecord) {
+	public void setPreviousRecord(ImmunizationRecordCondition previousRecord) {
 		this.previousRecord = previousRecord;
 	}
 	

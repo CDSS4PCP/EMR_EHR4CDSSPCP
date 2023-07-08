@@ -9,7 +9,7 @@ import javax.persistence.Id;
 
 //@Entity(name = "cdss.Action")
 //@Table(name = "cdss_action")
-public class Action extends BaseOpenmrsData {
+public class Action {
 	
 	private static Integer actionCounter = 1;
 	
@@ -26,7 +26,7 @@ public class Action extends BaseOpenmrsData {
 	@Column(name = "displayString", length = 255)
 	private String displayString;
 	
-	@Override
+	//	@Override
 	public Integer getId() {
 		return id;
 	}
@@ -36,7 +36,7 @@ public class Action extends BaseOpenmrsData {
 		actionCounter++;
 	}
 	
-	@Override
+	//	@Override
 	public void setId(Integer integer) {
 		//		throw new RuntimeException("CDSS ERROR: You cannot change the id of an action instance!");
 		id = integer;
