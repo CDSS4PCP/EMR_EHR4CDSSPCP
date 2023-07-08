@@ -187,41 +187,11 @@
     <br>
 
 
-    <label>Minimum Age
 
-
-        <input type="number" name="min-age" min="0"
-               max="99999">
-
-
-        Unit
-        <select name="min-age-unit" required>
-            <option value="year">year</option>
-            <option value="month">month</option>
-            <option value="week">week</option>
-            <option value="day">day</option>
-            <option value="hour">hour</option>
-            <option value="minute">minute</option>
-        </select>
-    </label>
-
+    ${ui.includeFragment('cdss', 'ageConditionWidget', [label: "Minimum Age", name: "min-age"])}
     <br>
-    <label>Maximum Age
 
-
-        <input type="number" name="max-age" min="0"
-               max="99999">
-
-        Unit
-        <select name="max-age-unit" required>
-            <option value="year">year</option>
-            <option value="month">month</option>
-            <option value="week">week</option>
-            <option value="day">day</option>
-            <option value="hour">hour</option>
-            <option value="minute">minute</option>
-        </select>
-    </label>
+    ${ui.includeFragment('cdss', 'ageConditionWidget', [label: "Maximum Age", name: "max-age"])}
 
 
     <div>

@@ -23,68 +23,21 @@ public class EditRulePageController {
 		Integer editRuleId = request.getAttribute("editRuleId") != null ? Integer.parseInt((String) request
 		        .getAttribute("editRuleId")) : null;
 		
+		if (editRuleId == null) {
+			return "redirect:" + CDSSWebConfig.RULE_MANAGER_URL;
+		}
+		
 		List<String> vaccines = service.getLoadedVaccineRulesets();
 		List<Action> actions = service.getAllActions();
 		
+		Rule rule = service.getRuleById(editRuleId);
+		
+		model.addAttribute("rule", rule);
 		model.addAttribute("vaccines", vaccines);
 		model.addAttribute("actions", actions);
-		model.addAttribute("selectedActions", "");
-		model.addAttribute("ruleAddedError", false);
-		
-		// Editing rule
-		if (editRuleId != null) {
-			Rule rule = service.getRuleById(editRuleId);
-			if (rule == null) {
-				throw new RuntimeException("Rule with id " + editRuleId + " is null!");
-			}
-			String vaccine = rule.getVaccine();
-			Integer minAge = rule.getMinimumAge();
-			Integer maxAge = rule.getMaximumAge();
-			SpecialCondition specialCondition = rule.getSpecialCondition();
-			ImmunizationRecordCondition immunizationCondition = rule.getPreviousRecord();
-			
-			String[] conditions = rule.getMedicalConditions();
-			Action[] presetActions = rule.getActions();
-			
-			// Previous rule values
-			model.addAttribute("presetVaccine", vaccine);
-			model.addAttribute("presetMinAge", minAge);
-			model.addAttribute("presetMaxAge", maxAge);
-			model.addAttribute("presetSpecialCondition", specialCondition == null ? null : specialCondition.getLabel());
-			model.addAttribute("presetSpecialConditionCollegeStudent",
-			    specialCondition == null ? null : specialCondition.getCollegeStudent());
-			model.addAttribute("presetSpecialConditionMilitaryWorker",
-			    specialCondition == null ? null : specialCondition.getMilitaryWorker());
-			model.addAttribute("presetSpecialConditionTravel",
-			    specialCondition == null ? null : specialCondition.getTravel());
-			model.addAttribute("presetImmunizationCondition", // TODO change this property
-			    immunizationCondition == null ? null : true);
-			model.addAttribute("presetNumPrevDoses",
-			    immunizationCondition == null ? null : immunizationCondition.getNumberDoses());
-			
-			if (immunizationCondition != null) {
-				Integer[] timeIntervals = new Integer[immunizationCondition.getNumberDoses()];
-				for (int i = 0; i < immunizationCondition.getNumberDoses(); i++) {
-					//					model.addAttribute("presetTimeInterval" + i, immunizationCondition.getDoseTimePeriod(i));
-					timeIntervals[i] = immunizationCondition.getDoseTimePeriod(i);
-					
-				}
-				
-				model.addAttribute("presetTimeInterval", timeIntervals);
-				
-			} else {
-				model.addAttribute("presetTimeInterval", null);
-				
-			}
-			model.addAttribute("presetActions", presetActions);
-			model.addAttribute("presetIndications", conditions);
-			
-		} else {
-			// Not editing Rule
-			setNoEditModAttributes(model);
-		}
 		
 		return null;
+		
 	}
 	
 	public String post(PageModel model, PageRequest request,
