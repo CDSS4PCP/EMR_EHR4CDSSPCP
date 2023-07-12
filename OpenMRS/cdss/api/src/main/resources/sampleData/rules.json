@@ -1,8 +1,12 @@
 [
   {
     "vaccine": "MMR",
-    "min_age": 0,
-    "max_age": 12,
+    "age_condition": {
+      "min_age": 0,
+      "min_age_unit": "month",
+      "max_age": 12,
+      "max_age_unit": "month"
+    },
     "min_age_unit": "month",
     "max_age_unit": "month",
     "special_condition": null,
@@ -15,8 +19,12 @@
   },
   {
     "vaccine": "MMR",
-    "min_age": 12,
-    "max_age": 47,
+    "age_condition": {
+      "min_age": 12,
+      "min_age_unit": "month",
+      "max_age": 47,
+      "max_age_unit": "month"
+    },
     "min_age_unit": "month",
     "max_age_unit": "month",
     "special_condition": null,
@@ -29,8 +37,12 @@
   },
   {
     "vaccine": "MMR",
-    "min_age": 47,
-    "max_age": 218,
+    "age_condition": {
+      "min_age": 47,
+      "min_age_unit": "month",
+      "max_age": 218,
+      "max_age_unit": "month"
+    },
     "min_age_unit": "month",
     "max_age_unit": "month",
     "special_condition": null,
@@ -43,8 +55,12 @@
   },
   {
     "vaccine": "MMR",
-    "min_age": 12,
-    "max_age": 36,
+    "age_condition": {
+      "min_age": 12,
+      "min_age_unit": "month",
+      "max_age": 36,
+      "max_age_unit": "month"
+    },
     "min_age_unit": "month",
     "max_age_unit": "month",
     "special_condition": null,
@@ -53,8 +69,12 @@
       "num_doses": 1,
       "doses": [
         {
-          "administered_min_age": 12,
-          "administered_max_age": 15,
+          "age_condition": {
+            "min_age": 12,
+            "min_age_unit": "month",
+            "max_age": 15,
+            "max_age_unit": "month"
+          },
           "timePeriod": null
         }
       ]

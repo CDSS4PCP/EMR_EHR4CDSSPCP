@@ -50,7 +50,7 @@ public class RuleManagerPageController {
 			rulesets = service.getRulesByVaccine(filterVaccine);
 			model.addAttribute("rulesets", rulesets);
 			model.addAttribute("filterVaccine", filterVaccine);
-
+			
 		}
 		
 		if (confirmDeleteRuleId != null) {
@@ -62,7 +62,7 @@ public class RuleManagerPageController {
 				return "redirect:" + CDSSWebConfig.ERROR_URL + "?nonExistentRuleId=" + confirmDeleteRuleId;
 				
 			}
-    } else if (deleteRuleId != null) {
+		} else if (deleteRuleId != null) {
 			Rule rule = service.getRuleById(deleteRuleId);
 			
 			String vaccine = rule.getVaccine();

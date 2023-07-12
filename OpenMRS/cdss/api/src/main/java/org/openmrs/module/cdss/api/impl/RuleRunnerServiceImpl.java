@@ -13,7 +13,6 @@ import org.openmrs.module.cdss.api.RuleRunnerService;
 import org.openmrs.module.cdss.api.dao.CDSSDao;
 import org.openmrs.module.cdss.api.data.Action;
 import org.openmrs.module.cdss.api.data.Rule;
-import org.openmrs.module.cdss.api.util.TimeUnit;
 import org.openmrs.module.cdss.api.util.TimeUtil;
 import org.openmrs.ui.framework.annotation.SpringBean;
 

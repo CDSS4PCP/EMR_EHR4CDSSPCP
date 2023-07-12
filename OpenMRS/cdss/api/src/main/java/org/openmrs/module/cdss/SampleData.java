@@ -1,12 +1,13 @@
 package org.openmrs.module.cdss;
 
-import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 import org.openmrs.module.cdss.api.data.Action;
+import org.openmrs.module.cdss.api.data.AgeCondition;
 import org.openmrs.module.cdss.api.data.ImmunizationRecordCondition;
 import org.openmrs.module.cdss.api.data.Rule;
+import org.openmrs.module.cdss.api.util.BaseTimeUnit;
 
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -38,8 +39,7 @@ public class SampleData {
 		
 		for (int i = 0; i < source.length(); i++) {
 			String vaccine = source.getJSONObject(i).getString("vaccine");
-			Integer minAge = source.getJSONObject(i).getInt("min_age");
-			Integer maxAge = source.getJSONObject(i).getInt("max_age");
+			AgeCondition ageCondition = parseAgeCondition(source.getJSONObject(i).getJSONObject("age_condition"));
 			
 			String specialCondition = source.getJSONObject(i).get("special_condition") != JSONObject.NULL ? (String) source
 			        .getJSONObject(i).get("special_condition") : null;
@@ -72,8 +72,7 @@ public class SampleData {
 			
 			Rule rule = new Rule();
 			rule.setVaccine(vaccine);
-			rule.setMinimumAge(minAge);
-			rule.setMaximumAge(maxAge);
+			rule.setAgeCondition(ageCondition);
 			rule.setSpecialCondition(specialCondition);
 			//            rule.setMedicalCondition(null);
 			rule.setPreviousRecord(previousRecord);
@@ -101,16 +100,13 @@ public class SampleData {
 		
 		for (int i = 0; i < numDoses; i++) {
 			JSONObject doseObject = (JSONObject) doses.get(i);
-			Object minAgeObject = doseObject.get("administered_min_age");
-			Object maxAgeObject = doseObject.get("administered_max_age");
+			JSONObject ageConditionObject = (JSONObject) doseObject.get("age_condition");
+			
+			AgeCondition recordConditionAgeCondition = parseAgeCondition(ageConditionObject);
 			Object timePeriodObject = doseObject.get("timePeriod");
 			
-			if (minAgeObject != null && minAgeObject != JSONObject.NULL) {
-				recordCondition.setDoseMinAge(i, (Integer) minAgeObject);
-			}
-			
-			if (maxAgeObject != null && maxAgeObject != JSONObject.NULL) {
-				recordCondition.setDoseMaxAge(i, (Integer) maxAgeObject);
+			if (recordConditionAgeCondition != null) {
+				recordCondition.setAgeCondition(i, recordConditionAgeCondition);
 			}
 			
 			if (timePeriodObject != null && timePeriodObject != JSONObject.NULL) {
@@ -120,6 +116,25 @@ public class SampleData {
 		
 		return recordCondition;
 		
+	}
+	
+	private AgeCondition parseAgeCondition(JSONObject object) {
+		AgeCondition condition = new AgeCondition();
+		Integer minAge = object.getInt("min_age");
+		String minAgeUnitString = object.getString("min_age_unit").toUpperCase();
+		BaseTimeUnit minAgeUnit = BaseTimeUnit.valueOf(minAgeUnitString);
+		
+		Integer maxAge = object.getInt("max_age");
+		String maxAgeUnitString = object.getString("max_age_unit").toUpperCase();
+		BaseTimeUnit maxAgeUnit = BaseTimeUnit.valueOf(maxAgeUnitString);
+		
+		condition.setMinimumAge(minAge);
+		condition.setMinimumAgeUnit(minAgeUnit);
+		
+		condition.setMaximumAge(maxAge);
+		condition.setMaximumAgeUnit(maxAgeUnit);
+		
+		return condition;
 	}
 	
 	public List<Rule> getRules() {

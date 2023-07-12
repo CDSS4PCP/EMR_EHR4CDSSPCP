@@ -2,8 +2,8 @@
 
     <td>${ui.format(config.rule.getId())}</td>
     <td>${ui.format(config.rule.getVaccine())}</td>
-    <td>${ui.format(config.rule.getMinimumAge())}</td>
-    <td>${ui.format(config.rule.getMaximumAge())}</td>
+    <td>${ui.format(config.rule.getMinimumAge())} ${ui.format(config.rule.getMinimumAgeUnit())}</td>
+    <td>${ui.format(config.rule.getMaximumAge())} ${ui.format(config.rule.getMaximumAgeUnit())}</td>
     <td>
 
         <ul>
@@ -54,9 +54,9 @@
                     <% } %>
 
                     <% if (config.rule.getPreviousRecord().isDoseAgeBased(c)) { %>
-                    <p>Minimum Age: ${config.rule.getPreviousRecord().getDoseMinAge(c)} weeks</p>
+                    <p>Minimum Age: ${config.rule.getPreviousRecord().getDoseMinAge(c)}  ${config.rule.getPreviousRecord().getDoseMinAgeUnit(c)}</p>
 
-                    <p>Maximum Age: ${config.rule.getPreviousRecord().getDoseMaxAge(c)} weeks</p>
+                    <p>Maximum Age: ${config.rule.getPreviousRecord().getDoseMaxAge(c)} ${config.rule.getPreviousRecord().getDoseMaxAgeUnit(c)}</p>
                     <% } %>
                     <% } %>
                 </li>

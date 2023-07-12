@@ -1,11 +1,11 @@
 package org.openmrs.module.cdss.api.util;
 
-public enum TimeUnit {
-	YEAR("year"), MONTH("month"), WEEK("week"), DAY("day");
+public enum BaseTimeUnit {
+	MONTH("month"), DAY("day");
 	
 	private String value;
 	
-	TimeUnit(String value) {
+	BaseTimeUnit(String value) {
 		this.value = value;
 	}
 	

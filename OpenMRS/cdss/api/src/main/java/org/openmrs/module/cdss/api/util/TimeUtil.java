@@ -97,4 +97,56 @@ public class TimeUtil {
 		return numMonths / MONTHS_IN_YEAR;
 	}
 	
+	public static BaseTimeUnit getBaseTimeUnit(TimeUnit timeUnit) {
+		switch (timeUnit) {
+			case YEAR:
+				return BaseTimeUnit.MONTH;
+			case MONTH:
+				return BaseTimeUnit.MONTH;
+			case WEEK:
+				return BaseTimeUnit.DAY;
+			case DAY:
+				return BaseTimeUnit.DAY;
+			default:
+				return BaseTimeUnit.DAY;
+		}
+	}
+	
+	public static Integer convertToBaseUnit(Integer value, TimeUnit timeUnit) {
+		BaseTimeUnit baseUnit = getBaseTimeUnit(timeUnit);
+		
+		if (baseUnit == BaseTimeUnit.MONTH) {
+			return convertToMonth(value, timeUnit);
+			
+		} else {
+			return convertToDay(value, timeUnit);
+		}
+	}
+	
+	public static Integer convertToDay(Integer value, TimeUnit timeUnit) {
+		BaseTimeUnit baseUnit = getBaseTimeUnit(timeUnit);
+		
+		if (baseUnit == BaseTimeUnit.MONTH) {
+			throw new UnsupportedOperationException("Cannot convert to day when base unit is month.");
+		} else {
+			if (timeUnit == TimeUnit.WEEK) {
+				return value * DAYS_IN_WEEK;
+			}
+			return value;
+		}
+	}
+	
+	public static Integer convertToMonth(Integer value, TimeUnit timeUnit) {
+		BaseTimeUnit baseUnit = getBaseTimeUnit(timeUnit);
+		
+		if (baseUnit == BaseTimeUnit.DAY) {
+			throw new UnsupportedOperationException("Cannot convert to month when base unit is day.");
+		} else {
+			if (timeUnit == TimeUnit.YEAR) {
+				return value * MONTHS_IN_YEAR;
+			}
+			return value;
+		}
+	}
+	
 }

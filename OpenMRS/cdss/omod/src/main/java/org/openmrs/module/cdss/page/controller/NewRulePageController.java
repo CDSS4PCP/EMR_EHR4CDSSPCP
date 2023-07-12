@@ -8,6 +8,9 @@ import org.openmrs.module.cdss.api.data.Action;
 import org.openmrs.module.cdss.api.data.ImmunizationRecordCondition;
 import org.openmrs.module.cdss.api.data.Rule;
 import org.openmrs.module.cdss.api.data.SpecialCondition;
+import org.openmrs.module.cdss.api.util.BaseTimeUnit;
+import org.openmrs.module.cdss.api.util.TimeUnit;
+import org.openmrs.module.cdss.api.util.TimeUtil;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.page.PageModel;
 import org.openmrs.ui.framework.page.PageRequest;
@@ -47,9 +50,17 @@ public class NewRulePageController {
 		String maxAgeString = (String) request.getAttribute("max-age");
 		
 		Integer minAge = minAgeString.length() == 0 ? CDSSConfig.RULE_MINIMUM_AGE : Integer.parseInt(minAgeString);
-		String minAgeUnit = (String) request.getAttribute("min-age-unit");
+		String minAgeUnitString = (String) request.getAttribute("min-age-unit");
 		Integer maxAge = maxAgeString.length() == 0 ? CDSSConfig.RULE_MAXIMUM_AGE : Integer.parseInt(maxAgeString);
-		String maxAgeUnit = (String) request.getAttribute("max-age-unit");
+		String maxAgeUnitString = (String) request.getAttribute("max-age-unit");
+		
+		TimeUnit minAgeUnit = TimeUnit.valueOf(minAgeUnitString);
+		TimeUnit maxAgeUnit = TimeUnit.valueOf(maxAgeUnitString);
+		
+		BaseTimeUnit minAgeBaseUnit = TimeUtil.getBaseTimeUnit(minAgeUnit);
+		BaseTimeUnit maxAgeBaseUnit = TimeUtil.getBaseTimeUnit(maxAgeUnit);
+		Integer minAgeValue = TimeUtil.convertToBaseUnit(minAge, minAgeUnit);
+		Integer maxAgeValue = TimeUtil.convertToBaseUnit(maxAge, maxAgeUnit);
 		
 		Boolean specialConditionExists = parseCheckboxValue((String) request.getAttribute("special-condition-exists"));
 		
@@ -108,7 +119,10 @@ public class NewRulePageController {
 				selectedActions[i] = service.getActionById(Integer.parseInt(selectedActionStrings[i]));
 			}
 			
-			Rule newRule = new Rule(vaccine, minAge, maxAge, selectedActions);
+			Rule newRule = new Rule(vaccine, minAgeValue, maxAgeValue, selectedActions);
+			
+			newRule.setMinimumAgeUnit(minAgeBaseUnit);
+			newRule.setMaximumAgeUnit(maxAgeBaseUnit);
 			
 			if (specialConditionExists)
 				newRule.setSpecialCondition(specialCondition);

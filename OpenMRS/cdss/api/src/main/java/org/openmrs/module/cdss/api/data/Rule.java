@@ -1,6 +1,6 @@
 package org.openmrs.module.cdss.api.data;
 
-import org.openmrs.module.cdss.api.util.TimeUnit;
+import org.openmrs.module.cdss.api.util.BaseTimeUnit;
 
 import java.util.Arrays;
 import java.util.Comparator;
@@ -38,11 +38,7 @@ public class Rule {
 	
 	private String vaccine;
 	
-	private Integer minimumAge;
-	
-	private Integer maximumAge;
-	
-	private TimeUnit ageUnit;
+	private AgeCondition ageCondition;
 	
 	private SpecialCondition specialCondition;
 	
@@ -54,14 +50,13 @@ public class Rule {
 	
 	public Rule() {
 		id = nextIndex++;
+		ageCondition = new AgeCondition();
 	}
 	
 	public Rule(Integer id, String vaccine, Integer minimumAge, Integer maximumAge, Action... actions) {
 		this.id = id;
 		this.vaccine = vaccine;
-		this.minimumAge = minimumAge;
-		this.maximumAge = maximumAge;
-		this.ageUnit = TimeUnit.Day;
+		this.ageCondition = new AgeCondition(minimumAge, maximumAge);
 		this.actions = actions;
 		
 		if (id == nextIndex) {
@@ -70,15 +65,7 @@ public class Rule {
 	}
 	
 	public Rule(String vaccine, Integer minimumAge, Integer maximumAge, Action... actions) {
-		this.id = nextIndex;
-		this.vaccine = vaccine;
-		this.minimumAge = minimumAge;
-		this.maximumAge = maximumAge;
-		this.ageUnit = TimeUnit.Day;
-		this.actions = actions;
-		
-		nextIndex++;
-		
+		this(nextIndex, vaccine, minimumAge, maximumAge, actions);
 	}
 	
 	public Integer getId() {
@@ -94,27 +81,43 @@ public class Rule {
 	}
 	
 	public Integer getMinimumAge() {
-		return minimumAge;
+		return ageCondition.getMinimumAge();
 	}
 	
 	public void setMinimumAge(Integer minimumAge) {
-		this.minimumAge = minimumAge;
+		ageCondition.setMinimumAge(minimumAge);
+	}
+	
+	public BaseTimeUnit getMinimumAgeUnit() {
+		return ageCondition.getMinimumAgeUnit();
+	}
+	
+	public void setMinimumAgeUnit(BaseTimeUnit unit) {
+		ageCondition.setMinimumAgeUnit(unit);
 	}
 	
 	public Integer getMaximumAge() {
-		return maximumAge;
+		return ageCondition.getMaximumAge();
 	}
 	
 	public void setMaximumAge(Integer maximumAge) {
-		this.maximumAge = maximumAge;
+		ageCondition.setMaximumAge(maximumAge);
 	}
 	
-	public TimeUnit getAgeUnit() {
-		return ageUnit;
+	public BaseTimeUnit getMaximumAgeUnit() {
+		return ageCondition.getMaximumAgeUnit();
 	}
 	
-	public void setAgeUnit(TimeUnit ageUnit) {
-		this.ageUnit = ageUnit;
+	public void setMaximumAgeUnit(BaseTimeUnit unit) {
+		ageCondition.setMaximumAgeUnit(unit);
+	}
+	
+	public AgeCondition getAgeCondition() {
+		return ageCondition;
+	}
+	
+	public void setAgeCondition(AgeCondition ageCondition) {
+		this.ageCondition = ageCondition;
 	}
 	
 	public SpecialCondition getSpecialCondition() {
@@ -160,16 +163,15 @@ public class Rule {
 		if (o == null || getClass() != o.getClass())
 			return false;
 		Rule rule = (Rule) o;
-		return id.equals(rule.id) && vaccine.equals(rule.vaccine) && minimumAge.equals(rule.minimumAge)
-		        && maximumAge.equals(rule.maximumAge) && specialCondition.equals(rule.specialCondition)
-		        && medicalConditions.equals(rule.medicalConditions) && previousRecord.equals(rule.previousRecord)
-		        && Arrays.equals(actions, rule.actions);
+		return id.equals(rule.id) && vaccine.equals(rule.vaccine) && ageCondition.equals(rule.ageCondition)
+		        && specialCondition.equals(rule.specialCondition) && medicalConditions.equals(rule.medicalConditions)
+		        && previousRecord.equals(rule.previousRecord) && Arrays.equals(actions, rule.actions);
 	}
 	
 	@Override
 	public String toString() {
-		return "Rule{" + "id=" + id + ", vaccine='" + vaccine + '\'' + ", minimumAge=" + minimumAge + ", maximumAge="
-		        + maximumAge + ", specialCondition='" + specialCondition + '\'' + ", medicalConditions='"
+		return "Rule{" + "id=" + id + ", vaccine='" + vaccine + '\'' + ", ageCondition=" + ageCondition
+		        + ", specialCondition='" + specialCondition + '\'' + ", medicalConditions='"
 		        + Arrays.toString(medicalConditions) + '\'' + ", previousRecord='" + previousRecord + '\'' + ", actions="
 		        + Arrays.toString(actions) + '}';
 	}
