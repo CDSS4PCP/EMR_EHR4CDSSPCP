@@ -10,7 +10,7 @@ public class ImmunizationRecordCondition {
 		
 		Integer timePeriod;
 		
-		AgeCondition ageCondition;
+		AgeCondition ageCondition = new AgeCondition();
 		
 		public Integer getTimePeriod() {
 			return timePeriod;

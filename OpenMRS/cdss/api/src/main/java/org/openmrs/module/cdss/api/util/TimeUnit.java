@@ -6,7 +6,7 @@ public enum TimeUnit {
 	private String value;
 	
 	TimeUnit(String value) {
-		this.value = value;
+		this.value = value.toUpperCase();
 	}
 	
 	@Override

@@ -7,6 +7,7 @@
         <% maximum = config.maximum != null ? config.maximum : 99999 %>
         <% value = config.value != null ? config.value : null %>
         <% unitName = name + "-unit" %>
+        <% selectedUnit = config.unit != null ? config.unit : "day" %>
 
 
         <label>${ui.format(label)}
@@ -28,12 +29,10 @@
         <label>
             Unit
             <select name=${unitName} required>
-                <option value="year">year</option>
-                <option value="month">month</option>
-                <option value="week">week</option>
-                <option value="day">day</option>
-                <option value="hour">hour</option>
-                <option value="minute">minute</option>
+                <option value="year" ${selectedUnit == "year" ? "selected" : ""}>year</option>
+                <option value="month" ${selectedUnit == "month" ? "selected" : ""}>month</option>
+                <option value="week" ${selectedUnit == "month" ? "week" : ""}>week</option>
+                <option value="day" ${selectedUnit == "month" ? "day" : ""}>day</option>
             </select>
         </label>
     </div>

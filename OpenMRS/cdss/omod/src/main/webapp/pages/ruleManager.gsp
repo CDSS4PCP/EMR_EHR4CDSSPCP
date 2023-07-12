@@ -61,13 +61,15 @@
     </form>
 </div>
 
-<% filterVaccine = param.filterVaccine %>
 
 <% if (param.deleteRuleId != null) { %>
-${ui.includeFragment ( 'cdss', 'confirmation', [ title : "Are you sure?", message: "Are you sure you want to delete this rule?", confirmHref: "ruleManager.page?confirmDeleteRuleId=" + deleteRuleId + "&filterVaccine=" + filterVaccine [ 0 ], cancelHref: "ruleManager.page?filterVaccine=" + filterVaccine [ 0 ] ] )}
+${ui.includeFragment('cdss', 'confirmation', [title: "Are you sure?", message: "Are you sure you want to delete rule " + param.deleteRuleId[0] + "?", confirmHref: "ruleManager.page?confirmDeleteRuleId=" + deleteRuleId + "&filterVaccine=" + filterVaccine[0], cancelHref: "ruleManager.page?filterVaccine=" + filterVaccine[0]])}
 <% } %>
 
-<a class="button confirm" href="newRule.page">Add rule</a>
+<% filterVaccine = param.filterVaccine %>
+
+
+<a class="button confirm" href="newRule.page">New rule</a>
 <table class="table table-sm table-responsive-sm table-responsive-md table-responsive-lg table-responsive-xl rule-table">
     <thead>
     <tr>

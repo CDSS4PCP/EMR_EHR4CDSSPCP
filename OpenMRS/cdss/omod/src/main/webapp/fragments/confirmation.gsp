@@ -7,7 +7,7 @@
         </div>
 
         <div class="dialog-content">
-            <p>
+            <p class="dialog-text">
                 ${config.message}
             </p>
 

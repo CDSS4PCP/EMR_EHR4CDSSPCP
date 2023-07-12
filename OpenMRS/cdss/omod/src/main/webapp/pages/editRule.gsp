@@ -163,9 +163,9 @@
 
     <br>
 
-    ${ui.includeFragment('cdss', 'ageConditionWidget', [label: "Minimum Age", name: "min-age", value: rule.getMinimumAge()])}
+    ${ui.includeFragment('cdss', 'ageConditionWidget', [label: "Minimum Age", name: "min-age", value: rule.getMinimumAge(), unit: rule.getMinimumAgeUnit().toString()])}
     <br>
-    ${ui.includeFragment('cdss', 'ageConditionWidget', [label: "Maximum Age", name: "max-age", value: rule.getMaximumAge()])}
+    ${ui.includeFragment('cdss', 'ageConditionWidget', [label: "Maximum Age", name: "max-age", value: rule.getMaximumAge(), unit: rule.getMaximumAgeUnit().toString()])}
 
     <div>
         <% if (rule.getSpecialCondition() != null) { %>
@@ -284,43 +284,19 @@
                     </label>
                     OR
 
-                    <label>
-                        Minimum Administer Age
+                    <div>
 
-                        <input type="number" name=${"time-interval-" + i + "-min-age"} min="0" max="99999"
-                               value='${ui.format(record.getDoseMinAge(i - 1))}'>
-                    </label>
-                    <label>
-                        Unit
-                        <select name= ${"time-interval-" + i + "-min-age-unit"}>
-                            <option value="year">year</option>
-                            <option value="month">month</option>
-                            <option value="week">week</option>
-                            <option value="day">day</option>
-                            <option value="hour">hour</option>
-                            <option value="minute">minute</option>
-                        </select>
-                    </label>
+                        ${ui.includeFragment('cdss', 'ageConditionWidget', [label: "Minimum Administer Age", name: "time-interval-" + i + "-min-age", value: record.getDoseMinAge(i - 1), unit: record.getDoseMinAgeUnit(i - 1).toString()])}
 
 
 
 
-                    <label>
-                        Maximum Administer Age
-                        <input type="number" name=${"time-interval-" + i + "-max-age"} min="0" max="99999"
-                               value='${ui.format(record.getDoseMaxAge(i - 1))}'>
-                    </label>
-                    <label>
-                        Unit
-                        <select name= ${"time-interval-" + i + "-max-age-unit"}>
-                            <option value="year">year</option>
-                            <option value="month">month</option>
-                            <option value="week">week</option>
-                            <option value="day">day</option>
-                            <option value="hour">hour</option>
-                            <option value="minute">minute</option>
-                        </select>
-                    </label>
+                        <br>
+
+
+                        ${ui.includeFragment('cdss', 'ageConditionWidget', [label: "Maximum Administer Age", name: "time-interval-" + i + "-max-age", value: record.getDoseMaxAge(i - 1), unit: record.getDoseMaxAgeUnit(i - 1).toString()])}
+
+                    </div>
 
                 </div>
 

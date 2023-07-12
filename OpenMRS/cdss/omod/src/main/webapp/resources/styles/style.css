@@ -4,7 +4,6 @@
 }
 
 
-
 .tooltip-text {
     visibility: hidden;
     position: absolute;
@@ -76,6 +75,7 @@
     margin: 40px;
     font-family: Arial;
     /*text-align: center;*/
+}
 
 .dialog-overlay {
     position: fixed;
@@ -97,5 +97,10 @@
     padding: 10px;
     text-align: center;
     z-index: 9999;
+
+}
+
+.dialog-text {
+    color: black;
 
 }

@@ -54,8 +54,8 @@ public class NewRulePageController {
 		Integer maxAge = maxAgeString.length() == 0 ? CDSSConfig.RULE_MAXIMUM_AGE : Integer.parseInt(maxAgeString);
 		String maxAgeUnitString = (String) request.getAttribute("max-age-unit");
 		
-		TimeUnit minAgeUnit = TimeUnit.valueOf(minAgeUnitString);
-		TimeUnit maxAgeUnit = TimeUnit.valueOf(maxAgeUnitString);
+		TimeUnit minAgeUnit = TimeUnit.valueOf(minAgeUnitString.toUpperCase());
+		TimeUnit maxAgeUnit = TimeUnit.valueOf(maxAgeUnitString.toUpperCase());
 		
 		BaseTimeUnit minAgeBaseUnit = TimeUtil.getBaseTimeUnit(minAgeUnit);
 		BaseTimeUnit maxAgeBaseUnit = TimeUtil.getBaseTimeUnit(maxAgeUnit);
