@@ -10,7 +10,7 @@
         "appId": "cdss.patientWidget",
         "extensionPointId": "patientDashboard.secondColumnFragments",
         "type": "link",
-        "url": "module/cdss/results.form?patientId={{patient.uuid}}&visitId={{visit.uuid}}",
+        "url": "cdss/patient.page?patientUuid={{patient.uuid}}&visitId={{visit.uuid}}",
         "label": "CDSS Patient Widget",
         "extensionParams": {
           "provider": "cdss",

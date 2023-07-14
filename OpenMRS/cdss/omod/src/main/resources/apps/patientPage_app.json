@@ -1,18 +1,19 @@
-[  {
-  "id": "cdss.patientPage",
-  "description": "An decision support system for vaccines.",
-  "order": 10,
-  "extensions": [
-    {
-      "id": "coreapps.patientDashboard.overallActions",
-      "extensionPointId": "patientDashboard.visitActions",
-      "type": "link",
-      "label": "CDSS",
-      "url": "module/cdss/results.form?patientUuid={{patient.uuid}}&visitId={{visit.uuid}}",
-      "icon": "icon-stethoscope",
-      "order": 20,
-      "requiredPrivilege": "Some required privilege like 'Task: coreapps.createVisit'"
-    }
-  ]
-}
+[
+  {
+    "id": "cdss.patientPage",
+    "description": "An decision support system for vaccines.",
+    "order": 10,
+    "extensions": [
+      {
+        "id": "coreapps.patientDashboard.overallActions",
+        "extensionPointId": "patientDashboard.visitActions",
+        "type": "link",
+        "label": "CDSS",
+        "url": "cdss/patient.page?patientUuid={{patient.uuid}}&visitId={{visit.uuid}}",
+        "icon": "icon-stethoscope",
+        "order": 20,
+        "requiredPrivilege": "Some required privilege like 'Task: coreapps.createVisit'"
+      }
+    ]
+  }
 ]

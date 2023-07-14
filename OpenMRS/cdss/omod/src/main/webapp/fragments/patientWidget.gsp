@@ -4,7 +4,7 @@
 
         <h3>CDSS Results</h3>
         <i class="icon-link edit-action right"
-           onclick="location.href = '../../module/cdss/results.form?patientUuid=${patientUuid}'"></i>
+           onclick="location.href = '../../cdss/patient.page?patientUuid=${patientUuid}'"></i>
     </div>
 
     <div class="info-body">
