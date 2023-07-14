@@ -14,13 +14,13 @@
 
     <!-- Wraps CDSSService methods in DB transactions and OpenMRS interceptors,
     which set audit info like dateCreated, changedBy, etc.-->
-    <bean id="cdss.RuleRunnerServiceImpl"
+    <bean id="cdss.RuleEngineServiceImpl"
           class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
         <property name="transactionManager">
             <ref bean="transactionManager"/>
         </property>
         <property name="target">
-            <bean class="org.openmrs.module.cdss.api.impl.RuleRunnerServiceImpl">
+            <bean class="org.openmrs.module.cdss.api.impl.RuleEngineServiceImpl">
                 <property name="dao" ref="cdss.CDSSDao"/>
             </bean>
         </property>
@@ -77,7 +77,7 @@
     <!--            <ref bean="transactionManager"/>-->
     <!--        </property>-->
     <!--        <property name="target">-->
-    <!--            <bean class="org.openmrs.module.cdss.api.impl.RuleRunnerServiceImpl">-->
+    <!--            <bean class="org.openmrs.module.cdss.api.impl.RuleEngineServiceImpl">-->
     <!--&lt;!&ndash;                <property name="dao" ref="cdss.CDSSDao"/>&ndash;&gt;-->
     <!--            </bean>-->
     <!--        </property>-->
@@ -94,8 +94,8 @@
     <bean parent="serviceContext">
         <property name="moduleService">
             <list>
-                <value>org.openmrs.module.cdss.api.RuleRunnerService</value>
-                <ref bean="cdss.RuleRunnerServiceImpl"/>
+                <value>org.openmrs.module.cdss.api.RuleEngineService</value>
+                <ref bean="cdss.RuleEngineServiceImpl"/>
             </list>
         </property>
     </bean>

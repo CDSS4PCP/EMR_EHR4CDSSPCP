@@ -7,7 +7,7 @@ import org.openmrs.api.context.Context;
 import org.openmrs.module.cdss.CDSSWebConfig;
 import org.openmrs.module.cdss.RunnerResult;
 import org.openmrs.module.cdss.api.RuleManagerService;
-import org.openmrs.module.cdss.api.RuleRunnerService;
+import org.openmrs.module.cdss.api.RuleEngineService;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -46,7 +46,7 @@ public class PatientPageController {
 	        @RequestParam(value = "ruleset", required = false) String ruleset,
 	        @SpringBean("cdss.RuleManagerServiceImpl") RuleManagerService service) {
 		
-		RuleRunnerService vc = Context.getService(RuleRunnerService.class);
+		RuleEngineService vc = Context.getService(RuleEngineService.class);
 		PatientService patientService = Context.getPatientService();
 		Patient patient = patientService.getPatientByUuid(patientUuid);
 		
@@ -59,14 +59,14 @@ public class PatientPageController {
 		HashMap<String, RunnerResult> results = new HashMap<String, RunnerResult>();
 		
 		if (ruleset == null) {
-			for (RunnerResult res : vc.getAllResults(patient, service)) {
+			for (RunnerResult res : vc.getAllResults(patient)) {
 				results.put(res.getVaccine(), res);
 			}
 			mv.addObject("results", results);
 		} else {
 			if (loadedRulesets.contains(ruleset)) {
 				
-				RunnerResult result = vc.getResult(patient, ruleset, service);
+				RunnerResult result = vc.getResult(patient, ruleset);
 				results.put(result.getVaccine(), result);
 				mv.addObject("results", results);
 				

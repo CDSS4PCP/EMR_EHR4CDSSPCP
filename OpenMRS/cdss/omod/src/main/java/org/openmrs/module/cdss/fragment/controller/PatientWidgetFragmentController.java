@@ -6,7 +6,7 @@ import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.cdss.RunnerResult;
 import org.openmrs.module.cdss.api.RuleManagerService;
-import org.openmrs.module.cdss.api.RuleRunnerService;
+import org.openmrs.module.cdss.api.RuleEngineService;
 import org.openmrs.ui.framework.annotation.FragmentParam;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.fragment.FragmentModel;
@@ -34,9 +34,9 @@ public class PatientWidgetFragmentController {
 	        @SpringBean("cdss.RuleManagerServiceImpl") RuleManagerService service) {
 		
 		Patient p = patientService.getPatient(patientId);
-		RuleRunnerService vc = Context.getService(RuleRunnerService.class);
+		RuleEngineService vc = Context.getService(RuleEngineService.class);
 		
-		List<RunnerResult> res = vc.getAllResults(p, service);
+		List<RunnerResult> res = vc.getAllResults(p);
 		
 		model.addAttribute("results", res);
 		model.addAttribute("patientUuid", p.getUuid());

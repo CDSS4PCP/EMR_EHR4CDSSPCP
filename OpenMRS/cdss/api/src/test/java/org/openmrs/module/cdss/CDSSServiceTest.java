@@ -9,20 +9,9 @@
  */
 package org.openmrs.module.cdss;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.openmrs.User;
-import org.openmrs.api.UserService;
-import org.openmrs.module.cdss.api.dao.CDSSDao;
-import org.openmrs.module.cdss.api.impl.RuleRunnerServiceImpl;
-
 import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.when;
 
 /**
  * This is a unit test, which verifies logic in CDSSService. It doesn't extend

@@ -4,11 +4,11 @@
     "age_condition": {
       "min_age": 0,
       "min_age_unit": "month",
+      "min_age_inclusive": false,
       "max_age": 12,
-      "max_age_unit": "month"
+      "max_age_unit": "month",
+      "max_age_inclusive": true
     },
-    "min_age_unit": "month",
-    "max_age_unit": "month",
     "special_condition": null,
     "medical_conditions": [],
     "previous_record": null,
@@ -22,11 +22,11 @@
     "age_condition": {
       "min_age": 12,
       "min_age_unit": "month",
+      "min_age_inclusive": true,
       "max_age": 47,
-      "max_age_unit": "month"
+      "max_age_unit": "month",
+      "max_age_inclusive": true
     },
-    "min_age_unit": "month",
-    "max_age_unit": "month",
     "special_condition": null,
     "medical_conditions": [],
     "previous_record": null,
@@ -40,17 +40,16 @@
     "age_condition": {
       "min_age": 47,
       "min_age_unit": "month",
-      "max_age": 218,
-      "max_age_unit": "month"
+      "min_age_inclusive": false,
+      "max_age": 65,
+      "max_age_unit": "year"
     },
-    "min_age_unit": "month",
-    "max_age_unit": "month",
     "special_condition": null,
     "medical_conditions": null,
     "previous_record": null,
     "actions": [
       "Admin 1 dose",
-      "Schedule 2nd dose > = 4 wk of 1st dose"
+      "Schedule 2nd dose 4-6 yr of age"
     ]
   },
   {
@@ -58,11 +57,11 @@
     "age_condition": {
       "min_age": 12,
       "min_age_unit": "month",
-      "max_age": 36,
-      "max_age_unit": "month"
+      "min_age_inclusive": false,
+      "max_age": 4,
+      "max_age_unit": "year",
+      "max_age_inclusive": false
     },
-    "min_age_unit": "month",
-    "max_age_unit": "month",
     "special_condition": null,
     "medical_conditions": null,
     "previous_record": {
@@ -72,16 +71,17 @@
           "age_condition": {
             "min_age": 12,
             "min_age_unit": "month",
+            "min_age_inclusive": false,
             "max_age": 15,
-            "max_age_unit": "month"
+            "max_age_unit": "month",
+            "max_age_inclusive": false
           },
           "timePeriod": null
         }
       ]
     },
     "actions": [
-      "Admin 1 dose",
-      "Schedule 2nd dose > = 4 wk of 1st dose"
+      "Schedule 2nd dose 4-6 yr of age"
     ]
   }
 ]

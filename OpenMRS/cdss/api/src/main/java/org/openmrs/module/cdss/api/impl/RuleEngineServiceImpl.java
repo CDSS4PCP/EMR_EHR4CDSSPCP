@@ -4,24 +4,25 @@ import org.apache.log4j.Logger;
 import org.openmrs.Patient;
 import org.openmrs.api.APIException;
 import org.openmrs.api.UserService;
+import org.openmrs.api.context.Context;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.cdss.CDSSConfig;
 import org.openmrs.module.cdss.Item;
 import org.openmrs.module.cdss.RunnerResult;
+import org.openmrs.module.cdss.api.RuleEngineService;
 import org.openmrs.module.cdss.api.RuleManagerService;
-import org.openmrs.module.cdss.api.RuleRunnerService;
 import org.openmrs.module.cdss.api.dao.CDSSDao;
 import org.openmrs.module.cdss.api.data.Action;
 import org.openmrs.module.cdss.api.data.Rule;
+import org.openmrs.module.cdss.api.util.BaseTimeUnit;
 import org.openmrs.module.cdss.api.util.TimeUtil;
-import org.openmrs.ui.framework.annotation.SpringBean;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
-public class RuleRunnerServiceImpl extends BaseOpenmrsService implements RuleRunnerService {
+public class RuleEngineServiceImpl extends BaseOpenmrsService implements RuleEngineService {
 	
 	CDSSDao dao;
 	
@@ -67,8 +68,9 @@ public class RuleRunnerServiceImpl extends BaseOpenmrsService implements RuleRun
 	 * @param patient Patient to get results for.
 	 * @return A list of results. Each entry corresponds to a vaccine.
 	 */
-	public List<RunnerResult> getAllResults(Patient patient,
-	        @SpringBean("cdss.RuleManagerServiceImpl") RuleManagerService service) {
+	public List<RunnerResult> getAllResults(Patient patient) {
+		RuleManagerService service = Context.getService(RuleManagerService.class);
+		
 		if (patient == null) {
 			log.error("CDSS Runner ERROR: Running getAllResults() on null patient! \n Returning null.");
 			return null;
@@ -76,7 +78,7 @@ public class RuleRunnerServiceImpl extends BaseOpenmrsService implements RuleRun
 		List<String> rulesets = getLoadedVaccineRulesets();
 		ArrayList<RunnerResult> results = new ArrayList<RunnerResult>(rulesets.size());
 		for (String vaccine : rulesets) {
-			results.add(getResult(patient, vaccine, service));
+			results.add(getResult(patient, vaccine));
 		}
 		return results;
 	}
@@ -88,8 +90,9 @@ public class RuleRunnerServiceImpl extends BaseOpenmrsService implements RuleRun
 	 * @param vaccine A string that is a valid vaccine code.
 	 * @return A single result given patient and a specific vaccine.
 	 */
-	public RunnerResult getResult(Patient patient, String vaccine,
-	        @SpringBean("cdss.RuleManagerServiceImpl") RuleManagerService service) {
+	public RunnerResult getResult(Patient patient, String vaccine) {
+		RuleManagerService service = Context.getService(RuleManagerService.class);
+		
 		if (patient == null || vaccine == null) {
 			
 			log.error("CDSS Runner ERROR: Running getResult() on null patient or null vaccine! \n Returning null.");
@@ -161,18 +164,24 @@ public class RuleRunnerServiceImpl extends BaseOpenmrsService implements RuleRun
 		for (Rule rule : rules) {
 			applicableRules.add(rule);
 			
-			//			Integer ruleMinAge = rule.getMinimumAge();
-			//			Integer ruleMaxAge = rule.getMaximumAge();
-			//
-			//			if (rule.getAgeUnit() == TimeUnit.Day) {
-			//				if (numDays > ruleMinAge && numDays < ruleMaxAge) {
-			//					applicableRules.add(rule);
-			//				}
-			//			} else if (rule.getAgeUnit() == TimeUnit.Month) {
-			//				if (numMonths > ruleMinAge && numMonths < ruleMaxAge) {
-			//					applicableRules.add(rule);
-			//				}
-			//			}
+			Integer ruleMinAge = rule.getMinimumAge();
+			BaseTimeUnit ruleMinAgeUnit = rule.getMinimumAgeUnit();
+			Integer ruleMaxAge = rule.getMaximumAge();
+			BaseTimeUnit ruleMaxAgeUnit = rule.getMaximumAgeUnit();
+			
+			if (ruleMinAgeUnit == BaseTimeUnit.DAY && ruleMaxAgeUnit == BaseTimeUnit.DAY) {
+				if (numDays > ruleMinAge && numDays < ruleMaxAge) {
+					applicableRules.add(rule);
+				}
+			} else if (ruleMinAgeUnit == BaseTimeUnit.MONTH && ruleMaxAgeUnit == BaseTimeUnit.MONTH) {
+				if (numMonths > ruleMinAge && numMonths < ruleMaxAge) {
+					applicableRules.add(rule);
+				}
+			} else if (ruleMinAgeUnit == BaseTimeUnit.DAY && ruleMaxAgeUnit == BaseTimeUnit.MONTH) {
+				if (numDays > ruleMinAge && numMonths < ruleMaxAge) {
+					applicableRules.add(rule);
+				}
+			}
 		}
 		return applicableRules;
 	}

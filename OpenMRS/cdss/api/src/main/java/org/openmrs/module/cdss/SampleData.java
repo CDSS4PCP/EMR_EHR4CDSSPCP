@@ -8,6 +8,8 @@ import org.openmrs.module.cdss.api.data.AgeCondition;
 import org.openmrs.module.cdss.api.data.ImmunizationRecordCondition;
 import org.openmrs.module.cdss.api.data.Rule;
 import org.openmrs.module.cdss.api.util.BaseTimeUnit;
+import org.openmrs.module.cdss.api.util.TimeUnit;
+import org.openmrs.module.cdss.api.util.TimeUtil;
 
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -122,11 +124,14 @@ public class SampleData {
 		AgeCondition condition = new AgeCondition();
 		Integer minAge = object.getInt("min_age");
 		String minAgeUnitString = object.getString("min_age_unit").toUpperCase();
-		BaseTimeUnit minAgeUnit = BaseTimeUnit.valueOf(minAgeUnitString);
+		minAge = TimeUtil.convertToBaseUnit(minAge, TimeUnit.valueOf(minAgeUnitString));
+		BaseTimeUnit minAgeUnit = TimeUtil.getBaseTimeUnit(TimeUnit.valueOf(minAgeUnitString));
 		
 		Integer maxAge = object.getInt("max_age");
 		String maxAgeUnitString = object.getString("max_age_unit").toUpperCase();
-		BaseTimeUnit maxAgeUnit = BaseTimeUnit.valueOf(maxAgeUnitString);
+		maxAge = TimeUtil.convertToBaseUnit(maxAge, TimeUnit.valueOf(maxAgeUnitString));
+		
+		BaseTimeUnit maxAgeUnit = TimeUtil.getBaseTimeUnit(TimeUnit.valueOf(maxAgeUnitString));
 		
 		condition.setMinimumAge(minAge);
 		condition.setMinimumAgeUnit(minAgeUnit);

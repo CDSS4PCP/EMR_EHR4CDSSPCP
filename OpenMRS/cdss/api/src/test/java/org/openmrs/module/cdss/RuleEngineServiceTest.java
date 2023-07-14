@@ -2,17 +2,18 @@ package org.openmrs.module.cdss;
 
 import org.junit.Test;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.cdss.api.RuleRunnerService;
+import org.openmrs.module.cdss.api.RuleEngineService;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
+
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
-public class RuleRunnerServiceTest extends BaseModuleContextSensitiveTest {
+public class RuleEngineServiceTest extends BaseModuleContextSensitiveTest {
 	
 	@Test
 	public void shouldSetupContext() {
-		assertNotNull(Context.getService(RuleRunnerService.class));
+		assertNotNull(Context.getService(RuleEngineService.class));
 	}
 	
 	//	@Test
@@ -23,14 +24,14 @@ public class RuleRunnerServiceTest extends BaseModuleContextSensitiveTest {
 	
 	@Test
 	public void checkNullPatient() {
-		RuleRunnerService serv = Context.getService(RuleRunnerService.class);
-		assertThat(null, is(serv.getAllResults(null, null)));
+		RuleEngineService serv = Context.getService(RuleEngineService.class);
+		assertThat(null, is(serv.getAllResults(null)));
 	}
 	
 	@Test
 	public void checkNullPatientNullVaccine() {
-		RuleRunnerService serv = Context.getService(RuleRunnerService.class);
-		assertThat(null, is(serv.getResult(null, null, null)));
+		RuleEngineService serv = Context.getService(RuleEngineService.class);
+		assertThat(null, is(serv.getResult(null, null)));
 	}
 	
 }

@@ -4,14 +4,13 @@ import org.junit.Test;
 import org.openmrs.module.cdss.api.data.Action;
 
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
-public class SampleDataTest extends RuleRunnerServiceTest {
+public class SampleDataTest extends RuleEngineServiceTest {
 	
 	@Test
 	public void checkSampleDataLoad() {
