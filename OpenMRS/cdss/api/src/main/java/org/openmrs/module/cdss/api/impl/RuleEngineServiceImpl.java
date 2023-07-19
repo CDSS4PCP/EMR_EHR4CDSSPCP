@@ -16,11 +16,10 @@ import org.openmrs.module.cdss.api.data.Action;
 import org.openmrs.module.cdss.api.data.Rule;
 import org.openmrs.module.cdss.api.util.BaseTimeUnit;
 import org.openmrs.module.cdss.api.util.TimeUtil;
+import org.openmrs.api.ConditionService;
+import org.openmrs.Condition;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class RuleEngineServiceImpl extends BaseOpenmrsService implements RuleEngineService {
 	
@@ -98,33 +97,42 @@ public class RuleEngineServiceImpl extends BaseOpenmrsService implements RuleEng
 			log.error("CDSS Runner ERROR: Running getResult() on null patient or null vaccine! \n Returning null.");
 			return null;
 		}
+//		log.debug("Patients: " + patient.getGivenName() + " " + patient.getFamilyName());
 		
 		List<Rule> rules = service.getRulesByVaccine(vaccine);
+//		log.debug("Total Rules: " + rules);
+		
 		List<Rule> applicableRules = new ArrayList<Rule>();
 		// Check Medical Indications
+		applicableRules = checkMedicalIndications(patient, rules);
+//		log.debug("After Checking Medical Indications: " + applicableRules);
 		// Check Special Condition
 		// Check Prexisting Record
 		// Check Age
-		applicableRules = checkAge(patient, rules);
+		applicableRules = checkAge(patient, applicableRules);
+//		log.debug("After Checking Age: " + applicableRules);
 		
 		if (applicableRules.size() > 0) {
-			Action[] actions = applicableRules.get(0).getActions();
+			List<Action> actions = applicableRules.get(0).getActions();
 			RunnerResult result = new RunnerResult();
 			result.setPatient(patient);
 			result.setVaccine(vaccine);
 			result.setStatus(1);
 			result.setActions(actions);
+			result.setRule(applicableRules.get(0));
 			
 			return result;
 		}
 		RunnerResult test = new RunnerResult();
 		Action action = new Action();
-		action.setDisplayString("Testing....");
+		action.setDisplayString("ERROR: No rule found!");
 		action.setPriority(2);
 		test.setPatient(patient);
 		test.setVaccine(vaccine);
 		test.setActions(action);
 		test.setStatus(0);
+		test.setRule(null);
+		
 		return test;
 	}
 	
@@ -153,6 +161,31 @@ public class RuleEngineServiceImpl extends BaseOpenmrsService implements RuleEng
 	public void onShutdown() {
 		log.info("CDSS Vaccine Runner service stopped...");
 		
+	}
+	
+	private List<Rule> checkMedicalIndications(Patient patient, List<Rule> rules) {
+		ConditionService conditionService = Context.getService(ConditionService.class);
+		HashSet<Condition> patientConditions = new HashSet<Condition>(conditionService.getActiveConditions(patient));
+		List<Rule> applicableRules = new ArrayList<Rule>();
+		
+		if (patientConditions.size() == 0) {
+			for (Rule rule : rules) {
+				if (rule.getMedicalConditions() == null || rule.getMedicalConditions().size() == 0) {
+					applicableRules.add(rule);
+				}
+			}
+		} else {
+
+			for (Rule rule : rules) {
+				for (Condition condition : patientConditions) {
+					if (rule.getMedicalConditions().contains(condition.getCondition().getCoded())) {
+						applicableRules.add(rule);
+					}
+				}
+				
+			}
+		}
+		return applicableRules;
 	}
 	
 	private List<Rule> checkAge(Patient patient, List<Rule> rules) {

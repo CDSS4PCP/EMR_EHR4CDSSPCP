@@ -22,12 +22,15 @@
             <groupId>org.openmrs.web</groupId>
             <artifactId>openmrs-web</artifactId>
             <scope>provided</scope>
+            <version>${openmrsPlatformVersion}</version>
         </dependency>
         <dependency>
             <groupId>org.openmrs.web</groupId>
             <artifactId>openmrs-web</artifactId>
             <scope>provided</scope>
             <classifier>tests</classifier>
+            <version>${openmrsPlatformVersion}</version>
+
         </dependency>
 
         <dependency>
@@ -54,7 +57,10 @@
             <artifactId>event-api</artifactId>
             <type>jar</type>
             <scope>provided</scope>
+            <version>${eventAPIVersion}</version>
+
         </dependency>
+
 
     </dependencies>
 

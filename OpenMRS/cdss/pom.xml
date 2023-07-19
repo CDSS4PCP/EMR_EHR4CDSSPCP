@@ -16,6 +16,7 @@
     <description>CDSS module for OpenMRS, that provides clinical decision support for vaccinations.</description>
 
 
+
     <organization>
         <name>cdss4pcp</name>
         <url>https://cdss4pcp.com/</url>
@@ -38,7 +39,7 @@
             <dependency>
                 <groupId>org.openmrs.distro</groupId>
                 <artifactId>referenceapplication</artifactId>
-                <version>2.4</version>
+                <version>2.6.0</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -65,6 +66,15 @@
                 <artifactId>uicommons-api</artifactId>
                 <scope>provided</scope>
             </dependency>
+
+            <dependency>
+                <groupId>org.openmrs.api</groupId>
+                <artifactId>openmrs-api</artifactId>
+                <type>pom</type>
+                <scope>provided</scope>
+                <version>${openmrsPlatformVersion}</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 
@@ -93,6 +103,9 @@
     </pluginRepositories>
 
     <properties>
-        <openmrsPlatformVersion>1.11.6</openmrsPlatformVersion>
+        <openmrsPlatformVersion>2.4.3</openmrsPlatformVersion>
+        <eventAPIVersion>2.4</eventAPIVersion>
+
+
     </properties>
 </project>

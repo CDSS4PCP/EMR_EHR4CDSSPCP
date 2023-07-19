@@ -39,8 +39,6 @@
 	
 	<!-- Extensions -->
 	<extension>
-		<point>org.openmrs.admin.list</point>
-		<class>org.openmrs.module.cdss.extension.html.AdminList</class>
 	</extension>
 
 	<aware_of_modules>

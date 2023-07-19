@@ -1,9 +1,12 @@
 package org.openmrs.module.cdss.api.data;
 
+import org.openmrs.Concept;
 import org.openmrs.module.cdss.api.util.BaseTimeUnit;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.List;
 
 public class Rule {
 	
@@ -42,11 +45,11 @@ public class Rule {
 	
 	private SpecialCondition specialCondition;
 	
-	private String[] medicalConditions;
+	private List<Concept> medicalConditions;
 	
 	private ImmunizationRecordCondition previousRecord;
 	
-	private Action[] actions;
+	private List<Action> actions;
 	
 	public Rule() {
 		id = nextIndex++;
@@ -57,7 +60,7 @@ public class Rule {
 		this.id = id;
 		this.vaccine = vaccine;
 		this.ageCondition = new AgeCondition(minimumAge, maximumAge);
-		this.actions = actions;
+		this.actions = Arrays.asList(actions);
 		
 		if (id == nextIndex) {
 			nextIndex++;
@@ -132,12 +135,20 @@ public class Rule {
 		this.specialCondition = new SpecialCondition(label);
 	}
 	
-	public String[] getMedicalConditions() {
+	public List<Concept> getMedicalConditions() {
 		return medicalConditions;
 	}
 	
-	public void setMedicalConditions(String... medicalConditions) {
-		this.medicalConditions = medicalConditions;
+	public void setMedicalConditions(Concept... medicalConditions) {
+		if (medicalConditions == null || medicalConditions.length == 0) {
+			this.medicalConditions = null;
+			return;
+		}
+		this.medicalConditions = new ArrayList<Concept>();
+		for (Concept condition : medicalConditions) {
+			if (condition != null)
+				this.medicalConditions.add(condition);
+		}
 	}
 	
 	public ImmunizationRecordCondition getPreviousRecord() {
@@ -148,12 +159,12 @@ public class Rule {
 		this.previousRecord = previousRecord;
 	}
 	
-	public Action[] getActions() {
+	public List<Action> getActions() {
 		return actions;
 	}
 	
-	public void setActions(Action[] actions) {
-		this.actions = actions;
+	public void setActions(Action... actions) {
+		this.actions = new ArrayList<Action>(Arrays.asList(actions));
 	}
 	
 	@Override
@@ -165,14 +176,13 @@ public class Rule {
 		Rule rule = (Rule) o;
 		return id.equals(rule.id) && vaccine.equals(rule.vaccine) && ageCondition.equals(rule.ageCondition)
 		        && specialCondition.equals(rule.specialCondition) && medicalConditions.equals(rule.medicalConditions)
-		        && previousRecord.equals(rule.previousRecord) && Arrays.equals(actions, rule.actions);
+		        && previousRecord.equals(rule.previousRecord) && actions.equals(rule.actions);
 	}
 	
 	@Override
 	public String toString() {
 		return "Rule{" + "id=" + id + ", vaccine='" + vaccine + '\'' + ", ageCondition=" + ageCondition
-		        + ", specialCondition='" + specialCondition + '\'' + ", medicalConditions='"
-		        + Arrays.toString(medicalConditions) + '\'' + ", previousRecord='" + previousRecord + '\'' + ", actions="
-		        + Arrays.toString(actions) + '}';
+		        + ", specialCondition='" + specialCondition + '\'' + ", medicalConditions='" + medicalConditions + '\''
+		        + ", previousRecord='" + previousRecord + '\'' + ", actions=" + actions + '}';
 	}
 }

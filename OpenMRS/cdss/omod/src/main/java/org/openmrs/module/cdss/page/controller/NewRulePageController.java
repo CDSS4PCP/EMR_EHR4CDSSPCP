@@ -132,9 +132,11 @@ public class NewRulePageController {
 				newRule.setPreviousRecord(immunizationRecordCondition);
 			}
 			
-			if (selectedIndicationStrings != null && selectedIndicationStrings.length > 0)
-				newRule.setMedicalConditions(selectedIndicationStrings);
-			
+			// TODO fix medical conditions
+			if (selectedIndicationStrings != null && selectedIndicationStrings.length > 0) {
+				//				newRule.setMedicalConditions(selectedIndicationStrings);
+				newRule.setMedicalConditions(null);
+			}
 			Boolean success;
 			success = !service.addRule(newRule);
 			model.addAttribute("ruleAddedError", success);

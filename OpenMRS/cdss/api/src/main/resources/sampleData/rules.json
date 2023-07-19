@@ -10,7 +10,7 @@
       "max_age_inclusive": true
     },
     "special_condition": null,
-    "medical_conditions": [],
+    "medical_conditions": null,
     "previous_record": null,
     "actions": [
       "Schedule 1st dose 12-15 mon of age",
@@ -28,7 +28,7 @@
       "max_age_inclusive": true
     },
     "special_condition": null,
-    "medical_conditions": [],
+    "medical_conditions": null,
     "previous_record": null,
     "actions": [
       "Admin 1 dose",
@@ -82,6 +82,25 @@
     },
     "actions": [
       "Schedule 2nd dose 4-6 yr of age"
+    ]
+  },
+  {
+    "vaccine": "MMR",
+    "age_condition": {
+      "min_age": 0,
+      "min_age_unit": "month",
+      "min_age_inclusive": false,
+      "max_age": 999,
+      "max_age_unit": "month",
+      "max_age_inclusive": true
+    },
+    "special_condition": null,
+    "medical_conditions": {
+      "concept_id": 138405
+    },
+    "previous_record": null,
+    "actions": [
+      "DO Not Administer"
     ]
   }
 ]

@@ -142,9 +142,12 @@ public class EditRulePageController {
 				newRule.setPreviousRecord(immunizationRecordCondition);
 			}
 			
-			if (selectedIndicationStrings != null && selectedIndicationStrings.length > 0)
-				newRule.setMedicalConditions(selectedIndicationStrings);
+			// TODD fix this
 			
+			if (selectedIndicationStrings != null && selectedIndicationStrings.length > 0) {
+				//				newRule.setMedicalConditions(selectedIndicationStrings);
+				newRule.setMedicalConditions(null);
+			}
 			Boolean success;
 			if (editRuleId == null)
 				success = !service.addRule(newRule);

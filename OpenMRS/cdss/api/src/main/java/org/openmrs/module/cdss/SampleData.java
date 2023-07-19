@@ -3,6 +3,11 @@ package org.openmrs.module.cdss;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
+import org.openmrs.Concept;
+import org.openmrs.Condition;
+import org.openmrs.api.ConceptService;
+import org.openmrs.api.ConditionService;
+import org.openmrs.api.context.Context;
 import org.openmrs.module.cdss.api.data.Action;
 import org.openmrs.module.cdss.api.data.AgeCondition;
 import org.openmrs.module.cdss.api.data.ImmunizationRecordCondition;
@@ -45,7 +50,9 @@ public class SampleData {
 			
 			String specialCondition = source.getJSONObject(i).get("special_condition") != JSONObject.NULL ? (String) source
 			        .getJSONObject(i).get("special_condition") : null;
-			//            String medicalConditions =  source.getJSONObject(i).get("medical_conditions") != JSONObject.NULL ? (String)source.getJSONObject(i).get("medical_conditions") : null;
+			
+			Concept medicalConditions = source.getJSONObject(i).get("medical_conditions") != JSONObject.NULL ? parseMedicalCondition((JSONObject) source
+			        .getJSONObject(i).get("medical_conditions")) : null;
 			
 			ImmunizationRecordCondition previousRecord = parsePreviousCondition(
 			    source.getJSONObject(i).get("previous_record"), vaccine);
@@ -76,7 +83,7 @@ public class SampleData {
 			rule.setVaccine(vaccine);
 			rule.setAgeCondition(ageCondition);
 			rule.setSpecialCondition(specialCondition);
-			//            rule.setMedicalCondition(null);
+			rule.setMedicalConditions(medicalConditions);
 			rule.setPreviousRecord(previousRecord);
 			rule.setActions(actionsForRule);
 			
@@ -140,6 +147,20 @@ public class SampleData {
 		condition.setMaximumAgeUnit(maxAgeUnit);
 		
 		return condition;
+	}
+	
+	private Concept parseMedicalCondition(JSONObject object) {
+		if (object == null || object == JSONObject.NULL) {
+			return null;
+		}
+		
+		ConceptService conceptService = Context.getService(ConceptService.class);
+		
+		if (object.has("concept_id") && conceptService != null) {
+			return conceptService.getConcept(object.getInt("concept_id"));
+			
+		}
+		return null;
 	}
 	
 	public List<Rule> getRules() {

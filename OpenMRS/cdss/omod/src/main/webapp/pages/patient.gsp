@@ -28,6 +28,8 @@ ${ui.includeFragment('cdss', 'errorMesssage')}
         <tr>
             <th>Vaccine</th>
             <th>Message</th>
+            <th>Rule Id</th>
+
         </tr>
 
         <% results.each { res -> %>
@@ -42,11 +44,32 @@ ${ui.includeFragment('cdss', 'errorMesssage')}
                 <p>${action.getDisplayString()}</p>
                 <% } %>
             </td>
+
+            <td>
+
+                <% if (res.value.getRule() == null) { %>
+                <p>???</p>
+                <% } else { %>
+                <p>${res.value.getRule().getId()}</p>
+                <% } %>
+            </td>
+
             <% } else { %>
+
             <td style="color: red;">${res.key}</td>
             <td style="color: red;">
                 <% res.value.getActions().each { action -> %>
                 <p>${action.getDisplayString()}</p>
+                <% } %>
+            </td>
+
+
+            <td style="color: red;">
+
+                <% if (res.value.getRule() == null) { %>
+                <p>???</p>
+                <% } else { %>
+                <p>${res.value.getRule().getId()}</p>
                 <% } %>
             </td>
             <% } %>

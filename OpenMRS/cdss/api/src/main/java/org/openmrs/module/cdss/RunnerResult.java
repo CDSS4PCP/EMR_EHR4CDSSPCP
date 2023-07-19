@@ -2,13 +2,16 @@ package org.openmrs.module.cdss;
 
 import org.openmrs.Patient;
 import org.openmrs.module.cdss.api.data.Action;
+import org.openmrs.module.cdss.api.data.Rule;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class RunnerResult {
 	
 	// Message to be displayed to clinician.
-	private Action[] actions;
+	private List<Action> actions;
 	
 	// The patient that this result is for
 	private Patient patient;
@@ -16,21 +19,29 @@ public class RunnerResult {
 	// The vaccine code that this result is for.
 	private String vaccine;
 	
+	private Rule rule;
+	
 	// Status of the result. if zero, then no action is needed by clinician.
 	// Otherwise, some action needs to be taken as instructed by message
 	private Integer status;
 	
-	public Action[] getActions() {
+	public List<Action> getActions() {
 		return actions;
 	}
 	
 	public void setActions(Action action) {
-		actions = new Action[1];
-		actions[0] = action;
+		actions = new ArrayList<Action>();
+		actions.add(action);
 	}
 	
-	public void setActions(Action[] actions) {
+	public void setActions(Action... actions) {
+		this.actions = Arrays.asList(actions);
+		
+	}
+	
+	public void setActions(List<Action> actions) {
 		this.actions = actions;
+		
 	}
 	
 	public Patient getPatient() {
@@ -49,6 +60,14 @@ public class RunnerResult {
 		this.vaccine = vaccine;
 	}
 	
+	public Rule getRule() {
+		return rule;
+	}
+	
+	public void setRule(Rule rule) {
+		this.rule = rule;
+	}
+	
 	public int getStatus() {
 		return status;
 	}
@@ -59,7 +78,7 @@ public class RunnerResult {
 	
 	@Override
 	public String toString() {
-		return "RunnerResult{" + "actions=" + Arrays.toString(actions) + ", patient=" + patient.getId() + ", vaccine='"
-		        + vaccine + '\'' + ", status=" + status + '}';
+		return "RunnerResult{" + "actions=" + actions + ", patient=" + patient.getId() + ", vaccine='" + vaccine + '\''
+		        + ", status=" + status + '}';
 	}
 }
