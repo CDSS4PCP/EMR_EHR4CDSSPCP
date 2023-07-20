@@ -69,12 +69,15 @@
     </td>
     <td>
 
+        <% if (config.rule.getMedicalConditions() != null) { %>
         <ul>
             <% config.rule.getMedicalConditions().each { condition -> %>
 
             <li>${condition}</li>
             <% } %>
         </ul>
+        <% } %>
+
     </td>
 
     <td>

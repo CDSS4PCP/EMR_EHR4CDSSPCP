@@ -3,6 +3,22 @@
     ui.includeCss("cdss", "style.css")
 
 %>
+
+
+
+<script>
+    var breadcrumbs = [
+        {icon: "icon-home", link: '/' + OPENMRS_CONTEXT_PATH + '/index.htm'},
+        {
+            label: " System Administration",
+            link: '/' + OPENMRS_CONTEXT_PATH + '/coreapps/systemadministration/systemAdministration.page'
+        },
+        {label: "CDSS Manager", link: '/' + OPENMRS_CONTEXT_PATH + '/cdss/cdssManager.page'},
+        {label: "Action Manager", link: '/' + OPENMRS_CONTEXT_PATH + '/cdss/actionManager.page'}
+    ];
+</script>
+
+
 <h2>CDSS Action Manager</h2>
 
 <br/>
@@ -12,7 +28,6 @@
 
 <a class="button confirm" href="newAction.page">Add Action</a>
 
-%{--<p>Num actions: ${actions.size()}</p>--}%
 <table class="table table-sm table-responsive-sm table-responsive-md table-responsive-lg table-responsive-xl rule-table">
     <thead>
     <tr>

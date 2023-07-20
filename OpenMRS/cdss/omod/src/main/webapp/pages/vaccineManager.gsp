@@ -4,6 +4,19 @@
 
 %>
 
+
+<script>
+    var breadcrumbs = [
+        {icon: "icon-home", link: '/' + OPENMRS_CONTEXT_PATH + '/index.htm'},
+        {
+            label: " System Administration",
+            link: '/' + OPENMRS_CONTEXT_PATH + '/coreapps/systemadministration/systemAdministration.page'
+        },
+        {label: "CDSS Manager", link: '/' + OPENMRS_CONTEXT_PATH + '/cdss/cdssManager.page'},
+        {label: "Vaccine Manager", link: '/' + OPENMRS_CONTEXT_PATH + '/cdss/vaccineManager.page'}
+    ];
+</script>
+
 <% if (errorAddingVaccine) { %>
 
 

@@ -4,7 +4,18 @@
 
 
 %>
-
+<script>
+    var breadcrumbs = [
+        {icon: "icon-home", link: '/' + OPENMRS_CONTEXT_PATH + '/index.htm'},
+        {
+            label: " System Administration",
+            link: '/' + OPENMRS_CONTEXT_PATH + '/coreapps/systemadministration/systemAdministration.page'
+        },
+        {label: "CDSS Manager", link: '/' + OPENMRS_CONTEXT_PATH + '/cdss/cdssManager.page'},
+        {label: "Action Manager", link: '/' + OPENMRS_CONTEXT_PATH + '/cdss/actionManager.page'},
+        {label: "New Action", link: '/' + OPENMRS_CONTEXT_PATH + '/cdss/newAction.page'}
+    ];
+</script>
 
 
 <form method="post">

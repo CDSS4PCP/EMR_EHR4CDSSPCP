@@ -3,6 +3,21 @@
     ui.includeCss("cdss", "style.css")
 
 %>
+
+
+<script>
+    var breadcrumbs = [
+        {icon: "icon-home", link: '/' + OPENMRS_CONTEXT_PATH + '/index.htm'},
+        {
+            label: " System Administration",
+            link: '/' + OPENMRS_CONTEXT_PATH + '/coreapps/systemadministration/systemAdministration.page'
+        },
+        {label: "CDSS Manager", link: '/' + OPENMRS_CONTEXT_PATH + '/cdss/cdssManager.page'},
+        {label: "Rule Manager", link: '/' + OPENMRS_CONTEXT_PATH + '/cdss/ruleManager.page'}
+    ];
+</script>
+
+
 <h2>CDSS Rule Manager</h2>
 
 <br/>
@@ -63,7 +78,8 @@
 
 
 <% if (param.deleteRuleId != null) { %>
-${ui.includeFragment('cdss', 'confirmation', [title: "Are you sure?", message: "Are you sure you want to delete rule " + param.deleteRuleId[0] + "?", confirmHref: "ruleManager.page?confirmDeleteRuleId=" + deleteRuleId + "&filterVaccine=" + filterVaccine[0], cancelHref: "ruleManager.page?filterVaccine=" + filterVaccine[0]])}
+${
+        ui.includeFragment('cdss', 'confirmation', [title: "Are you sure?", message: "Are you sure you want to delete rule " + param.deleteRuleId[0] + "?", confirmHref: "ruleManager.page?confirmDeleteRuleId=" + deleteRuleId + "&filterVaccine=" + filterVaccine[0], cancelHref: "ruleManager.page?filterVaccine=" + filterVaccine[0]])}
 <% } %>
 
 <% filterVaccine = param.filterVaccine %>

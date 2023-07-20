@@ -3,6 +3,19 @@
     ui.decorateWith("appui", "standardEmrPage", [title: "CDSS Manager"])
 
 %>
+
+
+<script>
+    var breadcrumbs = [
+        {icon: "icon-home", link: '/' + OPENMRS_CONTEXT_PATH + '/index.htm'},
+        {
+            label: " System Administration",
+            link: '/' + OPENMRS_CONTEXT_PATH + '/' + 'coreapps/systemadministration/systemAdministration.page'
+        },
+        {label: "CDSS Manager", link: '#'}
+    ];
+</script>
+
 <h2>CDSS Manager</h2>
 
 <br/>

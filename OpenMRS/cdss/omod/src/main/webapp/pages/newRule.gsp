@@ -5,6 +5,21 @@
 %>
 
 
+
+<script>
+    var breadcrumbs = [
+        {icon: "icon-home", link: '/' + OPENMRS_CONTEXT_PATH + '/index.htm'},
+        {
+            label: " System Administration",
+            link: '/' + OPENMRS_CONTEXT_PATH + '/coreapps/systemadministration/systemAdministration.page'
+        },
+        {label: "CDSS Manager", link: '/' + OPENMRS_CONTEXT_PATH + '/cdss/cdssManager.page'},
+        {label: "Rule Manager", link: '/' + OPENMRS_CONTEXT_PATH + '/cdss/ruleManager.page'},
+        {label: "New Rule", link: '/' + OPENMRS_CONTEXT_PATH + '/cdss/newRule.page'}
+    ];
+</script>
+
+
 <script>
     function specialConditionToggle(e) {
         let elem = document.getElementById("special-condition-exists");

@@ -90,7 +90,7 @@
       "min_age": 0,
       "min_age_unit": "month",
       "min_age_inclusive": false,
-      "max_age": 999,
+      "max_age": 9999,
       "max_age_unit": "month",
       "max_age_inclusive": true
     },
