@@ -58,7 +58,7 @@
             <ref bean="transactionManager"/>
         </property>
         <property name="target">
-            <bean class="org.openmrs.module.cdss.api.impl.RuleManagerServiceImpl">
+            <bean class="org.openmrs.module.cdss.api.impl.RuleLoggerServiceImpl">
                 <!--                <property name="dao" ref="cdss.CDSSDao"/>-->
             </bean>
         </property>

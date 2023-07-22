@@ -4,11 +4,9 @@ import org.openmrs.Patient;
 import org.openmrs.module.cdss.api.data.Action;
 import org.openmrs.module.cdss.api.data.Rule;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
-public class RunnerResult {
+public class EngineResult {
 	
 	// Message to be displayed to clinician.
 	private List<Action> actions;
@@ -27,6 +25,9 @@ public class RunnerResult {
 	
 	public List<Action> getActions() {
 		return actions;
+	}
+	
+	public EngineResult() {
 	}
 	
 	public void setActions(Action action) {
@@ -76,9 +77,28 @@ public class RunnerResult {
 		this.status = status;
 	}
 	
+	public String getId() {
+		return hashCode() + "";
+	}
+	
 	@Override
 	public String toString() {
 		return "RunnerResult{" + "actions=" + actions + ", patient=" + patient.getId() + ", vaccine='" + vaccine + '\''
 		        + ", status=" + status + '}';
+	}
+	
+	//    @Override
+	//    public boolean equals(Object o) {
+	//        if (this == o) return true;
+	//        if (o == null || getClass() != o.getClass()) return false;
+	//        EngineResult result = (EngineResult) o;
+	//        return Objects.equals(actions, result.actions) && Objects.equals(patient, result.patient) && Objects.equals(vaccine, result.vaccine) && Objects.equals(rule, result.rule) && Objects.equals(status, result.status);
+	//    }
+	
+	@Override
+	public int hashCode() {
+		return Arrays.hashCode(new Object[] { actions, //auto-boxed
+		        patient, //auto-boxed
+		        vaccine, rule, status });
 	}
 }

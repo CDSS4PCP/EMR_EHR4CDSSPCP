@@ -4,7 +4,7 @@ import org.apache.log4j.Logger;
 import org.openmrs.Patient;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.cdss.RunnerResult;
+import org.openmrs.module.cdss.EngineResult;
 import org.openmrs.module.cdss.api.RuleManagerService;
 import org.openmrs.module.cdss.api.RuleEngineService;
 import org.openmrs.ui.framework.annotation.FragmentParam;
@@ -36,7 +36,7 @@ public class PatientWidgetFragmentController {
 		Patient p = patientService.getPatient(patientId);
 		RuleEngineService vc = Context.getService(RuleEngineService.class);
 		
-		List<RunnerResult> res = vc.getAllResults(p);
+		List<EngineResult> res = vc.getAllResults(p);
 		
 		model.addAttribute("results", res);
 		model.addAttribute("patientUuid", p.getUuid());

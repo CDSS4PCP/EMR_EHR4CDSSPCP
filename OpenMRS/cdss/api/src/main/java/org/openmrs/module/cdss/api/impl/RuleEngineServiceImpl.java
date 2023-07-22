@@ -8,7 +8,7 @@ import org.openmrs.api.context.Context;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.cdss.CDSSConfig;
 import org.openmrs.module.cdss.Item;
-import org.openmrs.module.cdss.RunnerResult;
+import org.openmrs.module.cdss.EngineResult;
 import org.openmrs.module.cdss.api.RuleEngineService;
 import org.openmrs.module.cdss.api.RuleManagerService;
 import org.openmrs.module.cdss.api.dao.CDSSDao;
@@ -56,10 +56,6 @@ public class RuleEngineServiceImpl extends BaseOpenmrsService implements RuleEng
 	
 	private final Logger log = Logger.getLogger(getClass());
 	
-	// Random is used to generate random vaccine results for simply displaying VaccineRunnerService's functionality.
-	// In the future, this will replace by database queries for a more deterministic and accurate outcome.
-	final Random random = new Random();
-	
 	/**
 	 * Get results for a given patient and all vaccines that are avialable. It calls
 	 * getLoadedVaccineRulesets() to get the vaccines
@@ -67,7 +63,7 @@ public class RuleEngineServiceImpl extends BaseOpenmrsService implements RuleEng
 	 * @param patient Patient to get results for.
 	 * @return A list of results. Each entry corresponds to a vaccine.
 	 */
-	public List<RunnerResult> getAllResults(Patient patient) {
+	public List<EngineResult> getAllResults(Patient patient) {
 		RuleManagerService service = Context.getService(RuleManagerService.class);
 		
 		if (patient == null) {
@@ -75,7 +71,7 @@ public class RuleEngineServiceImpl extends BaseOpenmrsService implements RuleEng
 			return null;
 		}
 		List<String> rulesets = getLoadedVaccineRulesets();
-		ArrayList<RunnerResult> results = new ArrayList<RunnerResult>(rulesets.size());
+		ArrayList<EngineResult> results = new ArrayList<EngineResult>(rulesets.size());
 		for (String vaccine : rulesets) {
 			results.add(getResult(patient, vaccine));
 		}
@@ -89,7 +85,7 @@ public class RuleEngineServiceImpl extends BaseOpenmrsService implements RuleEng
 	 * @param vaccine A string that is a valid vaccine code.
 	 * @return A single result given patient and a specific vaccine.
 	 */
-	public RunnerResult getResult(Patient patient, String vaccine) {
+	public EngineResult getResult(Patient patient, String vaccine) {
 		RuleManagerService service = Context.getService(RuleManagerService.class);
 		
 		if (patient == null || vaccine == null) {
@@ -97,24 +93,24 @@ public class RuleEngineServiceImpl extends BaseOpenmrsService implements RuleEng
 			log.error("CDSS Runner ERROR: Running getResult() on null patient or null vaccine! \n Returning null.");
 			return null;
 		}
-		//		log.debug("Patients: " + patient.getGivenName() + " " + patient.getFamilyName());
 		
 		List<Rule> rules = service.getRulesByVaccine(vaccine);
-		//		log.debug("Total Rules: " + rules);
 		
 		List<Rule> applicableRules = new ArrayList<Rule>();
+		
 		// Check Medical Indications
 		applicableRules = checkMedicalIndications(patient, rules);
-		//		log.debug("After Checking Medical Indications: " + applicableRules);
+		
 		// Check Special Condition
+		
 		// Check Prexisting Record
+		
 		// Check Age
 		applicableRules = checkAge(patient, applicableRules);
-		//		log.debug("After Checking Age: " + applicableRules);
 		
 		if (applicableRules.size() > 0) {
 			List<Action> actions = applicableRules.get(0).getActions();
-			RunnerResult result = new RunnerResult();
+			EngineResult result = new EngineResult();
 			result.setPatient(patient);
 			result.setVaccine(vaccine);
 			result.setStatus(1);
@@ -123,7 +119,7 @@ public class RuleEngineServiceImpl extends BaseOpenmrsService implements RuleEng
 			
 			return result;
 		}
-		RunnerResult test = new RunnerResult();
+		EngineResult test = new EngineResult();
 		Action action = new Action();
 		action.setDisplayString("ERROR: No rule found!");
 		action.setPriority(2);

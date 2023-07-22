@@ -10,6 +10,9 @@ import org.openmrs.module.cdss.CDSSConfig;
 import org.openmrs.module.cdss.api.RuleLoggerService;
 import org.openmrs.module.cdss.api.data.Action;
 
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -19,6 +22,8 @@ import java.util.List;
 
 public class RuleLoggerServiceImpl extends BaseOpenmrsService implements RuleLoggerService {
 	
+	PrintWriter writer;
+	
 	private final Logger log = Logger.getLogger(getClass());
 	
 	/**
@@ -26,6 +31,21 @@ public class RuleLoggerServiceImpl extends BaseOpenmrsService implements RuleLog
 	 */
 	@Override
 	public void onStartup() {
+		
+		try {
+			writer = new PrintWriter("CDSS-Log.txt", "UTF-8");
+			log.info("Created log file at CDSS-Log.txt");
+			
+		}
+		catch (FileNotFoundException e) {
+			log.info("Unable to create log file at CDSS-Log.txt");
+			
+		}
+		catch (UnsupportedEncodingException e) {
+			log.info("Unable to encode log file at CDSS-Log.txt");
+			
+		}
+		
 		log.info("CDSS Vaccine Logger service started...");
 	}
 	
@@ -34,11 +54,17 @@ public class RuleLoggerServiceImpl extends BaseOpenmrsService implements RuleLog
 	 */
 	@Override
 	public void onShutdown() {
+		
+		if (writer != null) {
+			writer.flush();
+			writer.close();
+			
+			log.info("Saving log file at CDSS-Log.txt");
+		}
 		log.info("CDSS Vaccine Logger service stopped...");
 		
 	}
 	
-	@Override
 	public List<String> getLoadedVaccineRulesets() {
 		return CDSSConfig.VACCINE_CODES;
 	}
@@ -46,8 +72,15 @@ public class RuleLoggerServiceImpl extends BaseOpenmrsService implements RuleLog
 	@Override
 	public void recordRuleHit(ZonedDateTime time, Patient patient, int ruleId, String vaccine, Action action,
 	        Boolean actionTaken, User userInitiated, User userActionAdministered) {
-		Instant i = Instant.now();
 		
-		throw new NotImplementedException("This method is not finished yet!");
+		log.debug("Saving rule hit");
+		if (writer == null) {
+			log.debug("Could not save record hit because writer is null!");
+		} else {
+			writer.println("Time: " + time + " Patient: " + patient + " Rule: " + ruleId + " Vaccine: " + vaccine);
+			log.debug("Time: " + time + " Patient: " + patient + " Rule: " + ruleId + " Vaccine: " + vaccine);
+			writer.flush();
+
+		}
 	}
 }

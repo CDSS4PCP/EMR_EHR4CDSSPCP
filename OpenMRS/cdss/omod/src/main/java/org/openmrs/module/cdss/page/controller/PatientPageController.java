@@ -5,18 +5,15 @@ import org.openmrs.Patient;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.cdss.CDSSWebConfig;
-import org.openmrs.module.cdss.RunnerResult;
-import org.openmrs.module.cdss.api.RuleManagerService;
+import org.openmrs.module.cdss.EngineResult;
 import org.openmrs.module.cdss.api.RuleEngineService;
+import org.openmrs.module.cdss.api.RuleLoggerService;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.page.PageModel;
 import org.openmrs.ui.framework.page.PageRequest;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.ModelAndView;
 
+import java.time.Instant;
+import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.List;
 
@@ -32,7 +29,9 @@ public class PatientPageController {
 	
 	public String get(PageModel model, PageRequest request,
 	        @SpringBean("cdss.RuleEngineServiceImpl") RuleEngineService engineService,
+	        @SpringBean("cdss.RuleLoggerServiceImpl") RuleLoggerService loggerService,
 	        @SpringBean("patientService") PatientService patientService) {
+		
 		model.addAttribute("error", null);
 		
 		String patientUuid = (String) request.getAttribute("patientUuid");
@@ -40,6 +39,7 @@ public class PatientPageController {
 		if (patientUuid == null) {
 			return "redirect:" + CDSSWebConfig.ERROR_URL;
 		}
+		
 		String ruleset = (String) request.getAttribute("ruleset");
 		
 		Patient patient = patientService.getPatientByUuid(patientUuid);
@@ -49,15 +49,15 @@ public class PatientPageController {
 		model.addAttribute("patientId", patientUuid);
 		
 		List<String> loadedRulesets = engineService.getLoadedVaccineRulesets();
-		HashMap<String, RunnerResult> results = new HashMap<String, RunnerResult>();
+		HashMap<String, EngineResult> results = new HashMap<String, EngineResult>();
 		if (ruleset == null) {
-			for (RunnerResult res : engineService.getAllResults(patient)) {
+			for (EngineResult res : engineService.getAllResults(patient)) {
 				results.put(res.getVaccine(), res);
 			}
 			model.addAttribute("results", results);
 		} else {
 			if (loadedRulesets.contains(ruleset)) {
-				RunnerResult result = engineService.getResult(patient, ruleset);
+				EngineResult result = engineService.getResult(patient, ruleset);
 				results.put(result.getVaccine(), result);
 				model.addAttribute("results", results);
 			} else {
@@ -65,14 +65,38 @@ public class PatientPageController {
 			}
 		}
 		
+		if (request.getAttribute("takeAction") != null) {
+			String resultUuid = (String) request.getAttribute("takeAction");
+			
+			EngineResult result = null;
+			
+			for (EngineResult res : results.values()) {
+				if (res.getId().equals(resultUuid)) {
+					result = res;
+				}
+			}
+			
+			if (result == null) {
+				log.debug("ERROR: No result found for uuid: " + resultUuid);
+				log.debug("Results: " + results);
+			} else {
+				
+				loggerService.recordRuleHit(ZonedDateTime.now(), patient, result.getRule().getId(), result.getVaccine(),
+				    null, true, Context.getAuthenticatedUser(), Context.getAuthenticatedUser());
+				return "redirect:" + "/coreapps/clinicianfacing/patient.page?patientId=" + patientUuid;
+			}
+			
+		}
+		
 		return null;
 	}
 	
 	public String post(PageModel model, PageRequest request,
 	        @SpringBean("cdss.RuleEngineServiceImpl") RuleEngineService engineService,
+	        @SpringBean("cdss.RuleLoggerServiceImpl") RuleLoggerService loggerService,
 	        @SpringBean("patientService") PatientService patientService) {
 		
-		return get(model, request, engineService, patientService);
+		return get(model, request, engineService, loggerService, patientService);
 	}
 	
 }

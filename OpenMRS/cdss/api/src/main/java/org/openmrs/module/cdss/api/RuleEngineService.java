@@ -4,7 +4,7 @@ import org.openmrs.Patient;
 import org.openmrs.annotation.Authorized;
 import org.openmrs.api.APIException;
 import org.openmrs.module.cdss.Item;
-import org.openmrs.module.cdss.RunnerResult;
+import org.openmrs.module.cdss.EngineResult;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -23,9 +23,9 @@ public interface RuleEngineService extends CDSSService {
 	@Transactional(readOnly = true)
 	Item getItemByUuid(String uuid) throws APIException;
 	
-	RunnerResult getResult(Patient patient, String vaccine);
+	EngineResult getResult(Patient patient, String vaccine);
 	
 	List<String> getLoadedVaccineRulesets();
 	
-	List<RunnerResult> getAllResults(Patient patient);
+	List<EngineResult> getAllResults(Patient patient);
 }

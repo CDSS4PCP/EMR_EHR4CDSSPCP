@@ -53,6 +53,14 @@ ${ui.includeFragment('cdss', 'errorMesssage')}
                 <p>${res.value.getRule().getId()}</p>
                 <% } %>
             </td>
+            <td>
+                <% if (res.value.getRule() == null) { %>
+
+                <a class="button disabled" disabled>Take action</a>
+                <% } else { %>
+                <a class="button confirm" href="?takeAction=${res.value.getId()}&patientUuid=${patientId}">Take action</a>
+                <% } %>
+            </td>
 
             <% } else { %>
 
@@ -70,6 +78,15 @@ ${ui.includeFragment('cdss', 'errorMesssage')}
                 <p>???</p>
                 <% } else { %>
                 <p>${res.value.getRule().getId()}</p>
+                <% } %>
+            </td>
+
+            <td>
+                <% if (res.value.getRule() == null) { %>
+
+                <a class="button disabled" disabled>Take action</a>
+                <% } else { %>
+                <a class="button confirm" href="?takeAction=${res.value.getId()}&patientUuid=${patientId}">Take action</a>
                 <% } %>
             </td>
             <% } %>
