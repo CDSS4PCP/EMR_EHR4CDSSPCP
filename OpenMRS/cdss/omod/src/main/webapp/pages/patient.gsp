@@ -54,11 +54,12 @@ ${ui.includeFragment('cdss', 'errorMesssage')}
                 <% } %>
             </td>
             <td>
-                <% if (res.value.getRule() == null) { %>
+                <% if (res.value.getRule() == null || (disabledResults != null && disabledResults.contains(res.value.getId()))) { %>
 
                 <a class="button disabled" disabled>Take action</a>
                 <% } else { %>
-                <a class="button confirm" href="?takeAction=${res.value.getId()}&patientUuid=${patientId}">Take action</a>
+                <a class="button confirm"
+                   href="?takeAction=${res.value.getId()}&patientUuid=${patientId}">Take action</a>
                 <% } %>
             </td>
 
@@ -82,11 +83,12 @@ ${ui.includeFragment('cdss', 'errorMesssage')}
             </td>
 
             <td>
-                <% if (res.value.getRule() == null) { %>
+                <% if (res.value.getRule() == null || (disabledResults != null && disabledResults.contains(res.value.getId()))) { %>
 
                 <a class="button disabled" disabled>Take action</a>
                 <% } else { %>
-                <a class="button confirm" href="?takeAction=${res.value.getId()}&patientUuid=${patientId}">Take action</a>
+                <a class="button confirm"
+                   href="?takeAction=${res.value.getId()}&patientUuid=${patientId}">Take action</a>
                 <% } %>
             </td>
             <% } %>

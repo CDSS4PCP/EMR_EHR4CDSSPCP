@@ -14,6 +14,7 @@ import org.openmrs.ui.framework.page.PageRequest;
 
 import java.time.Instant;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -33,6 +34,7 @@ public class PatientPageController {
 	        @SpringBean("patientService") PatientService patientService) {
 		
 		model.addAttribute("error", null);
+		model.addAttribute("disabledResults", new ArrayList<String>());
 		
 		String patientUuid = (String) request.getAttribute("patientUuid");
 		
@@ -65,6 +67,15 @@ public class PatientPageController {
 			}
 		}
 		
+		List<String> disabledResults = new ArrayList<String>();
+		for (EngineResult result : results.values()) {
+			if (loggerService.isActionTaken(result.getId())) {
+				disabledResults.add(result.getId());
+			}
+		}
+		
+		model.addAttribute("disabledResults", disabledResults);
+		
 		if (request.getAttribute("takeAction") != null) {
 			String resultUuid = (String) request.getAttribute("takeAction");
 			
@@ -81,8 +92,8 @@ public class PatientPageController {
 				log.debug("Results: " + results);
 			} else {
 				
-				loggerService.recordRuleHit(ZonedDateTime.now(), patient, result.getRule().getId(), result.getVaccine(),
-				    null, true, Context.getAuthenticatedUser(), Context.getAuthenticatedUser());
+				loggerService.recordRuleHit(ZonedDateTime.now(), result, true, Context.getAuthenticatedUser(),
+				    Context.getAuthenticatedUser());
 				return "redirect:" + "/coreapps/clinicianfacing/patient.page?patientId=" + patientUuid;
 			}
 			

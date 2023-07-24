@@ -21,5 +21,5 @@
 
 <br/>
 
-${ui.includeFragment('cdss', 'notImplementedWidget')}
 
+<p>Total Actions taken: ${numActionsTaken}</p>
