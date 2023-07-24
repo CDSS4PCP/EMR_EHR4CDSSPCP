@@ -37,13 +37,18 @@
         <label>
             Select a vaccine
 
-            <select onclick="redirectToFilteredVaccine(event)" name="filterVaccine">
+            <select name="filterVaccine">
                 <% vaccines.each { vaccine -> %>
+
+                <% if (param.filterVaccine == vaccine) { %>
+                <option value="${vaccine}" selected>
+                    ${vaccine}
+                </option>
+                <% } else { %>
                 <option value="${vaccine}">
                     ${vaccine}
                 </option>
-
-
+                <% } %>
                 <% } %>
             </select>
         </label>
@@ -61,7 +66,7 @@
 
             <select onchange="redirectToFilteredVaccine(event)">
                 <% vaccines.each { vaccine -> %>
-                <% if (param.filterVaccine == vaccine) { %>
+                <% if (param.filterVaccine != null && param.filterVaccine.length > 0 && param.filterVaccine[0] == vaccine) { %>
                 <option value="${vaccine}" selected>
                     ${vaccine}
                 </option>
@@ -76,13 +81,12 @@
     </form>
 </div>
 
+<% filterVaccine = param.filterVaccine %>
 
 <% if (param.deleteRuleId != null) { %>
-${
-        ui.includeFragment('cdss', 'confirmation', [title: "Are you sure?", message: "Are you sure you want to delete rule " + param.deleteRuleId[0] + "?", confirmHref: "ruleManager.page?confirmDeleteRuleId=" + deleteRuleId + "&filterVaccine=" + filterVaccine[0], cancelHref: "ruleManager.page?filterVaccine=" + filterVaccine[0]])}
+${ui.includeFragment ( 'cdss', 'confirmation', [ title : "Are you sure?", message: "Are you sure you want to delete rule " + param.deleteRuleId [ 0 ] + "?", confirmHref: "ruleManager.page?confirmDeleteRuleId=" + deleteRuleId + "&filterVaccine=" + filterVaccine [ 0 ], cancelHref: "ruleManager.page?filterVaccine=" + filterVaccine [ 0 ] ] )}
 <% } %>
 
-<% filterVaccine = param.filterVaccine %>
 
 
 <a class="button confirm" href="newRule.page">New rule</a>

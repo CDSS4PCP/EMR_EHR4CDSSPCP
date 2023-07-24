@@ -56,11 +56,12 @@ public class RuleManagerPageController {
 		if (confirmDeleteRuleId != null) {
 			
 			Rule rule = service.getRuleById(confirmDeleteRuleId);
-			
 			String vaccine = rule.getVaccine();
 			if (rule == null) {
 				return "redirect:" + CDSSWebConfig.ERROR_URL + "?nonExistentRuleId=" + confirmDeleteRuleId;
-				
+			} else {
+				service.deleteRule(confirmDeleteRuleId);
+				return "redirect:" + CDSSWebConfig.RULE_MANAGER_URL + "?filterVaccine=" + vaccine;
 			}
 		} else if (deleteRuleId != null) {
 			Rule rule = service.getRuleById(deleteRuleId);
