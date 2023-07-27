@@ -4,6 +4,7 @@ import org.openmrs.Patient;
 import org.openmrs.module.cdss.api.data.Action;
 import org.openmrs.module.cdss.api.data.Rule;
 
+import java.time.ZonedDateTime;
 import java.util.*;
 
 public class EngineResult {
@@ -23,11 +24,14 @@ public class EngineResult {
 	// Otherwise, some action needs to be taken as instructed by message
 	private Integer status;
 	
+	ZonedDateTime timestamp;
+	
 	public List<Action> getActions() {
 		return actions;
 	}
 	
 	public EngineResult() {
+		timestamp = ZonedDateTime.now();
 	}
 	
 	public void setActions(Action action) {
@@ -81,6 +85,14 @@ public class EngineResult {
 		return hashCode() + "";
 	}
 	
+	public ZonedDateTime getTimestamp() {
+		return timestamp;
+	}
+	
+	public void setTimestamp(ZonedDateTime timestamp) {
+		this.timestamp = timestamp;
+	}
+	
 	@Override
 	public String toString() {
 		return "RunnerResult{" + "actions=" + actions + ", patient=" + patient.getId() + ", vaccine='" + vaccine + '\''
@@ -99,6 +111,6 @@ public class EngineResult {
 	public int hashCode() {
 		return Arrays.hashCode(new Object[] { actions, //auto-boxed
 		        patient, //auto-boxed
-		        vaccine, rule, status });
+		        vaccine, rule, status, timestamp.getDayOfYear(), timestamp.getYear() });
 	}
 }

@@ -23,3 +23,33 @@
 
 
 <p>Total Actions taken: ${numActionsTaken}</p>
+
+<p>Total Actions taken in the past week: ${numActionsTakenPastWeek}</p>
+
+<table>
+    <thead>
+    <tr>
+        <th>
+            Vaccine
+        </th>
+        <th>Num of total actions taken</th>
+    </tr>
+    </thead>
+    <tbody>
+    <% vaccines.each { vaccine -> %>
+
+    <tr>
+        <td>
+            ${vaccine}
+        </td>
+
+        <td>
+            ${actionsTakenByVaccine[vaccine]}
+        </td>
+    </tr>
+
+
+    <% } %>
+    </tbody>
+</table>
+

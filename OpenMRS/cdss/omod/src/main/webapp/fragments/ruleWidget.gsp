@@ -5,7 +5,6 @@
     <td>${ui.format(config.rule.getMinimumAge())} ${ui.format(config.rule.getMinimumAgeUnit())}</td>
     <td>${ui.format(config.rule.getMaximumAge())} ${ui.format(config.rule.getMaximumAgeUnit())}</td>
     <td>
-
         <ul>
             <% if (config.rule.getSpecialCondition() != null && config.rule.getSpecialCondition().getLabel() != null) { %>
             <li>

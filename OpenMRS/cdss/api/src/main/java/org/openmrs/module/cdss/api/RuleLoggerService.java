@@ -16,4 +16,8 @@ public interface RuleLoggerService extends CDSSService {
 	boolean isActionTaken(String resultId);
 	
 	int getNumberOfActionsTaken();
+	
+	int getNumberOfActionsTakenWithinTimeRange(ZonedDateTime start, ZonedDateTime end);
+	
+	int getNumberOfActionsTakenByVaccine(String vaccine);
 }

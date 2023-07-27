@@ -1,5 +1,5 @@
 <%
-    ui.decorateWith("appui", "standardEmrPage", [title: "CDSS New Action"])
+    ui.decorateWith("appui", "standardEmrPage", [title: "CDSS Results for " + givenName + " " + familyName])
     ui.includeCss("cdss", "style.css")
 
 

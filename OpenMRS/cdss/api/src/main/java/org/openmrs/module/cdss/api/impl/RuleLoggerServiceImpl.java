@@ -28,7 +28,7 @@ public class RuleLoggerServiceImpl extends BaseOpenmrsService implements RuleLog
 	
 	private final Logger log = Logger.getLogger(getClass());
 	
-	private List<String> resultsWithTakenActions = new ArrayList<String>();
+	private List<EngineResult> resultsWithTakenActions = new ArrayList<EngineResult>();
 	
 	/**
 	 * Logic that is run when this service is started. At the moment, this method is not used.
@@ -91,16 +91,53 @@ public class RuleLoggerServiceImpl extends BaseOpenmrsService implements RuleLog
 		}
 		
 		if (actionTaken) {
-			resultsWithTakenActions.add(result.getId());
+			resultsWithTakenActions.add(result);
 		}
 	}
 	
 	public boolean isActionTaken(String resultId) {
-		return resultsWithTakenActions.contains(resultId);
+		for (EngineResult result : resultsWithTakenActions) {
+			if (result.getId().equals(resultId)) {
+				return true;
+			}
+		}
+		
+		return false;
 	}
 	
 	@Override
 	public int getNumberOfActionsTaken() {
 		return resultsWithTakenActions.size();
+	}
+	
+	@Override
+	public int getNumberOfActionsTakenWithinTimeRange(ZonedDateTime start, ZonedDateTime end) {
+		int count = 0;
+		
+		if (start.isAfter(end)) {
+			ZonedDateTime bak = start;
+			start = end;
+			end = bak;
+		}
+		for (EngineResult result : resultsWithTakenActions) {
+			boolean inBetween = result.getTimestamp().isAfter(start) && result.getTimestamp().isBefore(end);
+			
+			if (inBetween) {
+				count++;
+			}
+		}
+		return count;
+	}
+	
+	@Override
+	public int getNumberOfActionsTakenByVaccine(String vaccine) {
+		int count = 0;
+		
+		for (EngineResult result : resultsWithTakenActions) {
+			if (result.getVaccine().equals(vaccine)) {
+				count++;
+			}
+		}
+		return count;
 	}
 }
