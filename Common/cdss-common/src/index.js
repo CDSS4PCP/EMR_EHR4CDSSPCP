@@ -241,15 +241,19 @@ function createBundle(resource, url) {
     return resource
 }
 
+function test1() {
+    return 1;
+}
 
-window.cdss = {
+global.cdss = {
     endpoints: endpoints,
     checkRulesForPatient: checkRulesForPatient,
     getListOfPatients: getListOfPatients,
     getListOfMedicationRequests: getListOfMedicationRequests,
     checkRules: checkRules,
     buildResource: buildResource,
-    medRequestToImm: medRequestToImm
+    medRequestToImm: medRequestToImm,
+    test1: test1
 };
 
 

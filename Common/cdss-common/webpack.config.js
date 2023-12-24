@@ -12,11 +12,7 @@ module.exports = {
             // "process": require.resolve("process/browser"),
             utils: false,
             util: false,
-            constants: false,
-            // constants: require.resolve("constants-browserify"),
-            path: require.resolve("path-browserify"),
-            // assert: require.resolve("assert/")
-            assert: false
+            path: require.resolve("path-browserify")
         }
     },
     plugins: [
