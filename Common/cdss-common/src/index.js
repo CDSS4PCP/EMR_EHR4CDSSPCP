@@ -51,19 +51,45 @@ let endpoints = {
 };
 
 /**
+ * Retrieves a list of expected parameters required buy the rule.
  *
- * @param rule
- * @returns {*[]}
+ * @param {Object} rule - The rule object.
+ * @returns {Array} An array of objects representing expected parameters with name and type.
  */
 function getListOfExpectedParameters(rule) {
-    return [];
+    let result = [];
+    rule.library.parameters.def.forEach(p => {
+        result.push({name: p.name, type: p.parameterTypeSpecifier.name});
+    });
+    return result;
 }
 
 /**
+ * Retrieves a list of expected libraries based on the given rule.
  *
- * @param resource
- * @param url
- * @returns {{entry: [{resource, fullUrl}], resourceType: string}|{entry: [{resource}], resourceType: string}|*}
+ * @param {Object} rule - The rule object.
+ * @returns {Array} An array of objects representing expected libraries with name and path.
+ */
+function getListOfExpectedLibraries(rule) {
+
+
+    if (rule?.library?.includes?.def === undefined) return [];
+    if (typeof (rule.library.includes.def) != 'array') return [];
+
+    let result = [];
+    rule.library.includes.def.forEach(l => {
+        result.push({name: l.localIdentifier, path: l.path});
+    });
+
+    return result;
+}
+
+/**
+ * Creates a FHIR (Fast Healthcare Interoperability Resources) Bundle based on the given resource and URL.
+ *
+ * @param {Object} resource - The resource object to be included in the Bundle.
+ * @param {string|null} url - The URL associated with the resource. Can be null.
+ * @returns {Object} A FHIR Bundle object.
  */
 function createBundle(resource, url) {
     if (resource.resourceType !== "Bundle") {
@@ -74,12 +100,13 @@ function createBundle(resource, url) {
 }
 
 /**
+ * Executes a Clinical Quality Language (CQL) rule on a FHIR (Fast Healthcare Interoperability Resources) patient.
  *
- * @param patient
- * @param rule
- * @param libraries
- * @param parameters
- * @returns {Promise<any>}
+ * @param {Object} patient - The FHIR patient resource on which the CQL rule will be executed.
+ * @param {Object} rule - The CQL rule to be executed.
+ * @param {Array|null} libraries - An array of additional CQL libraries to be used in the execution. Default is null.
+ * @param {Object|null} parameters - Additional parameters to be used in the CQL execution. Default is null.
+ * @returns {Object} The result of the CQL execution on the patient, including patient-specific results.
  */
 async function executeCql(patient, rule, libraries = null, parameters = null) {
 
@@ -127,7 +154,11 @@ async function executeCql(patient, rule, libraries = null, parameters = null) {
 
 
 global.cdss = {
-    endpoints: endpoints
+    endpoints: endpoints,
+    createBundle: createBundle,
+    executeCql: executeCql,
+    getListOfExpectedParameters: getListOfExpectedParameters,
+    getListOfExpectedLibraries: getListOfExpectedLibraries
 };
 
 
