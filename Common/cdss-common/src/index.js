@@ -57,6 +57,11 @@ let endpoints = {
  * @returns {Array} An array of objects representing expected parameters with name and type.
  */
 function getListOfExpectedParameters(rule) {
+
+    if (rule?.library?.parameters?.def === undefined) return undefined;
+
+    if (!Array.isArray(rule.library.parameters.def)) return undefined;
+
     let result = [];
     rule.library.parameters.def.forEach(p => {
         result.push({name: p.name, type: p.parameterTypeSpecifier.name});
@@ -72,9 +77,8 @@ function getListOfExpectedParameters(rule) {
  */
 function getListOfExpectedLibraries(rule) {
 
-
-    if (rule?.library?.includes?.def === undefined) return [];
-    if (typeof (rule.library.includes.def) != 'array') return [];
+    if (rule?.library?.parameters?.def === undefined) return undefined;
+    if (!Array.isArray(rule.library.parameters.def)) return undefined;
 
     let result = [];
     rule.library.includes.def.forEach(l => {

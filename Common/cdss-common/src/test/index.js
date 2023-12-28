@@ -11,7 +11,14 @@ const mockRule = {
                 {localIdentifier: 'lib2', path: '/path/to/lib2'},
             ],
         },
-    },
+        parameters: {
+            def: [{
+                name: 'par1', accessLevel: 'Public', parameterTypeSpecifier: {
+                    name: 'Number', type: 'NamedTypeSpecifier'
+                }
+            }]
+        }
+    }
 };
 const r1 = {
     "library": {
@@ -162,107 +169,71 @@ const r1 = {
 // Testing getListOfExpectedParameters()
 
 function testGetListOfExpectedParameters() {
-    function testGetListOfExpectedParameters1() {
-        let expect = [{"name": "Imm", "type": "{http://hl7.org/fhir}Immunization"}];
 
-        let result = global.cdss.getListOfExpectedParameters(r1);
-        test.array(result).is(expect);
-
+    function testListOfExpectedParameters_mockRule() {
+        let result = global.cdss.getListOfExpectedParameters(mockRule);
+        test.array(result).hasLength(1);
+        test.array(result).contains([{name: 'par1', type: 'Number'}]);
     }
 
-    function testGetListOfExpectedParameters2() {
-        let r1 = {
-            "library": {
-                "annotation": [{
-                    "translatorVersion": "3.0.0-SNAPSHOT", "translatorOptions": "", "type": "CqlToElmInfo"
-                }], "identifier": {
-                    "id": "medrx0312", "version": "1"
-                }, "schemaIdentifier": {
-                    "id": "urn:hl7-org:elm", "version": "r1"
-                }, "usings": {
-                    "def": [{
-                        "localIdentifier": "System", "uri": "urn:hl7-org:elm-types:r1"
-                    }, {
-                        "localIdentifier": "FHIR", "uri": "http://hl7.org/fhir", "version": "4.0.1"
-                    }]
-                }, "includes": {
-                    "def": [{
-                        "localIdentifier": "FHIRHelpers", "path": "FHIRHelpers", "version": "4.0.1"
-                    }]
-                }, "parameters": {
-                    "def": [{
-                        "name": "PrescriptionRequest", "accessLevel": "Public", "parameterTypeSpecifier": {
-                            "name": "{http://hl7.org/fhir}MedicationRequest", "type": "NamedTypeSpecifier"
-                        }
-                    }]
-                }, "codeSystems": {
-                    "def": [{
-                        "name": "RXNORM", "id": "http://www.nlm.nih.gov/research/umls/rxnorm", "accessLevel": "Public"
-                    }]
-                }, "codes": {
-                    "def": [{
-                        "name": "phenytoin code",
-                        "id": "1313112",
-                        "display": "phenytoin",
-                        "accessLevel": "Public",
-                        "codeSystem": {
-                            "name": "RXNORM"
-                        }
-                    }]
-                }, "contexts": {
-                    "def": [{
-                        "name": "Patient"
-                    }]
-                }, "statements": {
-                    "def": [{
-                        "name": "Patient", "context": "Patient", "expression": {
-                            "type": "SingletonFrom", "operand": {
-                                "dataType": "{http://hl7.org/fhir}Patient",
-                                "templateId": "http://hl7.org/fhir/StructureDefinition/Patient",
-                                "type": "Retrieve"
-                            }
-                        }
-                    }, {
-                        "name": "ProcessMedication1", "context": "Patient", "accessLevel": "Public", "expression": {
-                            "type": "Query", "source": [{
-                                "alias": "P", "expression": {
-                                    "name": "PrescriptionRequest", "type": "ParameterRef"
-                                }
-                            }], "relationship": [], "return": {
-                                "expression": {
-                                    "path": "reference", "type": "Property", "source": {
-                                        "path": "medication", "scope": "P", "type": "Property"
-                                    }
-                                }
-                            }
-                        }
-                    }, {
-                        "name": "ProcessMedication2", "context": "Patient", "accessLevel": "Public", "expression": {
-                            "type": "Query", "source": [{
-                                "alias": "P", "expression": {
-                                    "name": "PrescriptionRequest", "type": "ParameterRef"
-                                }
-                            }], "relationship": [], "return": {
-                                "expression": {
-                                    "path": "coding", "type": "Property", "source": {
-                                        "path": "medication", "scope": "P", "type": "Property"
-                                    }
-                                }
-                            }
-                        }
-                    }]
-                }
-            }
-        };
-        let expect = [{"name": "PrescriptionRequest", "type": "{http://hl7.org/fhir}MedicationRequest"}];
 
-        let result = global.cdss.getListOfExpectedParameters(r1);
-        test.array(result).is(expect);
+    function testListOfExpectedParameters_libraryParametersDefEmpty() {
+        const result = global.cdss.getListOfExpectedParameters({library: {parameters: {def: []}}});
 
+        test.array(result).is([]);
     }
 
-    testGetListOfExpectedParameters1();
-    testGetListOfExpectedParameters2();
+    function testListOfExpectedParameters_libraryParametersDefUndefined() {
+        const result = global.cdss.getListOfExpectedParameters({library: {parameters: {}}});
+
+        test.value(result).is(undefined);
+    }
+
+    function testListOfExpectedParameters_libraryParametersUndefined() {
+        const result = global.cdss.getListOfExpectedParameters({library: {}});
+
+        test.value(result).is(undefined);
+    }
+
+
+    function testListOfExpectedParameters_libraryUndefined() {
+        const result = global.cdss.getListOfExpectedParameters({});
+
+        test.value(result).is(undefined);
+    }
+
+    function testListOfExpectedParameters_undefined() {
+        const result = global.cdss.getListOfExpectedParameters(undefined);
+
+        test.value(result).is(undefined);
+    }
+
+    function testListOfExpectedParameters_validRule1() {
+        let expected = [{"name": "Imm", "type": "{http://hl7.org/fhir}Immunization"}];
+
+        let result = global.cdss.getListOfExpectedParameters(r1);
+        test.array(result).hasLength(1);
+        test.array(result).contains(expected);
+    }
+
+    function testListOfExpectedParameters_validRule2() {
+        let expected = [{"name": "Imm", "type": "{http://hl7.org/fhir}Immunization"}];
+
+        let result = global.cdss.getListOfExpectedParameters(r1);
+        test.array(result).hasLength(1);
+        test.array(result).contains(expected);
+    }
+
+    testListOfExpectedParameters_mockRule();
+
+    testListOfExpectedParameters_libraryParametersDefEmpty();
+    testListOfExpectedParameters_libraryParametersDefUndefined();
+    testListOfExpectedParameters_libraryParametersUndefined();
+    testListOfExpectedParameters_libraryUndefined();
+    testListOfExpectedParameters_undefined();
+
+    testListOfExpectedParameters_validRule1();
+    testListOfExpectedParameters_validRule2();
 }
 
 function testGetListOfExpectedLibraries() {
@@ -291,7 +262,7 @@ function testGetListOfExpectedLibraries() {
         const result2 = global.cdss.getListOfExpectedLibraries({library: {includes: {def: []}}});
 
         // Assert that the result is an empty array
-        test.array(result2).is([]);
+        test.value(result2).is(undefined);
 
     }
 
@@ -301,7 +272,22 @@ function testGetListOfExpectedLibraries() {
         const result3 = global.cdss.getListOfExpectedLibraries({library: {includes: {}}});
 
         // Assert that the result is an empty array
-        test.array(result3).is([]);
+        test.value(result3).is(undefined);
+    }
+
+    function getListOfExpectedLibraries_libraryIncludesUndefined() {
+
+        const result3 = global.cdss.getListOfExpectedLibraries({library: {}});
+
+        // Assert that the result is an empty array
+        test.value(result3).is(undefined);
+    }
+
+    function getListOfExpectedLibraries_libraryUndefined() {
+
+        const result = global.cdss.getListOfExpectedLibraries({});
+
+        test.value(result).is(undefined);
     }
 
     function getListOfExpectedLibraries_validRule() {
@@ -314,11 +300,13 @@ function testGetListOfExpectedLibraries() {
     getListOfExpectedLibraries_mockRule();
     getListOfExpectedLibraries_libraryIncludesDefEmpty();
     getListOfExpectedLibraries_libraryIncludesDefUndefined();
+    getListOfExpectedLibraries_libraryUndefined();
+    getListOfExpectedLibraries_libraryIncludesUndefined();
     getListOfExpectedLibraries_validRule();
 }
 
-testGetListOfExpectedLibraries();
 testGetListOfExpectedParameters();
+testGetListOfExpectedLibraries();
 
 
 console.log("All tests passed");
