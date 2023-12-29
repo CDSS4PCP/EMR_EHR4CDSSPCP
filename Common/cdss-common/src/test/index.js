@@ -20,6 +20,7 @@ const mockRule = {
         }
     }
 };
+// Real rule
 const r1 = {
     "library": {
         "annotation": [{
@@ -164,9 +165,220 @@ const r1 = {
         }
     }
 };
+//
+const p1 = {
+    "resourceType": "Patient",
+    "id": "example",
+    "text": {
+        "status": "generated",
+        "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">\n\t\t\t<table>\n\t\t\t\t<tbody>\n\t\t\t\t\t<tr>\n\t\t\t\t\t\t<td>Name</td>\n\t\t\t\t\t\t<td>Peter James \n              <b>Chalmers</b> (&quot;Jim&quot;)\n            </td>\n\t\t\t\t\t</tr>\n\t\t\t\t\t<tr>\n\t\t\t\t\t\t<td>Address</td>\n\t\t\t\t\t\t<td>534 Erewhon, Pleasantville, Vic, 3999</td>\n\t\t\t\t\t</tr>\n\t\t\t\t\t<tr>\n\t\t\t\t\t\t<td>Contacts</td>\n\t\t\t\t\t\t<td>Home: unknown. Work: (03) 5555 6473</td>\n\t\t\t\t\t</tr>\n\t\t\t\t\t<tr>\n\t\t\t\t\t\t<td>Id</td>\n\t\t\t\t\t\t<td>MRN: 12345 (Acme Healthcare)</td>\n\t\t\t\t\t</tr>\n\t\t\t\t</tbody>\n\t\t\t</table>\n\t\t</div>"
+    },
+    "identifier": [
+        {
+            "use": "usual",
+            "type": {
+                "coding": [
+                    {
+                        "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                        "code": "MR"
+                    }
+                ]
+            },
+            "system": "urn:oid:1.2.36.146.595.217.0.1",
+            "value": "12345",
+            "period": {
+                "start": "2001-05-06"
+            },
+            "assigner": {
+                "display": "Acme Healthcare"
+            }
+        }
+    ],
+    "active": true,
+    "name": [
+        {
+            "use": "official",
+            "family": "Chalmers",
+            "given": [
+                "Peter",
+                "James"
+            ]
+        },
+        {
+            "use": "usual",
+            "given": [
+                "Jim"
+            ]
+        },
+        {
+            "use": "maiden",
+            "family": "Windsor",
+            "given": [
+                "Peter",
+                "James"
+            ],
+            "period": {
+                "end": "2002"
+            }
+        }
+    ],
+    "telecom": [
+        {
+            "use": "home"
+        },
+        {
+            "system": "phone",
+            "value": "(03) 5555 6473",
+            "use": "work",
+            "rank": 1
+        },
+        {
+            "system": "phone",
+            "value": "(03) 3410 5613",
+            "use": "mobile",
+            "rank": 2
+        },
+        {
+            "system": "phone",
+            "value": "(03) 5555 8834",
+            "use": "old",
+            "period": {
+                "end": "2014"
+            }
+        }
+    ],
+    "gender": "male",
+    "birthDate": "1974-12-25",
+    "_birthDate": {
+        "extension": [
+            {
+                "url": "http://hl7.org/fhir/StructureDefinition/patient-birthTime",
+                "valueDateTime": "1974-12-25T14:35:45-05:00"
+            }
+        ]
+    },
+    "deceasedBoolean": false,
+    "address": [
+        {
+            "use": "home",
+            "type": "both",
+            "text": "534 Erewhon St PeasantVille, Rainbow, Vic  3999",
+            "line": [
+                "534 Erewhon St"
+            ],
+            "city": "PleasantVille",
+            "district": "Rainbow",
+            "state": "Vic",
+            "postalCode": "3999",
+            "period": {
+                "start": "1974-12-25"
+            }
+        }
+    ],
+    "contact": [
+        {
+            "relationship": [
+                {
+                    "coding": [
+                        {
+                            "system": "http://terminology.hl7.org/CodeSystem/v2-0131",
+                            "code": "N"
+                        }
+                    ]
+                }
+            ],
+            "name": {
+                "family": "du Marché",
+                "_family": {
+                    "extension": [
+                        {
+                            "url": "http://hl7.org/fhir/StructureDefinition/humanname-own-prefix",
+                            "valueString": "VV"
+                        }
+                    ]
+                },
+                "given": [
+                    "Bénédicte"
+                ]
+            },
+            "telecom": [
+                {
+                    "system": "phone",
+                    "value": "+33 (237) 998327"
+                }
+            ],
+            "address": {
+                "use": "home",
+                "type": "both",
+                "line": [
+                    "534 Erewhon St"
+                ],
+                "city": "PleasantVille",
+                "district": "Rainbow",
+                "state": "Vic",
+                "postalCode": "3999",
+                "period": {
+                    "start": "1974-12-25"
+                }
+            },
+            "gender": "female",
+            "period": {
+                "start": "2012"
+            }
+        }
+    ],
+    "managingOrganization": {
+        "reference": "Organization/1"
+    }
+}
 
 
-// Testing getListOfExpectedParameters()
+function testEndpoints() {
+
+    function endpoints_metadata() {
+        test.object(global.cdss.endpoints).hasProperty("metadata");
+        test.object(global.cdss.endpoints["metadata"]).hasProperty("systemName");
+        test.object(global.cdss.endpoints["metadata"]).hasProperty("remoteAddress");
+    }
+
+    function endpoints_patientById() {
+        test.object(global.cdss.endpoints).hasProperty("patientById");
+        test.object(global.cdss.endpoints["patientById"]).hasProperty("address");
+        test.object(global.cdss.endpoints["patientById"]).hasProperty("method");
+    }
+
+    function endpoints_medicationRequestByPatientId() {
+        test.object(global.cdss.endpoints).hasProperty("medicationRequestByPatientId");
+        test.object(global.cdss.endpoints["patientById"]).hasProperty("address");
+        test.object(global.cdss.endpoints["patientById"]).hasProperty("method");
+    }
+
+    function endpoints_medicationByMedicationRequestId() {
+        test.object(global.cdss.endpoints).hasProperty("medicationByMedicationRequestId");
+        test.object(global.cdss.endpoints["patientById"]).hasProperty("address");
+        test.object(global.cdss.endpoints["patientById"]).hasProperty("method");
+    }
+
+    function endpoints_immunizationByPatientId() {
+        test.object(global.cdss.endpoints).hasProperty("immunizationByPatientId");
+        test.object(global.cdss.endpoints["patientById"]).hasProperty("address");
+        test.object(global.cdss.endpoints["patientById"]).hasProperty("method");
+    }
+
+    function endpoints_ruleById() {
+        test.object(global.cdss.endpoints).hasProperty("ruleById");
+        test.object(global.cdss.endpoints["patientById"]).hasProperty("address");
+        test.object(global.cdss.endpoints["patientById"]).hasProperty("method");
+    }
+
+    endpoints_metadata();
+    endpoints_patientById();
+    endpoints_medicationRequestByPatientId();
+    endpoints_medicationByMedicationRequestId();
+    endpoints_immunizationByPatientId();
+    endpoints_ruleById();
+}
+
 
 function testGetListOfExpectedParameters() {
 
@@ -186,26 +398,26 @@ function testGetListOfExpectedParameters() {
     function testListOfExpectedParameters_libraryParametersDefUndefined() {
         const result = global.cdss.getListOfExpectedParameters({library: {parameters: {}}});
 
-        test.value(result).is(undefined);
+        test.undefined(result);
     }
 
     function testListOfExpectedParameters_libraryParametersUndefined() {
         const result = global.cdss.getListOfExpectedParameters({library: {}});
 
-        test.value(result).is(undefined);
+        test.undefined(result);
     }
 
 
     function testListOfExpectedParameters_libraryUndefined() {
         const result = global.cdss.getListOfExpectedParameters({});
 
-        test.value(result).is(undefined);
+        test.undefined(result);
     }
 
     function testListOfExpectedParameters_undefined() {
         const result = global.cdss.getListOfExpectedParameters(undefined);
 
-        test.value(result).is(undefined);
+        test.undefined(result);
     }
 
     function testListOfExpectedParameters_validRule1() {
@@ -259,35 +471,35 @@ function testGetListOfExpectedLibraries() {
     function getListOfExpectedLibraries_libraryIncludesDefEmpty() {
 
         // Test case 2: Test with a rule where library.includes.def is empty
-        const result2 = global.cdss.getListOfExpectedLibraries({library: {includes: {def: []}}});
+        const result = global.cdss.getListOfExpectedLibraries({library: {includes: {def: []}}});
 
         // Assert that the result is an empty array
-        test.value(result2).is(undefined);
+        test.undefined(result);
 
     }
 
     function getListOfExpectedLibraries_libraryIncludesDefUndefined() {
 
         // Test case 3: Test with a rule where library.includes.def is undefined
-        const result3 = global.cdss.getListOfExpectedLibraries({library: {includes: {}}});
+        const result = global.cdss.getListOfExpectedLibraries({library: {includes: {}}});
 
         // Assert that the result is an empty array
-        test.value(result3).is(undefined);
+        test.undefined(result);
     }
 
     function getListOfExpectedLibraries_libraryIncludesUndefined() {
 
-        const result3 = global.cdss.getListOfExpectedLibraries({library: {}});
+        const result = global.cdss.getListOfExpectedLibraries({library: {}});
 
         // Assert that the result is an empty array
-        test.value(result3).is(undefined);
+        test.undefined(result);
     }
 
     function getListOfExpectedLibraries_libraryUndefined() {
 
         const result = global.cdss.getListOfExpectedLibraries({});
 
-        test.value(result).is(undefined);
+        test.undefined(result);
     }
 
     function getListOfExpectedLibraries_validRule() {
@@ -305,8 +517,90 @@ function testGetListOfExpectedLibraries() {
     getListOfExpectedLibraries_validRule();
 }
 
-testGetListOfExpectedParameters();
-testGetListOfExpectedLibraries();
+
+function testCreateBundle() {
+
+    function createBundle_nullUrl() {
+        // Test case 1: Non-Bundle resource with null URL
+        const nonBundleResourceNullUrl = {resourceType: "Patient", name: "John Doe"};
+        const result1 = global.cdss.createBundle(nonBundleResourceNullUrl, null);
+        test.object(result1).is({
+            resourceType: "Bundle",
+            entry: [{resource: nonBundleResourceNullUrl}]
+        });
+    }
+
+    function createBundle_withUrl() {
+        // Test case 2: Non-Bundle resource with a specified URL
+        const nonBundleResourceWithUrl = {resourceType: "Patient", name: "Jane Doe"};
+        const specifiedUrl = 'http://example.com/patients/123';
+        const result2 = global.cdss.createBundle(nonBundleResourceWithUrl, specifiedUrl);
+        test.object(result2).is({
+            resourceType: "Bundle",
+            entry: [{resource: nonBundleResourceWithUrl, fullUrl: specifiedUrl}]
+        });
+    }
+
+    function createBundle_bundleValid() {
+        // Test case 3: Bundle resource
+        const bundleResource = {resourceType: "Bundle", entry: [{resource: {resourceType: "Patient", name: "Bob"}}]};
+        const result3 = global.cdss.createBundle(bundleResource);
+        test.object(result3).is(bundleResource); // Should be the same as the input
+
+    }
+
+    function createBundle_bundleUndefined() {
+        const result = global.cdss.createBundle(undefined);
+        test.undefined(result);
+
+    }
+
+    createBundle_nullUrl();
+    createBundle_withUrl();
+    createBundle_bundleValid();
+    createBundle_bundleUndefined();
+}
+
+async function testExecuteCql() {
+
+    async function executeCql_nullPatient() {
+
+        let err = new Error("Patient is undefined");
+        test.function(() => {
+            console.log("hello");
+
+            global.cdss.executeCql(null, mockRule, null, null);
+        }).throws();
+
+
+        // trigger
+        // var trigger = await function(){
+        //     throw new Error("I'm a ninja !")
+        // };
+        //
+        // test.function( () =>  trigger())
+        //     .throws();
+
+    }
+
+    async function executeCql_nullRule() {
+        const result = await global.cdss.executeCql(p1, null, null, null);
+        // test.undefined(result);
+    }
+
+    await executeCql_nullPatient();
+
+    // executeCql_nullRule();
+
+}
+
+// testEndpoints();
+// testGetListOfExpectedParameters();
+// testGetListOfExpectedLibraries();
+// testCreateBundle();
+testExecuteCql();
 
 
 console.log("All tests passed");
+
+

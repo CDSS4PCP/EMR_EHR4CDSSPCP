@@ -2,52 +2,81 @@ import cql from 'cql-execution';
 import cqlfhir from 'cql-exec-fhir';
 import vsac from 'cql-exec-vsac';
 
+// let endpoints = {
+//     "metadata": {
+//         "systemName": "OpenMRS", "remoteAddress": "http://localhost:8081/openmrs-standalone/",
+//     },
+//     "general": {
+//         address: "http://localhost:8081/openmrs-standalone/ws/fhir2/R4/{{extend}}",
+//         method: "GET",
+//         credentials: "include",
+//         mode: "cors",
+//         headers: {Accept: "application/json", Cookie: "JSESSIONID=F71AF8B41B0E913A2BE0A870450F9F73"}
+//     },
+//     "patientList": {
+//         address: "http://localhost:8081/openmrs-standalone/ws/fhir2/R4/Patient",
+//         method: "GET",
+//         credentials: "include",
+//         mode: "cors",
+//         headers: {Accept: "application/json", Cookie: "JSESSIONID=F71AF8B41B0E913A2BE0A870450F9F73"}
+//     },
+//     "patientEngineRun": {
+//         address: "http://localhost:8081/openmrs-standalone/ws/fhir2/R4/Patient/{{patientId}}",
+//         method: "GET",
+//         credentials: "include",
+//         mode: "cors",
+//         headers: {Accept: "application/json", Cookie: "JSESSIONID=F71AF8B41B0E913A2BE0A870450F9F73"}
+//     },
+//     "medicationRequestList": {
+//         address: "http://localhost:8081/openmrs-standalone/ws/fhir2/R4/MedicationRequest",
+//         method: "GET",
+//         credentials: "include",
+//         mode: "cors",
+//         headers: {Accept: "application/json", Cookie: "JSESSIONID=F71AF8B41B0E913A2BE0A870450F9F73"}
+//     },
+//     "medicationRequestByPatient": {
+//         address: "http://localhost:8081/openmrs-standalone/ws/fhir2/R4/MedicationRequest?patient.identifier={{patientId}}",
+//         method: "GET",
+//         credentials: "include",
+//         mode: "cors",
+//         headers: {Accept: "application/json", Cookie: "JSESSIONID=F71AF8B41B0E913A2BE0A870450F9F73"}
+//     },
+//     medicationList: {
+//         address: "http://localhost:8081/openmrs-standalone/ws/fhir2/R4/Medication/{{medicationId}}",
+//         method: "GET",
+//         credentials: "include",
+//         mode: "cors",
+//         headers: {Accept: "application/json", Cookie: "JSESSIONID=F71AF8B41B0E913A2BE0A870450F9F73"}
+//     }
+// };
+//
+
+
 let endpoints = {
     "metadata": {
-        "systemName": "OpenMRS", "remoteAddress": "http://localhost:8081/openmrs-standalone/",
+        "systemName": null, "remoteAddress": null,
     },
-    "general": {
-        address: "http://localhost:8081/openmrs-standalone/ws/fhir2/R4/{{extend}}",
+    "patientById": {
+        address: null,
         method: "GET",
-        credentials: "include",
-        mode: "cors",
-        headers: {Accept: "application/json", Cookie: "JSESSIONID=F71AF8B41B0E913A2BE0A870450F9F73"}
     },
-    "patientList": {
-        address: "http://localhost:8081/openmrs-standalone/ws/fhir2/R4/Patient",
+    "medicationRequestByPatientId": {
+        address: null,
         method: "GET",
-        credentials: "include",
-        mode: "cors",
-        headers: {Accept: "application/json", Cookie: "JSESSIONID=F71AF8B41B0E913A2BE0A870450F9F73"}
     },
-    "patientEngineRun": {
-        address: "http://localhost:8081/openmrs-standalone/ws/fhir2/R4/Patient/{{patientId}}",
+    "medicationByMedicationRequestId": {
+        address: null,
         method: "GET",
-        credentials: "include",
-        mode: "cors",
-        headers: {Accept: "application/json", Cookie: "JSESSIONID=F71AF8B41B0E913A2BE0A870450F9F73"}
     },
-    "medicationRequestList": {
-        address: "http://localhost:8081/openmrs-standalone/ws/fhir2/R4/MedicationRequest",
+    "immunizationByPatientId": {
+        address: null,
         method: "GET",
-        credentials: "include",
-        mode: "cors",
-        headers: {Accept: "application/json", Cookie: "JSESSIONID=F71AF8B41B0E913A2BE0A870450F9F73"}
     },
-    "medicationRequestByPatient": {
-        address: "http://localhost:8081/openmrs-standalone/ws/fhir2/R4/MedicationRequest?patient.identifier={{patientId}}",
+    "ruleById": {
+        address: null,
         method: "GET",
-        credentials: "include",
-        mode: "cors",
-        headers: {Accept: "application/json", Cookie: "JSESSIONID=F71AF8B41B0E913A2BE0A870450F9F73"}
-    },
-    medicationList: {
-        address: "http://localhost:8081/openmrs-standalone/ws/fhir2/R4/Medication/{{medicationId}}",
-        method: "GET",
-        credentials: "include",
-        mode: "cors",
-        headers: {Accept: "application/json", Cookie: "JSESSIONID=F71AF8B41B0E913A2BE0A870450F9F73"}
     }
+
 };
 
 /**
@@ -96,6 +125,7 @@ function getListOfExpectedLibraries(rule) {
  * @returns {Object} A FHIR Bundle object.
  */
 function createBundle(resource, url) {
+    if (resource === undefined) return undefined;
     if (resource.resourceType !== "Bundle") {
         if (url === null) return {resourceType: "Bundle", entry: [{resource: resource}]}
         return {resourceType: "Bundle", entry: [{resource: resource, fullUrl: url}]}
@@ -113,6 +143,15 @@ function createBundle(resource, url) {
  * @returns {Object} The result of the CQL execution on the patient, including patient-specific results.
  */
 async function executeCql(patient, rule, libraries = null, parameters = null) {
+    if (patient === null || patient === undefined) {
+        // console.error("Error Executing CDSS: Patient is undefined\nPatient FHIR resource is required to execute a CQL rule.");
+        throw new Error("Patient is undefined");
+    }
+    if (rule === null || rule === undefined) {
+        // console.error("Error Executing CDSS: Rule is undefined\nRule object is required to execute a CQL rule.");
+        throw new Error("Rule is undefined");
+    }
+
 
     const fhirWrapper = cqlfhir.FHIRWrapper.FHIRv401(); // or .FHIRv102() or .FHIRv300() or .FHIRv401()
 
