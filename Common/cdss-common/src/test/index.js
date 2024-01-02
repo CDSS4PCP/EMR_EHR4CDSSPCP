@@ -2,16 +2,14 @@ var test = require('unit.js');
 var cdss = require('../../dist/main.js');
 
 
+var allTestsPassed = true;
+
 // Mock data for testing
 const mockRule = {
     library: {
         includes: {
-            def: [
-                {localIdentifier: 'lib1', path: '/path/to/lib1'},
-                {localIdentifier: 'lib2', path: '/path/to/lib2'},
-            ],
-        },
-        parameters: {
+            def: [{localIdentifier: 'lib1', path: '/path/to/lib1'}, {localIdentifier: 'lib2', path: '/path/to/lib2'},],
+        }, parameters: {
             def: [{
                 name: 'par1', accessLevel: 'Public', parameterTypeSpecifier: {
                     name: 'Number', type: 'NamedTypeSpecifier'
@@ -69,11 +67,7 @@ const r1 = {
                     }
                 }
             }, {
-                "name": "ToCode",
-                "context": "Patient",
-                "accessLevel": "Public",
-                "type": "FunctionDef",
-                "expression": {
+                "name": "ToCode", "context": "Patient", "accessLevel": "Public", "type": "FunctionDef", "expression": {
                     "classType": "{urn:hl7-org:elm-types:r1}Code", "type": "Instance", "element": [{
                         "name": "code", "value": {
                             "path": "value", "type": "Property", "source": {
@@ -107,8 +101,7 @@ const r1 = {
                             }
                         }
                     }]
-                },
-                "operand": [{
+                }, "operand": [{
                     "name": "coding", "operandTypeSpecifier": {
                         "name": "{http://hl7.org/fhir}Coding", "type": "NamedTypeSpecifier"
                     }
@@ -127,9 +120,7 @@ const r1 = {
                                         "path": "vaccineCode", "scope": "P", "type": "Property"
                                     }
                                 }, {
-                                    "valueType": "{urn:hl7-org:elm-types:r1}Integer",
-                                    "value": "0",
-                                    "type": "Literal"
+                                    "valueType": "{urn:hl7-org:elm-types:r1}Integer", "value": "0", "type": "Literal"
                                 }]
                             }]
                         }
@@ -165,107 +156,73 @@ const r1 = {
         }
     }
 };
-//
+// Patient
 const p1 = {
-    "resourceType": "Patient",
-    "id": "example",
-    "text": {
+    "resourceType": "Patient", "id": "example", "text": {
         "status": "generated",
         "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">\n\t\t\t<table>\n\t\t\t\t<tbody>\n\t\t\t\t\t<tr>\n\t\t\t\t\t\t<td>Name</td>\n\t\t\t\t\t\t<td>Peter James \n              <b>Chalmers</b> (&quot;Jim&quot;)\n            </td>\n\t\t\t\t\t</tr>\n\t\t\t\t\t<tr>\n\t\t\t\t\t\t<td>Address</td>\n\t\t\t\t\t\t<td>534 Erewhon, Pleasantville, Vic, 3999</td>\n\t\t\t\t\t</tr>\n\t\t\t\t\t<tr>\n\t\t\t\t\t\t<td>Contacts</td>\n\t\t\t\t\t\t<td>Home: unknown. Work: (03) 5555 6473</td>\n\t\t\t\t\t</tr>\n\t\t\t\t\t<tr>\n\t\t\t\t\t\t<td>Id</td>\n\t\t\t\t\t\t<td>MRN: 12345 (Acme Healthcare)</td>\n\t\t\t\t\t</tr>\n\t\t\t\t</tbody>\n\t\t\t</table>\n\t\t</div>"
-    },
-    "identifier": [
-        {
-            "use": "usual",
-            "type": {
-                "coding": [
-                    {
-                        "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
-                        "code": "MR"
-                    }
-                ]
-            },
-            "system": "urn:oid:1.2.36.146.595.217.0.1",
-            "value": "12345",
-            "period": {
-                "start": "2001-05-06"
-            },
-            "assigner": {
-                "display": "Acme Healthcare"
-            }
+    }, "identifier": [{
+        "use": "usual", "type": {
+            "coding": [{
+                "system": "http://terminology.hl7.org/CodeSystem/v2-0203", "code": "MR"
+            }]
+        }, "system": "urn:oid:1.2.36.146.595.217.0.1", "value": "12345", "period": {
+            "start": "2001-05-06"
+        }, "assigner": {
+            "display": "Acme Healthcare"
         }
-    ],
-    "active": true,
-    "name": [
-        {
-            "use": "official",
-            "family": "Chalmers",
-            "given": [
-                "Peter",
-                "James"
-            ]
-        },
-        {
-            "use": "usual",
-            "given": [
-                "Jim"
-            ]
-        },
-        {
-            "use": "maiden",
-            "family": "Windsor",
-            "given": [
-                "Peter",
-                "James"
-            ],
-            "period": {
-                "end": "2002"
-            }
+    }], "active": true, "name": [{
+        "use": "official", "family": "Chalmers", "given": ["Peter", "James"]
+    }, {
+        "use": "usual", "given": ["Jim"]
+    }, {
+        "use": "maiden", "family": "Windsor", "given": ["Peter", "James"], "period": {
+            "end": "2002"
         }
-    ],
-    "telecom": [
-        {
-            "use": "home"
-        },
-        {
-            "system": "phone",
-            "value": "(03) 5555 6473",
-            "use": "work",
-            "rank": 1
-        },
-        {
-            "system": "phone",
-            "value": "(03) 3410 5613",
-            "use": "mobile",
-            "rank": 2
-        },
-        {
-            "system": "phone",
-            "value": "(03) 5555 8834",
-            "use": "old",
-            "period": {
-                "end": "2014"
-            }
+    }], "telecom": [{
+        "use": "home"
+    }, {
+        "system": "phone", "value": "(03) 5555 6473", "use": "work", "rank": 1
+    }, {
+        "system": "phone", "value": "(03) 3410 5613", "use": "mobile", "rank": 2
+    }, {
+        "system": "phone", "value": "(03) 5555 8834", "use": "old", "period": {
+            "end": "2014"
         }
-    ],
-    "gender": "male",
-    "birthDate": "1974-12-25",
-    "_birthDate": {
-        "extension": [
-            {
-                "url": "http://hl7.org/fhir/StructureDefinition/patient-birthTime",
-                "valueDateTime": "1974-12-25T14:35:45-05:00"
-            }
-        ]
-    },
-    "deceasedBoolean": false,
-    "address": [
-        {
+    }], "gender": "male", "birthDate": "1974-12-25", "_birthDate": {
+        "extension": [{
+            "url": "http://hl7.org/fhir/StructureDefinition/patient-birthTime",
+            "valueDateTime": "1974-12-25T14:35:45-05:00"
+        }]
+    }, "deceasedBoolean": false, "address": [{
+        "use": "home",
+        "type": "both",
+        "text": "534 Erewhon St PeasantVille, Rainbow, Vic  3999",
+        "line": ["534 Erewhon St"],
+        "city": "PleasantVille",
+        "district": "Rainbow",
+        "state": "Vic",
+        "postalCode": "3999",
+        "period": {
+            "start": "1974-12-25"
+        }
+    }], "contact": [{
+        "relationship": [{
+            "coding": [{
+                "system": "http://terminology.hl7.org/CodeSystem/v2-0131", "code": "N"
+            }]
+        }], "name": {
+            "family": "du Marché", "_family": {
+                "extension": [{
+                    "url": "http://hl7.org/fhir/StructureDefinition/humanname-own-prefix", "valueString": "VV"
+                }]
+            }, "given": ["Bénédicte"]
+        }, "telecom": [{
+            "system": "phone", "value": "+33 (237) 998327"
+        }], "address": {
             "use": "home",
             "type": "both",
-            "text": "534 Erewhon St PeasantVille, Rainbow, Vic  3999",
-            "line": [
-                "534 Erewhon St"
-            ],
+            "line": ["534 Erewhon St"],
             "city": "PleasantVille",
             "district": "Rainbow",
             "state": "Vic",
@@ -273,61 +230,10 @@ const p1 = {
             "period": {
                 "start": "1974-12-25"
             }
+        }, "gender": "female", "period": {
+            "start": "2012"
         }
-    ],
-    "contact": [
-        {
-            "relationship": [
-                {
-                    "coding": [
-                        {
-                            "system": "http://terminology.hl7.org/CodeSystem/v2-0131",
-                            "code": "N"
-                        }
-                    ]
-                }
-            ],
-            "name": {
-                "family": "du Marché",
-                "_family": {
-                    "extension": [
-                        {
-                            "url": "http://hl7.org/fhir/StructureDefinition/humanname-own-prefix",
-                            "valueString": "VV"
-                        }
-                    ]
-                },
-                "given": [
-                    "Bénédicte"
-                ]
-            },
-            "telecom": [
-                {
-                    "system": "phone",
-                    "value": "+33 (237) 998327"
-                }
-            ],
-            "address": {
-                "use": "home",
-                "type": "both",
-                "line": [
-                    "534 Erewhon St"
-                ],
-                "city": "PleasantVille",
-                "district": "Rainbow",
-                "state": "Vic",
-                "postalCode": "3999",
-                "period": {
-                    "start": "1974-12-25"
-                }
-            },
-            "gender": "female",
-            "period": {
-                "start": "2012"
-            }
-        }
-    ],
-    "managingOrganization": {
+    }], "managingOrganization": {
         "reference": "Organization/1"
     }
 }
@@ -525,8 +431,7 @@ function testCreateBundle() {
         const nonBundleResourceNullUrl = {resourceType: "Patient", name: "John Doe"};
         const result1 = global.cdss.createBundle(nonBundleResourceNullUrl, null);
         test.object(result1).is({
-            resourceType: "Bundle",
-            entry: [{resource: nonBundleResourceNullUrl}]
+            resourceType: "Bundle", entry: [{resource: nonBundleResourceNullUrl}]
         });
     }
 
@@ -536,8 +441,7 @@ function testCreateBundle() {
         const specifiedUrl = 'http://example.com/patients/123';
         const result2 = global.cdss.createBundle(nonBundleResourceWithUrl, specifiedUrl);
         test.object(result2).is({
-            resourceType: "Bundle",
-            entry: [{resource: nonBundleResourceWithUrl, fullUrl: specifiedUrl}]
+            resourceType: "Bundle", entry: [{resource: nonBundleResourceWithUrl, fullUrl: specifiedUrl}]
         });
     }
 
@@ -561,46 +465,64 @@ function testCreateBundle() {
     createBundle_bundleUndefined();
 }
 
-async function testExecuteCql() {
+function testExecuteCql() {
 
     async function executeCql_nullPatient() {
 
-        let err = new Error("Patient is undefined");
-        test.function(() => {
-            console.log("hello");
+        let expectedError = new Error("Patient is undefined");
 
-            global.cdss.executeCql(null, mockRule, null, null);
-        }).throws();
+        var trigger = function () {
 
+            global.cdss.executeCql(null, mockRule, null, null).then(result => {
+                test.fail(`Test should have passed with error "${expectedError.message}"  but did not!`);
+                allTestsPassed = false;
+            })
+                .catch(e => {
+                    if (e.message !== expectedError.message) {
+                        test.fail(`Test should have passed with error "${expectedError.message}"  but the error was "${e.message}!"`);
+                    }
+                });
+        };
 
-        // trigger
-        // var trigger = await function(){
-        //     throw new Error("I'm a ninja !")
-        // };
-        //
-        // test.function( () =>  trigger())
-        //     .throws();
+        test.given(trigger);
 
     }
 
     async function executeCql_nullRule() {
-        const result = await global.cdss.executeCql(p1, null, null, null);
-        // test.undefined(result);
+
+
+        let expectedError = new Error("Rule is undefined");
+
+        var trigger = function () {
+
+            global.cdss.executeCql(p1, null, null, null).then(result => {
+                test.fail(`Test should have passed with error "${expectedError.message}"  but did not!`);
+            })
+                .catch(e => {
+                    if (e.message !== expectedError.message) {
+                        test.fail(`Test should have passed with error "${expectedError.message}"  but the error was "${e.message}!"`);
+                    }
+                });
+        };
+
+        test.given(trigger);
+
     }
 
-    await executeCql_nullPatient();
-
-    // executeCql_nullRule();
+    executeCql_nullPatient();
+    executeCql_nullRule();
 
 }
 
-// testEndpoints();
-// testGetListOfExpectedParameters();
-// testGetListOfExpectedLibraries();
-// testCreateBundle();
+testEndpoints();
+testGetListOfExpectedParameters();
+testGetListOfExpectedLibraries();
+testCreateBundle();
 testExecuteCql();
 
+setTimeout(() => {
+    console.log("All tests passed");
+}, 500)
 
-console.log("All tests passed");
 
 
