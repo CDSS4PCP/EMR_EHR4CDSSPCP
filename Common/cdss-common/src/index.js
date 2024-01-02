@@ -158,40 +158,74 @@ async function executeCql(patient, rule, libraries = null, parameters = null) {
 
     const codeService = new vsac.CodeService('cache', false);
 
+    // Create a patient bundle if patient is not a bundle
     const patientBundle = createBundle(patient);
 
     const psource = new cqlfhir.PatientSource.FHIRv401({
         requireProfileTagging: true
     });
 
+    // Load patients
     psource.loadBundles([patientBundle]);
 
-    let lib;
-    if (libraries === null || libraries === undefined || libraries.length === 0) {
-        lib = new cql.Library(rule);
 
-    } else {
-        lib = new cql.Library(rule, new cql.Repository(libraries));
+    // Create a library object and make sure all expected libraries are provided
+    const expectedLibraries = getListOfExpectedLibraries(rule);
+    let libraryObject = {};
+    if (expectedLibraries.length > 0) {
+        if (libraries === null || libraries === undefined) {
+            throw new Error("Rule expects libraries, but they are undefined");
+        }
+
+        for (const expectedLibrary of expectedLibraries) {
+
+            let lib = libraries[expectedLibrary.name];
+            if (lib === undefined || lib === null) {
+                throw new Error(`Rule expects library "${expectedLibrary.name}", but it is undefined`);
+            }
+            libraryObject[expectedLibrary.name] = expectedLibrary.path;
+
+
+        }
     }
+    // Create the rule merged with libraries if necessary
+    let ruleWithLibraries = new cql.Library(rule) ? libraryObject.length === 0 : new cql.Library(rule, new cql.Repository(libraryObject));
+
 
     // let success = await codeService.ensureValueSetsInLibraryWithAPIKey(lib, true, endpoints.uml.key);
-    let executor = new cql.Executor(lib, codeService);
+    let executor = new cql.Executor(ruleWithLibraries, codeService);
 
+    // Create parameter object and make sure all expected parameters are provided
     let paramObject = {};
+    const expectedParameters = getListOfExpectedParameters(rule);
 
-    if (parameters) {
-        for (const key of Object.keys(parameters)) {
+    if (expectedParameters.length > 0) {
 
-            let res = parameters[key];
-            paramObject[key] = fhirWrapper.wrap(res);
+        if (parameters === null || parameters === undefined) {
+            throw new Error("Rule expects parameters, but they are undefined");
+        }
+
+        for (const expectedParameter of expectedParameters) {
+
+            let res = parameters[expectedParameter.name];
+
+            if (res === undefined || res === null) {
+                throw new Error(`Rule expects parameter "${expectedParameter.name}", but it is undefined`);
+            }
+            paramObject[expectedParameter.name] = fhirWrapper.wrap(res);
+
         }
     }
 
+
+    // Load parameters into executor
     executor = executor.withParameters(paramObject);
 
 
+    // Execute the rule
     const result = await executor.exec(psource); // Await the execution result
 
+    // Return the results
     return result.patientResults;
 }
 
