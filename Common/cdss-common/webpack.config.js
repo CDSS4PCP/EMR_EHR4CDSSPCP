@@ -20,6 +20,8 @@ module.exports = {
         new webpack.ProvidePlugin({
             process: 'process/browser',
         })
-    ]
-
+    ],
+    output: {
+        filename: 'cdss.js',
+    },
 };

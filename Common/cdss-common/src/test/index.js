@@ -1,5 +1,5 @@
 var test = require('unit.js');
-var cdss = require('../../dist/main.js');
+var cdss = require('../../dist/cdss.js');
 
 
 const fhirHelpers = require('./testResources/fhirHelpers.json');
