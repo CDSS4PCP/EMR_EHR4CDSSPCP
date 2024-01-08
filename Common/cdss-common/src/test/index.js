@@ -172,7 +172,7 @@ function testGetListOfExpectedLibraries() {
         const result = global.cdss.getListOfExpectedLibraries({library: {includes: {def: []}}});
 
         // Assert that the result is an empty array
-        test.undefined(result);
+        test.array(result).hasLength(0)
 
     }
 

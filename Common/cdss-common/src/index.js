@@ -106,8 +106,8 @@ function getListOfExpectedParameters(rule) {
  */
 function getListOfExpectedLibraries(rule) {
 
-    if (rule?.library?.parameters?.def === undefined) return undefined;
-    if (!Array.isArray(rule.library.parameters.def)) return undefined;
+    if (rule?.library?.includes?.def === undefined) return undefined;
+    if (!Array.isArray(rule.library.includes.def)) return undefined;
 
     let result = [];
     rule.library.includes.def.forEach(l => {
@@ -124,7 +124,7 @@ function getListOfExpectedLibraries(rule) {
  * @param {string|null} url - The URL associated with the resource. Can be null.
  * @returns {Object} A FHIR Bundle object.
  */
-function createBundle(resource, url) {
+function createBundle(resource, url = null) {
     if (resource === undefined) return undefined;
     if (resource.resourceType !== "Bundle") {
         if (url === null) return {resourceType: "Bundle", entry: [{resource: resource}]}
@@ -189,8 +189,7 @@ async function executeCql(patient, rule, libraries = null, parameters = null) {
         }
     }
     // Create the rule merged with libraries if necessary
-    let ruleWithLibraries = new cql.Library(rule) ? libraryObject.length === 0 : new cql.Library(rule, new cql.Repository(libraryObject));
-
+    let ruleWithLibraries = libraryObject.length === 0 ? new cql.Library(rule) : new cql.Library(rule, new cql.Repository(libraryObject));
 
     // let success = await codeService.ensureValueSetsInLibraryWithAPIKey(lib, true, endpoints.uml.key);
     let executor = new cql.Executor(ruleWithLibraries, codeService);
