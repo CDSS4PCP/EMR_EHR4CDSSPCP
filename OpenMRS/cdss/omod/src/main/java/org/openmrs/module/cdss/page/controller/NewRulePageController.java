@@ -14,7 +14,7 @@ import org.openmrs.module.cdss.api.util.TimeUtil;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.page.PageModel;
 import org.openmrs.ui.framework.page.PageRequest;
-
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 public class NewRulePageController {

@@ -2,6 +2,7 @@ package org.openmrs.module.cdss.api.impl;
 
 import org.apache.log4j.Logger;
 import org.openmrs.annotation.Authorized;
+import org.openmrs.api.context.Context;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.cdss.CDSSActivator;
 import org.openmrs.module.cdss.CDSSConfig;
@@ -9,6 +10,7 @@ import org.openmrs.module.cdss.api.RuleManagerService;
 import org.openmrs.module.cdss.api.data.Action;
 import org.openmrs.module.cdss.api.data.Rule;
 import org.springframework.transaction.annotation.Transactional;
+//import org.openmrs.module.fhir2.api.FhirPatientService;
 
 import java.util.ArrayList;
 import java.util.List;

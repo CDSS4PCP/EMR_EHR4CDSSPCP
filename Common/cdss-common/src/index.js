@@ -172,7 +172,7 @@ async function executeCql(patient, rule, libraries = null, parameters = null) {
     // Create a library object and make sure all expected libraries are provided
     const expectedLibraries = getListOfExpectedLibraries(rule);
     let libraryObject = {};
-    if (expectedLibraries.length > 0) {
+    if (expectedLibraries !== undefined && expectedLibraries.length > 0) {
         if (libraries === null || libraries === undefined) {
             throw new Error("Rule expects libraries, but they are undefined");
         }
@@ -198,7 +198,7 @@ async function executeCql(patient, rule, libraries = null, parameters = null) {
     let paramObject = {};
     const expectedParameters = getListOfExpectedParameters(rule);
 
-    if (expectedParameters.length > 0) {
+    if (expectedParameters !== undefined && expectedParameters.length > 0) {
 
         if (parameters === null || parameters === undefined) {
             throw new Error("Rule expects parameters, but they are undefined");

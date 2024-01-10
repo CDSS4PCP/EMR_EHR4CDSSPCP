@@ -16,7 +16,6 @@
     <description>CDSS module for OpenMRS, that provides clinical decision support for vaccinations.</description>
 
 
-
     <organization>
         <name>cdss4pcp</name>
         <url>https://cdss4pcp.com/</url>
@@ -75,6 +74,7 @@
                 <version>${openmrsPlatformVersion}</version>
             </dependency>
 
+
         </dependencies>
     </dependencyManagement>
 
@@ -105,7 +105,8 @@
     <properties>
         <openmrsPlatformVersion>2.4.3</openmrsPlatformVersion>
         <eventAPIVersion>2.4</eventAPIVersion>
-
+        <fhir2APIVersion>1.10.0</fhir2APIVersion>
+        <hapiFhirVersion>5.4.0</hapiFhirVersion>
 
     </properties>
 </project>

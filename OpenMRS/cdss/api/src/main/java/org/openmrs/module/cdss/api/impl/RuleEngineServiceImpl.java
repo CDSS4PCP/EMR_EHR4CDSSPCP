@@ -99,7 +99,7 @@ public class RuleEngineServiceImpl extends BaseOpenmrsService implements RuleEng
 		List<Rule> applicableRules = new ArrayList<Rule>();
 		
 		// Check Medical Indications
-		applicableRules = checkMedicalIndications(patient, rules);
+		//		applicableRules = checkMedicalIndications(patient, rules);
 		
 		// Check Special Condition
 		
