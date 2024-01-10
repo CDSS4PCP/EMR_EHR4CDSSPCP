@@ -34,6 +34,8 @@
     async function doCoolStuff() {
 
 
+        let patientId = "${patientId}";
+
         let r1 = await fetch("/openmrs/cdss/rule1.form");
         let j1 = await r1.json();
 
@@ -41,14 +43,15 @@
         let fh = await fetch("/openmrs/cdss/FHIRHelpers.form");
         let fhirHelpers = await fh.json();
 
-        let p = await fetch('/openmrs/cdss/patient.form');
+        let p = await fetch('/openmrs/ws/fhir2/R4/Patient/' + patientId);
         let p1 = await p.json();
         console.log(p1);
 
         let result = await global.cdss.executeCql(p1, j1, {"FHIRHelpers": fhirHelpers}, {});
         console.log(result);
 
-        document.getElementById("result-view").innerHTML = "<pre>" + JSON.stringify(result, null, 2) + "</pre>";
+        document.getElementById("result-view").innerHTML = "<pre>Inpopulation:" + result[patientId].InPopulation + "</pre>";
+
         document.getElementById("patient-view").innerHTML = "<pre>" + JSON.stringify(p1, null, 2) + "</pre>";
 
     }
