@@ -2,55 +2,6 @@ import cql from 'cql-execution';
 import cqlfhir from 'cql-exec-fhir';
 import vsac from 'cql-exec-vsac';
 
-// let endpoints = {
-//     "metadata": {
-//         "systemName": "OpenMRS", "remoteAddress": "http://localhost:8081/openmrs-standalone/",
-//     },
-//     "general": {
-//         address: "http://localhost:8081/openmrs-standalone/ws/fhir2/R4/{{extend}}",
-//         method: "GET",
-//         credentials: "include",
-//         mode: "cors",
-//         headers: {Accept: "application/json", Cookie: "JSESSIONID=F71AF8B41B0E913A2BE0A870450F9F73"}
-//     },
-//     "patientList": {
-//         address: "http://localhost:8081/openmrs-standalone/ws/fhir2/R4/Patient",
-//         method: "GET",
-//         credentials: "include",
-//         mode: "cors",
-//         headers: {Accept: "application/json", Cookie: "JSESSIONID=F71AF8B41B0E913A2BE0A870450F9F73"}
-//     },
-//     "patientEngineRun": {
-//         address: "http://localhost:8081/openmrs-standalone/ws/fhir2/R4/Patient/{{patientId}}",
-//         method: "GET",
-//         credentials: "include",
-//         mode: "cors",
-//         headers: {Accept: "application/json", Cookie: "JSESSIONID=F71AF8B41B0E913A2BE0A870450F9F73"}
-//     },
-//     "medicationRequestList": {
-//         address: "http://localhost:8081/openmrs-standalone/ws/fhir2/R4/MedicationRequest",
-//         method: "GET",
-//         credentials: "include",
-//         mode: "cors",
-//         headers: {Accept: "application/json", Cookie: "JSESSIONID=F71AF8B41B0E913A2BE0A870450F9F73"}
-//     },
-//     "medicationRequestByPatient": {
-//         address: "http://localhost:8081/openmrs-standalone/ws/fhir2/R4/MedicationRequest?patient.identifier={{patientId}}",
-//         method: "GET",
-//         credentials: "include",
-//         mode: "cors",
-//         headers: {Accept: "application/json", Cookie: "JSESSIONID=F71AF8B41B0E913A2BE0A870450F9F73"}
-//     },
-//     medicationList: {
-//         address: "http://localhost:8081/openmrs-standalone/ws/fhir2/R4/Medication/{{medicationId}}",
-//         method: "GET",
-//         credentials: "include",
-//         mode: "cors",
-//         headers: {Accept: "application/json", Cookie: "JSESSIONID=F71AF8B41B0E913A2BE0A870450F9F73"}
-//     }
-// };
-//
-
 
 let endpoints = {
     "metadata": {
@@ -69,6 +20,10 @@ let endpoints = {
         method: "GET",
     },
     "immunizationByPatientId": {
+        address: null,
+        method: "GET",
+    },
+    "observationByPatientId": {
         address: null,
         method: "GET",
     },
@@ -228,6 +183,45 @@ async function executeCql(patient, rule, libraries = null, parameters = null) {
     return result.patientResults;
 }
 
+async function getPatientResource(patientId) {
+    let response = await fetch(endpoints.patientById.address.replace("{{patientId}}", patientId), endpoints.patientById);
+    if (response.status != 200) {
+        throw new Error("Patient responded with HTTP " + response.status);
+    }
+    let patient = await response.json();
+
+    if (patient.resourceType != "Patient") {
+        throw new Error("Requested Patient was not a Patient, rather it is " + patient.type);
+    }
+    return patient;
+}
+
+
+async function getRule(ruleId) {
+    let response = await fetch(endpoints.ruleById.address.replace("{{ruleId}}", ruleId), endpoints.ruleById);
+    if (response.status != 200) {
+        throw new Error("Rule responded with HTTP " + response.status);
+    }
+    let rule = await response.json();
+
+    return rule;
+}
+
+async function cds(ruleId, patientId) {
+    let patient = await getPatientResource(patientId);
+    let rule = await getRule(ruleId);
+
+    let libraries = {};
+    let expectedLibraries = getListOfExpectedLibraries(rule);
+
+    for (const lib of expectedLibraries) {
+        libraries[lib.name] = await getRule(lib.path);
+    }
+
+
+    let parameters = {}; // TODO how to figure what parameters to import
+    return await executeCql(patient, rule, libraries, parameters);
+}
 
 global.cdss = {
     endpoints: endpoints,
