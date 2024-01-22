@@ -39,6 +39,6 @@ public class PatientWidgetFragmentController {
 		List<EngineResult> res = vc.getAllResults(p);
 		
 		model.addAttribute("results", res);
-		model.addAttribute("patientUuid", p.getUuid());
+		model.addAttribute("patientId", p.getUuid());
 	}
 }

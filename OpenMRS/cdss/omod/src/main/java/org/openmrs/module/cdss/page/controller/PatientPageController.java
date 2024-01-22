@@ -28,10 +28,7 @@ public class PatientPageController {
 	
 	private final Logger log = Logger.getLogger(getClass());
 	
-	public String get(PageModel model, PageRequest request,
-	        @SpringBean("cdss.RuleEngineServiceImpl") RuleEngineService engineService,
-	        @SpringBean("cdss.RuleLoggerServiceImpl") RuleLoggerService loggerService,
-	        @SpringBean("patientService") PatientService patientService) {
+	public String get(PageModel model, PageRequest request, @SpringBean("patientService") PatientService patientService) {
 		
 		model.addAttribute("error", null);
 		model.addAttribute("disabledResults", new ArrayList<String>());
@@ -42,72 +39,18 @@ public class PatientPageController {
 			return "redirect:" + CDSSWebConfig.ERROR_URL;
 		}
 		
-		String ruleset = (String) request.getAttribute("ruleset");
-		
 		Patient patient = patientService.getPatientByUuid(patientUuid);
 		
 		model.addAttribute("givenName", patient.getGivenName());
 		model.addAttribute("familyName", patient.getFamilyName());
 		model.addAttribute("patientId", patientUuid);
 		
-		List<String> loadedRulesets = engineService.getLoadedVaccineRulesets();
-		HashMap<String, EngineResult> results = new HashMap<String, EngineResult>();
-		if (ruleset == null) {
-			for (EngineResult res : engineService.getAllResults(patient)) {
-				results.put(res.getVaccine(), res);
-			}
-			model.addAttribute("results", results);
-		} else {
-			if (loadedRulesets.contains(ruleset)) {
-				EngineResult result = engineService.getResult(patient, ruleset);
-				results.put(result.getVaccine(), result);
-				model.addAttribute("results", results);
-			} else {
-				model.addAttribute("results", results);
-			}
-		}
-		
-		List<String> disabledResults = new ArrayList<String>();
-		for (EngineResult result : results.values()) {
-			if (loggerService.isActionTaken(result.getId())) {
-				disabledResults.add(result.getId());
-			}
-		}
-		
-		model.addAttribute("disabledResults", disabledResults);
-		
-		if (request.getAttribute("takeAction") != null) {
-			String resultUuid = (String) request.getAttribute("takeAction");
-			
-			EngineResult result = null;
-			
-			for (EngineResult res : results.values()) {
-				if (res.getId().equals(resultUuid)) {
-					result = res;
-				}
-			}
-			
-			if (result == null) {
-				log.debug("ERROR: No result found for uuid: " + resultUuid);
-				log.debug("Results: " + results);
-			} else {
-				
-				loggerService.recordRuleHit(ZonedDateTime.now(), result, true, Context.getAuthenticatedUser(),
-				    Context.getAuthenticatedUser());
-				return "redirect:" + "/coreapps/clinicianfacing/patient.page?patientId=" + patientUuid;
-			}
-			
-		}
-		
 		return null;
 	}
 	
-	public String post(PageModel model, PageRequest request,
-	        @SpringBean("cdss.RuleEngineServiceImpl") RuleEngineService engineService,
-	        @SpringBean("cdss.RuleLoggerServiceImpl") RuleLoggerService loggerService,
-	        @SpringBean("patientService") PatientService patientService) {
+	public String post(PageModel model, PageRequest request, @SpringBean("patientService") PatientService patientService) {
 		
-		return get(model, request, engineService, loggerService, patientService);
+		return get(model, request, patientService);
 	}
 	
 }
