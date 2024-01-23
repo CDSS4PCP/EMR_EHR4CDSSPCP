@@ -30,29 +30,49 @@
 
 <script async>
 
+    // Set the endpoints
+    global.cdss.endpoints = {
+        "metadata": {
+            "systemName": "OpenMRS", "remoteAddress": "http://localhost:8080/openmrs",
+        },
+        "patientById": {
+            address: "http://localhost:8080/openmrs/ws/fhir2/R4/Patient/{{patientId}}",
+            method: "GET",
+        },
+        "medicationRequestByPatientId": {
+            address: "http://localhost:8080/openmrs/ws/fhir2/R4/MedicationRequest/{{medicationRequestId}}",
+            method: "GET",
+        },
+        "medicationByMedicationRequestId": {
+            address: "http://localhost:8080/openmrs/ws/fhir2/R4/Medication/{{medicationId}}",
+            method: "GET",
+        },
+        "immunizationByPatientId": {
+            address: "http://localhost:8080/openmrs/ws/fhir2/R4/Immunization/{{patientId}}",
+            method: "GET",
+        },
+        "observationByPatientId": {
+            address: "http://localhost:8080/openmrs/ws/fhir2/R4/Observation/{{patientId}}",
+            method: "GET",
+        },
+        "ruleById": {
+            address: "http://localhost:8080/openmrs/cdss/rule/{{ruleId}}.json",
+            method: "GET",
+        }
+
+    };
+
 
     async function doCoolStuff() {
 
-
         let patientId = "${patientId}";
+        let ruleId = "age-1.json";
 
-        let r1 = await fetch("/openmrs/cdss/rule1.form");
-        let j1 = await r1.json();
-
-        console.log(j1);
-        let fh = await fetch("/openmrs/cdss/FHIRHelpers.form");
-        let fhirHelpers = await fh.json();
-
-        let p = await fetch('/openmrs/ws/fhir2/R4/Patient/' + patientId);
-        let p1 = await p.json();
-        console.log(p1);
-
-        let result = await global.cdss.executeCql(p1, j1, {"FHIRHelpers": fhirHelpers}, {});
-        console.log(result);
+        let result = await global.cdss.executeRuleWithPatient(patientId, ruleId);
 
         document.getElementById("result-view").innerHTML = "<pre>Inpopulation:" + result[patientId].InPopulation + "</pre>";
 
-        document.getElementById("patient-view").innerHTML = "<pre>" + JSON.stringify(p1, null, 2) + "</pre>";
+        document.getElementById("patient-view").innerHTML = "<pre>" + patientId + "</pre>";
 
     }
 

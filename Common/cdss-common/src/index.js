@@ -184,22 +184,55 @@ async function executeCql(patient, rule, libraries = null, parameters = null) {
 }
 
 async function getPatientResource(patientId) {
-    let response = await fetch(endpoints.patientById.address.replace("{{patientId}}", patientId), endpoints.patientById);
-    if (response.status != 200) {
+    let url = global.cdss.endpoints.patientById.address.replace("{{patientId}}", patientId);
+    console.log("Fetching Patient " + url);
+    let response = await fetch(url, global.cdss.endpoints.patientById);
+    if (response.status !== 200) {
         throw new Error("Patient responded with HTTP " + response.status);
     }
+
     let patient = await response.json();
 
-    if (patient.resourceType != "Patient") {
+    if (patient.resourceType !== "Patient") {
         throw new Error("Requested Patient was not a Patient, rather it is " + patient.type);
     }
     return patient;
 }
 
+async function getFhirResource(patientId, resourceType) {
+    let response = null;
+    switch (resourceType) {
+        case "{http://hl7.org/fhir}Immunization":
+            response = await fetch(endpoints.immunizationByPatientId.address.replace("{{patientId}}", patientId), endpoints.immunizationByPatientId);
+            break;
+        case "{http://hl7.org/fhir}Observation":
+            response = await fetch(endpoints.observationByPatientId.address.replace("{{patientId}}", patientId), endpoints.observationByPatientId);
+            break;
+        case "{http://hl7.org/fhir}MedicationRequest":
+            response = await fetch(endpoints.medicationRequestByPatientId.address.replace("{{patientId}}", patientId), endpoints.medicationRequestByPatientId);
+            break;
+    }
+
+    if (response == null) {
+        throw new Error("Could not find proper endpoint type for " + resourceType);
+    }
+    if (response.status !== 200) {
+        throw new Error(resourceType + " responded with HTTP " + response.status);
+    }
+    let res = await response.json();
+
+    if (res.resourceType !== resourceType.replace("{http://hl7.org/fhir}", "")) {
+        throw new Error("Requested Patient was not a Patient, rather it is " + res.type);
+    }
+    return res;
+}
 
 async function getRule(ruleId) {
-    let response = await fetch(endpoints.ruleById.address.replace("{{ruleId}}", ruleId), endpoints.ruleById);
-    if (response.status != 200) {
+    let url = global.cdss.endpoints.ruleById.address.replace("{{ruleId}}", ruleId);
+    console.log("Fetching Rule " + url);
+
+    let response = await fetch(url, global.cdss.endpoints.ruleById);
+    if (response.status !== 200) {
         throw new Error("Rule responded with HTTP " + response.status);
     }
     let rule = await response.json();
@@ -207,19 +240,32 @@ async function getRule(ruleId) {
     return rule;
 }
 
-async function cds(ruleId, patientId) {
+
+async function executeRuleWithPatient(patientId, ruleId) {
     let patient = await getPatientResource(patientId);
     let rule = await getRule(ruleId);
 
+
     let libraries = {};
     let expectedLibraries = getListOfExpectedLibraries(rule);
+    console.log("expectedLibraries " + expectedLibraries);
+    if (expectedLibraries !== undefined)
+        for (const lib of expectedLibraries) {
+            libraries[lib.name] = await getRule(lib.path);
+        }
 
-    for (const lib of expectedLibraries) {
-        libraries[lib.name] = await getRule(lib.path);
-    }
+
+    let parameters = {};
+
+    let expectedParameters = getListOfExpectedParameters(rule);
+    console.log("expectedParameters " + expectedParameters);
+    if (expectedParameters !== undefined)
+        for (const par of expectedParameters) {
+            parameters[par.name] = await getFhirResource(patientId, par.type);
+
+        }
 
 
-    let parameters = {}; // TODO how to figure what parameters to import
     return await executeCql(patient, rule, libraries, parameters);
 }
 
@@ -228,7 +274,8 @@ global.cdss = {
     createBundle: createBundle,
     executeCql: executeCql,
     getListOfExpectedParameters: getListOfExpectedParameters,
-    getListOfExpectedLibraries: getListOfExpectedLibraries
+    getListOfExpectedLibraries: getListOfExpectedLibraries,
+    executeRuleWithPatient: executeRuleWithPatient
 };
 
 
