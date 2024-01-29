@@ -2,55 +2,6 @@ import cql from 'cql-execution';
 import cqlfhir from 'cql-exec-fhir';
 import vsac from 'cql-exec-vsac';
 
-// let endpoints = {
-//     "metadata": {
-//         "systemName": "OpenMRS", "remoteAddress": "http://localhost:8081/openmrs-standalone/",
-//     },
-//     "general": {
-//         address: "http://localhost:8081/openmrs-standalone/ws/fhir2/R4/{{extend}}",
-//         method: "GET",
-//         credentials: "include",
-//         mode: "cors",
-//         headers: {Accept: "application/json", Cookie: "JSESSIONID=F71AF8B41B0E913A2BE0A870450F9F73"}
-//     },
-//     "patientList": {
-//         address: "http://localhost:8081/openmrs-standalone/ws/fhir2/R4/Patient",
-//         method: "GET",
-//         credentials: "include",
-//         mode: "cors",
-//         headers: {Accept: "application/json", Cookie: "JSESSIONID=F71AF8B41B0E913A2BE0A870450F9F73"}
-//     },
-//     "patientEngineRun": {
-//         address: "http://localhost:8081/openmrs-standalone/ws/fhir2/R4/Patient/{{patientId}}",
-//         method: "GET",
-//         credentials: "include",
-//         mode: "cors",
-//         headers: {Accept: "application/json", Cookie: "JSESSIONID=F71AF8B41B0E913A2BE0A870450F9F73"}
-//     },
-//     "medicationRequestList": {
-//         address: "http://localhost:8081/openmrs-standalone/ws/fhir2/R4/MedicationRequest",
-//         method: "GET",
-//         credentials: "include",
-//         mode: "cors",
-//         headers: {Accept: "application/json", Cookie: "JSESSIONID=F71AF8B41B0E913A2BE0A870450F9F73"}
-//     },
-//     "medicationRequestByPatient": {
-//         address: "http://localhost:8081/openmrs-standalone/ws/fhir2/R4/MedicationRequest?patient.identifier={{patientId}}",
-//         method: "GET",
-//         credentials: "include",
-//         mode: "cors",
-//         headers: {Accept: "application/json", Cookie: "JSESSIONID=F71AF8B41B0E913A2BE0A870450F9F73"}
-//     },
-//     medicationList: {
-//         address: "http://localhost:8081/openmrs-standalone/ws/fhir2/R4/Medication/{{medicationId}}",
-//         method: "GET",
-//         credentials: "include",
-//         mode: "cors",
-//         headers: {Accept: "application/json", Cookie: "JSESSIONID=F71AF8B41B0E913A2BE0A870450F9F73"}
-//     }
-// };
-//
-
 
 let endpoints = {
     "metadata": {
@@ -69,6 +20,10 @@ let endpoints = {
         method: "GET",
     },
     "immunizationByPatientId": {
+        address: null,
+        method: "GET",
+    },
+    "observationByPatientId": {
         address: null,
         method: "GET",
     },
@@ -228,13 +183,99 @@ async function executeCql(patient, rule, libraries = null, parameters = null) {
     return result.patientResults;
 }
 
+async function getPatientResource(patientId) {
+    let url = global.cdss.endpoints.patientById.address.replace("{{patientId}}", patientId);
+    console.log("Fetching Patient " + url);
+    let response = await fetch(url, global.cdss.endpoints.patientById);
+    if (response.status !== 200) {
+        throw new Error("Patient responded with HTTP " + response.status);
+    }
+
+    let patient = await response.json();
+
+    if (patient.resourceType !== "Patient") {
+        throw new Error("Requested Patient was not a Patient, rather it is " + patient.type);
+    }
+    return patient;
+}
+
+async function getFhirResource(patientId, resourceType) {
+    let response = null;
+    switch (resourceType) {
+        case "{http://hl7.org/fhir}Immunization":
+            response = await fetch(endpoints.immunizationByPatientId.address.replace("{{patientId}}", patientId), endpoints.immunizationByPatientId);
+            break;
+        case "{http://hl7.org/fhir}Observation":
+            response = await fetch(endpoints.observationByPatientId.address.replace("{{patientId}}", patientId), endpoints.observationByPatientId);
+            break;
+        case "{http://hl7.org/fhir}MedicationRequest":
+            response = await fetch(endpoints.medicationRequestByPatientId.address.replace("{{patientId}}", patientId), endpoints.medicationRequestByPatientId);
+            break;
+    }
+
+    if (response == null) {
+        throw new Error("Could not find proper endpoint type for " + resourceType);
+    }
+    if (response.status !== 200) {
+        throw new Error(resourceType + " responded with HTTP " + response.status);
+    }
+    let res = await response.json();
+
+    if (res.resourceType !== resourceType.replace("{http://hl7.org/fhir}", "")) {
+        throw new Error("Requested Patient was not a Patient, rather it is " + res.type);
+    }
+    return res;
+}
+
+async function getRule(ruleId) {
+    let url = global.cdss.endpoints.ruleById.address.replace("{{ruleId}}", ruleId);
+    console.log("Fetching Rule " + url);
+
+    let response = await fetch(url, global.cdss.endpoints.ruleById);
+    if (response.status !== 200) {
+        throw new Error("Rule responded with HTTP " + response.status);
+    }
+    let rule = await response.json();
+
+    return rule;
+}
+
+
+async function executeRuleWithPatient(patientId, ruleId) {
+    let patient = await getPatientResource(patientId);
+    let rule = await getRule(ruleId);
+
+
+    let libraries = {};
+    let expectedLibraries = getListOfExpectedLibraries(rule);
+    console.log("expectedLibraries " + expectedLibraries);
+    if (expectedLibraries !== undefined)
+        for (const lib of expectedLibraries) {
+            libraries[lib.name] = await getRule(lib.path);
+        }
+
+
+    let parameters = {};
+
+    let expectedParameters = getListOfExpectedParameters(rule);
+    console.log("expectedParameters " + expectedParameters);
+    if (expectedParameters !== undefined)
+        for (const par of expectedParameters) {
+            parameters[par.name] = await getFhirResource(patientId, par.type);
+
+        }
+
+
+    return await executeCql(patient, rule, libraries, parameters);
+}
 
 global.cdss = {
     endpoints: endpoints,
     createBundle: createBundle,
     executeCql: executeCql,
     getListOfExpectedParameters: getListOfExpectedParameters,
-    getListOfExpectedLibraries: getListOfExpectedLibraries
+    getListOfExpectedLibraries: getListOfExpectedLibraries,
+    executeRuleWithPatient: executeRuleWithPatient
 };
 
 
