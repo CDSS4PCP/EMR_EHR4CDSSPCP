@@ -63,17 +63,26 @@ function testEndpoints() {
         test.object(global.cdss.endpoints["patientById"]).hasProperty("method");
     }
 
+    function endpoints_conditionByPatientId() {
+        test.object(global.cdss.endpoints).hasProperty("conditionByPatientId");
+        test.object(global.cdss.endpoints["conditionByPatientId"]).hasProperty("address");
+        test.object(global.cdss.endpoints["conditionByPatientId"]).hasProperty("method");
+    }
+
     function endpoints_ruleById() {
         test.object(global.cdss.endpoints).hasProperty("ruleById");
         test.object(global.cdss.endpoints["patientById"]).hasProperty("address");
         test.object(global.cdss.endpoints["patientById"]).hasProperty("method");
     }
 
+
+
     endpoints_metadata();
     endpoints_patientById();
     endpoints_medicationRequestByPatientId();
     endpoints_medicationByMedicationRequestId();
     endpoints_immunizationByPatientId();
+    endpoints_conditionByPatientId();
     endpoints_ruleById();
 }
 

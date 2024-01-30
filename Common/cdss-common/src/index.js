@@ -27,6 +27,10 @@ let endpoints = {
         address: null,
         method: "GET",
     },
+    "conditionByPatientId":{
+        address: null,
+        method: "GET",
+    },
     "ruleById": {
         address: null,
         method: "GET",
