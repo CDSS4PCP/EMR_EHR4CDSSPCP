@@ -27,7 +27,7 @@ let endpoints = {
         address: null,
         method: "GET",
     },
-    "conditionByPatientId":{
+    "conditionByPatientId": {
         address: null,
         method: "GET",
     },
@@ -188,60 +188,90 @@ async function executeCql(patient, rule, libraries = null, parameters = null) {
 }
 
 async function getPatientResource(patientId) {
-    let url = global.cdss.endpoints.patientById.address.replace("{{patientId}}", patientId);
-    console.log("Fetching Patient " + url);
-    let response = await fetch(url, global.cdss.endpoints.patientById);
-    if (response.status !== 200) {
-        throw new Error("Patient responded with HTTP " + response.status);
+
+    let patient = null;
+    if (typeof global.cdss.endpoints.patientById.address == 'function') {
+
+        patient = await global.cdss.endpoints.patientById.address(patientId);
+
+
+    } else {
+        let url = global.cdss.endpoints.patientById.address.replace("{{patientId}}", patientId);
+        console.log("Fetching Patient " + url);
+        let response = await fetch(url, global.cdss.endpoints.patientById);
+        if (response.status !== 200) {
+            throw new Error("Patient responded with HTTP " + response.status);
+        }
+
+        patient = await response.json();
+
     }
-
-    let patient = await response.json();
-
     if (patient.resourceType !== "Patient") {
         throw new Error("Requested Patient was not a Patient, rather it is " + patient.type);
     }
     return patient;
+
 }
 
 async function getFhirResource(patientId, resourceType) {
     let response = null;
+    let res = null;
     switch (resourceType) {
         case "{http://hl7.org/fhir}Immunization":
-            response = await fetch(endpoints.immunizationByPatientId.address.replace("{{patientId}}", patientId), endpoints.immunizationByPatientId);
+            if (typeof endpoints.immunizationByPatientId.address == 'string')
+                response = await fetch(endpoints.immunizationByPatientId.address.replace("{{patientId}}", patientId), endpoints.immunizationByPatientId);
+            else if (typeof endpoints.immunizationByPatientId.address == 'function')
+                res = await endpoints.immunizationByPatientId.address(patientId)
             break;
+
         case "{http://hl7.org/fhir}Observation":
-            response = await fetch(endpoints.observationByPatientId.address.replace("{{patientId}}", patientId), endpoints.observationByPatientId);
+            if (typeof endpoints.observationByPatientId.address == 'string')
+                response = await fetch(endpoints.observationByPatientId.address.replace("{{patientId}}", patientId), endpoints.observationByPatientId);
+            else if (typeof endpoints.observationByPatientId.address == 'function')
+                res = await endpoints.observationByPatientId.address(patientId)
             break;
         case "{http://hl7.org/fhir}MedicationRequest":
-            response = await fetch(endpoints.medicationRequestByPatientId.address.replace("{{patientId}}", patientId), endpoints.medicationRequestByPatientId);
+            if (typeof endpoints.medicationRequestByPatientId.address == 'string')
+                response = await fetch(endpoints.medicationRequestByPatientId.address.replace("{{patientId}}", patientId), endpoints.medicationRequestByPatientId);
+            else if (typeof endpoints.medicationRequestByPatientId.address == 'function')
+                res = await endpoints.medicationRequestByPatientId.address(patientId)
             break;
+
     }
 
     if (response == null) {
         throw new Error("Could not find proper endpoint type for " + resourceType);
     }
-    if (response.status !== 200) {
+    if (response?.status !== 200) {
         throw new Error(resourceType + " responded with HTTP " + response.status);
     }
-    let res = await response.json();
+    if (res == null)
+        res = await response.json();
 
-    if (res.resourceType !== resourceType.replace("{http://hl7.org/fhir}", "")) {
-        throw new Error("Requested Patient was not a Patient, rather it is " + res.type);
-    }
+    // if (res.resourceType !== resourceType.replace("{http://hl7.org/fhir}", "")) {
+    //     throw new Error("Requested Patient was not a Patient, rather it is " + res.type);
+    // }
     return res;
 }
 
 async function getRule(ruleId) {
-    let url = global.cdss.endpoints.ruleById.address.replace("{{ruleId}}", ruleId);
-    console.log("Fetching Rule " + url);
 
-    let response = await fetch(url, global.cdss.endpoints.ruleById);
-    if (response.status !== 200) {
-        throw new Error("Rule responded with HTTP " + response.status);
+    if (typeof global.cdss.endpoints.ruleById.address == 'function') {
+        let rule = await global.cdss.endpoints.ruleById.address(ruleId);
+        return rule;
+
+    } else {
+        let url = global.cdss.endpoints.ruleById.address.replace("{{ruleId}}", ruleId);
+        console.log("Fetching Rule " + url);
+
+        let response = await fetch(url, global.cdss.endpoints.ruleById);
+        if (response.status !== 200) {
+            throw new Error("Rule responded with HTTP " + response.status);
+        }
+        let rule = await response.json();
+
+        return rule;
     }
-    let rule = await response.json();
-
-    return rule;
 }
 
 
