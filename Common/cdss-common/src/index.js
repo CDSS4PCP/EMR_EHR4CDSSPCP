@@ -52,7 +52,13 @@ function getListOfExpectedParameters(rule) {
 
     let result = [];
     rule.library.parameters.def.forEach(p => {
-        result.push({name: p.name, type: p.parameterTypeSpecifier.name});
+        let type = "";
+        if (p.parameterTypeSpecifier.name != undefined) {
+            type = p.parameterTypeSpecifier.name
+        } else {
+            type = p.parameterTypeSpecifier.type + "<" + p.parameterTypeSpecifier.elementType.name + ">";
+        }
+        result.push({name: p.name, type: type});
     });
     return result;
 }
@@ -150,7 +156,7 @@ async function executeCql(patient, rule, libraries = null, parameters = null) {
     // Create the rule merged with libraries if necessary
     let ruleWithLibraries = libraryObject.length === 0 ? new cql.Library(rule) : new cql.Library(rule, new cql.Repository(libraryObject));
 
-    // let success = await codeService.ensureValueSetsInLibraryWithAPIKey(lib, true, endpoints.uml.key);
+    let success = await codeService.ensureValueSetsInLibraryWithAPIKey(rule, true, '5d7d49f3-4c14-4442-9b1d-a6895ca5a715');
     let executor = new cql.Executor(ruleWithLibraries, codeService);
 
     // Create parameter object and make sure all expected parameters are provided
@@ -165,12 +171,20 @@ async function executeCql(patient, rule, libraries = null, parameters = null) {
 
         for (const expectedParameter of expectedParameters) {
 
-            let res = parameters[expectedParameter.name].entry[0];
+            console.log(expectedParameter);
+            let res = parameters[expectedParameter.name];
 
             if (res === undefined || res === null) {
                 throw new Error(`Rule expects parameter "${expectedParameter.name}", but it is undefined`);
             }
-            paramObject[expectedParameter.name] = fhirWrapper.wrap(res);
+            if (expectedParameter.type.startsWith("ListTypeSpecifier")) {
+                paramObject[expectedParameter.name] = [];
+                for (const entry of res.entry) {
+                    paramObject[expectedParameter.name].push(fhirWrapper.wrap(entry))
+                }
+            } else {
+                paramObject[expectedParameter.name] = fhirWrapper.wrap(res);
+            }
 
         }
     }
