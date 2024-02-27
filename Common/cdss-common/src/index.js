@@ -165,7 +165,7 @@ async function executeCql(patient, rule, libraries = null, parameters = null) {
 
         for (const expectedParameter of expectedParameters) {
 
-            let res = parameters[expectedParameter.name];
+            let res = parameters[expectedParameter.name].entry[0];
 
             if (res === undefined || res === null) {
                 throw new Error(`Rule expects parameter "${expectedParameter.name}", but it is undefined`);

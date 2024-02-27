@@ -76,7 +76,6 @@ function testEndpoints() {
     }
 
 
-
     endpoints_metadata();
     endpoints_patientById();
     endpoints_medicationRequestByPatientId();
@@ -419,4 +418,9 @@ setTimeout(() => {
 }, 500)
 
 
-
+// const mmr = require('./testResources/MMR_Rule1.json');
+// function testListOfExpectedParameters_mockRule() {
+//     let result = global.cdss.getListOfExpectedParameters(mmr);
+//     console.log(result)
+// }
+// testListOfExpectedParameters_mockRule()

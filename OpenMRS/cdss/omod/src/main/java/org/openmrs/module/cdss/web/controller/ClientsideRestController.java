@@ -33,17 +33,4 @@ public class ClientsideRestController {
 		throw new ResponseStatusException(HttpStatus.NOT_FOUND, path + " not found");
 	}
 	
-	@GetMapping(path = "/patient.form", produces = "application/json")
-	public String getPatient() {
-		ClassLoader classloader = Thread.currentThread().getContextClassLoader();
-		InputStream is = classloader.getResourceAsStream("cql/patient.json");
-		
-		if (is != null) {
-			String result = new BufferedReader(new InputStreamReader(is)).lines().collect(Collectors.joining("\n"));
-			
-			return result;
-		}
-		throw new ResponseStatusException(HttpStatus.NOT_FOUND, "cql/patient.json not found");
-	}
-	
 }
