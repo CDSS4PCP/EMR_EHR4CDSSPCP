@@ -1,0 +1,22 @@
+### Get patient
+GET http://localhost/openmrs/ws/fhir2/R4/Patient/432c9029-b552-47d8-858f-3d9d179bbe32
+Cookie: JSESSIONID=89068CE36E3B8BE15835B73DE3C767D0
+Accept: application/json
+
+
+### Get invalid patient
+GET http://localhost:8080/openmrs/ws/fhir2/R4/Patient/eb781a54-642c-4d8e-b261-8b6ae60ffb3a
+Cookie: JSESSIONID=89068CE36E3B8BE15835B73DE3C767D0
+Accept: application/json
+
+
+### Get Rule
+GET http://localhost/openmrs/cdss/rule/FHIRHelpers.json
+Cookie: JSESSIONID=89068CE36E3B8BE15835B73DE3C767D0
+Accept: application/json
+
+### Get Immunization
+GET http://localhost/openmrs/ws/fhir2/R4/Immunization?patient=432c9029-b552-47d8-858f-3d9d179bbe32
+Cookie: JSESSIONID=89068CE36E3B8BE15835B73DE3C767D0
+Accept: application/json
+
