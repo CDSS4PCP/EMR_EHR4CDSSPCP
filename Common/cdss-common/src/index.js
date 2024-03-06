@@ -121,7 +121,7 @@ async function executeCql(patient, rule, libraries = null, parameters = null) {
     const fhirWrapper = cqlfhir.FHIRWrapper.FHIRv401(); // or .FHIRv102() or .FHIRv300() or .FHIRv401()
 
 
-    const codeService = new vsac.CodeService('cache', false);
+    const codeService = new vsac.CodeService('vsac_cache', false);
 
     // Create a patient bundle if patient is not a bundle
     const patientBundle = createBundle(patient);
@@ -158,6 +158,7 @@ async function executeCql(patient, rule, libraries = null, parameters = null) {
 
     let success = await codeService.ensureValueSetsInLibraryWithAPIKey(rule, true, '5d7d49f3-4c14-4442-9b1d-a6895ca5a715');
     let executor = new cql.Executor(ruleWithLibraries, codeService);
+    // let executor = new cql.Executor(ruleWithLibraries);
 
     // Create parameter object and make sure all expected parameters are provided
     let paramObject = {};
@@ -326,4 +327,12 @@ global.cdss = {
     executeRuleWithPatient: executeRuleWithPatient
 };
 
+export {
+    endpoints,
+    createBundle,
+    executeCql,
+    getListOfExpectedParameters,
+    getListOfExpectedLibraries,
+    executeRuleWithPatient
+}
 
