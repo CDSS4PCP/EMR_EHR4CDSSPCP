@@ -2,6 +2,26 @@ import cql from 'cql-execution';
 import cqlfhir from 'cql-exec-fhir';
 import vsac from 'cql-exec-vsac';
 
+const DEBUG_MODE = false;
+
+function debugMsg(func, msg){
+    console.log(`CDSS ${func} ${msg}`)
+}
+const FhirTypes = Object.freeze({
+    PATIENT: "{http://hl7.org/fhir}Patient",
+    IMMUNIZATION: "{http://hl7.org/fhir}Immunization",
+    MEDICATION_REQUEST: "{http://hl7.org/fhir}MedicationRequest",
+    MEDICATION: "{http://hl7.org/fhir}Medication",
+    OBSERVATION: "{http://hl7.org/fhir}Observation",
+    CONDITION: "{http://hl7.org/fhir}Condition"
+})
+
+const ContainerTypes = Object.freeze({
+    LIST: (t) => {
+        if (t == null) return "ListTypeSpecifier"
+        return "ListTypeSpecifier<" + t + ">"
+    }
+})
 
 let endpoints = {
     "metadata": {
@@ -17,7 +37,7 @@ let endpoints = {
     },
     "medicationByMedicationRequestId": {
         address: null,
-        method: "GET",
+        method: "GET"
     },
     "immunizationByPatientId": {
         address: null,
@@ -172,17 +192,17 @@ async function executeCql(patient, rule, libraries = null, parameters = null) {
 
         for (const expectedParameter of expectedParameters) {
 
-            console.log(expectedParameter);
             let res = parameters[expectedParameter.name];
 
             if (res === undefined || res === null) {
                 throw new Error(`Rule expects parameter "${expectedParameter.name}", but it is undefined`);
             }
-            if (expectedParameter.type.startsWith("ListTypeSpecifier")) {
+            if (expectedParameter.type.startsWith(ContainerTypes.LIST(null))) {
                 paramObject[expectedParameter.name] = [];
-                for (const entry of res.entry) {
-                    paramObject[expectedParameter.name].push(fhirWrapper.wrap(entry))
-                }
+                if (res.entry != null)
+                    for (const entry of res.entry) {
+                        paramObject[expectedParameter.name].push(fhirWrapper.wrap(entry))
+                    }
             } else {
                 paramObject[expectedParameter.name] = fhirWrapper.wrap(res);
             }
@@ -231,36 +251,47 @@ async function getPatientResource(patientId) {
 async function getFhirResource(patientId, resourceType) {
     let response = null;
     let res = null;
+    // console.log("getFhirResource:", resourceType, ContainerTypes.LIST(FhirTypes.IMMUNIZATION))
     switch (resourceType) {
-        case "{http://hl7.org/fhir}Immunization":
-            if (typeof endpoints.immunizationByPatientId.address == 'string')
-                response = await fetch(endpoints.immunizationByPatientId.address.replace("{{patientId}}", patientId), endpoints.immunizationByPatientId);
-            else if (typeof endpoints.immunizationByPatientId.address == 'function')
-                res = await endpoints.immunizationByPatientId.address(patientId)
+        case ContainerTypes.LIST(FhirTypes.IMMUNIZATION):
+            if (typeof global.cdss.endpoints.immunizationByPatientId.address == 'string')
+                response = await fetch(global.cdss.endpoints.immunizationByPatientId.address.replace("{{patientId}}", patientId), endpoints.immunizationByPatientId);
+            else if (typeof global.cdss.endpoints.immunizationByPatientId.address == 'function')
+                res = await global.cdss.endpoints.immunizationByPatientId.address(patientId)
             break;
 
-        case "{http://hl7.org/fhir}Observation":
-            if (typeof endpoints.observationByPatientId.address == 'string')
-                response = await fetch(endpoints.observationByPatientId.address.replace("{{patientId}}", patientId), endpoints.observationByPatientId);
-            else if (typeof endpoints.observationByPatientId.address == 'function')
-                res = await endpoints.observationByPatientId.address(patientId)
+        case ContainerTypes.LIST(FhirTypes.OBSERVATION):
+            if (typeof global.cdss.endpoints.observationByPatientId.address == 'string')
+                response = await fetch(global.cdss.endpoints.observationByPatientId.address.replace("{{patientId}}", patientId), endpoints.observationByPatientId);
+            else if (typeof global.cdss.endpoints.observationByPatientId.address == 'function')
+                res = await global.cdss.endpoints.observationByPatientId.address(patientId)
             break;
-        case "{http://hl7.org/fhir}MedicationRequest":
-            if (typeof endpoints.medicationRequestByPatientId.address == 'string')
-                response = await fetch(endpoints.medicationRequestByPatientId.address.replace("{{patientId}}", patientId), endpoints.medicationRequestByPatientId);
-            else if (typeof endpoints.medicationRequestByPatientId.address == 'function')
-                res = await endpoints.medicationRequestByPatientId.address(patientId)
+        case ContainerTypes.LIST(FhirTypes.MEDICATION_REQUEST):
+            if (typeof global.cdss.endpoints.medicationRequestByPatientId.address == 'string')
+                response = await fetch(global.cdss.endpoints.medicationRequestByPatientId.address.replace("{{patientId}}", patientId), endpoints.medicationRequestByPatientId);
+            else if (typeof global.cdss.endpoints.medicationRequestByPatientId.address == 'function')
+                res = await global.cdss.endpoints.medicationRequestByPatientId.address(patientId)
+            break;
+        case ContainerTypes.LIST(FhirTypes.CONDITION):
+            if (typeof global.cdss.endpoints.conditionByPatientId.address == 'string')
+                response = await fetch(global.cdss.endpoints.conditionByPatientId.address.replace("{{patientId}}", patientId), endpoints.medicationRequestByPatientId);
+            else if (typeof global.cdss.endpoints.conditionByPatientId.address == 'function')
+                res = await global.cdss.endpoints.conditionByPatientId.address(patientId)
             break;
 
     }
 
-    if (response == null) {
+    if (res != null) {
+        return res;
+    }
+
+    if (response == null && res == null) {
         throw new Error("Could not find proper endpoint type for " + resourceType);
     }
-    if (response?.status !== 200) {
+    if (response?.status !== 200 && res == null) {
         throw new Error(resourceType + " responded with HTTP " + response.status);
     }
-    if (res == null)
+    if (res == null && response != null)
         res = await response.json();
 
     // if (res.resourceType !== resourceType.replace("{http://hl7.org/fhir}", "")) {
@@ -307,7 +338,8 @@ async function executeRuleWithPatient(patientId, ruleId) {
     let parameters = {};
 
     let expectedParameters = getListOfExpectedParameters(rule);
-    console.log("expectedParameters " + expectedParameters);
+    // console.log("expectedParameters " + expectedParameters);
+    if(global.cdss.DEBUG_MODE)
     if (expectedParameters !== undefined)
         for (const par of expectedParameters) {
             parameters[par.name] = await getFhirResource(patientId, par.type);
@@ -324,7 +356,8 @@ global.cdss = {
     executeCql: executeCql,
     getListOfExpectedParameters: getListOfExpectedParameters,
     getListOfExpectedLibraries: getListOfExpectedLibraries,
-    executeRuleWithPatient: executeRuleWithPatient
+    executeRuleWithPatient: executeRuleWithPatient,
+    DEBUG_MODE: DEBUG_MODE
 };
 
 export {
