@@ -53,29 +53,6 @@
             "accessLevel" : "Public"
          } ]
       },
-      "valueSets" : {
-         "def" : [ {
-            "name" : "Measles, Mumps and Rubella (MMR) Vaccine Administered VS",
-            "id" : "https://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.110.11.1086",
-            "accessLevel" : "Public"
-         }, {
-            "name" : "Measles, Mumps and Rubella (MMR) Vaccine VS",
-            "id" : "https://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.196.11.1235",
-            "accessLevel" : "Public"
-         }, {
-            "name" : "Measles, Mumps and Rubella (MMR) Vaccine VS_1",
-            "id" : "https://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.196.12.1224",
-            "accessLevel" : "Public"
-         }, {
-            "name" : "Measles, Mumps and Rubella (MMR) Vaccine Administered VS_1",
-            "id" : "https://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.110.12.1031",
-            "accessLevel" : "Public"
-         }, {
-            "name" : "Measles, Mumps and Rubella (MMR) Vaccine Administered VS_2",
-            "id" : "https://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.110.11.1085",
-            "accessLevel" : "Public"
-         } ]
-      },
       "codes" : {
          "def" : [ {
             "name" : "measles, mumps, rubella, and varicella virus vaccine code",
@@ -87,7 +64,7 @@
             }
          }, {
             "name" : "measles, mumps and rubella virus vaccine code",
-            "id" : "03",
+            "id" : "3",
             "display" : "measles, mumps and rubella virus vaccine",
             "accessLevel" : "Public",
             "codeSystem" : {
@@ -186,78 +163,13 @@
                }
             } ]
          }, {
-            "name" : "MMR_Vaccine_valuesets",
+            "name" : "VaccineName",
             "context" : "Patient",
             "accessLevel" : "Public",
             "expression" : {
-               "type" : "Union",
-               "operand" : [ {
-                  "dataType" : "{http://hl7.org/fhir}Immunization",
-                  "templateId" : "http://hl7.org/fhir/StructureDefinition/Immunization",
-                  "codeProperty" : "vaccineCode",
-                  "codeComparator" : "in",
-                  "type" : "Retrieve",
-                  "codes" : {
-                     "name" : "Measles, Mumps and Rubella (MMR) Vaccine VS",
-                     "preserve" : true,
-                     "type" : "ValueSetRef"
-                  }
-               }, {
-                  "dataType" : "{http://hl7.org/fhir}Immunization",
-                  "templateId" : "http://hl7.org/fhir/StructureDefinition/Immunization",
-                  "codeProperty" : "vaccineCode",
-                  "codeComparator" : "in",
-                  "type" : "Retrieve",
-                  "codes" : {
-                     "name" : "Measles, Mumps and Rubella (MMR) Vaccine VS_1",
-                     "preserve" : true,
-                     "type" : "ValueSetRef"
-                  }
-               } ]
-            }
-         }, {
-            "name" : "MMR_Vaccine_Admin_valuesets",
-            "context" : "Patient",
-            "accessLevel" : "Public",
-            "expression" : {
-               "type" : "Union",
-               "operand" : [ {
-                  "type" : "Union",
-                  "operand" : [ {
-                     "dataType" : "{http://hl7.org/fhir}Immunization",
-                     "templateId" : "http://hl7.org/fhir/StructureDefinition/Immunization",
-                     "codeProperty" : "vaccineCode",
-                     "codeComparator" : "in",
-                     "type" : "Retrieve",
-                     "codes" : {
-                        "name" : "Measles, Mumps and Rubella (MMR) Vaccine Administered VS",
-                        "preserve" : true,
-                        "type" : "ValueSetRef"
-                     }
-                  }, {
-                     "dataType" : "{http://hl7.org/fhir}Immunization",
-                     "templateId" : "http://hl7.org/fhir/StructureDefinition/Immunization",
-                     "codeProperty" : "vaccineCode",
-                     "codeComparator" : "in",
-                     "type" : "Retrieve",
-                     "codes" : {
-                        "name" : "Measles, Mumps and Rubella (MMR) Vaccine Administered VS_1",
-                        "preserve" : true,
-                        "type" : "ValueSetRef"
-                     }
-                  } ]
-               }, {
-                  "dataType" : "{http://hl7.org/fhir}Immunization",
-                  "templateId" : "http://hl7.org/fhir/StructureDefinition/Immunization",
-                  "codeProperty" : "vaccineCode",
-                  "codeComparator" : "in",
-                  "type" : "Retrieve",
-                  "codes" : {
-                     "name" : "Measles, Mumps and Rubella (MMR) Vaccine Administered VS_2",
-                     "preserve" : true,
-                     "type" : "ValueSetRef"
-                  }
-               } ]
+               "valueType" : "{urn:hl7-org:elm-types:r1}String",
+               "value" : "Measles, Mumps, and Rubella Virus Vaccine",
+               "type" : "Literal"
             }
          }, {
             "name" : "MMR_Vaccine_CVXCodes",
@@ -266,51 +178,17 @@
             "expression" : {
                "type" : "Union",
                "operand" : [ {
-                  "dataType" : "{http://hl7.org/fhir}Immunization",
-                  "templateId" : "http://hl7.org/fhir/StructureDefinition/Immunization",
-                  "codeProperty" : "vaccineCode",
-                  "codeComparator" : "~",
-                  "type" : "Retrieve",
-                  "codes" : {
-                     "type" : "ToList",
-                     "operand" : {
-                        "name" : "measles, mumps, rubella, and varicella virus vaccine code",
-                        "type" : "CodeRef"
-                     }
+                  "type" : "ToList",
+                  "operand" : {
+                     "name" : "measles, mumps, rubella, and varicella virus vaccine code",
+                     "type" : "CodeRef"
                   }
                }, {
-                  "dataType" : "{http://hl7.org/fhir}Immunization",
-                  "templateId" : "http://hl7.org/fhir/StructureDefinition/Immunization",
-                  "codeProperty" : "vaccineCode",
-                  "codeComparator" : "~",
-                  "type" : "Retrieve",
-                  "codes" : {
-                     "type" : "ToList",
-                     "operand" : {
-                        "name" : "measles, mumps and rubella virus vaccine code",
-                        "type" : "CodeRef"
-                     }
+                  "type" : "ToList",
+                  "operand" : {
+                     "name" : "measles, mumps and rubella virus vaccine code",
+                     "type" : "CodeRef"
                   }
-               } ]
-            }
-         }, {
-            "name" : "MMR_Vaccine_union",
-            "context" : "Patient",
-            "accessLevel" : "Public",
-            "expression" : {
-               "type" : "Union",
-               "operand" : [ {
-                  "type" : "Union",
-                  "operand" : [ {
-                     "name" : "MMR_Vaccine_valuesets",
-                     "type" : "ExpressionRef"
-                  }, {
-                     "name" : "MMR_Vaccine_Admin_valuesets",
-                     "type" : "ExpressionRef"
-                  } ]
-               }, {
-                  "name" : "MMR_Vaccine_CVXCodes",
-                  "type" : "ExpressionRef"
                } ]
             }
          }, {
@@ -358,7 +236,47 @@
                } ]
             }
          }, {
-            "name" : "CheckMMRdose",
+            "name" : "FindValidCodes",
+            "context" : "Patient",
+            "accessLevel" : "Public",
+            "type" : "FunctionDef",
+            "expression" : {
+               "type" : "Query",
+               "source" : [ {
+                  "alias" : "c",
+                  "expression" : {
+                     "name" : "codes",
+                     "type" : "OperandRef"
+                  }
+               } ],
+               "relationship" : [ ],
+               "where" : {
+                  "type" : "In",
+                  "operand" : [ {
+                     "name" : "ToCode",
+                     "type" : "FunctionRef",
+                     "operand" : [ {
+                        "name" : "c",
+                        "type" : "AliasRef"
+                     } ]
+                  }, {
+                     "name" : "MMR_Vaccine_CVXCodes",
+                     "type" : "ExpressionRef"
+                  } ]
+               }
+            },
+            "operand" : [ {
+               "name" : "codes",
+               "operandTypeSpecifier" : {
+                  "type" : "ListTypeSpecifier",
+                  "elementType" : {
+                     "name" : "{http://hl7.org/fhir}Coding",
+                     "type" : "NamedTypeSpecifier"
+                  }
+               }
+            } ]
+         }, {
+            "name" : "FindValidVaccines",
             "context" : "Patient",
             "accessLevel" : "Public",
             "type" : "FunctionDef",
@@ -373,67 +291,22 @@
                } ],
                "relationship" : [ ],
                "where" : {
-                  "type" : "In",
-                  "operand" : [ {
-                     "name" : "Temp",
-                     "type" : "AliasRef"
-                  }, {
-                     "type" : "Union",
-                     "operand" : [ {
-                        "name" : "MMR_Vaccine_CVXCodes",
-                        "type" : "ExpressionRef"
-                     }, {
-                        "name" : "MMR_Vaccine_valuesets",
-                        "type" : "ExpressionRef"
-                     } ]
-                  } ]
-               },
-               "return" : {
-                  "expression" : {
-                     "name" : "Temp",
-                     "type" : "AliasRef"
-                  }
-               }
-            },
-            "operand" : [ {
-               "name" : "Immunizations",
-               "operandTypeSpecifier" : {
-                  "type" : "ListTypeSpecifier",
-                  "elementType" : {
-                     "name" : "{http://hl7.org/fhir}Immunization",
-                     "type" : "NamedTypeSpecifier"
-                  }
-               }
-            } ]
-         }, {
-            "name" : "CheckMMRAdmin",
-            "context" : "Patient",
-            "accessLevel" : "Public",
-            "type" : "FunctionDef",
-            "expression" : {
-               "type" : "Query",
-               "source" : [ {
-                  "alias" : "TempAdm",
-                  "expression" : {
-                     "name" : "Immunizations",
-                     "type" : "OperandRef"
-                  }
-               } ],
-               "relationship" : [ ],
-               "where" : {
-                  "type" : "In",
-                  "operand" : [ {
-                     "name" : "TempAdm",
-                     "type" : "AliasRef"
-                  }, {
-                     "name" : "MMR_Vaccine_Admin_valuesets",
-                     "type" : "ExpressionRef"
-                  } ]
-               },
-               "return" : {
-                  "expression" : {
-                     "name" : "TempAdm",
-                     "type" : "AliasRef"
+                  "type" : "Not",
+                  "operand" : {
+                     "type" : "IsNull",
+                     "operand" : {
+                        "name" : "FindValidCodes",
+                        "type" : "FunctionRef",
+                        "operand" : [ {
+                           "path" : "coding",
+                           "type" : "Property",
+                           "source" : {
+                              "path" : "vaccineCode",
+                              "scope" : "Temp",
+                              "type" : "Property"
+                           }
+                        } ]
+                     }
                   }
                }
             },
@@ -452,41 +325,21 @@
             "context" : "Patient",
             "accessLevel" : "Public",
             "expression" : {
-               "type" : "Or",
+               "type" : "Equal",
                "operand" : [ {
-                  "type" : "Equal",
-                  "operand" : [ {
-                     "type" : "Count",
-                     "source" : {
-                        "name" : "CheckMMRdose",
-                        "type" : "FunctionRef",
-                        "operand" : [ {
-                           "name" : "Imm",
-                           "type" : "ParameterRef"
-                        } ]
-                     }
-                  }, {
-                     "valueType" : "{urn:hl7-org:elm-types:r1}Integer",
-                     "value" : "1",
-                     "type" : "Literal"
-                  } ]
+                  "type" : "Count",
+                  "source" : {
+                     "name" : "FindValidVaccines",
+                     "type" : "FunctionRef",
+                     "operand" : [ {
+                        "name" : "Imm",
+                        "type" : "ParameterRef"
+                     } ]
+                  }
                }, {
-                  "type" : "Equal",
-                  "operand" : [ {
-                     "type" : "Count",
-                     "source" : {
-                        "name" : "CheckMMRAdmin",
-                        "type" : "FunctionRef",
-                        "operand" : [ {
-                           "name" : "Imm",
-                           "type" : "ParameterRef"
-                        } ]
-                     }
-                  }, {
-                     "valueType" : "{urn:hl7-org:elm-types:r1}Integer",
-                     "value" : "1",
-                     "type" : "Literal"
-                  } ]
+                  "valueType" : "{urn:hl7-org:elm-types:r1}Integer",
+                  "value" : "1",
+                  "type" : "Literal"
                } ]
             }
          }, {
@@ -505,14 +358,23 @@
                } ],
                "relationship" : [ ],
                "where" : {
-                  "type" : "In",
-                  "operand" : [ {
-                     "name" : "TemDate",
-                     "type" : "AliasRef"
-                  }, {
-                     "name" : "MMR_Vaccine_union",
-                     "type" : "ExpressionRef"
-                  } ]
+                  "type" : "Not",
+                  "operand" : {
+                     "type" : "IsNull",
+                     "operand" : {
+                        "name" : "FindValidCodes",
+                        "type" : "FunctionRef",
+                        "operand" : [ {
+                           "path" : "coding",
+                           "type" : "Property",
+                           "source" : {
+                              "path" : "vaccineCode",
+                              "scope" : "TemDate",
+                              "type" : "Property"
+                           }
+                        } ]
+                     }
+                  }
                },
                "return" : {
                   "expression" : {
@@ -595,85 +457,81 @@
                }
             } ]
          }, {
-            "name" : "AgeFirstMMR",
+            "name" : "PatientBirthDate",
             "context" : "Patient",
             "accessLevel" : "Public",
             "expression" : {
-               "precision" : "Month",
-               "type" : "DifferenceBetween",
-               "operand" : [ {
-                  "path" : "Date",
-                  "type" : "Property",
-                  "source" : {
-                     "type" : "Indexer",
-                     "operand" : [ {
-                        "name" : "MMRVaccineDate",
-                        "type" : "FunctionRef",
-                        "operand" : [ {
-                           "name" : "Imm",
-                           "type" : "ParameterRef"
-                        } ]
-                     }, {
-                        "valueType" : "{urn:hl7-org:elm-types:r1}Integer",
-                        "value" : "0",
-                        "type" : "Literal"
-                     } ]
-                  }
-               }, {
-                  "name" : "ToDate",
-                  "libraryName" : "FHIRHelpers",
-                  "type" : "FunctionRef",
-                  "operand" : [ {
-                     "path" : "birthDate",
+               "type" : "ToDate",
+               "operand" : {
+                  "type" : "ToDateTime",
+                  "operand" : {
+                     "path" : "value",
                      "type" : "Property",
                      "source" : {
-                        "name" : "Patient",
-                        "type" : "ExpressionRef"
+                        "path" : "birthDate",
+                        "type" : "Property",
+                        "source" : {
+                           "name" : "Patient",
+                           "type" : "ExpressionRef"
+                        }
                      }
-                  } ]
-               } ]
+                  }
+               }
             }
          }, {
-            "name" : "AgeFirstMMRIn",
+            "name" : "VaccineDate",
             "context" : "Patient",
             "accessLevel" : "Public",
             "expression" : {
-               "type" : "And",
-               "operand" : [ {
-                  "type" : "GreaterOrEqual",
+               "type" : "ToDate",
+               "operand" : {
+                  "type" : "ToDateTime",
+                  "operand" : {
+                     "path" : "Date",
+                     "type" : "Property",
+                     "source" : {
+                        "type" : "Indexer",
+                        "operand" : [ {
+                           "name" : "MMRVaccineDate",
+                           "type" : "FunctionRef",
+                           "operand" : [ {
+                              "name" : "Imm",
+                              "type" : "ParameterRef"
+                           } ]
+                        }, {
+                           "valueType" : "{urn:hl7-org:elm-types:r1}Integer",
+                           "value" : "0",
+                           "type" : "Literal"
+                        } ]
+                     }
+                  }
+               }
+            }
+         }, {
+            "name" : "DiffInMonths",
+            "context" : "Patient",
+            "accessLevel" : "Public",
+            "expression" : {
+               "type" : "Abs",
+               "operand" : {
+                  "precision" : "Month",
+                  "type" : "DifferenceBetween",
                   "operand" : [ {
-                     "name" : "AgeFirstMMR",
+                     "name" : "VaccineDate",
                      "type" : "ExpressionRef"
                   }, {
-                     "valueType" : "{urn:hl7-org:elm-types:r1}Integer",
-                     "value" : "12",
-                     "type" : "Literal"
-                  } ]
-               }, {
-                  "type" : "LessOrEqual",
-                  "operand" : [ {
-                     "name" : "AgeFirstMMR",
+                     "name" : "PatientBirthDate",
                      "type" : "ExpressionRef"
-                  }, {
-                     "valueType" : "{urn:hl7-org:elm-types:r1}Integer",
-                     "value" : "15",
-                     "type" : "Literal"
                   } ]
-               } ]
+               }
             }
          }, {
             "name" : "InDemographic",
             "context" : "Patient",
             "accessLevel" : "Public",
             "expression" : {
-               "type" : "And",
-               "operand" : [ {
-                  "name" : "AgeFirstMMRIn",
-                  "type" : "ExpressionRef"
-               }, {
-                  "name" : "CurrentAge",
-                  "type" : "ExpressionRef"
-               } ]
+               "name" : "CurrentAge",
+               "type" : "ExpressionRef"
             }
          }, {
             "name" : "InPopulation",
@@ -690,12 +548,25 @@
                } ]
             }
          }, {
-            "name" : "Recommendation 1: Schedule 2nd dose MMR when patient is 4-6 years old",
+            "name" : "Recommendation",
             "context" : "Patient",
             "accessLevel" : "Public",
             "expression" : {
-               "name" : "InPopulation",
-               "type" : "ExpressionRef"
+               "type" : "If",
+               "condition" : {
+                  "name" : "InPopulation",
+                  "type" : "ExpressionRef"
+               },
+               "then" : {
+                  "valueType" : "{urn:hl7-org:elm-types:r1}String",
+                  "value" : "Recommendation 1: Schedule 2nd dose MMR when patient is 4-6 years old",
+                  "type" : "Literal"
+               },
+               "else" : {
+                  "valueType" : "{urn:hl7-org:elm-types:r1}String",
+                  "value" : "Does not apply",
+                  "type" : "Literal"
+               }
             }
          } ]
       }

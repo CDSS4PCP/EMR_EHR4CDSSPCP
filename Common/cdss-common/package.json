@@ -4,7 +4,6 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "install": "git clone https://github.com/sorliog/cql-exec-vsac.git node_modules/cql-exec-vsac && npm install" ,
     "build": "webpack",
     "test": "node .\\src\\test\\index.js"
   },

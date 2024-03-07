@@ -4,9 +4,10 @@ import vsac from 'cql-exec-vsac';
 
 const DEBUG_MODE = false;
 
-function debugMsg(func, msg){
+function debugMsg(func, msg) {
     console.log(`CDSS ${func} ${msg}`)
 }
+
 const FhirTypes = Object.freeze({
     PATIENT: "{http://hl7.org/fhir}Patient",
     IMMUNIZATION: "{http://hl7.org/fhir}Immunization",
@@ -173,10 +174,12 @@ async function executeCql(patient, rule, libraries = null, parameters = null) {
 
         }
     }
+
     // Create the rule merged with libraries if necessary
     let ruleWithLibraries = libraryObject.length === 0 ? new cql.Library(rule) : new cql.Library(rule, new cql.Repository(libraryObject));
 
     let success = await codeService.ensureValueSetsInLibraryWithAPIKey(rule, true, '5d7d49f3-4c14-4442-9b1d-a6895ca5a715');
+    console.log("CodeService check returned : ", success);
     let executor = new cql.Executor(ruleWithLibraries, codeService);
     // let executor = new cql.Executor(ruleWithLibraries);
 
@@ -197,12 +200,19 @@ async function executeCql(patient, rule, libraries = null, parameters = null) {
             if (res === undefined || res === null) {
                 throw new Error(`Rule expects parameter "${expectedParameter.name}", but it is undefined`);
             }
+
             if (expectedParameter.type.startsWith(ContainerTypes.LIST(null))) {
+
                 paramObject[expectedParameter.name] = [];
-                if (res.entry != null)
+
+                if (res.entry != null) {
+
                     for (const entry of res.entry) {
-                        paramObject[expectedParameter.name].push(fhirWrapper.wrap(entry))
+                        let wrapped = fhirWrapper.wrap(entry.resource);
+                        paramObject[expectedParameter.name].push(wrapped);
+
                     }
+                }
             } else {
                 paramObject[expectedParameter.name] = fhirWrapper.wrap(res);
             }
@@ -214,12 +224,13 @@ async function executeCql(patient, rule, libraries = null, parameters = null) {
     // Load parameters into executor
     executor = executor.withParameters(paramObject);
 
-
     // Execute the rule
     const result = await executor.exec(psource); // Await the execution result
 
+    let patientResults = result.patientResults;
+    patientResults.library = {name: rule.library.identifier.id, version: rule.library.identifier.version};
     // Return the results
-    return result.patientResults;
+    return patientResults;
 }
 
 async function getPatientResource(patientId) {
@@ -249,9 +260,10 @@ async function getPatientResource(patientId) {
 }
 
 async function getFhirResource(patientId, resourceType) {
+    console.log("getFhirResource:", resourceType)
+
     let response = null;
     let res = null;
-    // console.log("getFhirResource:", resourceType, ContainerTypes.LIST(FhirTypes.IMMUNIZATION))
     switch (resourceType) {
         case ContainerTypes.LIST(FhirTypes.IMMUNIZATION):
             if (typeof global.cdss.endpoints.immunizationByPatientId.address == 'string')
@@ -308,7 +320,7 @@ async function getRule(ruleId) {
 
     } else {
         let url = global.cdss.endpoints.ruleById.address.replace("{{ruleId}}", ruleId);
-        console.log("Fetching Rule " + url);
+        console.log("Fetching Rule " , url);
 
         let response = await fetch(url, global.cdss.endpoints.ruleById);
         if (response.status !== 200) {
@@ -328,7 +340,7 @@ async function executeRuleWithPatient(patientId, ruleId) {
 
     let libraries = {};
     let expectedLibraries = getListOfExpectedLibraries(rule);
-    console.log("expectedLibraries " + expectedLibraries);
+    console.log("expectedLibraries ", expectedLibraries);
     if (expectedLibraries !== undefined)
         for (const lib of expectedLibraries) {
             libraries[lib.name] = await getRule(lib.path);
@@ -338,8 +350,8 @@ async function executeRuleWithPatient(patientId, ruleId) {
     let parameters = {};
 
     let expectedParameters = getListOfExpectedParameters(rule);
-    // console.log("expectedParameters " + expectedParameters);
-    if(global.cdss.DEBUG_MODE)
+    console.log("expectedParameters ", expectedParameters);
+
     if (expectedParameters !== undefined)
         for (const par of expectedParameters) {
             parameters[par.name] = await getFhirResource(patientId, par.type);
