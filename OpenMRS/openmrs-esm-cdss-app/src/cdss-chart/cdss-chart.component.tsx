@@ -15,6 +15,13 @@ import {
   Session,
   openmrsFetch
 } from "@openmrs/esm-framework";
+import {
+  CardHeader,
+  EmptyState,
+  ErrorState,
+  launchPatientWorkspace,
+  PatientChartPagination
+} from "@openmrs/esm-patient-common-lib";
 
 import "./../cdss.js";
 import { usePatient } from "../patient-getter/patient-getter.resource";
@@ -46,10 +53,10 @@ export const CdssChart: React.FC<CdssChartComponentProps> = ({
       {}
     );
     const imm = await result.json();
-    if (imm.entry == undefined) {
+    if (imm == undefined) {
       return [];
     }
-    return imm.entry;
+    return imm;
   }
 
   async function doCoolStuff(patientUuid, ruleId) {
@@ -104,12 +111,16 @@ export const CdssChart: React.FC<CdssChartComponentProps> = ({
   const { t } = useTranslation();
 
   // const ruleId = "age-1";
-  const ruleId = "MMR_Rule1";
+  const ruleId = "MMR_Rule4";
   const [results, setResults] = useState(null);
-  doCoolStuff(patientUuid, ruleId).then((r) => {
-    setResults(r);
-  });
-  const props = () => ({
+
+  useEffect(() => {
+    doCoolStuff(patientUuid, ruleId).then((r) => {
+      setResults(r);
+    });
+  }, []);
+
+  const loadingProps = () => ({
     active: true,
     withOverlay: false,
     small: false,
@@ -117,21 +128,23 @@ export const CdssChart: React.FC<CdssChartComponentProps> = ({
   });
   return (
     <div>
-      <h1>CDSS Component</h1>
+      <CardHeader title={"CDSS"}>
+        <hr />
 
+
+      </CardHeader>
       {results ? (
-        <div>
-          <CdssResultsTable
-            patientResults={results}
-            debug={false}
-            ruleId={ruleId}
-            patientUuid={patientUuid}
-          ></CdssResultsTable>
-        </div>
+        <CdssResultsTable
+          patientResults={results}
+          debug={false}
+          ruleId={ruleId}
+          patientUuid={patientUuid}
+          visibleColumns={["VaccineName", "Recommendation"]}
+        ></CdssResultsTable>
       ) : (
         <div>
           Waiting for patient....
-          <Loading {...props()} />
+          <Loading {...loadingProps()} />
         </div>
       )}
     </div>
