@@ -13,14 +13,14 @@ import {
   useConnectivity,
   navigate as openmrsNavigate,
   Session,
-  openmrsFetch
+  openmrsFetch,
 } from "@openmrs/esm-framework";
 import {
   CardHeader,
   EmptyState,
   ErrorState,
   launchPatientWorkspace,
-  PatientChartPagination
+  PatientChartPagination,
 } from "@openmrs/esm-patient-common-lib";
 
 import "./../cdss.js";
@@ -33,8 +33,8 @@ export interface CdssChartComponentProps {
 }
 
 export const CdssChart: React.FC<CdssChartComponentProps> = ({
-                                                               patientUuid
-                                                             }) => {
+  patientUuid,
+}) => {
   async function loadPatient(patientId) {
     const result = await openmrsFetch(`/ws/fhir2/R4/Patient/${patientId}`, {});
     const pat = await result.json();
@@ -64,41 +64,41 @@ export const CdssChart: React.FC<CdssChartComponentProps> = ({
     global.cdss.endpoints = {
       metadata: {
         systemName: "OpenMRS",
-        remoteAddress: "http://127.0.0.1:80/openmrs"
+        remoteAddress: "http://127.0.0.1:80/openmrs",
       },
       patientById: {
         address: async (patientId) => {
           return await loadPatient(patientId);
         },
-        method: "GET"
+        method: "GET",
       },
       medicationRequestByPatientId: {
         address:
           "http://127.0.0.1:80/openmrs/ws/fhir2/R4/MedicationRequest/{{medicationRequestId}}",
-        method: "GET"
+        method: "GET",
       },
       medicationByMedicationRequestId: {
         address:
           "http://127.0.0.1:80/openmrs/ws/fhir2/R4/Medication/{{medicationId}}",
-        method: "GET"
+        method: "GET",
       },
       immunizationByPatientId: {
         address: async (patientId) => {
           return await loadImmunizations(patientId);
         },
-        method: "GET"
+        method: "GET",
       },
       observationByPatientId: {
         address:
           "http://127.0.0.1:80/openmrs/ws/fhir2/R4/Observation/{{patientId}}",
-        method: "GET"
+        method: "GET",
       },
       ruleById: {
         address: async (ruleId) => {
           return await loadRule(ruleId);
         },
-        method: "GET"
-      }
+        method: "GET",
+      },
     };
     const result = await global.cdss.executeRuleWithPatient(
       patientUuid,
@@ -124,14 +124,12 @@ export const CdssChart: React.FC<CdssChartComponentProps> = ({
     active: true,
     withOverlay: false,
     small: false,
-    description: "Active loading indicator"
+    description: "Active loading indicator",
   });
   return (
     <div>
       <CardHeader title={"CDSS"}>
         <hr />
-
-
       </CardHeader>
       {results ? (
         <CdssResultsTable

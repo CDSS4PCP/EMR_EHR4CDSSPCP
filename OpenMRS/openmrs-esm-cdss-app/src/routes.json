@@ -4,7 +4,6 @@
     "fhir2": "^1.2.0",
     "webservices.rest": "^2.24.0",
     "cdss": "1.0.0-SNAPSHOT"
-
   },
   "extensions": [
     {
@@ -41,16 +40,21 @@
         "path": "Cdss"
       },
       "order": 12
+    },
+    {
+      "name": "cdss-reports-link",
+      "slot": "app-menu-slot",
+      "component": "cdssReportsLink",
+      "online": true,
+      "offline": true
     }
   ],
   "pages": [
     {
-      "component": "root",
-      "route": "cdss"
-    },
-    {
-      "component": "resources",
-      "route": "^cdss/resources"
+      "component": "cdssReportsPage",
+      "route": "cdss/reports",
+      "online": true,
+      "offline": true
     }
   ]
 }
