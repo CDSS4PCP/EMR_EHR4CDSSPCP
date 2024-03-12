@@ -2,6 +2,24 @@ import cql from 'cql-execution';
 import cqlfhir from 'cql-exec-fhir';
 import vsac from 'cql-exec-vsac';
 
+const DEBUG_MODE = false;
+
+
+const FhirTypes = Object.freeze({
+    PATIENT: "{http://hl7.org/fhir}Patient",
+    IMMUNIZATION: "{http://hl7.org/fhir}Immunization",
+    MEDICATION_REQUEST: "{http://hl7.org/fhir}MedicationRequest",
+    MEDICATION: "{http://hl7.org/fhir}Medication",
+    OBSERVATION: "{http://hl7.org/fhir}Observation",
+    CONDITION: "{http://hl7.org/fhir}Condition"
+})
+
+const ContainerTypes = Object.freeze({
+    LIST: (t) => {
+        if (t == null) return "ListTypeSpecifier"
+        return "ListTypeSpecifier<" + t + ">"
+    }
+})
 
 let endpoints = {
     "metadata": {
@@ -17,13 +35,17 @@ let endpoints = {
     },
     "medicationByMedicationRequestId": {
         address: null,
-        method: "GET",
+        method: "GET"
     },
     "immunizationByPatientId": {
         address: null,
         method: "GET",
     },
     "observationByPatientId": {
+        address: null,
+        method: "GET",
+    },
+    "conditionByPatientId": {
         address: null,
         method: "GET",
     },
@@ -48,7 +70,13 @@ function getListOfExpectedParameters(rule) {
 
     let result = [];
     rule.library.parameters.def.forEach(p => {
-        result.push({name: p.name, type: p.parameterTypeSpecifier.name});
+        let type = "";
+        if (p.parameterTypeSpecifier.name != undefined) {
+            type = p.parameterTypeSpecifier.name
+        } else {
+            type = p.parameterTypeSpecifier.type + "<" + p.parameterTypeSpecifier.elementType.name + ">";
+        }
+        result.push({name: p.name, type: type});
     });
     return result;
 }
@@ -111,7 +139,7 @@ async function executeCql(patient, rule, libraries = null, parameters = null) {
     const fhirWrapper = cqlfhir.FHIRWrapper.FHIRv401(); // or .FHIRv102() or .FHIRv300() or .FHIRv401()
 
 
-    const codeService = new vsac.CodeService('cache', false);
+    const codeService = new vsac.CodeService('vsac_cache', false);
 
     // Create a patient bundle if patient is not a bundle
     const patientBundle = createBundle(patient);
@@ -143,11 +171,14 @@ async function executeCql(patient, rule, libraries = null, parameters = null) {
 
         }
     }
+
     // Create the rule merged with libraries if necessary
     let ruleWithLibraries = libraryObject.length === 0 ? new cql.Library(rule) : new cql.Library(rule, new cql.Repository(libraryObject));
 
-    // let success = await codeService.ensureValueSetsInLibraryWithAPIKey(lib, true, endpoints.uml.key);
+    let success = await codeService.ensureValueSetsInLibraryWithAPIKey(rule, true, '5d7d49f3-4c14-4442-9b1d-a6895ca5a715');
+    console.log("CodeService check returned : ", success);
     let executor = new cql.Executor(ruleWithLibraries, codeService);
+    // let executor = new cql.Executor(ruleWithLibraries);
 
     // Create parameter object and make sure all expected parameters are provided
     let paramObject = {};
@@ -166,7 +197,22 @@ async function executeCql(patient, rule, libraries = null, parameters = null) {
             if (res === undefined || res === null) {
                 throw new Error(`Rule expects parameter "${expectedParameter.name}", but it is undefined`);
             }
-            paramObject[expectedParameter.name] = fhirWrapper.wrap(res);
+
+            if (expectedParameter.type.startsWith(ContainerTypes.LIST(null))) {
+
+                paramObject[expectedParameter.name] = [];
+
+                if (res.entry != null) {
+
+                    for (const entry of res.entry) {
+                        let wrapped = fhirWrapper.wrap(entry.resource);
+                        paramObject[expectedParameter.name].push(wrapped);
+
+                    }
+                }
+            } else {
+                paramObject[expectedParameter.name] = fhirWrapper.wrap(res);
+            }
 
         }
     }
@@ -175,72 +221,140 @@ async function executeCql(patient, rule, libraries = null, parameters = null) {
     // Load parameters into executor
     executor = executor.withParameters(paramObject);
 
-
     // Execute the rule
     const result = await executor.exec(psource); // Await the execution result
 
+    let patientResults = result.patientResults;
+    patientResults.library = {name: rule.library.identifier.id, version: rule.library.identifier.version};
     // Return the results
-    return result.patientResults;
+    return patientResults;
 }
 
+/**
+ * Retrieves patient resource based on the provided patient ID.
+ *
+ * @param {string} patientId - The unique identifier of the patient
+ * @returns {Object} The patient FHIR resource object
+ */
 async function getPatientResource(patientId) {
-    let url = global.cdss.endpoints.patientById.address.replace("{{patientId}}", patientId);
-    console.log("Fetching Patient " + url);
-    let response = await fetch(url, global.cdss.endpoints.patientById);
-    if (response.status !== 200) {
-        throw new Error("Patient responded with HTTP " + response.status);
+
+    let patient = null;
+    if (typeof global.cdss.endpoints.patientById.address == 'function') {
+
+        patient = await global.cdss.endpoints.patientById.address(patientId);
+
+
+    } else {
+        let url = global.cdss.endpoints.patientById.address.replace("{{patientId}}", patientId);
+        console.log("Fetching Patient " + url);
+        let response = await fetch(url, global.cdss.endpoints.patientById);
+        if (response.status !== 200) {
+            throw new Error("Patient responded with HTTP " + response.status);
+        }
+
+        patient = await response.json();
+
     }
-
-    let patient = await response.json();
-
     if (patient.resourceType !== "Patient") {
         throw new Error("Requested Patient was not a Patient, rather it is " + patient.type);
     }
     return patient;
+
 }
 
+/**
+ * Retrieves a FHIR resource for a specific patient and resource type from the server.
+ *
+ * @param {string} patientId - The unique identifier of the patient
+ * @param {string} resourceType - The type of FHIR resource to retrieve(must be either a ContainerTypes or FhirTypes enum)
+ * @returns {Object} The FHIR resource object
+ */
 async function getFhirResource(patientId, resourceType) {
     let response = null;
+    let res = null;
     switch (resourceType) {
-        case "{http://hl7.org/fhir}Immunization":
-            response = await fetch(endpoints.immunizationByPatientId.address.replace("{{patientId}}", patientId), endpoints.immunizationByPatientId);
+        case ContainerTypes.LIST(FhirTypes.IMMUNIZATION):
+            if (typeof global.cdss.endpoints.immunizationByPatientId.address == 'string')
+                response = await fetch(global.cdss.endpoints.immunizationByPatientId.address.replace("{{patientId}}", patientId), endpoints.immunizationByPatientId);
+            else if (typeof global.cdss.endpoints.immunizationByPatientId.address == 'function')
+                res = await global.cdss.endpoints.immunizationByPatientId.address(patientId)
             break;
-        case "{http://hl7.org/fhir}Observation":
-            response = await fetch(endpoints.observationByPatientId.address.replace("{{patientId}}", patientId), endpoints.observationByPatientId);
+
+        case ContainerTypes.LIST(FhirTypes.OBSERVATION):
+            if (typeof global.cdss.endpoints.observationByPatientId.address == 'string')
+                response = await fetch(global.cdss.endpoints.observationByPatientId.address.replace("{{patientId}}", patientId), endpoints.observationByPatientId);
+            else if (typeof global.cdss.endpoints.observationByPatientId.address == 'function')
+                res = await global.cdss.endpoints.observationByPatientId.address(patientId)
             break;
-        case "{http://hl7.org/fhir}MedicationRequest":
-            response = await fetch(endpoints.medicationRequestByPatientId.address.replace("{{patientId}}", patientId), endpoints.medicationRequestByPatientId);
+        case ContainerTypes.LIST(FhirTypes.MEDICATION_REQUEST):
+            if (typeof global.cdss.endpoints.medicationRequestByPatientId.address == 'string')
+                response = await fetch(global.cdss.endpoints.medicationRequestByPatientId.address.replace("{{patientId}}", patientId), endpoints.medicationRequestByPatientId);
+            else if (typeof global.cdss.endpoints.medicationRequestByPatientId.address == 'function')
+                res = await global.cdss.endpoints.medicationRequestByPatientId.address(patientId)
             break;
+        case ContainerTypes.LIST(FhirTypes.CONDITION):
+            if (typeof global.cdss.endpoints.conditionByPatientId.address == 'string')
+                response = await fetch(global.cdss.endpoints.conditionByPatientId.address.replace("{{patientId}}", patientId), endpoints.medicationRequestByPatientId);
+            else if (typeof global.cdss.endpoints.conditionByPatientId.address == 'function')
+                res = await global.cdss.endpoints.conditionByPatientId.address(patientId)
+            break;
+
     }
 
-    if (response == null) {
+    if (res != null) {
+        return res;
+    }
+
+    if (response == null && res == null) {
         throw new Error("Could not find proper endpoint type for " + resourceType);
     }
-    if (response.status !== 200) {
+    if (response?.status !== 200 && res == null) {
         throw new Error(resourceType + " responded with HTTP " + response.status);
     }
-    let res = await response.json();
+    if (res == null && response != null)
+        res = await response.json();
 
-    if (res.resourceType !== resourceType.replace("{http://hl7.org/fhir}", "")) {
-        throw new Error("Requested Patient was not a Patient, rather it is " + res.type);
-    }
+    // if (res.resourceType !== resourceType.replace("{http://hl7.org/fhir}", "")) {
+    //     throw new Error("Requested Patient was not a Patient, rather it is " + res.type);
+    // }
     return res;
 }
 
+/**
+ * Retrieves a rule based on the specified rule ID.
+ *
+ * @param {string} ruleId - The unique identifier of the rule
+ * @returns {Object} The retrieved rule object (in JSON-ELM format)
+ */
 async function getRule(ruleId) {
-    let url = global.cdss.endpoints.ruleById.address.replace("{{ruleId}}", ruleId);
-    console.log("Fetching Rule " + url);
 
-    let response = await fetch(url, global.cdss.endpoints.ruleById);
-    if (response.status !== 200) {
-        throw new Error("Rule responded with HTTP " + response.status);
+    if (typeof global.cdss.endpoints.ruleById.address == 'function') {
+        let rule = await global.cdss.endpoints.ruleById.address(ruleId);
+        return rule;
+
+    } else {
+        let url = global.cdss.endpoints.ruleById.address.replace("{{ruleId}}", ruleId);
+        console.log("Fetching Rule ", url);
+
+        let response = await fetch(url, global.cdss.endpoints.ruleById);
+        if (response.status !== 200) {
+            throw new Error("Rule responded with HTTP " + response.status);
+        }
+        let rule = await response.json();
+
+        return rule;
     }
-    let rule = await response.json();
-
-    return rule;
 }
 
 
+/**
+ * Executes a rule for a specific patient based on the provided patient ID and rule ID.
+ * Attempts to fetch all expected libraries and parameters for the rule.
+ *
+ * @param {string} patientId - The unique identifier of the patient
+ * @param {string} ruleId - The unique identifier of the rule to execute
+ * @returns {Object} The result of the CQL execution on the patient, including patient-specific results.
+ */
 async function executeRuleWithPatient(patientId, ruleId) {
     let patient = await getPatientResource(patientId);
     let rule = await getRule(ruleId);
@@ -248,7 +362,7 @@ async function executeRuleWithPatient(patientId, ruleId) {
 
     let libraries = {};
     let expectedLibraries = getListOfExpectedLibraries(rule);
-    console.log("expectedLibraries " + expectedLibraries);
+    console.log("expectedLibraries ", expectedLibraries);
     if (expectedLibraries !== undefined)
         for (const lib of expectedLibraries) {
             libraries[lib.name] = await getRule(lib.path);
@@ -258,7 +372,8 @@ async function executeRuleWithPatient(patientId, ruleId) {
     let parameters = {};
 
     let expectedParameters = getListOfExpectedParameters(rule);
-    console.log("expectedParameters " + expectedParameters);
+    console.log("expectedParameters ", expectedParameters);
+
     if (expectedParameters !== undefined)
         for (const par of expectedParameters) {
             parameters[par.name] = await getFhirResource(patientId, par.type);
@@ -269,13 +384,23 @@ async function executeRuleWithPatient(patientId, ruleId) {
     return await executeCql(patient, rule, libraries, parameters);
 }
 
+// Exporting global variables
 global.cdss = {
     endpoints: endpoints,
     createBundle: createBundle,
     executeCql: executeCql,
     getListOfExpectedParameters: getListOfExpectedParameters,
     getListOfExpectedLibraries: getListOfExpectedLibraries,
-    executeRuleWithPatient: executeRuleWithPatient
+    executeRuleWithPatient: executeRuleWithPatient,
+    DEBUG_MODE: DEBUG_MODE
 };
 
+export {
+    endpoints,
+    createBundle,
+    executeCql,
+    getListOfExpectedParameters,
+    getListOfExpectedLibraries,
+    executeRuleWithPatient
+}
 
