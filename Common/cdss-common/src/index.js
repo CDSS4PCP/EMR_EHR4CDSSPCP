@@ -4,9 +4,6 @@ import vsac from 'cql-exec-vsac';
 
 const DEBUG_MODE = false;
 
-function debugMsg(func, msg) {
-    console.log(`CDSS ${func} ${msg}`)
-}
 
 const FhirTypes = Object.freeze({
     PATIENT: "{http://hl7.org/fhir}Patient",
@@ -233,6 +230,12 @@ async function executeCql(patient, rule, libraries = null, parameters = null) {
     return patientResults;
 }
 
+/**
+ * Retrieves patient resource based on the provided patient ID.
+ *
+ * @param {string} patientId - The unique identifier of the patient
+ * @returns {Object} The patient FHIR resource object
+ */
 async function getPatientResource(patientId) {
 
     let patient = null;
@@ -259,9 +262,14 @@ async function getPatientResource(patientId) {
 
 }
 
+/**
+ * Retrieves a FHIR resource for a specific patient and resource type from the server.
+ *
+ * @param {string} patientId - The unique identifier of the patient
+ * @param {string} resourceType - The type of FHIR resource to retrieve(must be either a ContainerTypes or FhirTypes enum)
+ * @returns {Object} The FHIR resource object
+ */
 async function getFhirResource(patientId, resourceType) {
-    console.log("getFhirResource:", resourceType)
-
     let response = null;
     let res = null;
     switch (resourceType) {
@@ -312,6 +320,12 @@ async function getFhirResource(patientId, resourceType) {
     return res;
 }
 
+/**
+ * Retrieves a rule based on the specified rule ID.
+ *
+ * @param {string} ruleId - The unique identifier of the rule
+ * @returns {Object} The retrieved rule object (in JSON-ELM format)
+ */
 async function getRule(ruleId) {
 
     if (typeof global.cdss.endpoints.ruleById.address == 'function') {
@@ -320,7 +334,7 @@ async function getRule(ruleId) {
 
     } else {
         let url = global.cdss.endpoints.ruleById.address.replace("{{ruleId}}", ruleId);
-        console.log("Fetching Rule " , url);
+        console.log("Fetching Rule ", url);
 
         let response = await fetch(url, global.cdss.endpoints.ruleById);
         if (response.status !== 200) {
@@ -333,6 +347,14 @@ async function getRule(ruleId) {
 }
 
 
+/**
+ * Executes a rule for a specific patient based on the provided patient ID and rule ID.
+ * Attempts to fetch all expected libraries and parameters for the rule.
+ *
+ * @param {string} patientId - The unique identifier of the patient
+ * @param {string} ruleId - The unique identifier of the rule to execute
+ * @returns {Object} The result of the CQL execution on the patient, including patient-specific results.
+ */
 async function executeRuleWithPatient(patientId, ruleId) {
     let patient = await getPatientResource(patientId);
     let rule = await getRule(ruleId);
@@ -362,6 +384,7 @@ async function executeRuleWithPatient(patientId, ruleId) {
     return await executeCql(patient, rule, libraries, parameters);
 }
 
+// Exporting global variables
 global.cdss = {
     endpoints: endpoints,
     createBundle: createBundle,
