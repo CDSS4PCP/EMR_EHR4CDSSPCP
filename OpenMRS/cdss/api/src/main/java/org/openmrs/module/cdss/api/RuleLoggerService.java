@@ -5,19 +5,15 @@ import org.openmrs.User;
 import org.openmrs.api.OpenmrsService;
 import org.openmrs.module.cdss.EngineResult;
 import org.openmrs.module.cdss.api.data.Action;
+import org.openmrs.module.cdss.api.data.EngineUsage;
 
 import java.time.ZonedDateTime;
+import java.util.List;
 
 public interface RuleLoggerService extends CDSSService {
 	
-	void recordRuleHit(ZonedDateTime time, EngineResult result, Boolean actionTaken, User userInitiated,
-	        User userActionAdministered);
+	void recordRuleUsage(EngineUsage usage);
 	
-	boolean isActionTaken(String resultId);
+	List<EngineUsage> getRuleUsages();
 	
-	int getNumberOfActionsTaken();
-	
-	int getNumberOfActionsTakenWithinTimeRange(ZonedDateTime start, ZonedDateTime end);
-	
-	int getNumberOfActionsTakenByVaccine(String vaccine);
 }

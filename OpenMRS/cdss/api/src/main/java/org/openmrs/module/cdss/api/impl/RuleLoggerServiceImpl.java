@@ -5,11 +5,14 @@ import org.apache.commons.lang.NotImplementedException;
 import org.apache.log4j.Logger;
 import org.openmrs.Patient;
 import org.openmrs.User;
+import org.openmrs.api.UserService;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.cdss.CDSSConfig;
 import org.openmrs.module.cdss.EngineResult;
 import org.openmrs.module.cdss.api.RuleLoggerService;
+import org.openmrs.module.cdss.api.dao.CDSSDao;
 import org.openmrs.module.cdss.api.data.Action;
+import org.openmrs.module.cdss.api.data.EngineUsage;
 
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
@@ -28,7 +31,14 @@ public class RuleLoggerServiceImpl extends BaseOpenmrsService implements RuleLog
 	
 	private final Logger log = Logger.getLogger(getClass());
 	
-	private List<EngineResult> resultsWithTakenActions = new ArrayList<EngineResult>();
+	CDSSDao dao;
+	
+	/**
+	 * Injected in moduleApplicationContext.xml
+	 */
+	public void setDao(CDSSDao dao) {
+		this.dao = dao;
+	}
 	
 	/**
 	 * Logic that is run when this service is started. At the moment, this method is not used.
@@ -74,70 +84,12 @@ public class RuleLoggerServiceImpl extends BaseOpenmrsService implements RuleLog
 	}
 	
 	@Override
-	public void recordRuleHit(ZonedDateTime time, EngineResult result, Boolean actionTaken, User userInitiated,
-	        User userActionAdministered) {
+	public void recordRuleUsage(EngineUsage usage) {
 		
-		log.debug("Saving rule hit");
-		if (writer == null) {
-			log.debug("Could not save record hit because writer is null!");
-		} else {
-			writer.println("Time: " + time + " Patient: " + result.getPatient().getUuid() + " Rule: "
-			        + result.getRule().getId() + " Vaccine: " + result.getVaccine() + " UserInitiated: "
-			        + userInitiated.getUuid() + " ActionTaken: " + actionTaken);
-			log.info("Time: " + time + " Patient: " + result.getPatient().getUuid() + " Rule: " + result.getRule().getId()
-			        + " Vaccine: " + result.getVaccine() + " UserInitiated: " + userInitiated.getUuid() + " ActionTaken: "
-			        + actionTaken);
-			writer.flush();
-		}
-		
-		if (actionTaken) {
-			resultsWithTakenActions.add(result);
-		}
-	}
-	
-	public boolean isActionTaken(String resultId) {
-		for (EngineResult result : resultsWithTakenActions) {
-			if (result.getId().equals(resultId)) {
-				return true;
-			}
-		}
-		
-		return false;
 	}
 	
 	@Override
-	public int getNumberOfActionsTaken() {
-		return resultsWithTakenActions.size();
-	}
-	
-	@Override
-	public int getNumberOfActionsTakenWithinTimeRange(ZonedDateTime start, ZonedDateTime end) {
-		int count = 0;
-		
-		if (start.isAfter(end)) {
-			ZonedDateTime bak = start;
-			start = end;
-			end = bak;
-		}
-		for (EngineResult result : resultsWithTakenActions) {
-			boolean inBetween = result.getTimestamp().isAfter(start) && result.getTimestamp().isBefore(end);
-			
-			if (inBetween) {
-				count++;
-			}
-		}
-		return count;
-	}
-	
-	@Override
-	public int getNumberOfActionsTakenByVaccine(String vaccine) {
-		int count = 0;
-		
-		for (EngineResult result : resultsWithTakenActions) {
-			if (result.getVaccine().equals(vaccine)) {
-				count++;
-			}
-		}
-		return count;
+	public List<EngineUsage> getRuleUsages() {
+		return (List<EngineUsage>) dao.getUsages();
 	}
 }

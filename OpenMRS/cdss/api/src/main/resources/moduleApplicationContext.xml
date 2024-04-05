@@ -59,7 +59,7 @@
         </property>
         <property name="target">
             <bean class="org.openmrs.module.cdss.api.impl.RuleLoggerServiceImpl">
-                <!--                <property name="dao" ref="cdss.CDSSDao"/>-->
+                <property name="dao" ref="cdss.CDSSDao"/>
             </bean>
         </property>
         <property name="preInterceptors">
