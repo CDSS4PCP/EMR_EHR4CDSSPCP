@@ -1,6 +1,8 @@
 import React from "react";
 import {
+  Button,
   DataTable,
+  Link,
   Table,
   TableBody,
   TableCell,
@@ -8,6 +10,7 @@ import {
   TableHead,
   TableRow,
 } from "@carbon/react";
+import { openmrsFetch } from "@openmrs/esm-framework";
 
 export interface CdssChartComponentProps {
   patientUuid: string;
@@ -15,6 +18,12 @@ export interface CdssChartComponentProps {
   ruleId: string;
   debug?: boolean;
   visibleColumns?: Array<string>;
+  takeAction: (
+    ruleId: string,
+    patientId: string,
+    vaccine: string,
+    recommendation: string
+  ) => void;
 }
 
 export const CdssResultsTable: React.FC<CdssChartComponentProps> = ({
@@ -23,6 +32,7 @@ export const CdssResultsTable: React.FC<CdssChartComponentProps> = ({
   patientResults,
   debug,
   visibleColumns,
+  takeAction,
 }) => {
   return (
     <TableContainer style={{ padding: "10px" }}>
@@ -38,6 +48,7 @@ export const CdssResultsTable: React.FC<CdssChartComponentProps> = ({
               .map((m) => {
                 return <TableCell>{m}</TableCell>;
               })}
+            <TableCell>Take Action</TableCell>
           </TableRow>
         </TableHead>
 
@@ -56,6 +67,26 @@ export const CdssResultsTable: React.FC<CdssChartComponentProps> = ({
                   </TableCell>
                 );
               })}
+
+            <TableCell>
+              {patientResults[patientUuid]["Recommendation"] ===
+              "Does not apply" ? (
+                <Button disabled>No action Needed</Button>
+              ) : (
+                <Button
+                  onClick={(e) =>
+                    takeAction(
+                      ruleId,
+                      patientUuid,
+                      patientResults[patientUuid]["VaccineName"],
+                      patientResults[patientUuid]["Recommendation"]
+                    )
+                  }
+                >
+                  Take action
+                </Button>
+              )}
+            </TableCell>
           </TableRow>
         </TableBody>
       </Table>

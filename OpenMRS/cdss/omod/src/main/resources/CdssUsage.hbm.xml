@@ -27,6 +27,10 @@
             <column name="cdss_usage_date" not-null="true"/>
         </property>
 
+
+        <property name="rule" type="java.lang.String" column="cdss_usage_rule" not-null="true"></property>
+        <property name="recommendation" type="java.lang.String" column="cdss_usage_recommendation"
+                  not-null="true"></property>
         <property name="uuid" type="java.lang.String" column="uuid" length="38" not-null="true" unique="true"/>
 
 

@@ -32,6 +32,12 @@ public class CdssUsage implements OpenmrsObject {
 	@Column(name = "cdss_usage_date", nullable = false)
 	private LocalDateTime timestamp;
 	
+	@Column(name = "cdss_usage_rule", nullable = false)
+	private String rule;
+	
+	@Column(name = "cdss_usage_recommendation", nullable = false)
+	private String recommendation;
+	
 	@Column
 	private String uuid;
 	
