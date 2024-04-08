@@ -1,28 +1,15 @@
 package org.openmrs.module.cdss.api.impl;
 
-import org.apache.commons.lang.NotImplementedException;
-
 import org.apache.log4j.Logger;
-import org.openmrs.Patient;
-import org.openmrs.User;
-import org.openmrs.api.UserService;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.cdss.CDSSConfig;
-import org.openmrs.module.cdss.EngineResult;
 import org.openmrs.module.cdss.api.RuleLoggerService;
 import org.openmrs.module.cdss.api.dao.CDSSDao;
-import org.openmrs.module.cdss.api.data.Action;
-import org.openmrs.module.cdss.api.data.EngineUsage;
+import org.openmrs.module.cdss.api.data.CdssUsage;
 
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class RuleLoggerServiceImpl extends BaseOpenmrsService implements RuleLoggerService {
@@ -84,12 +71,13 @@ public class RuleLoggerServiceImpl extends BaseOpenmrsService implements RuleLog
 	}
 	
 	@Override
-	public void recordRuleUsage(EngineUsage usage) {
+	public void recordRuleUsage(CdssUsage usage) {
 		
 	}
 	
 	@Override
-	public List<EngineUsage> getRuleUsages() {
-		return (List<EngineUsage>) dao.getUsages();
+	public List<CdssUsage> getRuleUsages() {
+		log.debug("CDSS: getRuleUsages() in RuleLoggerServiceImpl.java");
+		return (List<CdssUsage>) dao.getUsages();
 	}
 }

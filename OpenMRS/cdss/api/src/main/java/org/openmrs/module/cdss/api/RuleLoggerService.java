@@ -1,19 +1,13 @@
 package org.openmrs.module.cdss.api;
 
-import org.openmrs.Patient;
-import org.openmrs.User;
-import org.openmrs.api.OpenmrsService;
-import org.openmrs.module.cdss.EngineResult;
-import org.openmrs.module.cdss.api.data.Action;
-import org.openmrs.module.cdss.api.data.EngineUsage;
+import org.openmrs.module.cdss.api.data.CdssUsage;
 
-import java.time.ZonedDateTime;
 import java.util.List;
 
 public interface RuleLoggerService extends CDSSService {
 	
-	void recordRuleUsage(EngineUsage usage);
+	void recordRuleUsage(CdssUsage usage);
 	
-	List<EngineUsage> getRuleUsages();
+	List<CdssUsage> getRuleUsages();
 	
 }

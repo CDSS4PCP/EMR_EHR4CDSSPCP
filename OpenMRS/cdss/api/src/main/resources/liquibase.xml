@@ -37,7 +37,7 @@
    </changeSet> -->
 
 
-    <changeSet id="cdss-efsdfsafsdff" author="raff">
+    <changeSet id="cdss-efsdfdsgsdgfsafsdff" author="raff">
 
 
         <dropTable tableName="cdss_usage"></dropTable>
@@ -62,41 +62,41 @@
                 <constraints nullable="false"/>
             </column>
 
-            <column name="creator" type="int">
-                <constraints nullable="false"/>
-            </column>
-            <column name="date_created" type="datetime">
-                <constraints nullable="false"/>
-            </column>
-            <column name="changed_by" type="int" defaultValue="null">
-            </column>
-            <column name="date_changed" type="datetime">
-                <!--                <constraints nullable="false"/>-->
-            </column>
-            <column name="retired" type="boolean" defaultValueBoolean="false">
-                <!--                <constraints nullable="false"/>-->
-            </column>
-            <column name="retired_by" type="int">
-                <!--                <constraints nullable="false"/>-->
-            </column>
-            <column name="date_retired" type="datetime">
-                <!--                <constraints nullable="false"/>-->
-            </column>
-            <column name="retire_reason" type="varchar(255)">
+<!--            <column name="creator" type="int">-->
 <!--                <constraints nullable="false"/>-->
-            </column>
-            <column name="voided" type="boolean" defaultValueBoolean="false">
-                <!--                <constraints nullable="false"/>-->
-            </column>
-            <column name="voided_by" type="int">
-                <!--                <constraints nullable="false"/>-->
-            </column>
-            <column name="date_voided" type="datetime">
-                <!--                <constraints nullable="false"/>-->
-            </column>
-            <column name="void_reason" type="varchar(255)">
-                <!--                <constraints nullable="false"/>-->
-            </column>
+<!--            </column>-->
+<!--            <column name="date_created" type="datetime">-->
+<!--                <constraints nullable="false"/>-->
+<!--            </column>-->
+<!--            <column name="changed_by" type="int" defaultValue="null">-->
+<!--            </column>-->
+<!--            <column name="date_changed" type="datetime">-->
+<!--                &lt;!&ndash;                <constraints nullable="false"/>&ndash;&gt;-->
+<!--            </column>-->
+<!--            <column name="retired" type="boolean" defaultValueBoolean="false">-->
+<!--                &lt;!&ndash;                <constraints nullable="false"/>&ndash;&gt;-->
+<!--            </column>-->
+<!--            <column name="retired_by" type="int">-->
+<!--                &lt;!&ndash;                <constraints nullable="false"/>&ndash;&gt;-->
+<!--            </column>-->
+<!--            <column name="date_retired" type="datetime">-->
+<!--                &lt;!&ndash;                <constraints nullable="false"/>&ndash;&gt;-->
+<!--            </column>-->
+<!--            <column name="retire_reason" type="varchar(255)">-->
+<!--&lt;!&ndash;                <constraints nullable="false"/>&ndash;&gt;-->
+<!--            </column>-->
+<!--            <column name="voided" type="boolean" defaultValueBoolean="false">-->
+<!--                &lt;!&ndash;                <constraints nullable="false"/>&ndash;&gt;-->
+<!--            </column>-->
+<!--            <column name="voided_by" type="int">-->
+<!--                &lt;!&ndash;                <constraints nullable="false"/>&ndash;&gt;-->
+<!--            </column>-->
+<!--            <column name="date_voided" type="datetime">-->
+<!--                &lt;!&ndash;                <constraints nullable="false"/>&ndash;&gt;-->
+<!--            </column>-->
+<!--            <column name="void_reason" type="varchar(255)">-->
+<!--                &lt;!&ndash;                <constraints nullable="false"/>&ndash;&gt;-->
+<!--            </column>-->
 
             <column name="uuid" type="varchar(38)">
                 <constraints nullable="false"/>
@@ -112,17 +112,17 @@
             <column name="cdss_usage_vaccine">TestVac</column>
             <column name="cdss_usage_patient">6</column>
             <column name="cdss_usage_date">2024-04-01 01:20:14</column>
-            <column name="creator">0</column>
-            <column name="date_created">2024-04-01 01:20:14</column>
-            <column name="changed_by">null</column>
-            <column name="retired">0</column>
-            <column name="retired_by">null</column>
-            <column name="date_retired">null</column>
-            <column name="retire_reason">null</column>
-            <column name="voided">null</column>
-            <column name="voided_by">null</column>
-            <column name="date_voided">null</column>
-            <column name="void_reason">null</column>
+<!--            <column name="creator">0</column>-->
+<!--            <column name="date_created">2024-04-01 01:20:14</column>-->
+<!--            <column name="changed_by">null</column>-->
+<!--            <column name="retired">0</column>-->
+<!--            <column name="retired_by">null</column>-->
+<!--            <column name="date_retired">null</column>-->
+<!--            <column name="retire_reason">null</column>-->
+<!--            <column name="voided">null</column>-->
+<!--            <column name="voided_by">null</column>-->
+<!--            <column name="date_voided">null</column>-->
+<!--            <column name="void_reason">null</column>-->
             <column name="uuid">29080fbe-f38a-11ee-a25e-0242ac130002</column>
         </insert>
     </changeSet>

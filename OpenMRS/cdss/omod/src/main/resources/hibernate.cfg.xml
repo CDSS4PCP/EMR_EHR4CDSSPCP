@@ -20,7 +20,7 @@
 
         <!-- API -->
 
-        <mapping resource="org/openmrs/module/cdss/api/data/EngineUsage.hbm.xml"/>
+        <mapping resource="CdssUsage.hbm.xml"/>
 
     </session-factory>
 

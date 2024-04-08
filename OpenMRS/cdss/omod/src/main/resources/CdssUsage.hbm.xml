@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="org.openmrs.module.cdss.api.data">
+
+    <class name="org.openmrs.module.cdss.api.data.CdssUsage" table="cdss_usage">
+
+        <id name="id" type="java.lang.Integer">
+            <column name="cdss_usage_id"/>
+            <generator class="identity"/>
+        </id>
+
+        <property name="vaccine" type="java.lang.String">
+            <column name="cdss_usage_vaccine" length="255" not-null="true"/>
+        </property>
+
+
+        <!--        <many-to-one name="patient" class="org.openmrs.Patient" not-null="true" column="cdss_usage_patient" />-->
+        <!--        <property name="patient" type="org.openmrs.Patient" not-null="true" column="cdss_usage_patient" />-->
+
+
+        <property name="patientId" type="java.lang.Integer" not-null="true" column="cdss_usage_patient"/>
+
+        <property name="timestamp" type="java.time.LocalDateTime">
+            <column name="cdss_usage_date" not-null="true"/>
+        </property>
+
+        <property name="uuid" type="java.lang.String" column="uuid" length="38" not-null="true" unique="true"/>
+
+
+        <!--        <many-to-one name="creator" class="org.openmrs.User" not-null="true">-->
+        <!--            <column name="creator" />-->
+        <!--        </many-to-one>-->
+
+        <!--        <property name="dateCreated" type="java.util.Date"-->
+        <!--                  column="date_created" not-null="true" length="19" />-->
+
+        <!--        <many-to-one name="changedBy" class="org.openmrs.User" not-null="true">-->
+        <!--            <column name="changed_by" />-->
+        <!--        </many-to-one>-->
+
+        <!--        <property name="dateChanged" type="java.util.Date"-->
+        <!--                  column="date_changed" not-null="true" length="19" />-->
+    </class>
+
+</hibernate-mapping>

@@ -117,6 +117,10 @@
 		<file>messages_es.properties</file>
 	</messages>
 	<!-- /Internationalization -->
-	
+
+
+	<mappingFiles>
+		CdssUsage.hbm.xml
+	</mappingFiles>
 </module>
 
