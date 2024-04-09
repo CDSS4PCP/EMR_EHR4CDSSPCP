@@ -32,6 +32,31 @@ export interface CdssChartComponentProps {
   patientUuid: string;
 }
 
+const recordActionTaken = (
+  ruleId: string,
+  patientId: string,
+  vaccine: string,
+  recommendation: string,
+  uuid: string
+) => {
+  const ac: AbortController = new AbortController();
+  openmrsFetch(`/cdss/record-usage.form`, {
+    signal: ac.signal,
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: {
+      vaccine: vaccine,
+      patientId: patientId,
+      timestamp: new Date(),
+      rule: ruleId,
+      recommendation: recommendation,
+      uuid: uuid,
+    },
+  })
+    .then((result) => console.log(result))
+    .catch((error) => console.log(error));
+  console.log(ruleId, patientId, vaccine, recommendation);
+};
 export const CdssChart: React.FC<CdssChartComponentProps> = ({
   patientUuid,
 }) => {
@@ -138,6 +163,7 @@ export const CdssChart: React.FC<CdssChartComponentProps> = ({
           ruleId={ruleId}
           patientUuid={patientUuid}
           visibleColumns={["VaccineName", "Recommendation"]}
+          takeAction={recordActionTaken}
         ></CdssResultsTable>
       ) : (
         <div>

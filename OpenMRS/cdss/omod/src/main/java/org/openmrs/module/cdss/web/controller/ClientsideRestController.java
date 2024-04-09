@@ -19,42 +19,42 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/cdss")
 public class ClientsideRestController {
-	
-	Logger log = Logger.getLogger(ClientsideRestController.class);
-	
-	@Autowired
-	CDSSDao dao;
-	
-	@GetMapping(path = "/rule/{ruleId}", produces = "application/json")
-	public String getRule(@PathVariable(value = "ruleId") String ruleId) {
-		String path = "cql/" + ruleId;
-		if (!ruleId.endsWith(".json")) {
-			path = path + ".json";
-		}
-		ClassLoader classloader = Thread.currentThread().getContextClassLoader();
-		InputStream is = classloader.getResourceAsStream(path);
-		
-		if (is != null) {
-			String result = new BufferedReader(new InputStreamReader(is)).lines().collect(Collectors.joining("\n"));
-			
-			return result;
-		}
-		throw new ResponseStatusException(HttpStatus.NOT_FOUND, path + " not found");
-	}
-	
-	@RequestMapping(path = "/record-usage.form", produces = "application/json", method = { RequestMethod.POST })
-	public String recordUsage(@RequestBody CdssUsage newUsage) {
-		log.debug("Saving " + newUsage.toString());
-		
-		dao.saveEngineUsage(newUsage);
-		return "{\"status\":\"success\"}";
-	}
-	
-	@RequestMapping(path = "/usages.form", produces = "application/json", method = { RequestMethod.GET })
-	public List<CdssUsage> getUsages() {
-		
-		RuleLoggerService service = ServiceContext.getInstance().getService(RuleLoggerService.class);
-		List<CdssUsage> usages = service.getRuleUsages();
-		return usages;
-	}
+
+    Logger log = Logger.getLogger(ClientsideRestController.class);
+
+    @Autowired
+    CDSSDao dao;
+
+    @GetMapping(path = "/rule/{ruleId}", produces = "application/json")
+    public String getRule(@PathVariable(value = "ruleId") String ruleId) {
+        String path = "cql/" + ruleId;
+        if (!ruleId.endsWith(".json")) {
+            path = path + ".json";
+        }
+        ClassLoader classloader = Thread.currentThread().getContextClassLoader();
+        InputStream is = classloader.getResourceAsStream(path);
+
+        if (is != null) {
+            String result = new BufferedReader(new InputStreamReader(is)).lines().collect(Collectors.joining("\n"));
+
+            return result;
+        }
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND, path + " not found");
+    }
+
+    @RequestMapping(path = "/record-usage.form", produces = "application/json", method = {RequestMethod.POST})
+    public String recordUsage(@RequestBody CdssUsage newUsage) {
+        log.debug("Saving " + newUsage.toString());
+
+        CdssUsage saved = dao.saveEngineUsage(newUsage);
+        return "{\"status\":\"success\", \"id\": " + saved.getId() + "}";
+    }
+
+    @RequestMapping(path = "/usages.form", produces = "application/json", method = {RequestMethod.GET})
+    public List<CdssUsage> getUsages() {
+
+        RuleLoggerService service = ServiceContext.getInstance().getService(RuleLoggerService.class);
+        List<CdssUsage> usages = service.getRuleUsages();
+        return usages;
+    }
 }

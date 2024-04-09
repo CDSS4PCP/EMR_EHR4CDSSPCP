@@ -10,12 +10,8 @@
 package org.openmrs.module.cdss.api.dao;
 
 import org.apache.log4j.Logger;
-import org.hibernate.criterion.ProjectionList;
-import org.hibernate.criterion.Projections;
+import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.transform.DistinctResultTransformer;
-import org.hibernate.transform.ResultTransformer;
-import org.hibernate.transform.Transformers;
 import org.openmrs.api.db.hibernate.DbSession;
 import org.openmrs.api.db.hibernate.DbSessionFactory;
 import org.openmrs.module.cdss.Item;
@@ -23,8 +19,6 @@ import org.openmrs.module.cdss.api.data.CdssUsage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Repository("cdss.CDSSDao")
@@ -49,23 +43,17 @@ public class CDSSDao {
 	}
 	
 	public CdssUsage saveEngineUsage(CdssUsage usage) {
+		Transaction tx = getSession().beginTransaction();
+		
 		getSession().saveOrUpdate(usage);
+//		Integer id = (Integer) getSession().save(usage);
+		tx.commit();
+
+		
 		return usage;
 	}
 	
 	public List<CdssUsage> getUsages() {
-		
-		//        return getSession().createSQLQuery(
-		//                "SELECT cdss_usage_id,cdss_usage_vaccine,cdss_usage_patient,cdss_usage_date FROM openmrs.cdss_usage").list();
-		//
-		//		ProjectionList pl = Projections.projectionList();
-		//		pl.add(Projections.property("id"));
-		//		pl.add(Projections.property("patient.id"));
-		//		pl.add(Projections.property("vaccine"));
-		//		pl.add(Projections.property("timestamp"));
-		//		pl.add(Projections.property("uuid"));
-		//		List l = getSession().createCriteria(CdssUsage.class).setProjection(pl).list();
-		//		return (List<CdssUsage>) l;
 		
 		List l = getSession().createCriteria(CdssUsage.class).setFetchSize(1).list();
 		return (List<CdssUsage>) l;
