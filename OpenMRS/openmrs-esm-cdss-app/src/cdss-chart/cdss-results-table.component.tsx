@@ -10,7 +10,6 @@ import {
   TableHead,
   TableRow,
 } from "@carbon/react";
-import { openmrsFetch } from "@openmrs/esm-framework";
 
 export interface CdssChartComponentProps {
   patientUuid: string;
@@ -19,6 +18,12 @@ export interface CdssChartComponentProps {
   debug?: boolean;
   visibleColumns?: Array<string>;
   takeAction: (
+    ruleId: string,
+    patientId: string,
+    vaccine: string,
+    recommendation: string
+  ) => void;
+  declineAction: (
     ruleId: string,
     patientId: string,
     vaccine: string,
@@ -33,6 +38,7 @@ export const CdssResultsTable: React.FC<CdssChartComponentProps> = ({
   debug,
   visibleColumns,
   takeAction,
+  declineAction,
 }) => {
   return (
     <TableContainer style={{ padding: "10px" }}>
@@ -71,20 +77,39 @@ export const CdssResultsTable: React.FC<CdssChartComponentProps> = ({
             <TableCell>
               {patientResults[patientUuid]["Recommendation"] ===
               "Does not apply" ? (
-                <Button disabled>No action Needed</Button>
+                <div>
+                  <Button disabled>No action Needed</Button>
+                </div>
               ) : (
-                <Button
-                  onClick={(e) =>
-                    takeAction(
-                      ruleId,
-                      patientUuid,
-                      patientResults[patientUuid]["VaccineName"],
-                      patientResults[patientUuid]["Recommendation"]
-                    )
-                  }
-                >
-                  Take action
-                </Button>
+                <div>
+                  <Button
+                    kind={"primary"}
+                    onClick={(e) =>
+                      takeAction(
+                        ruleId,
+                        patientUuid,
+                        patientResults[patientUuid]["VaccineName"],
+                        patientResults[patientUuid]["Recommendation"]
+                      )
+                    }
+                  >
+                    Take action
+                  </Button>
+
+                  <Button
+                    kind={"secondary"}
+                    onClick={(e) => {
+                      declineAction(
+                        ruleId,
+                        patientUuid,
+                        patientResults[patientUuid]["VaccineName"],
+                        patientResults[patientUuid]["Recommendation"]
+                      );
+                    }}
+                  >
+                    Decline action
+                  </Button>
+                </div>
               )}
             </TableCell>
           </TableRow>

@@ -21,7 +21,7 @@
         <!--        <property name="patient" type="org.openmrs.Patient" not-null="true" column="cdss_usage_patient" />-->
 
 
-        <property name="patientId" type="java.lang.Integer" not-null="true" column="cdss_usage_patient"/>
+        <property name="patientId" type="java.lang.String" not-null="true" column="cdss_usage_patient"/>
 
         <property name="timestamp" type="java.time.LocalDateTime">
             <column name="cdss_usage_date" not-null="true"/>

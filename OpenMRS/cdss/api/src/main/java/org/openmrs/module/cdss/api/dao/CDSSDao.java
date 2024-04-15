@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.UUID;
 
 @Repository("cdss.CDSSDao")
 public class CDSSDao {
@@ -45,12 +46,30 @@ public class CDSSDao {
 	public CdssUsage saveEngineUsage(CdssUsage usage) {
 		Transaction tx = getSession().beginTransaction();
 		
-		getSession().saveOrUpdate(usage);
-//		Integer id = (Integer) getSession().save(usage);
-		tx.commit();
-
-		
-		return usage;
+		if (usage.getUuid() == null) {
+			usage.setUuid(UUID.randomUUID().toString());
+		}
+		CdssUsage existingUsage = getUsage(usage.getVaccine(), usage.getPatientId(), usage.getRule(),
+		    usage.getRecommendation(), usage.getStatus());
+		if (existingUsage == null) {
+			getSession().saveOrUpdate(usage);
+			tx.commit();
+			return usage;
+		} else {
+			return null;
+		}
+	}
+	
+	public CdssUsage getUsage(int id) {
+		return (CdssUsage) getSession().createCriteria(CdssUsage.class).add(Restrictions.eq("id", id)).uniqueResult();
+	}
+	
+	public CdssUsage getUsage(String vaccine, String patient, String rule, String recommendation, String status) {
+		return (CdssUsage) getSession().createCriteria(CdssUsage.class).add(Restrictions.eq("vaccine", vaccine))
+		        .add(Restrictions.eq("patientId", patient)).add(Restrictions.eq("rule", rule))
+		        .add(Restrictions.eq("recommendation", recommendation))
+		        //				.add(Restrictions.eq("status", status))
+		        .uniqueResult();
 	}
 	
 	public List<CdssUsage> getUsages() {
@@ -58,4 +77,5 @@ public class CDSSDao {
 		List l = getSession().createCriteria(CdssUsage.class).setFetchSize(1).list();
 		return (List<CdssUsage>) l;
 	}
+	
 }

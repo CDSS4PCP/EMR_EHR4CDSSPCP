@@ -7,6 +7,32 @@ import org.openmrs.Patient;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
+import static javax.persistence.EnumType.STRING;
+
+enum CDSS_USAGE_STATUS {
+	ACTED("ACTED"),
+	
+	DECLINED("DECLINED"),
+	
+	ROUTINE("ROUTINE");
+	
+	private final String value;
+	
+	private CDSS_USAGE_STATUS(String value) {
+		this.value = value;
+	}
+	
+	public boolean equalsName(String otherName) {
+		// (otherName == null) check is not needed because name.equals(null) returns false
+		return this.value.equals(otherName);
+	}
+	
+	public String toString() {
+		return this.value;
+	}
+	
+}
+
 @Data
 @Entity(name = "cdss_usage")
 public class CdssUsage implements OpenmrsObject {
@@ -14,7 +40,7 @@ public class CdssUsage implements OpenmrsObject {
 	public CdssUsage(Integer id, String vaccine, Patient patient, LocalDateTime timestamp) {
 		this.id = id;
 		this.vaccine = vaccine;
-		this.patientId = patient.getPatientId();
+		this.patientId = patient.getUuid();
 		this.timestamp = timestamp;
 	}
 	
@@ -27,8 +53,9 @@ public class CdssUsage implements OpenmrsObject {
 	private String vaccine;
 	
 	@Column(name = "cdss_usage_patient", nullable = false, insertable = false, updatable = false)
-	private Integer patientId;
+	private String patientId;
 	
+	@Version
 	@Column(name = "cdss_usage_date", nullable = false)
 	private LocalDateTime timestamp;
 	
@@ -38,8 +65,12 @@ public class CdssUsage implements OpenmrsObject {
 	@Column(name = "cdss_usage_recommendation", nullable = false)
 	private String recommendation;
 	
-	@Column
-	private String uuid;
+	@Column(name = "uuid", nullable = true)
+	String uuid;
+	
+	//	@Enumerated(STRING)
+	@Column(name = "cdss_usage_status", nullable = false)
+	private String status;
 	
 	public CdssUsage() {
 		
@@ -51,4 +82,13 @@ public class CdssUsage implements OpenmrsObject {
 		        + timestamp + '}';
 	}
 	
+	@Override
+	public String getUuid() {
+		return uuid;
+	}
+	
+	@Override
+	public void setUuid(String s) {
+		uuid = s;
+	}
 }

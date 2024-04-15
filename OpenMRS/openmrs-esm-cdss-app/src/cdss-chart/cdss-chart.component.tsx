@@ -27,112 +27,19 @@ import "./../cdss.js";
 import { usePatient } from "../patient-getter/patient-getter.resource";
 import Loading from "@carbon/react/es/components/Loading/Loading";
 import { CdssResultsTable } from "./cdss-results-table.component";
+import {
+  declineActionTaken,
+  getRecommendations,
+  recordActionTaken,
+} from "../cdssService";
 
 export interface CdssChartComponentProps {
   patientUuid: string;
 }
 
-const recordActionTaken = (
-  ruleId: string,
-  patientId: string,
-  vaccine: string,
-  recommendation: string,
-  uuid: string
-) => {
-  const ac: AbortController = new AbortController();
-  openmrsFetch(`/cdss/record-usage.form`, {
-    signal: ac.signal,
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: {
-      vaccine: vaccine,
-      patientId: patientId,
-      timestamp: new Date(),
-      rule: ruleId,
-      recommendation: recommendation,
-      uuid: uuid,
-    },
-  })
-    .then((result) => console.log(result))
-    .catch((error) => console.log(error));
-  console.log(ruleId, patientId, vaccine, recommendation);
-};
 export const CdssChart: React.FC<CdssChartComponentProps> = ({
   patientUuid,
 }) => {
-  async function loadPatient(patientId) {
-    const result = await openmrsFetch(`/ws/fhir2/R4/Patient/${patientId}`, {});
-    const pat = await result.json();
-    return pat;
-  }
-
-  async function loadRule(ruleId) {
-    const result = await openmrsFetch(`/cdss/rule/${ruleId}.json`, {});
-    const pat = await result.json();
-    return pat;
-  }
-
-  async function loadImmunizations(patientId) {
-    const result = await openmrsFetch(
-      `/ws/fhir2/R4/Immunization?patient=${patientId}`,
-      {}
-    );
-    const imm = await result.json();
-    if (imm == undefined) {
-      return [];
-    }
-    return imm;
-  }
-
-  async function doCoolStuff(patientUuid, ruleId) {
-    // Set the endpoints
-    global.cdss.endpoints = {
-      metadata: {
-        systemName: "OpenMRS",
-        remoteAddress: "http://127.0.0.1:80/openmrs",
-      },
-      patientById: {
-        address: async (patientId) => {
-          return await loadPatient(patientId);
-        },
-        method: "GET",
-      },
-      medicationRequestByPatientId: {
-        address:
-          "http://127.0.0.1:80/openmrs/ws/fhir2/R4/MedicationRequest/{{medicationRequestId}}",
-        method: "GET",
-      },
-      medicationByMedicationRequestId: {
-        address:
-          "http://127.0.0.1:80/openmrs/ws/fhir2/R4/Medication/{{medicationId}}",
-        method: "GET",
-      },
-      immunizationByPatientId: {
-        address: async (patientId) => {
-          return await loadImmunizations(patientId);
-        },
-        method: "GET",
-      },
-      observationByPatientId: {
-        address:
-          "http://127.0.0.1:80/openmrs/ws/fhir2/R4/Observation/{{patientId}}",
-        method: "GET",
-      },
-      ruleById: {
-        address: async (ruleId) => {
-          return await loadRule(ruleId);
-        },
-        method: "GET",
-      },
-    };
-    const result = await global.cdss.executeRuleWithPatient(
-      patientUuid,
-      ruleId
-    );
-
-    return result;
-  }
-
   const { t } = useTranslation();
 
   // const ruleId = "age-1";
@@ -140,7 +47,7 @@ export const CdssChart: React.FC<CdssChartComponentProps> = ({
   const [results, setResults] = useState(null);
 
   useEffect(() => {
-    doCoolStuff(patientUuid, ruleId).then((r) => {
+    getRecommendations(patientUuid, ruleId).then((r) => {
       setResults(r);
     });
   }, []);
@@ -164,6 +71,7 @@ export const CdssChart: React.FC<CdssChartComponentProps> = ({
           patientUuid={patientUuid}
           visibleColumns={["VaccineName", "Recommendation"]}
           takeAction={recordActionTaken}
+          declineAction={declineActionTaken}
         ></CdssResultsTable>
       ) : (
         <div>

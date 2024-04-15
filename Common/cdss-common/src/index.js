@@ -52,6 +52,14 @@ let endpoints = {
     "ruleById": {
         address: null,
         method: "GET",
+    },
+    "getUsages": {
+        address: null,
+        method: "GET"
+    },
+    "recordUsage": {
+        address: null,
+        method: "POST"
     }
 
 };

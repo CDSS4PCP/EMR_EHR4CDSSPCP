@@ -37,7 +37,7 @@
    </changeSet> -->
 
 
-    <changeSet id="cdss-2024-4-8-2" author="raff">
+    <changeSet id="cdss-2024-4-15-2" author="raff">
 
 
         <dropTable tableName="cdss_usage"></dropTable>
@@ -54,7 +54,7 @@
                 <constraints nullable="false"/>
             </column>
 
-            <column name="cdss_usage_patient" type="int">
+            <column name="cdss_usage_patient" type="varchar(38)">
                 <constraints nullable="false"/>
             </column>
 
@@ -67,6 +67,11 @@
             </column>
             <column name="cdss_usage_recommendation" type="varchar(255)">
                 <constraints nullable="false"/>
+            </column>
+
+            <column name="cdss_usage_status" type="varchar(8)" defaultValue="ROUTINE">
+                <constraints nullable="false"/>
+
             </column>
 
             <!--            <column name="creator" type="int">-->
@@ -111,18 +116,19 @@
         </createTable>
 
         <addForeignKeyConstraint constraintName="cdss_usage_patient_fk" baseTableName="cdss_usage"
-                                 baseColumnNames="cdss_usage_patient" referencedTableName="patient"
-                                 referencedColumnNames="patient_id"/>
+                                 baseColumnNames="cdss_usage_patient" referencedTableName="person"
+                                 referencedColumnNames="uuid"/>
 
         <insert tableName="cdss_usage">
             <column name="cdss_usage_id">0</column>
             <column name="cdss_usage_vaccine">Measles, Mumps, and Rubella Virus Vaccine</column>
-            <column name="cdss_usage_patient">6</column>
+            <column name="cdss_usage_patient">71a8fef3-52cc-46a1-9c1c-b834acae5b6f</column>
             <column name="cdss_usage_date">2024-04-01 01:20:14</column>
             <column name="cdss_usage_rule">MMR4regular12months_4yrs_OneMMRRecommendation</column>
             <column name="cdss_usage_recommendation">Recommendation 1: Schedule 2nd dose MMR when patient is 4-6 years
                 old
             </column>
+            <column name="cdss_usage_status">ACTED</column>
             <!--                    <column name="creator">0</column>-->
             <!--                    <column name="date_created">2024-04-01 01:20:14</column>-->
             <!--                    <column name="changed_by">null</column>-->

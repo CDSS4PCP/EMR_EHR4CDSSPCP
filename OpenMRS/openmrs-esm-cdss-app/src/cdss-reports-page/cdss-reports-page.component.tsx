@@ -8,11 +8,11 @@ import {
   TableCell,
   TableContainer,
   TableHead,
-  TableRow,
+  TableRow
 } from "@carbon/react";
 import { openmrsFetch, useConfig } from "@openmrs/esm-framework";
-import { useTranslation } from "react-i18next";
-import { Simulate } from "react-dom/test-utils";
+import "./../cdss.js";
+import { getUsages } from "../cdssService";
 
 function getYear(date) {
   return date[0];
@@ -38,21 +38,17 @@ function getSecond(date) {
   return date[5];
 }
 
-
 export const CdssReportsPage: React.FC = () => {
-
-
-  async function getUsages() {
-    console.log("Getting usages");
-    const ac: AbortController = new AbortController();
-    const response = await openmrsFetch(`/cdss/usages.form`, {
-      signal: ac.signal,
-      method: "GET",
-      headers: { "Content-Type": "application/json" },
-    });
-
-    return await response.json();
-  }
+  // async function getUsages() {
+  //   const ac: AbortController = new AbortController();
+  //   const response = await openmrsFetch(`/cdss/usages.form`, {
+  //     signal: ac.signal,
+  //     method: "GET",
+  //     headers: { "Content-Type": "application/json" },
+  //   });
+  //
+  //   return await response.json();
+  // }
 
   const [usages, setUsages] = useState([]);
   useEffect(() => {
@@ -71,7 +67,9 @@ export const CdssReportsPage: React.FC = () => {
             <TableRow>
               <TableCell>Id</TableCell>
               <TableCell>Vaccine</TableCell>
+              <TableCell>Rule</TableCell>
               <TableCell>Patient</TableCell>
+              <TableCell>Recommendation</TableCell>
               <TableCell>Occurrence Time</TableCell>
             </TableRow>
           </TableHead>
@@ -82,7 +80,9 @@ export const CdssReportsPage: React.FC = () => {
                 <TableRow>
                   <TableCell>{usage.id}</TableCell>
                   <TableCell>{usage.vaccine}</TableCell>
+                  <TableCell>{usage.rule}</TableCell>
                   <TableCell>{usage.patientId}</TableCell>
+                  <TableCell>{usage.recommendation}</TableCell>
                   <TableCell>
                     {getYear(usage.timestamp)}-{getMonth(usage.timestamp)}-
                     {getDay(usage.timestamp)} {getHour(usage.timestamp)}:
