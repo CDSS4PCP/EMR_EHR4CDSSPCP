@@ -27,11 +27,7 @@ import "./../cdss.js";
 import { usePatient } from "../patient-getter/patient-getter.resource";
 import Loading from "@carbon/react/es/components/Loading/Loading";
 import { CdssResultsTable } from "./cdss-results-table.component";
-import {
-  declineActionTaken,
-  getRecommendations,
-  recordActionTaken,
-} from "../cdssService";
+import { getRecommendations, getUsages, recordRuleUsage } from "../cdssService";
 
 export interface CdssChartComponentProps {
   patientUuid: string;
@@ -42,14 +38,19 @@ export const CdssChart: React.FC<CdssChartComponentProps> = ({
 }) => {
   const { t } = useTranslation();
 
-  // const ruleId = "age-1";
   const ruleId = "MMR_Rule4";
   const [results, setResults] = useState(null);
+  const [usages, setExistingUsages] = useState([]);
 
   useEffect(() => {
     getRecommendations(patientUuid, ruleId).then((r) => {
       setResults(r);
+      // console.log(r);
     });
+  }, []);
+
+  useEffect(() => {
+    getUsages().then(setExistingUsages);
   }, []);
 
   const loadingProps = () => ({
@@ -70,8 +71,19 @@ export const CdssChart: React.FC<CdssChartComponentProps> = ({
           ruleId={ruleId}
           patientUuid={patientUuid}
           visibleColumns={["VaccineName", "Recommendation"]}
-          takeAction={recordActionTaken}
-          declineAction={declineActionTaken}
+          existingUsages={usages}
+          takeAction={(ruleId, patientId, vaccine, recommendation) =>
+            recordRuleUsage(ruleId, patientId, vaccine, recommendation, "ACTED")
+          }
+          declineAction={(ruleId, patientId, vaccine, recommendation) =>
+            recordRuleUsage(
+              ruleId,
+              patientId,
+              vaccine,
+              recommendation,
+              "DECLINED"
+            )
+          }
         ></CdssResultsTable>
       ) : (
         <div>

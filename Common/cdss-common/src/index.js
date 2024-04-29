@@ -5,6 +5,12 @@ import vsac from 'cql-exec-vsac';
 const DEBUG_MODE = false;
 
 
+const UsageStatus = Object.freeze({
+    ACTED: "ACTED",
+    DECLINED: "DECLINED",
+    ROUTINE: "ROUTINE"
+})
+
 const FhirTypes = Object.freeze({
     PATIENT: "{http://hl7.org/fhir}Patient",
     IMMUNIZATION: "{http://hl7.org/fhir}Immunization",
@@ -124,6 +130,112 @@ function createBundle(resource, url = null) {
     return resource
 }
 
+
+/**
+ * Records routine usage of a rule for a patient.
+ * The status is will be "ROUTINE"
+ *
+ * @param {string} ruleId - The ID of the rule being used.
+ * @param {string} patientId - The ID of the patient.
+ * @param {string} vaccine - The name of the vaccine.
+ * @param {string} recommendation - The recommendation for the patient.
+ * @returns {Promise} - A promise that resolves when the usage is recorded successfully.
+ * @throws {Error} - If the rule responds with an HTTP status other than 200.
+ */
+async function recordRoutineUsage(ruleId, patientId, vaccine, recommendation) {
+    if (typeof global.cdss.endpoints.recordUsage.address == 'function') {
+
+        await global.cdss.endpoints.recordUsage.address(ruleId, patientId, vaccine, recommendation, UsageStatus.ROUTINE);
+
+    } else {
+        let url = global.cdss.endpoints.recordUsage.address;
+
+        let options = {...global.cdss.endpoints.recordUsage};
+        options.body = {
+            vaccine: vaccine,
+            patientId: patientId,
+            timestamp: new Date(),
+            rule: ruleId,
+            recommendation: recommendation,
+            status: UsageStatus.ROUTINE
+        };
+        let response = await fetch(url, options);
+        if (response.status !== 200) {
+            throw new Error("Rule responded with HTTP " + response.status);
+        }
+    }
+}
+
+
+/**
+ * Records the usage of a rule when it is acted upon.
+ * The status is will be "ACTED"
+ *
+ * @param {string} ruleId - The ID of the rule being acted upon.
+ * @param {string} patientId - The ID of the patient for whom the rule is being acted upon.
+ * @param {string} vaccine - The name of the vaccine being recommended.
+ * @param {string} recommendation - The recommendation being made.
+ * @returns {Promise} - A promise that resolves when the usage is recorded.
+ * @throws {Error} - If the rule does not respond with HTTP 200.
+ */
+async function recordActedUsage(ruleId, patientId, vaccine, recommendation) {
+    if (typeof global.cdss.endpoints.recordUsage.address == 'function') {
+        await global.cdss.endpoints.recordUsage.address(ruleId, patientId, vaccine, recommendation, UsageStatus.ACTED);
+
+    } else {
+        let url = global.cdss.endpoints.recordUsage.address;
+
+        let options = {...global.cdss.endpoints.recordUsage};
+        options.body = {
+            vaccine: vaccine,
+            patientId: patientId,
+            timestamp: new Date(),
+            rule: ruleId,
+            recommendation: recommendation,
+            status: UsageStatus.ACTED
+        };
+        let response = await fetch(url, options);
+        if (response.status !== 200) {
+            throw new Error("Rule responded with HTTP " + response.status);
+        }
+    }
+}
+
+
+/**
+ * Records the declined usage of a rule for a specific patient.
+ * The status is will be "DECLINED"
+ *
+ * @param {string} ruleId - The ID of the rule.
+ * @param {string} patientId - The ID of the patient.
+ * @param {string} vaccine - The name of the vaccine.
+ * @param {string} recommendation - The recommendation for the vaccine.
+ * @returns {Promise<void>} - A promise that resolves when the usage is recorded.
+ * @throws {Error} - If there is an error recording the usage.
+ */
+async function recordDeclinedUsage(ruleId, patientId, vaccine, recommendation) {
+    if (typeof global.cdss.endpoints.recordUsage.address == 'function') {
+        await global.cdss.endpoints.recordUsage.address(ruleId, patientId, vaccine, recommendation, UsageStatus.DECLINED);
+
+    } else {
+        let url = global.cdss.endpoints.recordUsage.address;
+
+        let options = {...global.cdss.endpoints.recordUsage};
+        options.body = {
+            vaccine: vaccine,
+            patientId: patientId,
+            timestamp: new Date(),
+            rule: ruleId,
+            recommendation: recommendation,
+            status: UsageStatus.DECLINED
+        };
+        let response = await fetch(url, options);
+        if (response.status !== 200) {
+            throw new Error("Rule responded with HTTP " + response.status);
+        }
+    }
+}
+
 /**
  * Executes a Clinical Quality Language (CQL) rule on a FHIR (Fast Healthcare Interoperability Resources) patient.
  *
@@ -184,7 +296,6 @@ async function executeCql(patient, rule, libraries = null, parameters = null) {
     let ruleWithLibraries = libraryObject.length === 0 ? new cql.Library(rule) : new cql.Library(rule, new cql.Repository(libraryObject));
 
     let success = await codeService.ensureValueSetsInLibraryWithAPIKey(rule, true, '5d7d49f3-4c14-4442-9b1d-a6895ca5a715');
-    console.log("CodeService check returned : ", success);
     let executor = new cql.Executor(ruleWithLibraries, codeService);
     // let executor = new cql.Executor(ruleWithLibraries);
 
@@ -215,7 +326,6 @@ async function executeCql(patient, rule, libraries = null, parameters = null) {
                     for (const entry of res.entry) {
                         let wrapped = fhirWrapper.wrap(entry.resource);
                         paramObject[expectedParameter.name].push(wrapped);
-
                     }
                 }
             } else {
@@ -234,6 +344,8 @@ async function executeCql(patient, rule, libraries = null, parameters = null) {
 
     let patientResults = result.patientResults;
     patientResults.library = {name: rule.library.identifier.id, version: rule.library.identifier.version};
+    await recordRoutineUsage(rule.library.identifier.id, patient.id, patientResults[patient.id].VaccineName, patientResults[patient.id].Recommendation);
+
     // Return the results
     return patientResults;
 }
@@ -254,7 +366,6 @@ async function getPatientResource(patientId) {
 
     } else {
         let url = global.cdss.endpoints.patientById.address.replace("{{patientId}}", patientId);
-        console.log("Fetching Patient " + url);
         let response = await fetch(url, global.cdss.endpoints.patientById);
         if (response.status !== 200) {
             throw new Error("Patient responded with HTTP " + response.status);
@@ -342,7 +453,6 @@ async function getRule(ruleId) {
 
     } else {
         let url = global.cdss.endpoints.ruleById.address.replace("{{ruleId}}", ruleId);
-        console.log("Fetching Rule ", url);
 
         let response = await fetch(url, global.cdss.endpoints.ruleById);
         if (response.status !== 200) {
@@ -370,7 +480,6 @@ async function executeRuleWithPatient(patientId, ruleId) {
 
     let libraries = {};
     let expectedLibraries = getListOfExpectedLibraries(rule);
-    console.log("expectedLibraries ", expectedLibraries);
     if (expectedLibraries !== undefined)
         for (const lib of expectedLibraries) {
             libraries[lib.name] = await getRule(lib.path);
@@ -380,7 +489,6 @@ async function executeRuleWithPatient(patientId, ruleId) {
     let parameters = {};
 
     let expectedParameters = getListOfExpectedParameters(rule);
-    console.log("expectedParameters ", expectedParameters);
 
     if (expectedParameters !== undefined)
         for (const par of expectedParameters) {

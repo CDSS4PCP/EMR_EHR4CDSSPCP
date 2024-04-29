@@ -17,6 +17,7 @@ export interface CdssChartComponentProps {
   ruleId: string;
   debug?: boolean;
   visibleColumns?: Array<string>;
+  existingUsages?: Array<object>;
   takeAction: (
     ruleId: string,
     patientId: string,
@@ -31,12 +32,34 @@ export interface CdssChartComponentProps {
   ) => void;
 }
 
+function doesActionApply(patientId, rule, patientResult, existingUsages) {
+  // TODO move this functionality to the common module
+  if (patientResult["Recommendation"] == "Does not apply") {
+    return false;
+  }
+  for (const usage of existingUsages) {
+    const condition =
+      patientId == usage["patientId"] &&
+      patientResult["VaccineName"] == usage["vaccine"] &&
+      rule == usage["rule"] &&
+      patientResult["Recommendation"] == usage["recommendation"] &&
+      usage["status"] == "ACTED";
+
+    if (condition) {
+      // Does not apply because previous action was taken
+      return false;
+    }
+  }
+  return true;
+}
+
 export const CdssResultsTable: React.FC<CdssChartComponentProps> = ({
   patientUuid,
   ruleId,
   patientResults,
   debug,
   visibleColumns,
+  existingUsages,
   takeAction,
   declineAction,
 }) => {
@@ -74,13 +97,13 @@ export const CdssResultsTable: React.FC<CdssChartComponentProps> = ({
                 );
               })}
 
-            <TableCell>
-              {patientResults[patientUuid]["Recommendation"] ===
-              "Does not apply" ? (
-                <div>
-                  <Button disabled>No action Needed</Button>
-                </div>
-              ) : (
+            <td>
+              {doesActionApply(
+                patientUuid,
+                ruleId,
+                patientResults[patientUuid],
+                existingUsages
+              ) ? (
                 <div>
                   <Button
                     kind={"primary"}
@@ -110,8 +133,12 @@ export const CdssResultsTable: React.FC<CdssChartComponentProps> = ({
                     Decline action
                   </Button>
                 </div>
+              ) : (
+                <div>
+                  <Button disabled>No action Needed</Button>
+                </div>
               )}
-            </TableCell>
+            </td>
           </TableRow>
         </TableBody>
       </Table>

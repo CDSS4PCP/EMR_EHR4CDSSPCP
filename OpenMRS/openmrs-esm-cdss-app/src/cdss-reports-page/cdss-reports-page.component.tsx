@@ -71,6 +71,7 @@ export const CdssReportsPage: React.FC = () => {
               <TableCell>Patient</TableCell>
               <TableCell>Recommendation</TableCell>
               <TableCell>Occurrence Time</TableCell>
+              <TableCell>Action</TableCell>
             </TableRow>
           </TableHead>
 
@@ -88,8 +89,10 @@ export const CdssReportsPage: React.FC = () => {
                     {getDay(usage.timestamp)} {getHour(usage.timestamp)}:
                     {getMinute(usage.timestamp)}:{getSecond(usage.timestamp)}
                   </TableCell>
+                  <TableCell>{usage.status}</TableCell>
                 </TableRow>
-              );
+
+            );
             })}
           </TableBody>
         </Table>
