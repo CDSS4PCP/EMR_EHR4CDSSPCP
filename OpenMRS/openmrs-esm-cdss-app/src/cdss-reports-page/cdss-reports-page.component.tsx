@@ -12,12 +12,14 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Tile,
+  Tile
 } from "@carbon/react";
 import { openmrsFetch, useConfig } from "@openmrs/esm-framework";
 
 import "./../cdss.js";
 import { getUsages } from "../cdssService";
+
+import styles from "./cdss-reports-page.module.scss";
 
 function getYear(date) {
   return date[0];
@@ -49,24 +51,52 @@ function getStatsOnUsages(usages) {
   let numActed = 0;
   let numDeclined = 0;
 
+  const uniquePatients: Set<string> = new Set([]);
+  const uniquePatientsActed: Set<string> = new Set([]);
+  const uniquePatientsDeclined: Set<string> = new Set([]);
+  const uniquePatientsRoutine: Set<string> = new Set([]);
+  const uniqueRules: Set<string> = new Set([]);
+  const uniqueRulesActed: Set<string> = new Set([]);
+  const uniqueRulesDeclined: Set<string> = new Set([]);
+  const uniqueRulesRoutine: Set<string> = new Set([]);
+
   for (const usage of usages) {
     numTotal += 1;
+    uniquePatients.add(usage.patientId);
+    uniqueRules.add(usage.rule);
 
     if (usage.status === "ACTED") {
       numActed += 1;
+      uniquePatientsActed.add(usage.patientId);
+      uniqueRulesActed.add(usage.rule);
     }
     if (usage.status === "DECLINED") {
       numDeclined += 1;
+      uniquePatientsDeclined.add(usage.patientId);
+      uniqueRulesDeclined.add(usage.rule);
+
     }
     if (usage.status === "ROUTINE") {
       numRoutine += 1;
+      uniquePatientsRoutine.add(usage.patientId);
+      uniqueRulesRoutine.add(usage.rule);
+
     }
   }
+
   return {
     numTotal: numTotal,
     numRoutine: numRoutine,
     numActed: numActed,
     numDeclined: numDeclined,
+    numUniquePatients: uniquePatients.size,
+    numUniquePatientsActed: uniquePatientsActed.size,
+    numUniquePatientsDeclined: uniquePatientsDeclined.size,
+    numUniquePatientsRoutine: uniquePatientsRoutine.size,
+    numUniqueUsedRules: uniqueRules.size,
+    numUniqueUsedRulesActed: uniqueRulesActed.size,
+    numUniqueUsedRulesDeclined: uniqueRulesDeclined.size,
+    numUniqueUsedRulesRoutine: uniqueRulesRoutine.size
   };
 }
 
@@ -83,71 +113,21 @@ export const CdssReportsPage: React.FC = () => {
 
   return (
     <div>
-      <div
-        style={{
-          backgroundColor: "#fff",
-          display: "flex",
-          justifyContent: "space-between",
-          height: "4rem",
-          alignItems: "center",
-          padding: "0 1rem",
-        }}
-      >
-        <span style={{ fontSize: "1.25rem", color: "#161616" }}>
-          {" "}
-          All Reports{" "}
-        </span>
+      <div className={styles.reportsHeaderContainer}>
+        <span className={styles.reportsHeader}>All Reports</span>
       </div>
-      <div
-        style={{
-          backgroundColor: "#fff",
-          display: "flex",
-          justifyContent: "space-between",
-          padding: "0.5rem 0rem",
-          flexFlow: "row wrap",
-        }}
-      >
+      <div className={styles.reportStatsContainer}>
         <div style={{ flexGrow: "1" }}>
           <div>
-            <div
-              style={{
-                margin: "0.5rem",
-                padding: "1rem",
-                height: "7.875rem",
-                border: ".0625rem solid #e0e0e0",
-              }}
-            >
-              <div
-                style={{
-                  fontSize: "0.875rem",
-                  fontWeight: "600",
-                  letterSpacing: "0.16px",
-                  color: "#525252",
-                }}
-              >
-                Totals
-              </div>
+            <div className={styles.reportStatsCategoryHeaderContainer}>
+              <div>Totals</div>
 
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr" }}>
                 <div>
-                  <p
-                    style={{
-                      fontSize: "0.75rem",
-                      fontWeight: "400",
-                      letterSpacing: "0.32px",
-                      color: "##525252",
-                    }}
-                  >
+                  <p className={styles.reportStatsDataPointHeader}>
                     Total usages
                   </p>
-                  <p
-                    style={{
-                      fontSize: "1.75rem",
-                      fontWeight: "400",
-                      letterSpacing: 0,
-                      color: "#161616",
-                    }}
-                  >
+                  <p className={styles.reportStatsDataPointValue}>
                     {usageStats["numTotal"] == undefined
                       ? 0
                       : usageStats["numTotal"]}
@@ -160,29 +140,23 @@ export const CdssReportsPage: React.FC = () => {
                     justifySelf: "flex-end",
                     columnGap: "0.5rem",
                     rowGap: "0.5rem",
-                    margin: "0.5rem",
+                    margin: "0.5rem"
                   }}
                 >
-                  <p style={{ fontSize: "0.625rem", color: "#525252" }}>
-                    ROUTINE
-                  </p>
-                  <p style={{ fontSize: "0.625rem", color: "#525252" }}>
-                    ACTED
-                  </p>
-                  <p style={{ fontSize: "0.625rem", color: "#525252" }}>
-                    DECLINED
-                  </p>
-                  <p style={{ color: "#525252" }}>
+                  <p className={styles.reportStatsDataPointHeader}>ROUTINE</p>
+                  <p className={styles.reportStatsDataPointHeader}>ACTED</p>
+                  <p className={styles.reportStatsDataPointHeader}>DECLINED</p>
+                  <p className={styles.reportStatsDataPointValue}>
                     {usageStats["numRoutine"] == undefined
                       ? 0
                       : usageStats["numRoutine"]}
                   </p>
-                  <p style={{ color: "#319227" }}>
+                  <p className={styles.reportStatsDataPointValueGreen}>
                     {usageStats["numActed"] == undefined
                       ? 0
                       : usageStats["numActed"]}
                   </p>
-                  <p style={{ color: "#DA1E28" }}>
+                  <p className={styles.reportStatsDataPointValueRed}>
                     {usageStats["numDeclined"] == undefined
                       ? 0
                       : usageStats["numDeclined"]}
@@ -194,29 +168,99 @@ export const CdssReportsPage: React.FC = () => {
         </div>
         <div style={{ flexGrow: "1" }}>
           <div>
-            <div
-              style={{
-                margin: "0.5rem",
-                padding: "1rem",
-                height: "7.875rem",
-                border: ".0625rem solid #e0e0e0",
-              }}
-            >
-              10
+            <div className={styles.reportStatsCategoryHeaderContainer}>
+              <div>Patients</div>
+
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr" }}>
+                <div>
+                  <p className={styles.reportStatsDataPointHeader}>
+                    Number of Unique Patients
+                  </p>
+                  <p className={styles.reportStatsDataPointValue}>
+                    {usageStats["numUniquePatients"] == undefined
+                      ? 0
+                      : usageStats["numUniquePatients"]}
+                  </p>
+                </div>
+                <div
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns: "auto auto auto",
+                    justifySelf: "flex-end",
+                    columnGap: "0.5rem",
+                    rowGap: "0.5rem",
+                    margin: "0.5rem"
+                  }}
+                >
+                  <p className={styles.reportStatsDataPointHeader}>ROUTINE</p>
+                  <p className={styles.reportStatsDataPointHeader}>ACTED</p>
+                  <p className={styles.reportStatsDataPointHeader}>DECLINED</p>
+                  <p className={styles.reportStatsDataPointValue}>
+                    {usageStats["numUniquePatientsRoutine"] == undefined
+                      ? 0
+                      : usageStats["numUniquePatientsRoutine"]}
+                  </p>
+                  <p className={styles.reportStatsDataPointValueGreen}>
+                    {usageStats["numUniquePatientsActed"] == undefined
+                      ? 0
+                      : usageStats["numUniquePatientsActed"]}
+                  </p>
+                  <p className={styles.reportStatsDataPointValueRed}>
+                    {usageStats["numUniquePatientsDeclined"] == undefined
+                      ? 0
+                      : usageStats["numUniquePatientsDeclined"]}
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
         <div style={{ flexGrow: "1" }}>
           <div>
-            <div
-              style={{
-                margin: "0.5rem",
-                padding: "1rem",
-                height: "7.875rem",
-                border: ".0625rem solid #e0e0e0",
-              }}
-            >
-              10
+            <div className={styles.reportStatsCategoryHeaderContainer}>
+              <div>Rules</div>
+
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr" }}>
+                <div>
+                  <p className={styles.reportStatsDataPointHeader}>
+                    Number of Used Unique Rules
+                  </p>
+                  <p className={styles.reportStatsDataPointValue}>
+                    {usageStats["numUniqueUsedRules"] == undefined
+                      ? 0
+                      : usageStats["numUniqueUsedRules"]}
+                  </p>
+                </div>
+                <div
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns: "auto auto auto",
+                    justifySelf: "flex-end",
+                    columnGap: "0.5rem",
+                    rowGap: "0.5rem",
+                    margin: "0.5rem"
+                  }}
+                >
+                  <p className={styles.reportStatsDataPointHeader}>ROUTINE</p>
+                  <p className={styles.reportStatsDataPointHeader}>ACTED</p>
+                  <p className={styles.reportStatsDataPointHeader}>DECLINED</p>
+                  <p className={styles.reportStatsDataPointValue}>
+                    {usageStats["numUniqueUsedRulesRoutine"] == undefined
+                      ? 0
+                      : usageStats["numUniqueUsedRulesRoutine"]}
+                  </p>
+                  <p className={styles.reportStatsDataPointValueGreen}>
+                    {usageStats["numUniqueUsedRulesActed"] == undefined
+                      ? 0
+                      : usageStats["numUniqueUsedRulesActed"]}
+                  </p>
+                  <p className={styles.reportStatsDataPointValueRed}>
+                    {usageStats["numUniqueUsedRulesDeclined"] == undefined
+                      ? 0
+                      : usageStats["numUniqueUsedRulesDeclined"]}
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
