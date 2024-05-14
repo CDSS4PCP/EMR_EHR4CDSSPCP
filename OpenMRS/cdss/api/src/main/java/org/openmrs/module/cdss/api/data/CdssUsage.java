@@ -36,13 +36,28 @@ public class CdssUsage implements OpenmrsObject {
 	@Column(name = "cdss_usage_rule", nullable = false)
 	private String rule;
 	
-	@Column(name = "cdss_usage_recommendation", nullable = false)
-	private String recommendation;
+	@Column(name = "cdss_usage_recommendation1", nullable = false)
+	private String recommendation1;
+	
+	@Column(name = "cdss_usage_recommendation2", nullable = true)
+	private String recommendation2;
+	
+	@Column(name = "cdss_usage_recommendation3", nullable = true)
+	private String recommendation3;
+	
+	@Column(name = "cdss_usage_recommendation4", nullable = true)
+	private String recommendation4;
+	
+	@Column(name = "cdss_usage_recommendation5", nullable = true)
+	private String recommendation5;
+	
+	@Column(name = "cdss_usage_recommendation6", nullable = true)
+	private String recommendation6;
 	
 	@Column(name = "uuid", nullable = true)
 	String uuid;
 	
-	@Enumerated(EnumType.STRING)
+	//	@Enumerated(EnumType.STRING)
 	@Column(name = "cdss_usage_status", nullable = false, columnDefinition = "VARCHAR(8)")
 	private String status;
 	
@@ -53,7 +68,7 @@ public class CdssUsage implements OpenmrsObject {
 	@Override
 	public String toString() {
 		return "CdssUsage{" + "id=" + id + ", vaccine='" + vaccine + '\'' + ", patientId='" + patientId + '\''
-		        + ", timestamp=" + timestamp + ", rule='" + rule + '\'' + ", recommendation='" + recommendation + '\''
+		        + ", timestamp=" + timestamp + ", rule='" + rule + '\'' + ", recommendation1='" + recommendation1 + '\''
 		        + ", uuid='" + uuid + '\'' + ", status=" + status + '}';
 	}
 	

@@ -1,6 +1,8 @@
 import { openmrsFetch } from "@openmrs/esm-framework";
 import "./cdss.js";
 import * as stream from "stream";
+import { types } from "sass";
+import List = types.List;
 
 async function loadPatient(patientId) {
   const result = await openmrsFetch(`/ws/fhir2/R4/Patient/${patientId}`, {});
@@ -30,7 +32,7 @@ const recordRuleUsage = (
   ruleId: string,
   patientId: string,
   vaccine: string,
-  recommendation: string,
+  recommendations: List,
   status: string
 ) => {
   const ac: AbortController = new AbortController();
@@ -40,17 +42,18 @@ const recordRuleUsage = (
     patientId: patientId,
     timestamp: new Date(),
     rule: ruleId,
-    recommendation: recommendation,
+    recommendations: recommendations,
     status: status,
   };
 
+  console.log("Sending: ", payload);
   openmrsFetch(`/cdss/record-usage.form`, {
     signal: ac.signal,
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: payload,
   })
-    .then((result) => console.log(result))
+    .then((result) => console.log("Recieved: ", result.data))
     .catch((error) => console.log(error));
 };
 

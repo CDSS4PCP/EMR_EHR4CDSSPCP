@@ -51,8 +51,8 @@ public class CDSSDao {
 		}
 		// Check if there already exists a previous usage, excluding the timestamp
 		CdssUsage existingUsage = getUsage(usage.getVaccine(), usage.getPatientId(), usage.getRule(),
-		    usage.getRecommendation(), usage.getStatus());
-
+		    usage.getRecommendation1(), usage.getStatus());
+		
 		// Save new usage, if there is no previous usage or if no action has been taken on previous usage
 		if (existingUsage == null || !usage.getStatus().equalsIgnoreCase("ACTED")) {
 			getSession().saveOrUpdate(usage);

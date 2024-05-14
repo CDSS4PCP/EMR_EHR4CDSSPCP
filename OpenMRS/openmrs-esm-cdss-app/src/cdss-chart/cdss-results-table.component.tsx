@@ -8,8 +8,10 @@ import {
   TableCell,
   TableContainer,
   TableHead,
-  TableRow,
+  TableRow
 } from "@carbon/react";
+import { types } from "sass";
+import List = types.List;
 
 export interface CdssChartComponentProps {
   patientUuid: string;
@@ -22,13 +24,13 @@ export interface CdssChartComponentProps {
     ruleId: string,
     patientId: string,
     vaccine: string,
-    recommendation: string
+    recommendation: List
   ) => void;
   declineAction: (
     ruleId: string,
     patientId: string,
     vaccine: string,
-    recommendation: string
+    recommendation: List
   ) => void;
 }
 
@@ -54,15 +56,17 @@ function doesActionApply(patientId, rule, patientResult, existingUsages) {
 }
 
 export const CdssResultsTable: React.FC<CdssChartComponentProps> = ({
-  patientUuid,
-  ruleId,
-  patientResults,
-  debug,
-  visibleColumns,
-  existingUsages,
-  takeAction,
-  declineAction,
-}) => {
+                                                                      patientUuid,
+                                                                      ruleId,
+                                                                      patientResults,
+                                                                      debug,
+                                                                      visibleColumns,
+                                                                      existingUsages,
+                                                                      takeAction,
+                                                                      declineAction
+                                                                    }) => {
+
+  console.log(patientResults[patientUuid]);
   return (
     <TableContainer style={{ padding: "10px" }}>
       <Table>

@@ -4,7 +4,7 @@ import {
   Column,
   Form,
   Grid,
-  InlineNotification,
+  InlineNotification, ListItem, OrderedList,
   Row,
   Table,
   TableBody,
@@ -12,7 +12,7 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Tile
+  Tile, UnorderedList
 } from "@carbon/react";
 import { openmrsFetch, useConfig } from "@openmrs/esm-framework";
 
@@ -74,13 +74,11 @@ function getStatsOnUsages(usages) {
       numDeclined += 1;
       uniquePatientsDeclined.add(usage.patientId);
       uniqueRulesDeclined.add(usage.rule);
-
     }
     if (usage.status === "ROUTINE") {
       numRoutine += 1;
       uniquePatientsRoutine.add(usage.patientId);
       uniqueRulesRoutine.add(usage.rule);
-
     }
   }
 
@@ -288,7 +286,19 @@ export const CdssReportsPage: React.FC = () => {
                   <TableCell>{usage.vaccine}</TableCell>
                   <TableCell>{usage.rule}</TableCell>
                   <TableCell>{usage.patientId}</TableCell>
-                  <TableCell>{usage.recommendation}</TableCell>
+                  <TableCell>
+                    {usage.recommendations != undefined &&
+                      <UnorderedList>
+                        {usage.recommendations.map((r) => {
+                          return <ListItem>{r.recommendation}</ListItem>;
+                        })}
+                      </UnorderedList>
+                    }
+                    {usage.recommendation1 != undefined &&
+                      <>{usage.recommendation1}</>
+                    }
+
+                  </TableCell>
                   <TableCell>
                     {getYear(usage.timestamp)}-{getMonth(usage.timestamp)}-
                     {getDay(usage.timestamp)} {getHour(usage.timestamp)}:

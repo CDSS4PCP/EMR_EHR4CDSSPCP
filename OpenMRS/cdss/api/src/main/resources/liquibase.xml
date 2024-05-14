@@ -37,10 +37,10 @@
    </changeSet> -->
 
 
-    <changeSet id="cdss-2024-4-15-3" author="raff">
+    <changeSet id="cdss-2024-5-14-1" author="raff">
 
 
-        <dropTable tableName="cdss_usage"></dropTable>
+<!--        <dropTable tableName="cdss_usage"></dropTable>-->
         <comment>
             Creating the cdss_usage table
         </comment>
@@ -65,9 +65,20 @@
             <column name="cdss_usage_rule" type="varchar(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="cdss_usage_recommendation" type="varchar(255)">
+            <column name="cdss_usage_recommendation1" type="varchar(255)">
                 <constraints nullable="false"/>
             </column>
+            <column name="cdss_usage_recommendation2" type="varchar(255)">
+            </column>
+            <column name="cdss_usage_recommendation3" type="varchar(255)">
+            </column>
+            <column name="cdss_usage_recommendation4" type="varchar(255)">
+            </column>
+            <column name="cdss_usage_recommendation5" type="varchar(255)">
+            </column>
+            <column name="cdss_usage_recommendation6" type="varchar(255)">
+            </column>
+
 
             <column name="cdss_usage_status" type="varchar(8)" defaultValue="ROUTINE">
                 <constraints nullable="false"/>
@@ -125,8 +136,7 @@
             <column name="cdss_usage_patient">71a8fef3-52cc-46a1-9c1c-b834acae5b6f</column>
             <column name="cdss_usage_date">2024-04-01 01:20:14</column>
             <column name="cdss_usage_rule">MMR4regular12months_4yrs_OneMMRRecommendation</column>
-            <column name="cdss_usage_recommendation">Recommendation 1: Schedule 2nd dose MMR when patient is 4-6 years
-                old
+            <column name="cdss_usage_recommendation1">Recommendation 1: Schedule 2nd dose MMR when patient is 4-6 years old
             </column>
             <column name="cdss_usage_status">ACTED</column>
             <!--                    <column name="creator">0</column>-->

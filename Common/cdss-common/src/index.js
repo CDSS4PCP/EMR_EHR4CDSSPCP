@@ -138,14 +138,14 @@ function createBundle(resource, url = null) {
  * @param {string} ruleId - The ID of the rule being used.
  * @param {string} patientId - The ID of the patient.
  * @param {string} vaccine - The name of the vaccine.
- * @param {string} recommendation - The recommendation for the patient.
+ * @param {string} recommendations - The recommendations for the patient.
  * @returns {Promise} - A promise that resolves when the usage is recorded successfully.
  * @throws {Error} - If the rule responds with an HTTP status other than 200.
  */
-async function recordRoutineUsage(ruleId, patientId, vaccine, recommendation) {
+async function recordRoutineUsage(ruleId, patientId, vaccine, recommendations) {
     if (typeof global.cdss.endpoints.recordUsage.address == 'function') {
 
-        await global.cdss.endpoints.recordUsage.address(ruleId, patientId, vaccine, recommendation, UsageStatus.ROUTINE);
+        await global.cdss.endpoints.recordUsage.address(ruleId, patientId, vaccine, recommendations, UsageStatus.ROUTINE);
 
     } else {
         let url = global.cdss.endpoints.recordUsage.address;
@@ -156,9 +156,11 @@ async function recordRoutineUsage(ruleId, patientId, vaccine, recommendation) {
             patientId: patientId,
             timestamp: new Date(),
             rule: ruleId,
-            recommendation: recommendation,
+            recommendations: recommendations,
             status: UsageStatus.ROUTINE
         };
+
+        console.log("Sending...", options.body);
         let response = await fetch(url, options);
         if (response.status !== 200) {
             throw new Error("Rule responded with HTTP " + response.status);
@@ -344,7 +346,14 @@ async function executeCql(patient, rule, libraries = null, parameters = null) {
 
     let patientResults = result.patientResults;
     patientResults.library = {name: rule.library.identifier.id, version: rule.library.identifier.version};
-    await recordRoutineUsage(rule.library.identifier.id, patient.id, patientResults[patient.id].VaccineName, patientResults[patient.id].Recommendation);
+    let recommendations = [];
+    recommendations.push({
+        "id": 17,
+        "recommendation": patientResults[patient.id].Recommendation,
+        "priority": 1,
+        "uuid": "testing"
+    })
+    await recordRoutineUsage(rule.library.identifier.id, patient.id, patientResults[patient.id].VaccineName, recommendations);
 
     // Return the results
     return patientResults;
