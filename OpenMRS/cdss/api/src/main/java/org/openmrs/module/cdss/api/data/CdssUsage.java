@@ -1,14 +1,17 @@
 package org.openmrs.module.cdss.api.data;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Data;
 import org.openmrs.OpenmrsObject;
 import org.openmrs.Patient;
+import org.openmrs.module.cdss.api.serialization.CdssUsageSerializer;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Data
 @Entity(name = "cdss_usage")
+@JsonSerialize(using = CdssUsageSerializer.class)
 public class CdssUsage implements OpenmrsObject {
 	
 	public CdssUsage(Integer id, String vaccine, Patient patient, LocalDateTime timestamp) {

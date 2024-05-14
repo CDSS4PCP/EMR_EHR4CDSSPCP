@@ -74,7 +74,26 @@
                 <version>${openmrsPlatformVersion}</version>
             </dependency>
 
-
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-core</artifactId>
+                <version>${jacksonVersion}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-annotations</artifactId>
+                <version>${jacksonVersion}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>${jacksonVersion}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.datatype</groupId>
+                <artifactId>jackson-datatype-jsr310</artifactId>
+                <version>${jacksonVersion}</version>
+            </dependency>
 
 
         </dependencies>
@@ -109,6 +128,7 @@
         <eventAPIVersion>2.4</eventAPIVersion>
         <fhir2APIVersion>1.10.0</fhir2APIVersion>
         <hapiFhirVersion>5.4.0</hapiFhirVersion>
+        <jacksonVersion>2.17.1</jacksonVersion>
 
     </properties>
 </project>

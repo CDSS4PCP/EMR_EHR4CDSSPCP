@@ -1,0 +1,70 @@
+package org.openmrs.module.cdss.api.serialization;
+
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.ser.std.StdSerializer;
+import org.openmrs.module.cdss.api.data.CdssUsage;
+
+import java.io.IOException;
+
+public class CdssUsageSerializer extends StdSerializer<CdssUsage> {
+	
+	protected CdssUsageSerializer(Class<CdssUsage> t) {
+		super(t);
+	}
+	
+	@Override
+	public void serialize(CdssUsage cdssUsage, JsonGenerator jsonGenerator, SerializerProvider serializerProvider)
+	        throws IOException {
+		jsonGenerator.writeStartObject();
+		
+		jsonGenerator.writeStringField("vaccine", cdssUsage.getVaccine());
+		jsonGenerator.writeStringField("patientId", cdssUsage.getPatientId());
+		
+		jsonGenerator.writeFieldName("timestamp");
+		jsonGenerator.writeStartArray();
+		jsonGenerator.writeNumber(cdssUsage.getTimestamp().getYear());
+		jsonGenerator.writeNumber(cdssUsage.getTimestamp().getMonthValue());
+		jsonGenerator.writeNumber(cdssUsage.getTimestamp().getDayOfMonth());
+		jsonGenerator.writeNumber(cdssUsage.getTimestamp().getHour());
+		jsonGenerator.writeNumber(cdssUsage.getTimestamp().getMinute());
+		jsonGenerator.writeNumber(cdssUsage.getTimestamp().getSecond());
+		jsonGenerator.writeEndArray();
+		
+		jsonGenerator.writeStringField("rule", cdssUsage.getRule());
+		
+		jsonGenerator.writeFieldName("recommendations");
+		jsonGenerator.writeStartArray();
+		
+		if (cdssUsage.getRecommendation1() != null && !cdssUsage.getRecommendation1().isEmpty())
+			writeRecommendation(jsonGenerator, cdssUsage.getRecommendation1(), 1);
+		
+		if (cdssUsage.getRecommendation2() != null && !cdssUsage.getRecommendation2().isEmpty())
+			writeRecommendation(jsonGenerator, cdssUsage.getRecommendation2(), 2);
+		
+		if (cdssUsage.getRecommendation3() != null && !cdssUsage.getRecommendation3().isEmpty())
+			writeRecommendation(jsonGenerator, cdssUsage.getRecommendation3(), 3);
+		
+		if (cdssUsage.getRecommendation4() != null && !cdssUsage.getRecommendation4().isEmpty())
+			writeRecommendation(jsonGenerator, cdssUsage.getRecommendation4(), 4);
+		
+		if (cdssUsage.getRecommendation5() != null && !cdssUsage.getRecommendation5().isEmpty())
+			writeRecommendation(jsonGenerator, cdssUsage.getRecommendation5(), 5);
+		
+		if (cdssUsage.getRecommendation6() != null && !cdssUsage.getRecommendation6().isEmpty())
+			writeRecommendation(jsonGenerator, cdssUsage.getRecommendation6(), 6);
+		jsonGenerator.writeEndArray();
+		
+		jsonGenerator.writeStringField("status", cdssUsage.getStatus());
+		jsonGenerator.writeStringField("uuid", cdssUsage.getUuid());
+		
+		jsonGenerator.writeEndObject();
+	}
+	
+	private void writeRecommendation(JsonGenerator jsonGenerator, String recommendation, int priority) throws IOException {
+		jsonGenerator.writeStartObject();
+		jsonGenerator.writeNumberField("priority", priority);
+		jsonGenerator.writeStringField("recommendation", recommendation);
+		jsonGenerator.writeEndObject();
+	}
+}

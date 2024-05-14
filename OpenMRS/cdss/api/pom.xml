@@ -15,13 +15,13 @@
     <dependencies>
 
 
-        <!--		Necessary for proper parsing of XML files-->
-        <dependency>
-            <groupId>net.sf.saxon</groupId>
-            <artifactId>saxon-dom</artifactId>
-            <version>8.7</version>
-            <scope>compile</scope>
-        </dependency>
+<!--        &lt;!&ndash;		Necessary for proper parsing of XML files&ndash;&gt;-->
+<!--        <dependency>-->
+<!--            <groupId>net.sf.saxon</groupId>-->
+<!--            <artifactId>saxon-dom</artifactId>-->
+<!--            <version>8.7</version>-->
+<!--            <scope>compile</scope>-->
+<!--        </dependency>-->
 
 
         <dependency>
@@ -46,6 +46,8 @@
             <artifactId>uiframework-api</artifactId>
             <scope>provided</scope>
         </dependency>
+
+
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>

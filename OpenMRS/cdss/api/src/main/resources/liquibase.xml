@@ -37,10 +37,10 @@
    </changeSet> -->
 
 
-    <changeSet id="cdss-2024-5-14-1" author="raff">
+    <changeSet id="cdss-2024-5-14-2" author="raff">
 
 
-<!--        <dropTable tableName="cdss_usage"></dropTable>-->
+        <dropTable tableName="cdss_usage"></dropTable>
         <comment>
             Creating the cdss_usage table
         </comment>
