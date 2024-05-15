@@ -9,8 +9,12 @@ import java.io.IOException;
 
 public class CdssUsageSerializer extends StdSerializer<CdssUsage> {
 	
-	protected CdssUsageSerializer(Class<CdssUsage> t) {
+	public CdssUsageSerializer(Class<CdssUsage> t) {
 		super(t);
+	}
+	
+	public CdssUsageSerializer() {
+		this(null);
 	}
 	
 	@Override

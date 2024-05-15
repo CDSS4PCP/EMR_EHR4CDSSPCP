@@ -1,16 +1,20 @@
 package org.openmrs.module.cdss.web.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.apache.log4j.Logger;
 import org.openmrs.api.context.ServiceContext;
 import org.openmrs.module.cdss.api.RuleLoggerService;
 import org.openmrs.module.cdss.api.dao.CDSSDao;
 import org.openmrs.module.cdss.api.data.CdssUsage;
+import org.openmrs.module.cdss.api.serialization.CdssUsageSerializer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.List;
@@ -59,5 +63,28 @@ public class ClientsideRestController {
 		RuleLoggerService service = ServiceContext.getInstance().getService(RuleLoggerService.class);
 		List<CdssUsage> usages = service.getRuleUsages();
 		return usages;
+	}
+	
+	@RequestMapping(path = "/debug.form", produces = "application/json", method = { RequestMethod.GET })
+	public String getDebug() {
+		
+		RuleLoggerService service = ServiceContext.getInstance().getService(RuleLoggerService.class);
+		CdssUsage usage = service.getRuleUsages().get(0);
+		
+		ObjectMapper objectMapper = new ObjectMapper();
+		SimpleModule module = new SimpleModule();
+		module.addSerializer(CdssUsage.class, new CdssUsageSerializer());
+		objectMapper.registerModule(module);
+		
+		String out = "";
+		try {
+			out = objectMapper.writeValueAsString(usage);
+		}
+		catch (IOException e) {
+			out = "{\"error\":true, \"exception\":\"" + e + "\"}";
+			
+		}
+		
+		return out;
 	}
 }
