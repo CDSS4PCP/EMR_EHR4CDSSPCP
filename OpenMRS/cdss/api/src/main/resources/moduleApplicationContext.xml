@@ -70,6 +70,23 @@
         </property>
     </bean>
 
+    <bean id="cdss.CdssServiceImpl"
+          class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager">
+            <ref bean="transactionManager"/>
+        </property>
+        <property name="target">
+            <bean class="org.openmrs.module.cdss.api.impl.CdssServiceImpl">
+<!--                <property name="dao" ref="cdss.CDSSDao"/>-->
+            </bean>
+        </property>
+        <property name="preInterceptors">
+            <ref bean="serviceInterceptors"/>
+        </property>
+        <property name="transactionAttributeSource">
+            <ref bean="transactionAttributeSource"/>
+        </property>
+    </bean>
 
     <!--    <bean id="cdss.CDSSServiceImpl"-->
     <!--          class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">-->
@@ -119,6 +136,15 @@
         </property>
     </bean>
 
+
+    <bean parent="serviceContext">
+        <property name="moduleService">
+            <list>
+                <value>org.openmrs.module.cdss.api.CDSSService</value>
+                <ref bean="cdss.CdssServiceImpl"/>
+            </list>
+        </property>
+    </bean>
 
     <!--    <bean parent="serviceContext">-->
     <!--        <property name="moduleService">-->

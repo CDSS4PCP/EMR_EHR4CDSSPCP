@@ -1,13 +1,13 @@
 package org.openmrs.module.cdss.web.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.apache.log4j.Logger;
+import org.openmrs.api.OpenmrsService;
 import org.openmrs.api.context.ServiceContext;
+import org.openmrs.module.cdss.api.CDSSService;
 import org.openmrs.module.cdss.api.RuleLoggerService;
 import org.openmrs.module.cdss.api.dao.CDSSDao;
 import org.openmrs.module.cdss.api.data.CdssUsage;
-import org.openmrs.module.cdss.api.serialization.CdssUsageSerializer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -25,9 +25,12 @@ import java.util.stream.Collectors;
 public class ClientsideRestController {
 	
 	Logger log = Logger.getLogger(ClientsideRestController.class);
-	
+
 	@Autowired
 	CDSSDao dao;
+	
+	@Autowired
+	CDSSService cdssService;
 	
 	@GetMapping(path = "/rule/{ruleId}", produces = "application/json")
 	public String getRule(@PathVariable(value = "ruleId") String ruleId) {
@@ -58,33 +61,23 @@ public class ClientsideRestController {
 	}
 	
 	@RequestMapping(path = "/usages.form", produces = "application/json", method = { RequestMethod.GET })
-	public List<CdssUsage> getUsages() {
-		
+	public String getUsages() {
 		RuleLoggerService service = ServiceContext.getInstance().getService(RuleLoggerService.class);
 		List<CdssUsage> usages = service.getRuleUsages();
-		return usages;
-	}
-	
-	@RequestMapping(path = "/debug.form", produces = "application/json", method = { RequestMethod.GET })
-	public String getDebug() {
-		
-		RuleLoggerService service = ServiceContext.getInstance().getService(RuleLoggerService.class);
-		CdssUsage usage = service.getRuleUsages().get(0);
-		
-		ObjectMapper objectMapper = new ObjectMapper();
-		SimpleModule module = new SimpleModule();
-		module.addSerializer(CdssUsage.class, new CdssUsageSerializer());
-		objectMapper.registerModule(module);
-		
-		String out = "";
+
+		String out = null;
 		try {
-			out = objectMapper.writeValueAsString(usage);
+			out = cdssService.getCdssObjectMapper().writeValueAsString(usages);
 		}
-		catch (IOException e) {
+		catch (JsonProcessingException e) {
 			out = "{\"error\":true, \"exception\":\"" + e + "\"}";
-			
 		}
 		
 		return out;
 	}
+	
+
+	
+
+
 }

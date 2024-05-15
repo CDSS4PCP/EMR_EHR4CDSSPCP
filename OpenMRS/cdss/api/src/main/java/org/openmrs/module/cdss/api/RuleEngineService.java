@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-public interface RuleEngineService extends CDSSService {
+public interface RuleEngineService extends CdssVaccineService {
 	
 	/**
 	 * Returns an item by uuid. It can be called by any authenticated user. It is fetched in read

@@ -9,9 +9,8 @@
  */
 package org.openmrs.module.cdss.api;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.openmrs.api.OpenmrsService;
-
-import java.util.List;
 
 /**
  * The main service of this module, which is exposed for other modules. See
@@ -19,5 +18,6 @@ import java.util.List;
  */
 public interface CDSSService extends OpenmrsService {
 	
-	List<String> getLoadedVaccineRulesets();
+	ObjectMapper getCdssObjectMapper();
+	
 }

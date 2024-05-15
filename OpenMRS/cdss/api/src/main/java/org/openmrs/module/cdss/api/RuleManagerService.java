@@ -7,7 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-public interface RuleManagerService extends CDSSService {
+public interface RuleManagerService extends CdssVaccineService {
 	
 	@Authorized
 	@Transactional
