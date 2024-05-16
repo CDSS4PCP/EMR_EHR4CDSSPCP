@@ -52,6 +52,7 @@ public class CDSSDao {
 		// Check if there already exists a previous usage, excluding the timestamp
 		CdssUsage existingUsage = getUsage(usage.getVaccine(), usage.getPatientId(), usage.getRule(),
 		    usage.getRecommendation1(), usage.getStatus());
+		log.debug("DAO already found existing usage: " + existingUsage);
 		
 		// Save new usage, if there is no previous usage or if no action has been taken on previous usage
 		if (existingUsage == null || !usage.getStatus().equalsIgnoreCase("ACTED")) {
@@ -73,10 +74,10 @@ public class CDSSDao {
 		        .add(Restrictions.eq("recommendation", recommendation)).uniqueResult();
 	}
 	
-	public CdssUsage getUsage(String vaccine, String patient, String rule, String recommendation, String status) {
+	public CdssUsage getUsage(String vaccine, String patient, String rule, String recommendation1, String status) {
 		return (CdssUsage) getSession().createCriteria(CdssUsage.class).add(Restrictions.eq("vaccine", vaccine))
 		        .add(Restrictions.eq("patientId", patient)).add(Restrictions.eq("rule", rule))
-		        .add(Restrictions.eq("recommendation", recommendation)).add(Restrictions.eq("status", status))
+		        .add(Restrictions.eq("recommendation1", recommendation1)).add(Restrictions.eq("status", status))
 		        .uniqueResult();
 	}
 	

@@ -4,7 +4,9 @@ import {
   Column,
   Form,
   Grid,
-  InlineNotification, ListItem, OrderedList,
+  InlineNotification,
+  ListItem,
+  OrderedList,
   Row,
   Table,
   TableBody,
@@ -12,7 +14,8 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Tile, UnorderedList
+  Tile,
+  UnorderedList,
 } from "@carbon/react";
 import { openmrsFetch, useConfig } from "@openmrs/esm-framework";
 
@@ -94,7 +97,7 @@ function getStatsOnUsages(usages) {
     numUniqueUsedRules: uniqueRules.size,
     numUniqueUsedRulesActed: uniqueRulesActed.size,
     numUniqueUsedRulesDeclined: uniqueRulesDeclined.size,
-    numUniqueUsedRulesRoutine: uniqueRulesRoutine.size
+    numUniqueUsedRulesRoutine: uniqueRulesRoutine.size,
   };
 }
 
@@ -138,7 +141,7 @@ export const CdssReportsPage: React.FC = () => {
                     justifySelf: "flex-end",
                     columnGap: "0.5rem",
                     rowGap: "0.5rem",
-                    margin: "0.5rem"
+                    margin: "0.5rem",
                   }}
                 >
                   <p className={styles.reportStatsDataPointHeader}>ROUTINE</p>
@@ -187,7 +190,7 @@ export const CdssReportsPage: React.FC = () => {
                     justifySelf: "flex-end",
                     columnGap: "0.5rem",
                     rowGap: "0.5rem",
-                    margin: "0.5rem"
+                    margin: "0.5rem",
                   }}
                 >
                   <p className={styles.reportStatsDataPointHeader}>ROUTINE</p>
@@ -236,7 +239,7 @@ export const CdssReportsPage: React.FC = () => {
                     justifySelf: "flex-end",
                     columnGap: "0.5rem",
                     rowGap: "0.5rem",
-                    margin: "0.5rem"
+                    margin: "0.5rem",
                   }}
                 >
                   <p className={styles.reportStatsDataPointHeader}>ROUTINE</p>
@@ -287,17 +290,13 @@ export const CdssReportsPage: React.FC = () => {
                   <TableCell>{usage.rule}</TableCell>
                   <TableCell>{usage.patientId}</TableCell>
                   <TableCell>
-                    {usage.recommendations != undefined &&
+                    {usage.recommendations != undefined && (
                       <UnorderedList>
                         {usage.recommendations.map((r) => {
                           return <ListItem>{r.recommendation}</ListItem>;
                         })}
                       </UnorderedList>
-                    }
-                    {usage.recommendation1 != undefined &&
-                      <>{usage.recommendation1}</>
-                    }
-
+                    )}
                   </TableCell>
                   <TableCell>
                     {getYear(usage.timestamp)}-{getMonth(usage.timestamp)}-

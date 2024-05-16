@@ -2,6 +2,7 @@ package org.openmrs.module.cdss.api.data;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.openmrs.OpenmrsObject;
 import org.openmrs.Patient;
 import org.openmrs.module.cdss.api.serialization.CdssUsageSerializer;
@@ -12,13 +13,33 @@ import java.time.LocalDateTime;
 @Data
 @Entity(name = "cdss_usage")
 @JsonSerialize(using = CdssUsageSerializer.class)
+@NoArgsConstructor
 public class CdssUsage implements OpenmrsObject {
 	
-	public CdssUsage(Integer id, String vaccine, Patient patient, LocalDateTime timestamp) {
-		this.id = id;
+	public CdssUsage(String vaccine, String patientId, String rule, LocalDateTime timestamp, String recommendation1,
+	    String status) {
 		this.vaccine = vaccine;
-		this.patientId = patient.getUuid();
+		this.patientId = patientId;
 		this.timestamp = timestamp;
+		this.recommendation1 = recommendation1;
+		this.rule = rule;
+		this.status = status;
+	}
+	
+	public CdssUsage(String vaccine, String patientId, LocalDateTime timestamp, String rule, String recommendation1,
+	    String recommendation2, String recommendation3, String recommendation4, String recommendation5,
+	    String recommendation6, String status) {
+		this.vaccine = vaccine;
+		this.patientId = patientId;
+		this.timestamp = timestamp;
+		this.rule = rule;
+		this.recommendation1 = recommendation1;
+		this.recommendation2 = recommendation2;
+		this.recommendation3 = recommendation3;
+		this.recommendation4 = recommendation4;
+		this.recommendation5 = recommendation5;
+		this.recommendation6 = recommendation6;
+		this.status = status;
 	}
 	
 	@Id
@@ -63,17 +84,6 @@ public class CdssUsage implements OpenmrsObject {
 	//	@Enumerated(EnumType.STRING)
 	@Column(name = "cdss_usage_status", nullable = false, columnDefinition = "VARCHAR(8)")
 	private String status;
-	
-	public CdssUsage() {
-		
-	}
-	
-	@Override
-	public String toString() {
-		return "CdssUsage{" + "id=" + id + ", vaccine='" + vaccine + '\'' + ", patientId='" + patientId + '\''
-		        + ", timestamp=" + timestamp + ", rule='" + rule + '\'' + ", recommendation1='" + recommendation1 + '\''
-		        + ", uuid='" + uuid + '\'' + ", status=" + status + '}';
-	}
 	
 	@Override
 	public String getUuid() {

@@ -30,17 +30,17 @@
 
         <property name="rule" type="java.lang.String" column="cdss_usage_rule" not-null="true"></property>
         <property name="recommendation1" type="java.lang.String" column="cdss_usage_recommendation1"
-                  not-null="true"></property>
+                  not-null="false"></property>
         <property name="recommendation2" type="java.lang.String" column="cdss_usage_recommendation2"
-                  not-null="true"></property>
+                  not-null="false"></property>
         <property name="recommendation3" type="java.lang.String" column="cdss_usage_recommendation3"
-                  not-null="true"></property>
+                  not-null="false"></property>
         <property name="recommendation4" type="java.lang.String" column="cdss_usage_recommendation4"
-                  not-null="true"></property>
+                  not-null="false"></property>
         <property name="recommendation5" type="java.lang.String" column="cdss_usage_recommendation5"
-                  not-null="true"></property>
+                  not-null="false"></property>
         <property name="recommendation6" type="java.lang.String" column="cdss_usage_recommendation6"
-                  not-null="true"></property>
+                  not-null="false"></property>
 
         <property name="status" type="java.lang.String" column="cdss_usage_status"
                   not-null="true"></property>

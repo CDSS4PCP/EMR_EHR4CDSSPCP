@@ -70,22 +70,28 @@
         </property>
     </bean>
 
+<!--    <bean id="cdss.CdssServiceImpl"-->
+<!--          class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">-->
+<!--        <property name="transactionManager">-->
+<!--            <ref bean="transactionManager"/>-->
+<!--        </property>-->
+<!--        <property name="target">-->
+<!--            <bean class="org.openmrs.module.cdss.api.impl.CdssServiceImpl">-->
+<!--&lt;!&ndash;                <property name="dao" ref="cdss.CDSSDao"/>&ndash;&gt;-->
+<!--            </bean>-->
+<!--        </property>-->
+<!--        <property name="preInterceptors">-->
+<!--            <ref bean="serviceInterceptors"/>-->
+<!--        </property>-->
+<!--        <property name="transactionAttributeSource">-->
+<!--            <ref bean="transactionAttributeSource"/>-->
+<!--        </property>-->
+<!--    </bean>-->
+
+
     <bean id="cdss.CdssServiceImpl"
-          class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
-        <property name="transactionManager">
-            <ref bean="transactionManager"/>
-        </property>
-        <property name="target">
-            <bean class="org.openmrs.module.cdss.api.impl.CdssServiceImpl">
-<!--                <property name="dao" ref="cdss.CDSSDao"/>-->
-            </bean>
-        </property>
-        <property name="preInterceptors">
-            <ref bean="serviceInterceptors"/>
-        </property>
-        <property name="transactionAttributeSource">
-            <ref bean="transactionAttributeSource"/>
-        </property>
+          class="org.openmrs.module.cdss.api.impl.CdssServiceImpl">
+
     </bean>
 
     <!--    <bean id="cdss.CDSSServiceImpl"-->
