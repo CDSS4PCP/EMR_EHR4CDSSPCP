@@ -30,6 +30,11 @@ public class CdssUsageDeserializer extends StdDeserializer<CdssUsage> {
             JacksonException {
         JsonNode rootNode = jsonParser.getCodec().readTree(jsonParser);
 
+        if (rootNode.isEmpty()){
+            throw new IOException("Empty object when deserializing \"CdssUsage\"");
+
+        }
+
         String vaccine = rootNode.get("vaccine").asText();
 
         log.debug("Deserialized vaccine: " + vaccine);
@@ -39,6 +44,10 @@ public class CdssUsageDeserializer extends StdDeserializer<CdssUsage> {
         String rule = rootNode.get("rule").asText();
         log.debug("Deserialized rule: " + rule);
 
+        if (!rootNode.hasNonNull("status")){
+            throw new IOException("Required field \"status\" was null when deserializing \"CdssUsage\"");
+
+        }
         String status = rootNode.get("status").asText();
         log.debug("Deserialized status: " + status);
 
