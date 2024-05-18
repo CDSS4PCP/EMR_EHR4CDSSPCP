@@ -55,13 +55,15 @@ public class ClientsideRestController {
             newUsage = cdssService.getCdssObjectMapper().readValue(newUsageString, CdssUsage.class);
             log.debug(newUsage);
         } catch (JsonProcessingException e) {
-            return new ResponseEntity<>("{\"error\":true, \"exception\":\"" + e + "\"}", HttpStatus.INTERNAL_SERVER_ERROR);
+            log.error("Error encountered when deserializing CdssUsage\n" + e.getMessage());
+
+            return new ResponseEntity<>("Internal Error encountered", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
         CdssUsage saved = dao.saveEngineUsage(newUsage);
         if (saved == null) {
-            return new ResponseEntity<>("{}", HttpStatus.OK);
-
+            log.warn("Attempted to save CdssUsage but could not");
+            return new ResponseEntity<>("Internal Issue Encountered", HttpStatus.OK);
         }
 
         try {
@@ -70,7 +72,10 @@ public class ClientsideRestController {
             return new ResponseEntity<>(savedString, HttpStatus.OK);
 
         } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
+            log.error("Error encountered when serializing CdssUsage\n" + e.getMessage());
+
+            return new ResponseEntity<>("Internal Error encountered", HttpStatus.INTERNAL_SERVER_ERROR);
+
         }
     }
 	
@@ -83,8 +88,8 @@ public class ClientsideRestController {
         try {
             out = cdssService.getCdssObjectMapper().writeValueAsString(usages);
         } catch (JsonProcessingException e) {
-            out = "{\"error\":true, \"exception\":\"" + e + "\"}";
-            return new ResponseEntity<>(out, HttpStatus.INTERNAL_SERVER_ERROR);
+            log.error("Error encountered when serializing CdssUsage\n" + e.getMessage());
+            return new ResponseEntity<>("Internal Error encountered", HttpStatus.INTERNAL_SERVER_ERROR);
 
         }
 

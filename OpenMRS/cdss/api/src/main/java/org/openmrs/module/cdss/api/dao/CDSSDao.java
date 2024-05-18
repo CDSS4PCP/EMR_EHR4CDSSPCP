@@ -51,7 +51,8 @@ public class CDSSDao {
 		}
 		// Check if there already exists a previous usage, excluding the timestamp
 		CdssUsage existingUsage = getUsage(usage.getVaccine(), usage.getPatientId(), usage.getRule(),
-		    usage.getRecommendation1(), usage.getStatus());
+		    usage.getRecommendation1(), usage.getRecommendation2(), usage.getRecommendation3(), usage.getRecommendation4(),
+		    usage.getRecommendation5(), usage.getRecommendation6(), usage.getStatus());
 		log.debug("DAO already found existing usage: " + existingUsage);
 		
 		// Save new usage, if there is no previous usage or if no action has been taken on previous usage
@@ -60,24 +61,28 @@ public class CDSSDao {
 			tx.commit();
 			return usage;
 		} else {
-			return null;
+			log.warn("Attempted to save CdssUsage, but already found an equivalent CdssUsage in the database");
+			return existingUsage;
 		}
-	}
-	
-	public CdssUsage getUsage(int id) {
-		return (CdssUsage) getSession().createCriteria(CdssUsage.class).add(Restrictions.eq("id", id)).uniqueResult();
-	}
-	
-	public CdssUsage getUsage(String vaccine, String patient, String rule, String recommendation) {
-		return (CdssUsage) getSession().createCriteria(CdssUsage.class).add(Restrictions.eq("vaccine", vaccine))
-		        .add(Restrictions.eq("patientId", patient)).add(Restrictions.eq("rule", rule))
-		        .add(Restrictions.eq("recommendation", recommendation)).uniqueResult();
 	}
 	
 	public CdssUsage getUsage(String vaccine, String patient, String rule, String recommendation1, String status) {
 		return (CdssUsage) getSession().createCriteria(CdssUsage.class).add(Restrictions.eq("vaccine", vaccine))
 		        .add(Restrictions.eq("patientId", patient)).add(Restrictions.eq("rule", rule))
 		        .add(Restrictions.eq("recommendation1", recommendation1)).add(Restrictions.eq("status", status))
+		        .uniqueResult();
+	}
+	
+	public CdssUsage getUsage(String vaccine, String patient, String rule, String recommendation1, String recommendation2,
+	        String recommendation3, String recommendation4, String recommendation5, String recommendation6, String status) {
+		return (CdssUsage) getSession().createCriteria(CdssUsage.class).add(Restrictions.eq("vaccine", vaccine))
+		        .add(Restrictions.eq("patientId", patient)).add(Restrictions.eq("rule", rule))
+		        .add(Restrictions.eq("recommendation1", recommendation1))
+		        .add(Restrictions.eq("recommendation2", recommendation2))
+		        .add(Restrictions.eq("recommendation3", recommendation3))
+		        .add(Restrictions.eq("recommendation4", recommendation4))
+		        .add(Restrictions.eq("recommendation5", recommendation5))
+		        .add(Restrictions.eq("recommendation6", recommendation6)).add(Restrictions.eq("status", status))
 		        .uniqueResult();
 	}
 	
