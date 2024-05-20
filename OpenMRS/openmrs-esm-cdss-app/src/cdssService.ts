@@ -1,9 +1,20 @@
 import { openmrsFetch } from "@openmrs/esm-framework";
 import "./cdss.js";
-import * as stream from "stream";
 import { types } from "sass";
 import List = types.List;
 
+
+function getCurrentTimestamp() {
+  let date :Date = new Date();
+  return [
+    date.getFullYear(),
+    date.getMonth(),
+    date.getDay(),
+    date.getHours(),
+    date.getMinutes(),
+    date.getSeconds(),
+  ];
+}
 async function loadPatient(patientId) {
   const result = await openmrsFetch(`/ws/fhir2/R4/Patient/${patientId}`, {});
   const pat = await result.json();
@@ -40,7 +51,7 @@ const recordRuleUsage = (
   const payload = {
     vaccine: vaccine,
     patientId: patientId,
-    timestamp: new Date(),
+    timestamp: getCurrentTimestamp(),
     rule: ruleId,
     recommendations: recommendations,
     status: status,
@@ -53,7 +64,7 @@ const recordRuleUsage = (
     headers: { "Content-Type": "application/json" },
     body: payload,
   })
-    .then((result) => console.log("Recieved: ", result.data))
+    .then((result) => console.log("Received: ", result.data))
     .catch((error) => console.log(error));
 };
 

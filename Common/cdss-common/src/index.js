@@ -131,6 +131,12 @@ function createBundle(resource, url = null) {
 }
 
 
+function getCurrentTimestamp() {
+    let date = new Date();
+    let timestamp = [date.year, date.month, date.day, date.getHours(), date.getMinutes(), date.getSeconds()];
+    return timestamp;
+}
+
 /**
  * Records routine usage of a rule for a patient.
  * The status is will be "ROUTINE"
@@ -148,13 +154,14 @@ async function recordRoutineUsage(ruleId, patientId, vaccine, recommendations) {
         await global.cdss.endpoints.recordUsage.address(ruleId, patientId, vaccine, recommendations, UsageStatus.ROUTINE);
 
     } else {
+
         let url = global.cdss.endpoints.recordUsage.address;
 
         let options = {...global.cdss.endpoints.recordUsage};
         options.body = {
             vaccine: vaccine,
             patientId: patientId,
-            timestamp: new Date(),
+            timestamp: getCurrentTimestamp(),
             rule: ruleId,
             recommendations: recommendations,
             status: UsageStatus.ROUTINE
@@ -191,7 +198,7 @@ async function recordActedUsage(ruleId, patientId, vaccine, recommendation) {
         options.body = {
             vaccine: vaccine,
             patientId: patientId,
-            timestamp: new Date(),
+            timestamp: getCurrentTimestamp(),
             rule: ruleId,
             recommendation: recommendation,
             status: UsageStatus.ACTED
@@ -226,7 +233,7 @@ async function recordDeclinedUsage(ruleId, patientId, vaccine, recommendation) {
         options.body = {
             vaccine: vaccine,
             patientId: patientId,
-            timestamp: new Date(),
+            timestamp: getCurrentTimestamp(),
             rule: ruleId,
             recommendation: recommendation,
             status: UsageStatus.DECLINED
@@ -346,13 +353,13 @@ async function executeCql(patient, rule, libraries = null, parameters = null) {
 
     let patientResults = result.patientResults;
     patientResults.library = {name: rule.library.identifier.id, version: rule.library.identifier.version};
+    console.log(patientResults);
+
     let recommendations = [];
     recommendations.push({
-        "id": 17,
         "recommendation": patientResults[patient.id].Recommendation,
         "priority": 1,
-        "uuid": "testing"
-    })
+    });
     await recordRoutineUsage(rule.library.identifier.id, patient.id, patientResults[patient.id].VaccineName, recommendations);
 
     // Return the results
