@@ -82,7 +82,6 @@ async function getUsages() {
 
 async function getRecommendations(patientUuid, ruleId) {
   const result = await global.cdss.executeRuleWithPatient(patientUuid, ruleId);
-  console.log("getRecommendations: ", result);
   return result;
 }
 

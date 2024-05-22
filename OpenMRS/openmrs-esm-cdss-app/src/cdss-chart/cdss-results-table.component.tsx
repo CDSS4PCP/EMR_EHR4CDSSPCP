@@ -3,12 +3,14 @@ import {
   Button,
   DataTable,
   Link,
+  ListItem,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
   TableRow,
+  UnorderedList,
 } from "@carbon/react";
 import { types } from "sass";
 import List = types.List;
@@ -39,14 +41,24 @@ function doesActionApply(patientId, rule, patientResult, existingUsages) {
   if (patientResult["Recommendation"] == "Does not apply") {
     return false;
   }
+  const recommendationSet = new Set<string>();
+  patientResult["Recommendations"].forEach((r) =>
+    recommendationSet.add(r.recommendation)
+  );
+
   for (const usage of existingUsages) {
-    const condition =
+    let condition =
       patientId == usage["patientId"] &&
       patientResult["VaccineName"] == usage["vaccine"] &&
       rule == usage["rule"] &&
-      patientResult["Recommendation"] == usage["recommendation"] &&
       usage["status"] == "ACTED";
 
+    const recommendations = new Set<string>();
+    usage.recommendations.forEach((r) => recommendations.add(r.recommendation));
+    const diff = new Set(
+      [...recommendationSet].filter((x) => !recommendations.has(x))
+    ).size;
+    condition = condition && diff == 0;
     if (condition) {
       // Does not apply because previous action was taken
       return false;
@@ -65,7 +77,6 @@ export const CdssResultsTable: React.FC<CdssChartComponentProps> = ({
   takeAction,
   declineAction,
 }) => {
-  console.log("So.... ", patientResults);
   return (
     <TableContainer style={{ padding: "10px" }}>
       <Table>
@@ -100,11 +111,11 @@ export const CdssResultsTable: React.FC<CdssChartComponentProps> = ({
                 else if (Array.isArray(patientResults[patientUuid][m])) {
                   return (
                     <TableCell>
-                      <ul>
+                      <UnorderedList>
                         {patientResults[patientUuid][m].map((e) => {
-                          return <li>{JSON.stringify(e)}</li>;
+                          return <ListItem>{JSON.stringify(e)}</ListItem>;
                         })}
-                      </ul>
+                      </UnorderedList>
                     </TableCell>
                   );
                 }
