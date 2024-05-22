@@ -5,16 +5,17 @@ import List = types.List;
 
 
 function getCurrentTimestamp() {
-  let date :Date = new Date();
+  let date: Date = new Date();
   return [
     date.getFullYear(),
     date.getMonth(),
     date.getDay(),
     date.getHours(),
     date.getMinutes(),
-    date.getSeconds(),
+    date.getSeconds()
   ];
 }
+
 async function loadPatient(patientId) {
   const result = await openmrsFetch(`/ws/fhir2/R4/Patient/${patientId}`, {});
   const pat = await result.json();
@@ -54,7 +55,7 @@ const recordRuleUsage = (
     timestamp: getCurrentTimestamp(),
     rule: ruleId,
     recommendations: recommendations,
-    status: status,
+    status: status
   };
 
   console.log("Sending: ", payload);
@@ -62,7 +63,7 @@ const recordRuleUsage = (
     signal: ac.signal,
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: payload,
+    body: payload
   })
     .then((result) => console.log("Received: ", result.data))
     .catch((error) => console.log(error));
@@ -73,7 +74,7 @@ async function getUsages() {
   const response = await openmrsFetch(`/cdss/usages.form`, {
     signal: ac.signal,
     method: "GET",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json" }
   });
 
   return await response.json();
@@ -81,7 +82,7 @@ async function getUsages() {
 
 async function getRecommendations(patientUuid, ruleId) {
   const result = await global.cdss.executeRuleWithPatient(patientUuid, ruleId);
-
+  console.log("getRecommendations: ", result);
   return result;
 }
 
@@ -90,46 +91,46 @@ function setupEndpointsMap() {
   global.cdss.endpoints = {
     metadata: {
       systemName: "OpenMRS",
-      remoteAddress: "http://127.0.0.1:80/openmrs",
+      remoteAddress: "http://127.0.0.1:80/openmrs"
     },
     patientById: {
       address: async (patientId) => {
         return await loadPatient(patientId);
       },
-      method: "GET",
+      method: "GET"
     },
     medicationRequestByPatientId: {
       address:
         "http://127.0.0.1:80/openmrs/ws/fhir2/R4/MedicationRequest/{{medicationRequestId}}",
-      method: "GET",
+      method: "GET"
     },
     medicationByMedicationRequestId: {
       address:
         "http://127.0.0.1:80/openmrs/ws/fhir2/R4/Medication/{{medicationId}}",
-      method: "GET",
+      method: "GET"
     },
     immunizationByPatientId: {
       address: async (patientId) => {
         return await loadImmunizations(patientId);
       },
-      method: "GET",
+      method: "GET"
     },
     observationByPatientId: {
       address:
         "http://127.0.0.1:80/openmrs/ws/fhir2/R4/Observation/{{patientId}}",
-      method: "GET",
+      method: "GET"
     },
     ruleById: {
       address: async (ruleId) => {
         return await loadRule(ruleId);
       },
-      method: "GET",
+      method: "GET"
     },
     getUsages: {
       address: async () => {
         return await getUsages();
       },
-      method: "GET",
+      method: "GET"
     },
     recordUsage: {
       address: async (ruleId, patientId, vaccine, recommendation, status) => {
@@ -141,8 +142,8 @@ function setupEndpointsMap() {
           status
         );
       },
-      method: "POST",
-    },
+      method: "POST"
+    }
   };
 }
 
@@ -154,5 +155,5 @@ export {
   loadImmunizations,
   loadPatient,
   loadRule,
-  getRecommendations,
+  getRecommendations
 };

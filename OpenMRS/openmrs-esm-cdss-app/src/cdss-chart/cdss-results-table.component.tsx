@@ -8,7 +8,7 @@ import {
   TableCell,
   TableContainer,
   TableHead,
-  TableRow
+  TableRow,
 } from "@carbon/react";
 import { types } from "sass";
 import List = types.List;
@@ -56,17 +56,16 @@ function doesActionApply(patientId, rule, patientResult, existingUsages) {
 }
 
 export const CdssResultsTable: React.FC<CdssChartComponentProps> = ({
-                                                                      patientUuid,
-                                                                      ruleId,
-                                                                      patientResults,
-                                                                      debug,
-                                                                      visibleColumns,
-                                                                      existingUsages,
-                                                                      takeAction,
-                                                                      declineAction
-                                                                    }) => {
-
-  console.log(patientResults[patientUuid]);
+  patientUuid,
+  ruleId,
+  patientResults,
+  debug,
+  visibleColumns,
+  existingUsages,
+  takeAction,
+  declineAction,
+}) => {
+  console.log("So.... ", patientResults);
   return (
     <TableContainer style={{ padding: "10px" }}>
       <Table>
@@ -94,11 +93,21 @@ export const CdssResultsTable: React.FC<CdssChartComponentProps> = ({
                 visibleColumns != null ? visibleColumns.includes(m) : m
               )
               .map((m) => {
-                return (
-                  <TableCell>
-                    {JSON.stringify(patientResults[patientUuid][m])}
-                  </TableCell>
-                );
+                if (typeof patientResults[patientUuid][m] == "string")
+                  return (
+                    <TableCell>{patientResults[patientUuid][m]}</TableCell>
+                  );
+                else if (Array.isArray(patientResults[patientUuid][m])) {
+                  return (
+                    <TableCell>
+                      <ul>
+                        {patientResults[patientUuid][m].map((e) => {
+                          return <li>{JSON.stringify(e)}</li>;
+                        })}
+                      </ul>
+                    </TableCell>
+                  );
+                }
               })}
 
             <td>
@@ -116,7 +125,7 @@ export const CdssResultsTable: React.FC<CdssChartComponentProps> = ({
                         ruleId,
                         patientUuid,
                         patientResults[patientUuid]["VaccineName"],
-                        patientResults[patientUuid]["Recommendation"]
+                        patientResults[patientUuid]["Recommendations"]
                       )
                     }
                   >
@@ -130,7 +139,7 @@ export const CdssResultsTable: React.FC<CdssChartComponentProps> = ({
                         ruleId,
                         patientUuid,
                         patientResults[patientUuid]["VaccineName"],
-                        patientResults[patientUuid]["Recommendation"]
+                        patientResults[patientUuid]["Recommendations"]
                       );
                     }}
                   >

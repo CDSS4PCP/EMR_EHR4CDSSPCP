@@ -70,7 +70,7 @@ export const CdssChart: React.FC<CdssChartComponentProps> = ({
           debug={false}
           ruleId={ruleId}
           patientUuid={patientUuid}
-          visibleColumns={["VaccineName", "Recommendation"]}
+          visibleColumns={["VaccineName", "Recommendations"]}
           existingUsages={usages}
           takeAction={(ruleId, patientId, vaccine, recommendation) =>
             recordRuleUsage(ruleId, patientId, vaccine, recommendation, "ACTED")

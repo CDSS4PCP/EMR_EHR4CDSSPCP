@@ -1,5 +1,6 @@
 package org.openmrs.module.cdss.api.data;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -56,7 +57,7 @@ public class CdssUsage implements OpenmrsObject {
 	@Version
 	@Column(name = "cdss_usage_date", nullable = false)
 	private LocalDateTime timestamp;
-	
+
 	@Column(name = "cdss_usage_rule", nullable = false)
 	private String rule;
 	

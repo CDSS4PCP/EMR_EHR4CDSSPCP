@@ -353,13 +353,14 @@ async function executeCql(patient, rule, libraries = null, parameters = null) {
 
     let patientResults = result.patientResults;
     patientResults.library = {name: rule.library.identifier.id, version: rule.library.identifier.version};
-    console.log(patientResults);
 
     let recommendations = [];
     recommendations.push({
         "recommendation": patientResults[patient.id].Recommendation,
         "priority": 1,
     });
+    patientResults[patient.id].Recommendations = recommendations;
+
     await recordRoutineUsage(rule.library.identifier.id, patient.id, patientResults[patient.id].VaccineName, recommendations);
 
     // Return the results
