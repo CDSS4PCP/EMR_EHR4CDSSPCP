@@ -26,8 +26,12 @@ import {
 import "./../cdss.js";
 import { usePatient } from "../patient-getter/patient-getter.resource";
 import Loading from "@carbon/react/es/components/Loading/Loading";
+import Modal from "@carbon/react/es/components/Modal/Modal";
 import { CdssResultsTable } from "./cdss-results-table.component";
 import { getRecommendations, getUsages, recordRuleUsage } from "../cdssService";
+import { types } from "sass";
+import { CdssUsage } from "../cdssTypes";
+import { ListItem, UnorderedList } from "@carbon/react";
 
 export interface CdssChartComponentProps {
   patientUuid: string;
@@ -41,6 +45,10 @@ export const CdssChart: React.FC<CdssChartComponentProps> = ({
   const ruleId = "MMR_Rule4";
   const [results, setResults] = useState(null);
   const [usages, setExistingUsages] = useState([]);
+  const [actionConfirmDialogOpen, setActionConfirmDialogOpen] = useState(false);
+  const [actionDeclineDialogOpen, setActionDeclineDialogOpen] = useState(false);
+
+  const [actionTaking, setActionTaking] = useState<CdssUsage>();
 
   useEffect(() => {
     getRecommendations(patientUuid, ruleId).then((r) => {
@@ -61,6 +69,66 @@ export const CdssChart: React.FC<CdssChartComponentProps> = ({
   });
   return (
     <div>
+      <Modal
+        modalHeading="Take action"
+        open={actionConfirmDialogOpen}
+        primaryButtonText="Yes"
+        secondaryButtonText="Cancel"
+        onRequestClose={() => setActionConfirmDialogOpen(false)}
+        onRequestSubmit={() => {
+          recordRuleUsage(actionTaking);
+          setActionConfirmDialogOpen(false);
+          window.location.reload();
+
+        }}
+      >
+        {actionTaking == null ? (
+          <></>
+        ) : (
+          <div>
+            <p>
+              Did you follow the following suggestions:
+              <br />
+              <UnorderedList>
+                {actionTaking.recommendations.map((e) => (
+                  <ListItem>{e.recommendation}</ListItem>
+                ))}
+              </UnorderedList>
+            </p>
+          </div>
+        )}
+      </Modal>
+
+      <Modal
+        modalHeading="Decline action"
+        open={actionDeclineDialogOpen}
+        primaryButtonText="Yes"
+        secondaryButtonText="Cancel"
+        onRequestClose={() => setActionDeclineDialogOpen(false)}
+        onRequestSubmit={() => {
+          recordRuleUsage(actionTaking);
+          setActionDeclineDialogOpen(false);
+          window.location.reload();
+
+        }}
+      >
+        {actionTaking == null ? (
+          <></>
+        ) : (
+          <div>
+            <p>
+              Are you sure you want to decline the following suggestions:
+              <br />
+              <UnorderedList>
+                {actionTaking.recommendations.map((e) => (
+                  <ListItem>{e.recommendation}</ListItem>
+                ))}
+              </UnorderedList>
+            </p>
+          </div>
+        )}
+      </Modal>
+
       <CardHeader title={"CDSS"}>
         <hr />
       </CardHeader>
@@ -72,18 +140,21 @@ export const CdssChart: React.FC<CdssChartComponentProps> = ({
           patientUuid={patientUuid}
           visibleColumns={["VaccineName", "Recommendations"]}
           existingUsages={usages}
-          takeAction={(ruleId, patientId, vaccine, recommendation) =>
-            recordRuleUsage(ruleId, patientId, vaccine, recommendation, "ACTED")
-          }
-          declineAction={(ruleId, patientId, vaccine, recommendation) =>
-            recordRuleUsage(
-              ruleId,
-              patientId,
-              vaccine,
-              recommendation,
-              "DECLINED"
-            )
-          }
+          takeAction={(usage) => {
+            setActionTaking(usage);
+            setActionConfirmDialogOpen(true);
+          }}
+          declineAction={(usage) => {
+            setActionTaking(usage);
+            setActionDeclineDialogOpen(true);
+            // recordRuleUsage(
+            //   ruleId,
+            //   patientId,
+            //   vaccine,
+            //   recommendation,
+            //   "DECLINED"
+            // )
+          }}
         ></CdssResultsTable>
       ) : (
         <div>

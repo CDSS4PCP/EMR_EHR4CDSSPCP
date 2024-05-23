@@ -2,17 +2,16 @@ import { openmrsFetch } from "@openmrs/esm-framework";
 import "./cdss.js";
 import { types } from "sass";
 import List = types.List;
+import { CdssUsage } from "./cdssTypes";
 
-
-function getCurrentTimestamp() {
-  let date: Date = new Date();
+function convertDateToTimestamp(date: Date) {
   return [
     date.getFullYear(),
     date.getMonth(),
     date.getDay(),
     date.getHours(),
     date.getMinutes(),
-    date.getSeconds()
+    date.getSeconds(),
   ];
 }
 
@@ -40,30 +39,53 @@ async function loadImmunizations(patientId) {
   return imm;
 }
 
-const recordRuleUsage = (
-  ruleId: string,
-  patientId: string,
-  vaccine: string,
-  recommendations: List,
-  status: string
-) => {
+// const recordRuleUsage = (
+//   ruleId: string,
+//   patientId: string,
+//   vaccine: string,
+//   recommendations: List,
+//   status: string
+// ) => {
+//   const ac: AbortController = new AbortController();
+//
+//   const payload = {
+//     vaccine: vaccine,
+//     patientId: patientId,
+//     timestamp: getCurrentTimestamp(),
+//     rule: ruleId,
+//     recommendations: recommendations,
+//     status: status
+//   };
+//
+//   console.log("Sending: ", payload);
+//   openmrsFetch(`/cdss/record-usage.form`, {
+//     signal: ac.signal,
+//     method: "POST",
+//     headers: { "Content-Type": "application/json" },
+//     body: payload
+//   })
+//     .then((result) => console.log("Received: ", result.data))
+//     .catch((error) => console.log(error));
+// };
+
+const recordRuleUsage = (usage: CdssUsage) => {
   const ac: AbortController = new AbortController();
 
   const payload = {
-    vaccine: vaccine,
-    patientId: patientId,
-    timestamp: getCurrentTimestamp(),
-    rule: ruleId,
-    recommendations: recommendations,
-    status: status
+    vaccine: usage.vaccine,
+    patientId: usage.patientId,
+    timestamp: convertDateToTimestamp(usage.timestamp),
+    rule: usage.ruleId,
+    recommendations: usage.recommendations,
+    status: usage.status,
   };
 
-  console.log("Sending: ", payload);
+  // console.log("Sending: ", payload);
   openmrsFetch(`/cdss/record-usage.form`, {
     signal: ac.signal,
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: payload
+    body: payload,
   })
     .then((result) => console.log("Received: ", result.data))
     .catch((error) => console.log(error));
@@ -74,7 +96,7 @@ async function getUsages() {
   const response = await openmrsFetch(`/cdss/usages.form`, {
     signal: ac.signal,
     method: "GET",
-    headers: { "Content-Type": "application/json" }
+    headers: { "Content-Type": "application/json" },
   });
 
   return await response.json();
@@ -90,59 +112,60 @@ function setupEndpointsMap() {
   global.cdss.endpoints = {
     metadata: {
       systemName: "OpenMRS",
-      remoteAddress: "http://127.0.0.1:80/openmrs"
+      remoteAddress: "http://127.0.0.1:80/openmrs",
     },
     patientById: {
       address: async (patientId) => {
         return await loadPatient(patientId);
       },
-      method: "GET"
+      method: "GET",
     },
     medicationRequestByPatientId: {
       address:
         "http://127.0.0.1:80/openmrs/ws/fhir2/R4/MedicationRequest/{{medicationRequestId}}",
-      method: "GET"
+      method: "GET",
     },
     medicationByMedicationRequestId: {
       address:
         "http://127.0.0.1:80/openmrs/ws/fhir2/R4/Medication/{{medicationId}}",
-      method: "GET"
+      method: "GET",
     },
     immunizationByPatientId: {
       address: async (patientId) => {
         return await loadImmunizations(patientId);
       },
-      method: "GET"
+      method: "GET",
     },
     observationByPatientId: {
       address:
         "http://127.0.0.1:80/openmrs/ws/fhir2/R4/Observation/{{patientId}}",
-      method: "GET"
+      method: "GET",
     },
     ruleById: {
       address: async (ruleId) => {
         return await loadRule(ruleId);
       },
-      method: "GET"
+      method: "GET",
     },
     getUsages: {
       address: async () => {
         return await getUsages();
       },
-      method: "GET"
+      method: "GET",
     },
     recordUsage: {
       address: async (ruleId, patientId, vaccine, recommendation, status) => {
-        return recordRuleUsage(
-          ruleId,
-          patientId,
-          vaccine,
-          recommendation,
-          status
-        );
+        return recordRuleUsage({
+          ruleId: ruleId,
+          patientId: patientId,
+          vaccine: vaccine,
+          recommendations: recommendation,
+          status: status,
+          timestamp: new Date(),
+        });
       },
-      method: "POST"
-    }
+      method: "POST",
+    },
   };
 }
 
@@ -154,5 +177,5 @@ export {
   loadImmunizations,
   loadPatient,
   loadRule,
-  getRecommendations
+  getRecommendations,
 };

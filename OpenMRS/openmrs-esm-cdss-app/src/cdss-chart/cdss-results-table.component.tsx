@@ -14,6 +14,7 @@ import {
 } from "@carbon/react";
 import { types } from "sass";
 import List = types.List;
+import { CdssUsage } from "../cdssTypes";
 
 export interface CdssChartComponentProps {
   patientUuid: string;
@@ -22,21 +23,12 @@ export interface CdssChartComponentProps {
   debug?: boolean;
   visibleColumns?: Array<string>;
   existingUsages?: Array<object>;
-  takeAction: (
-    ruleId: string,
-    patientId: string,
-    vaccine: string,
-    recommendation: List
-  ) => void;
-  declineAction: (
-    ruleId: string,
-    patientId: string,
-    vaccine: string,
-    recommendation: List
-  ) => void;
+  takeAction: (usage: CdssUsage) => void;
+  declineAction: (usage: CdssUsage) => void;
 }
 
 function doesActionApply(patientId, rule, patientResult, existingUsages) {
+
   // TODO move this functionality to the common module
   if (patientResult["Recommendation"] == "Does not apply") {
     return false;
@@ -131,14 +123,18 @@ export const CdssResultsTable: React.FC<CdssChartComponentProps> = ({
                 <div>
                   <Button
                     kind={"primary"}
-                    onClick={(e) =>
-                      takeAction(
-                        ruleId,
-                        patientUuid,
-                        patientResults[patientUuid]["VaccineName"],
-                        patientResults[patientUuid]["Recommendations"]
-                      )
-                    }
+                    onClick={(e) => {
+                      const usage: CdssUsage = {
+                        ruleId: ruleId,
+                        patientId: patientUuid,
+                        vaccine: patientResults[patientUuid]["VaccineName"],
+                        timestamp: new Date(),
+                        recommendations:
+                          patientResults[patientUuid]["Recommendations"],
+                        status: "ACTED",
+                      };
+                      takeAction(usage);
+                    }}
                   >
                     Take action
                   </Button>
@@ -146,12 +142,16 @@ export const CdssResultsTable: React.FC<CdssChartComponentProps> = ({
                   <Button
                     kind={"secondary"}
                     onClick={(e) => {
-                      declineAction(
-                        ruleId,
-                        patientUuid,
-                        patientResults[patientUuid]["VaccineName"],
-                        patientResults[patientUuid]["Recommendations"]
-                      );
+                      const usage: CdssUsage = {
+                        ruleId: ruleId,
+                        patientId: patientUuid,
+                        vaccine: patientResults[patientUuid]["VaccineName"],
+                        timestamp: new Date(),
+                        recommendations:
+                          patientResults[patientUuid]["Recommendations"],
+                        status: "ACTED",
+                      };
+                      declineAction(usage);
                     }}
                   >
                     Decline action
