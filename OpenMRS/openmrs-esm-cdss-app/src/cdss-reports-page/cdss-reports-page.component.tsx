@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import {
   Button,
   Column,
+  DataTable,
   Form,
   Grid,
   InlineNotification,
@@ -13,6 +14,7 @@ import {
   TableCell,
   TableContainer,
   TableHead,
+  TableHeader,
   TableRow,
   Tile,
   UnorderedList,
@@ -106,11 +108,29 @@ export const CdssReportsPage: React.FC = () => {
   const [usageStats, setUsageStats] = useState({});
   useEffect(() => {
     getUsages().then((json) => {
+      for (const r of json) {
+        r.timestamp = `${getYear(r.timestamp)}-${getMonth(
+          r.timestamp
+        )}-${getDay(r.timestamp)} ${getHour(r.timestamp)}:${getMinute(
+          r.timestamp
+        )}:${getSecond(r.timestamp)}`;
+      }
       setUsages(json);
       const stats = getStatsOnUsages(json);
+
       setUsageStats(stats);
     });
   }, []);
+
+  const headers = [
+    { key: "id", header: "Id" },
+    { key: "vaccine", header: "Vaccine" },
+    { key: "patientId", header: "Patient" },
+    { key: "rule", header: "Rule" },
+    { key: "recommendations", header: "Recommendations" },
+    { key: "timestamp", header: "Occurrence Time" },
+    { key: "status", header: "Status" },
+  ];
 
   return (
     <div>
@@ -267,47 +287,57 @@ export const CdssReportsPage: React.FC = () => {
         </div>
       </div>
 
-      <TableContainer style={{ padding: "10px" }}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Vaccine</TableCell>
-              <TableCell>Rule</TableCell>
-              <TableCell>Patient</TableCell>
-              <TableCell>Recommendation</TableCell>
-              <TableCell>Occurrence Time</TableCell>
-              <TableCell>Action</TableCell>
-            </TableRow>
-          </TableHead>
-
-          <TableBody>
-            {usages.map((usage) => {
-              return (
+      <DataTable headers={headers} rows={usages} isSortable>
+        {({ rows, headers, getHeaderProps, getRowProps, getTableProps }) => (
+          <TableContainer style={{ padding: "10px" }}>
+            <Table {...getTableProps()}>
+              <TableHead>
                 <TableRow>
-                  <TableCell>{usage.vaccine}</TableCell>
-                  <TableCell>{usage.rule}</TableCell>
-                  <TableCell>{usage.patientId}</TableCell>
-                  <TableCell>
-                    {usage.recommendations != undefined && (
-                      <UnorderedList>
-                        {usage.recommendations.map((r) => {
-                          return <ListItem>{r.recommendation}</ListItem>;
-                        })}
-                      </UnorderedList>
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    {getYear(usage.timestamp)}-{getMonth(usage.timestamp)}-
-                    {getDay(usage.timestamp)} {getHour(usage.timestamp)}:
-                    {getMinute(usage.timestamp)}:{getSecond(usage.timestamp)}
-                  </TableCell>
-                  <TableCell>{usage.status}</TableCell>
+                  {headers.map((header) => {
+                    return (
+                      <TableHeader
+                        key={header.key}
+                        {...getHeaderProps({ header })}
+                      >
+                        {header.header}
+                      </TableHeader>
+                    );
+                  })}
                 </TableRow>
-              );
-            })}
-          </TableBody>
-        </Table>
-      </TableContainer>
+              </TableHead>
+
+              <TableBody>
+                {rows.map((row) => {
+                  return (
+                    <TableRow key={row.id} {...getRowProps({ row })}>
+                      {row.cells.map((cell) => {
+                        if (cell.info.header == "recommendations") {
+                          // console.log(cell);
+                          const v = (
+                            <TableCell key={cell.id}>
+                              <UnorderedList key={cell.id}>
+                                {cell.value.map((r) => {
+                                  return (
+                                    <ListItem>{r.recommendation}</ListItem>
+                                  );
+                                })}
+                              </UnorderedList>
+                            </TableCell>
+                          );
+                          return v;
+                        } else
+                          return (
+                            <TableCell key={cell.id}>{cell.value}</TableCell>
+                          );
+                      })}
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        )}
+      </DataTable>
     </div>
   );
 };
