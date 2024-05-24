@@ -271,7 +271,6 @@ export const CdssReportsPage: React.FC = () => {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>Id</TableCell>
               <TableCell>Vaccine</TableCell>
               <TableCell>Rule</TableCell>
               <TableCell>Patient</TableCell>
@@ -285,7 +284,6 @@ export const CdssReportsPage: React.FC = () => {
             {usages.map((usage) => {
               return (
                 <TableRow>
-                  <TableCell>{usage.id}</TableCell>
                   <TableCell>{usage.vaccine}</TableCell>
                   <TableCell>{usage.rule}</TableCell>
                   <TableCell>{usage.patientId}</TableCell>

@@ -28,7 +28,6 @@ export interface CdssChartComponentProps {
 }
 
 function doesActionApply(patientId, rule, patientResult, existingUsages) {
-
   // TODO move this functionality to the common module
   if (patientResult["Recommendation"] == "Does not apply") {
     return false;

@@ -79,7 +79,6 @@ export const CdssChart: React.FC<CdssChartComponentProps> = ({
           recordRuleUsage(actionTaking);
           setActionConfirmDialogOpen(false);
           window.location.reload();
-
         }}
       >
         {actionTaking == null ? (
@@ -109,7 +108,6 @@ export const CdssChart: React.FC<CdssChartComponentProps> = ({
           recordRuleUsage(actionTaking);
           setActionDeclineDialogOpen(false);
           window.location.reload();
-
         }}
       >
         {actionTaking == null ? (
