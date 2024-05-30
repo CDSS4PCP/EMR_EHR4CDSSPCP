@@ -116,6 +116,7 @@ export const CdssReportsPage: React.FC = () => {
         )}:${getSecond(r.timestamp)}`;
       }
       setUsages(json);
+
       const stats = getStatsOnUsages(json);
 
       setUsageStats(stats);
@@ -294,14 +295,21 @@ export const CdssReportsPage: React.FC = () => {
               <TableHead>
                 <TableRow>
                   {headers.map((header) => {
-                    return (
-                      <TableHeader
-                        key={header.key}
-                        {...getHeaderProps({ header })}
-                      >
-                        {header.header}
-                      </TableHeader>
-                    );
+                    if (header.key == "recommendations") {
+                      return (
+                        <TableHeader key={header.key}>
+                          {header.header}
+                        </TableHeader>
+                      );
+                    } else
+                      return (
+                        <TableHeader
+                          key={header.key}
+                          {...getHeaderProps({ header })}
+                        >
+                          {header.header}
+                        </TableHeader>
+                      );
                   })}
                 </TableRow>
               </TableHead>
@@ -312,7 +320,6 @@ export const CdssReportsPage: React.FC = () => {
                     <TableRow key={row.id} {...getRowProps({ row })}>
                       {row.cells.map((cell) => {
                         if (cell.info.header == "recommendations") {
-                          // console.log(cell);
                           const v = (
                             <TableCell key={cell.id}>
                               <UnorderedList key={cell.id}>
