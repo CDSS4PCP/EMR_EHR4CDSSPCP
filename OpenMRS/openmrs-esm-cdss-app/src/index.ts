@@ -7,21 +7,24 @@
 import {
   defineConfigSchema,
   getAsyncLifecycle,
-  getSyncLifecycle
+  getSyncLifecycle,
 } from "@openmrs/esm-framework";
 import { createDashboardLink } from "@openmrs/esm-patient-common-lib";
 import { dashboardMeta } from "./dashboard.meta";
 
 import { configSchema } from "./config-schema";
 import { CdssChart } from "./cdss-chart/cdss-chart.component";
-import cdssReportsPageComponent, { CdssReportsPage } from "./cdss-reports-page/cdss-reports-page.component";
+import cdssReportsPageComponent, {
+  CdssReportsPage,
+} from "./cdss-reports-page/cdss-reports-page.component";
 import CdssReportsLink from "./cdss-reports-link/cdss-reports-link.component";
+import { CdssModificationPage } from "./cdss-modification-page/cdss-modification-page.component";
 
 const moduleName = "@openmrs/esm-cdss-app";
 
 const options = {
   featureName: "patient-cdss",
-  moduleName
+  moduleName,
 };
 
 /**
@@ -80,7 +83,7 @@ export const cdssChart = getSyncLifecycle(CdssChart, options);
 export const cdssDashboardLink = getSyncLifecycle(
   createDashboardLink({
     ...dashboardMeta,
-    moduleName
+    moduleName,
   }),
   options
 );
@@ -88,3 +91,7 @@ export const cdssDashboardLink = getSyncLifecycle(
 export const cdssReportsLink = getSyncLifecycle(CdssReportsLink, options);
 
 export const cdssReportsPage = getSyncLifecycle(CdssReportsPage, options);
+export const cdssModificationPage = getSyncLifecycle(
+  CdssModificationPage,
+  options
+);
