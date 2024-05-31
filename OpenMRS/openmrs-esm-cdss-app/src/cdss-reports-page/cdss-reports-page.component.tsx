@@ -17,7 +17,7 @@ import {
   TableHeader,
   TableRow,
   Tile,
-  UnorderedList,
+  UnorderedList
 } from "@carbon/react";
 import { openmrsFetch, useConfig } from "@openmrs/esm-framework";
 
@@ -99,7 +99,7 @@ function getStatsOnUsages(usages) {
     numUniqueUsedRules: uniqueRules.size,
     numUniqueUsedRulesActed: uniqueRulesActed.size,
     numUniqueUsedRulesDeclined: uniqueRulesDeclined.size,
-    numUniqueUsedRulesRoutine: uniqueRulesRoutine.size,
+    numUniqueUsedRulesRoutine: uniqueRulesRoutine.size
   };
 }
 
@@ -130,7 +130,7 @@ export const CdssReportsPage: React.FC = () => {
     { key: "rule", header: "Rule" },
     { key: "recommendations", header: "Recommendations" },
     { key: "timestamp", header: "Occurrence Time" },
-    { key: "status", header: "Status" },
+    { key: "status", header: "Status" }
   ];
 
   return (
@@ -147,7 +147,7 @@ export const CdssReportsPage: React.FC = () => {
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr" }}>
                 <div>
                   <p className={styles.reportStatsDataPointHeader}>
-                    Total usages
+                    Number of unique times CDSS was used
                   </p>
                   <p className={styles.reportStatsDataPointValue}>
                     {usageStats["numTotal"] == undefined
@@ -162,7 +162,7 @@ export const CdssReportsPage: React.FC = () => {
                     justifySelf: "flex-end",
                     columnGap: "0.5rem",
                     rowGap: "0.5rem",
-                    margin: "0.5rem",
+                    margin: "0.5rem"
                   }}
                 >
                   <p className={styles.reportStatsDataPointHeader}>ROUTINE</p>
@@ -196,7 +196,7 @@ export const CdssReportsPage: React.FC = () => {
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr" }}>
                 <div>
                   <p className={styles.reportStatsDataPointHeader}>
-                    Number of Unique Patients
+                    Number of Unique Patients affected by CDSS
                   </p>
                   <p className={styles.reportStatsDataPointValue}>
                     {usageStats["numUniquePatients"] == undefined
@@ -211,7 +211,7 @@ export const CdssReportsPage: React.FC = () => {
                     justifySelf: "flex-end",
                     columnGap: "0.5rem",
                     rowGap: "0.5rem",
-                    margin: "0.5rem",
+                    margin: "0.5rem"
                   }}
                 >
                   <p className={styles.reportStatsDataPointHeader}>ROUTINE</p>
@@ -245,7 +245,7 @@ export const CdssReportsPage: React.FC = () => {
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr" }}>
                 <div>
                   <p className={styles.reportStatsDataPointHeader}>
-                    Number of Used Unique Rules
+                    Number of Unique Rules used by CDSS
                   </p>
                   <p className={styles.reportStatsDataPointValue}>
                     {usageStats["numUniqueUsedRules"] == undefined
@@ -260,7 +260,7 @@ export const CdssReportsPage: React.FC = () => {
                     justifySelf: "flex-end",
                     columnGap: "0.5rem",
                     rowGap: "0.5rem",
-                    margin: "0.5rem",
+                    margin: "0.5rem"
                   }}
                 >
                   <p className={styles.reportStatsDataPointHeader}>ROUTINE</p>

@@ -354,7 +354,7 @@ async function executeCql(patient, rule, libraries = null, parameters = null) {
     let patientResults = result.patientResults;
     patientResults.library = {name: rule.library.identifier.id, version: rule.library.identifier.version};
 
-    let recommendations = [];
+    let recommendations = []; // TODO modify this block to allow for many recommendations
     recommendations.push({
         "recommendation": patientResults[patient.id].Recommendation,
         "priority": 1,

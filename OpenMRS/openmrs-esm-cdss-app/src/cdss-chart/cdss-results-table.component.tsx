@@ -10,7 +10,7 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  UnorderedList,
+  UnorderedList
 } from "@carbon/react";
 import { types } from "sass";
 import List = types.List;
@@ -59,15 +59,15 @@ function doesActionApply(patientId, rule, patientResult, existingUsages) {
 }
 
 export const CdssResultsTable: React.FC<CdssChartComponentProps> = ({
-  patientUuid,
-  ruleId,
-  patientResults,
-  debug,
-  visibleColumns,
-  existingUsages,
-  takeAction,
-  declineAction,
-}) => {
+                                                                      patientUuid,
+                                                                      ruleId,
+                                                                      patientResults,
+                                                                      debug,
+                                                                      visibleColumns,
+                                                                      existingUsages,
+                                                                      takeAction,
+                                                                      declineAction
+                                                                    }) => {
   return (
     <TableContainer style={{ padding: "10px" }}>
       <Table>
@@ -104,7 +104,9 @@ export const CdssResultsTable: React.FC<CdssChartComponentProps> = ({
                     <TableCell>
                       <UnorderedList>
                         {patientResults[patientUuid][m].map((e) => {
-                          return <ListItem>{JSON.stringify(e)}</ListItem>;
+                          if (e.recommendation == undefined) {
+                            return <></>;
+                          } else return <ListItem>{e.recommendation}</ListItem>;
                         })}
                       </UnorderedList>
                     </TableCell>
@@ -130,7 +132,7 @@ export const CdssResultsTable: React.FC<CdssChartComponentProps> = ({
                         timestamp: new Date(),
                         recommendations:
                           patientResults[patientUuid]["Recommendations"],
-                        status: "ACTED",
+                        status: "ACTED"
                       };
                       takeAction(usage);
                     }}
@@ -148,7 +150,7 @@ export const CdssResultsTable: React.FC<CdssChartComponentProps> = ({
                         timestamp: new Date(),
                         recommendations:
                           patientResults[patientUuid]["Recommendations"],
-                        status: "ACTED",
+                        status: "ACTED"
                       };
                       declineAction(usage);
                     }}
