@@ -470,7 +470,6 @@ async function getRule(ruleId) {
 
     } else {
         let url = global.cdss.endpoints.ruleById.address.replace("{{ruleId}}", ruleId);
-
         let response = await fetch(url, global.cdss.endpoints.ruleById);
         if (response.status !== 200) {
             throw new Error("Rule responded with HTTP " + response.status);

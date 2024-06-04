@@ -2,12 +2,14 @@ package org.openmrs.module.cdss.web.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.apache.log4j.Logger;
+import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.ServiceContext;
 import org.openmrs.module.cdss.api.CDSSService;
 import org.openmrs.module.cdss.api.RuleLoggerService;
 import org.openmrs.module.cdss.api.dao.CDSSDao;
 import org.openmrs.module.cdss.api.data.CdssUsage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,21 +33,40 @@ public class ClientsideRestController {
 	@Autowired
 	CDSSService cdssService;
 	
+	@Autowired
+	@Qualifier("adminService")
+	protected AdministrationService administrationService;
+	
+	private static String[] rules = new String[] { "MMR_Rule4.json", "MMR_Rule5.json", "MMR_Rule1.json", "age-1.json" };
+	
 	@GetMapping(path = "/rule/{ruleId}", produces = "application/json")
 	public String getRule(@PathVariable(value = "ruleId") String ruleId) {
+		
+		final Boolean allowDownloads = Boolean.parseBoolean(administrationService
+		        .getGlobalProperty("cdss.allowRuleDownloads"));
 		String path = "cql/" + ruleId;
+		log.debug(ruleId + " ending = " + ruleId.endsWith(".json"));
 		if (!ruleId.endsWith(".json")) {
 			path = path + ".json";
 		}
 		ClassLoader classloader = Thread.currentThread().getContextClassLoader();
 		InputStream is = classloader.getResourceAsStream(path);
 		
-		if (is != null) {
+		if (is != null) { // Rule was not found
 			String result = new BufferedReader(new InputStreamReader(is)).lines().collect(Collectors.joining("\n"));
 			
 			return result;
+		} else if (allowDownloads) {
+			// try to download the rule
+			String repoUrl = administrationService.getGlobalProperty("cdss.ruleRepoUrl");
 		}
 		throw new ResponseStatusException(HttpStatus.NOT_FOUND, path + " not found");
+	}
+	
+	@GetMapping(path = "/rule.form", produces = "application/json")
+	public String[] getRules() {
+		
+		return rules;
 	}
 	
 	@RequestMapping(path = "/record-usage.form", produces = "application/json", method = {RequestMethod.POST})

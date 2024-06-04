@@ -57,7 +57,7 @@ public class CdssUsage implements OpenmrsObject {
 	@Version
 	@Column(name = "cdss_usage_date", nullable = false)
 	private LocalDateTime timestamp;
-
+	
 	@Column(name = "cdss_usage_rule", nullable = false)
 	private String rule;
 	
