@@ -17,7 +17,7 @@ import {
   TableHeader,
   TableRow,
   Tile,
-  UnorderedList
+  UnorderedList,
 } from "@carbon/react";
 import { openmrsFetch, useConfig } from "@openmrs/esm-framework";
 
@@ -99,7 +99,7 @@ function getStatsOnUsages(usages) {
     numUniqueUsedRules: uniqueRules.size,
     numUniqueUsedRulesActed: uniqueRulesActed.size,
     numUniqueUsedRulesDeclined: uniqueRulesDeclined.size,
-    numUniqueUsedRulesRoutine: uniqueRulesRoutine.size
+    numUniqueUsedRulesRoutine: uniqueRulesRoutine.size,
   };
 }
 
@@ -117,6 +117,7 @@ export const CdssReportsPage: React.FC = () => {
       }
       setUsages(json);
 
+      console.log(json);
       const stats = getStatsOnUsages(json);
 
       setUsageStats(stats);
@@ -130,7 +131,7 @@ export const CdssReportsPage: React.FC = () => {
     { key: "rule", header: "Rule" },
     { key: "recommendations", header: "Recommendations" },
     { key: "timestamp", header: "Occurrence Time" },
-    { key: "status", header: "Status" }
+    { key: "status", header: "Status" },
   ];
 
   return (
@@ -138,6 +139,7 @@ export const CdssReportsPage: React.FC = () => {
       <div className={styles.reportsHeaderContainer}>
         <span className={styles.reportsHeader}>All Reports</span>
       </div>
+
       <div className={styles.reportStatsContainer}>
         <div style={{ flexGrow: "1" }}>
           <div>
@@ -162,7 +164,7 @@ export const CdssReportsPage: React.FC = () => {
                     justifySelf: "flex-end",
                     columnGap: "0.5rem",
                     rowGap: "0.5rem",
-                    margin: "0.5rem"
+                    margin: "0.5rem",
                   }}
                 >
                   <p className={styles.reportStatsDataPointHeader}>ROUTINE</p>
@@ -211,7 +213,7 @@ export const CdssReportsPage: React.FC = () => {
                     justifySelf: "flex-end",
                     columnGap: "0.5rem",
                     rowGap: "0.5rem",
-                    margin: "0.5rem"
+                    margin: "0.5rem",
                   }}
                 >
                   <p className={styles.reportStatsDataPointHeader}>ROUTINE</p>
@@ -260,7 +262,7 @@ export const CdssReportsPage: React.FC = () => {
                     justifySelf: "flex-end",
                     columnGap: "0.5rem",
                     rowGap: "0.5rem",
-                    margin: "0.5rem"
+                    margin: "0.5rem",
                   }}
                 >
                   <p className={styles.reportStatsDataPointHeader}>ROUTINE</p>
@@ -319,6 +321,7 @@ export const CdssReportsPage: React.FC = () => {
                   return (
                     <TableRow key={row.id} {...getRowProps({ row })}>
                       {row.cells.map((cell) => {
+
                         if (cell.info.header == "recommendations") {
                           const v = (
                             <TableCell key={cell.id}>

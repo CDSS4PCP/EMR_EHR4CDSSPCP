@@ -13,14 +13,14 @@ import {
   useConnectivity,
   navigate as openmrsNavigate,
   Session,
-  openmrsFetch,
+  openmrsFetch
 } from "@openmrs/esm-framework";
 import {
   CardHeader,
   EmptyState,
   ErrorState,
   launchPatientWorkspace,
-  PatientChartPagination,
+  PatientChartPagination
 } from "@openmrs/esm-patient-common-lib";
 
 import "./../cdss.js";
@@ -28,22 +28,42 @@ import { usePatient } from "../patient-getter/patient-getter.resource";
 import Loading from "@carbon/react/es/components/Loading/Loading";
 import Modal from "@carbon/react/es/components/Modal/Modal";
 import { CdssResultsTable } from "./cdss-results-table.component";
-import { getRecommendations, getUsages, recordRuleUsage } from "../cdssService";
+import {
+  getRecommendations,
+  getRules,
+  getUsages,
+  recordRuleUsage
+} from "../cdssService";
 import { types } from "sass";
 import { CdssUsage } from "../cdssTypes";
 import { ListItem, UnorderedList } from "@carbon/react";
+
+async function loadResults(patientUuid) {
+  const rules = await getRules();
+  const results = [];
+  for (const rule of rules) {
+    try {
+      const result = await getRecommendations(patientUuid, rule);
+      results.push(result);
+    } catch (error) {
+      console.log("Ran into error getting Reccomendatiosn for ", rule);
+    }
+
+  }
+  return results;
+}
 
 export interface CdssChartComponentProps {
   patientUuid: string;
 }
 
 export const CdssChart: React.FC<CdssChartComponentProps> = ({
-  patientUuid,
-}) => {
+                                                               patientUuid
+                                                             }) => {
   const { t } = useTranslation();
 
   const ruleId = "MMR_Rule4";
-  const [results, setResults] = useState(null);
+  const [results, setResults] = useState([]);
   const [usages, setExistingUsages] = useState([]);
   const [actionConfirmDialogOpen, setActionConfirmDialogOpen] = useState(false);
   const [actionDeclineDialogOpen, setActionDeclineDialogOpen] = useState(false);
@@ -51,9 +71,8 @@ export const CdssChart: React.FC<CdssChartComponentProps> = ({
   const [actionTaking, setActionTaking] = useState<CdssUsage>();
 
   useEffect(() => {
-    getRecommendations(patientUuid, ruleId).then((r) => {
-      setResults(r);
-      // console.log(r);
+    loadResults(patientUuid).then((result) => {
+      setResults(result);
     });
   }, []);
 
@@ -65,7 +84,7 @@ export const CdssChart: React.FC<CdssChartComponentProps> = ({
     active: true,
     withOverlay: false,
     small: false,
-    description: "Active loading indicator",
+    description: "Active loading indicator"
   });
   return (
     <div>
@@ -130,36 +149,57 @@ export const CdssChart: React.FC<CdssChartComponentProps> = ({
       <CardHeader title={"CDSS"}>
         <hr />
       </CardHeader>
-      {results ? (
+
+      {/*<p>*/}
+      {/*  <pre> {JSON.stringify(results, null, 2)}</pre>*/}
+      {/*</p>*/}
+
+
+      {results != null ? (
         <CdssResultsTable
-          patientResults={results}
-          debug={false}
-          ruleId={ruleId}
           patientUuid={patientUuid}
+          patientResults={results}
+          ruleId={ruleId}
           visibleColumns={["VaccineName", "Recommendations"]}
-          existingUsages={usages}
           takeAction={(usage) => {
-            setActionTaking(usage);
-            setActionConfirmDialogOpen(true);
           }}
           declineAction={(usage) => {
-            setActionTaking(usage);
-            setActionDeclineDialogOpen(true);
-            // recordRuleUsage(
-            //   ruleId,
-            //   patientId,
-            //   vaccine,
-            //   recommendation,
-            //   "DECLINED"
-            // )
           }}
         ></CdssResultsTable>
       ) : (
-        <div>
-          Waiting for patient....
-          <Loading {...loadingProps()} />
-        </div>
+        <div></div>
       )}
+
+      {/*{results ? (*/}
+      {/*  <CdssResultsTable*/}
+      {/*    patientResults={results}*/}
+      {/*    debug={false}*/}
+      {/*    ruleId={ruleId}*/}
+      {/*    patientUuid={patientUuid}*/}
+      {/*    visibleColumns={["VaccineName", "Recommendations"]}*/}
+      {/*    existingUsages={usages}*/}
+      {/*    takeAction={(usage) => {*/}
+      {/*      setActionTaking(usage);*/}
+      {/*      setActionConfirmDialogOpen(true);*/}
+      {/*    }}*/}
+      {/*    declineAction={(usage) => {*/}
+      {/*      setActionTaking(usage);*/}
+      {/*      setActionDeclineDialogOpen(true);*/}
+      {/*      // recordRuleUsage(*/}
+      {/*      //   ruleId,*/}
+      {/*      //   patientId,*/}
+      {/*      //   vaccine,*/}
+      {/*      //   recommendation,*/}
+      {/*      //   "DECLINED"*/}
+      {/*      // )*/}
+      {/*    }}*/}
+      {/*  ></CdssResultsTable>*/}
+      {/*) : (*/}
+      {/*  <div>*/}
+      {/*    Waiting for patient....*/}
+      {/*    <Loading {...loadingProps()} />*/}
+      {/*  </div>*/}
+      {/*)}*/}
     </div>
   );
 };
