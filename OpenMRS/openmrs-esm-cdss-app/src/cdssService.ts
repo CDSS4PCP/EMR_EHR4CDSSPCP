@@ -92,7 +92,7 @@ const recordRuleUsage = (usage: CdssUsage) => {
     headers: { "Content-Type": "application/json" },
     body: payload
   })
-    .then((result) => console.log("Received: ", result.data))
+    // .then((result) => console.log("Received: ", result.data))
     .catch((error) => console.log(error));
 };
 

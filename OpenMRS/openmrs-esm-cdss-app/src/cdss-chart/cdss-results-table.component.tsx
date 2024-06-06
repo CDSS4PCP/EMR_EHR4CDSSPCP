@@ -16,20 +16,24 @@ import { types } from "sass";
 import List = types.List;
 import { CdssUsage } from "../cdssTypes";
 
-export interface CdssResultsTableHeaderProps {
+interface CdssResultsTableDataCellProps {
+  data: any;
+}
+interface CdssResultsTableHeaderProps {
   visibleColumns: Array<string>;
 }
 
-export interface CdssResultsTableRowProps {
+interface CdssResultsTableRowProps {
   visibleColumns: Array<string>;
   patientUuid: string;
   patientResults: object;
+  existingUsages?: Array<object>;
 }
 
 export interface CdssChartResultsTableProps {
   patientUuid: string;
   patientResults: object[];
-  ruleId: string;
+  // ruleId: string;
   debug?: boolean;
   visibleColumns?: Array<string>;
   existingUsages?: Array<object>;
@@ -38,6 +42,15 @@ export interface CdssChartResultsTableProps {
 }
 
 function doesActionApply(patientId, rule, patientResult, existingUsages) {
+  // console.log("ActionApply: ", existingUsages);
+  if (
+    patientId == null ||
+    rule == null ||
+    patientResult == null ||
+    existingUsages == null
+  ) {
+    return false;
+  }
   // TODO move this functionality to the common module
   if (patientResult["Recommendation"] == "Does not apply") {
     return false;
@@ -68,6 +81,26 @@ function doesActionApply(patientId, rule, patientResult, existingUsages) {
   return true;
 }
 
+const CdssResultsTableDataCell: React.FC<CdssResultsTableDataCellProps> = ({
+  data,
+}) => {
+  if (data == null) {
+    return <TableCell></TableCell>;
+  } else if (typeof data == "string") {
+    return <TableCell>{data}</TableCell>;
+  } else if (Array.isArray(data)) {
+    return (
+      <TableCell>
+        <UnorderedList>
+          {data.map((d) => (
+            <ListItem>{JSON.stringify(d)}</ListItem>
+          ))}
+        </UnorderedList>
+      </TableCell>
+    );
+  }
+};
+
 const CdssResultsTableHeader: React.FC<CdssResultsTableHeaderProps> = ({
   visibleColumns,
 }) => {
@@ -90,38 +123,78 @@ const CdssResultsTableRow: React.FC<CdssResultsTableRowProps> = ({
   visibleColumns,
   patientResults,
   patientUuid,
+  existingUsages,
 }) => {
-  console.log(patientResults);
 
   return (
     <TableRow>
-      <TableCell>{patientResults["library"]["name"]}</TableCell>
+      <CdssResultsTableDataCell
+        data={patientResults?.["library"]?.["name"]}
+      ></CdssResultsTableDataCell>
       {visibleColumns.map((column) => {
-        // console.log(patientResults[patientUuid][column] == null ? `null ${column}` : patientResults[patientUuid][column]);
-
-        if (patientResults[patientUuid][column] == null) {
-          return <TableCell></TableCell>;
-        } else if (Array.isArray(patientResults[patientUuid][column])) {
-          return (
-            <TableCell>
-              <UnorderedList>
-                {patientResults[patientUuid][column].map((e) => {
-                  return <ListItem>{JSON.stringify(e)}</ListItem>;
-                })}
-              </UnorderedList>
-            </TableCell>
-          );
-        } else {
-          return <TableCell>{patientResults[patientUuid][column]}</TableCell>;
-        }
+        return (
+          <CdssResultsTableDataCell
+            data={patientResults?.[patientUuid]?.[column]}
+          ></CdssResultsTableDataCell>
+        );
       })}
-      <TableCell>Action</TableCell>
+
+      <TableCell>
+        {doesActionApply(
+          patientUuid,
+          patientResults?.["library"]?.["name"],
+          patientResults[patientUuid],
+          existingUsages
+        ) ? (
+          <div>
+            <Button
+              kind={"primary"}
+              onClick={(e) => {
+                const usage: CdssUsage = {
+                  ruleId: patientResults?.["library"]?.["name"],
+                  patientId: patientUuid,
+                  vaccine: patientResults[patientUuid]["VaccineName"],
+                  timestamp: new Date(),
+                  recommendations:
+                    patientResults[0][patientUuid]["Recommendations"],
+                  status: "ACTED",
+                };
+                // takeAction(usage);
+              }}
+            >
+              Take action
+            </Button>
+
+            <Button
+              kind={"secondary"}
+              onClick={(e) => {
+                const usage: CdssUsage = {
+                  ruleId: patientResults?.["library"]?.["name"],
+                  patientId: patientUuid,
+                  vaccine: patientResults[0][patientUuid]["VaccineName"],
+                  timestamp: new Date(),
+                  recommendations:
+                    patientResults[0][patientUuid]["Recommendations"],
+                  status: "ACTED",
+                };
+                // declineAction(usage);
+              }}
+            >
+              Decline action
+            </Button>
+          </div>
+        ) : (
+          <div>
+            <Button disabled>No action Needed</Button>
+          </div>
+        )}
+      </TableCell>
     </TableRow>
   );
 };
 export const CdssResultsTable: React.FC<CdssChartResultsTableProps> = ({
   patientUuid,
-  ruleId,
+  // ruleId,
   patientResults,
   debug,
   visibleColumns,
@@ -146,6 +219,7 @@ export const CdssResultsTable: React.FC<CdssChartResultsTableProps> = ({
                   visibleColumns={visibleColumns}
                   patientUuid={patientUuid}
                   patientResults={result}
+                  existingUsages={existingUsages}
                 ></CdssResultsTableRow>
               );
             })}

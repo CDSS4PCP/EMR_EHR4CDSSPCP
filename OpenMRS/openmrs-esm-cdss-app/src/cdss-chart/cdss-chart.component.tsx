@@ -13,14 +13,14 @@ import {
   useConnectivity,
   navigate as openmrsNavigate,
   Session,
-  openmrsFetch
+  openmrsFetch,
 } from "@openmrs/esm-framework";
 import {
   CardHeader,
   EmptyState,
   ErrorState,
   launchPatientWorkspace,
-  PatientChartPagination
+  PatientChartPagination,
 } from "@openmrs/esm-patient-common-lib";
 
 import "./../cdss.js";
@@ -32,7 +32,7 @@ import {
   getRecommendations,
   getRules,
   getUsages,
-  recordRuleUsage
+  recordRuleUsage,
 } from "../cdssService";
 import { types } from "sass";
 import { CdssUsage } from "../cdssTypes";
@@ -48,7 +48,6 @@ async function loadResults(patientUuid) {
     } catch (error) {
       console.log("Ran into error getting Reccomendatiosn for ", rule);
     }
-
   }
   return results;
 }
@@ -58,11 +57,11 @@ export interface CdssChartComponentProps {
 }
 
 export const CdssChart: React.FC<CdssChartComponentProps> = ({
-                                                               patientUuid
-                                                             }) => {
+  patientUuid,
+}) => {
   const { t } = useTranslation();
 
-  const ruleId = "MMR_Rule4";
+  // const ruleId = "MMR_Rule4";
   const [results, setResults] = useState([]);
   const [usages, setExistingUsages] = useState([]);
   const [actionConfirmDialogOpen, setActionConfirmDialogOpen] = useState(false);
@@ -77,14 +76,17 @@ export const CdssChart: React.FC<CdssChartComponentProps> = ({
   }, []);
 
   useEffect(() => {
-    getUsages().then(setExistingUsages);
+    getUsages().then((usageList) => {
+      console.log(usageList)
+      setExistingUsages(usageList);
+    });
   }, []);
 
   const loadingProps = () => ({
     active: true,
     withOverlay: false,
     small: false,
-    description: "Active loading indicator"
+    description: "Active loading indicator",
   });
   return (
     <div>
@@ -154,17 +156,15 @@ export const CdssChart: React.FC<CdssChartComponentProps> = ({
       {/*  <pre> {JSON.stringify(results, null, 2)}</pre>*/}
       {/*</p>*/}
 
-
       {results != null ? (
         <CdssResultsTable
           patientUuid={patientUuid}
           patientResults={results}
-          ruleId={ruleId}
+          // ruleId={ruleId}
+          existingUsages={usages}
           visibleColumns={["VaccineName", "Recommendations"]}
-          takeAction={(usage) => {
-          }}
-          declineAction={(usage) => {
-          }}
+          takeAction={(usage) => {}}
+          declineAction={(usage) => {}}
         ></CdssResultsTable>
       ) : (
         <div></div>
