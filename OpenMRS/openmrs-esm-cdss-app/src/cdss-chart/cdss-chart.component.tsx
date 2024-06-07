@@ -77,7 +77,7 @@ export const CdssChart: React.FC<CdssChartComponentProps> = ({
 
   useEffect(() => {
     getUsages().then((usageList) => {
-      console.log(usageList)
+      console.log(usageList);
       setExistingUsages(usageList);
     });
   }, []);
@@ -163,8 +163,21 @@ export const CdssChart: React.FC<CdssChartComponentProps> = ({
           // ruleId={ruleId}
           existingUsages={usages}
           visibleColumns={["VaccineName", "Recommendations"]}
-          takeAction={(usage) => {}}
-          declineAction={(usage) => {}}
+          takeAction={(usage) => {
+            setActionTaking(usage);
+            setActionConfirmDialogOpen(true);
+          }}
+          declineAction={(usage) => {
+            setActionTaking(usage);
+            setActionDeclineDialogOpen(true);
+            // recordRuleUsage(*/}
+            //   ruleId,*/}
+            //   patientId,*/}
+            //   vaccine,*/}
+            //   recommendation,*/}
+            //   "DECLINED"*/}
+            // )
+          }}
         ></CdssResultsTable>
       ) : (
         <div></div>

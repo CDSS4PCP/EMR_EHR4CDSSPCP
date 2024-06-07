@@ -28,6 +28,8 @@ interface CdssResultsTableRowProps {
   patientUuid: string;
   patientResults: object;
   existingUsages?: Array<object>;
+  takeAction: (usage: CdssUsage) => void;
+  declineAction: (usage: CdssUsage) => void;
 }
 
 export interface CdssChartResultsTableProps {
@@ -124,8 +126,9 @@ const CdssResultsTableRow: React.FC<CdssResultsTableRowProps> = ({
   patientResults,
   patientUuid,
   existingUsages,
+  takeAction,
+  declineAction,
 }) => {
-
   return (
     <TableRow>
       <CdssResultsTableDataCell
@@ -153,13 +156,13 @@ const CdssResultsTableRow: React.FC<CdssResultsTableRowProps> = ({
                 const usage: CdssUsage = {
                   ruleId: patientResults?.["library"]?.["name"],
                   patientId: patientUuid,
-                  vaccine: patientResults[patientUuid]["VaccineName"],
+                  vaccine: patientResults?.[patientUuid]?.["VaccineName"],
                   timestamp: new Date(),
                   recommendations:
-                    patientResults[0][patientUuid]["Recommendations"],
+                    patientResults?.[patientUuid]?.["Recommendations"],
                   status: "ACTED",
                 };
-                // takeAction(usage);
+                takeAction(usage);
               }}
             >
               Take action
@@ -171,13 +174,13 @@ const CdssResultsTableRow: React.FC<CdssResultsTableRowProps> = ({
                 const usage: CdssUsage = {
                   ruleId: patientResults?.["library"]?.["name"],
                   patientId: patientUuid,
-                  vaccine: patientResults[0][patientUuid]["VaccineName"],
+                  vaccine: patientResults?.[patientUuid]?.["VaccineName"],
                   timestamp: new Date(),
                   recommendations:
-                    patientResults[0][patientUuid]["Recommendations"],
+                    patientResults?.[patientUuid]?.["Recommendations"],
                   status: "ACTED",
                 };
-                // declineAction(usage);
+                declineAction(usage);
               }}
             >
               Decline action
@@ -220,6 +223,8 @@ export const CdssResultsTable: React.FC<CdssChartResultsTableProps> = ({
                   patientUuid={patientUuid}
                   patientResults={result}
                   existingUsages={existingUsages}
+                  takeAction={takeAction}
+                  declineAction={declineAction}
                 ></CdssResultsTableRow>
               );
             })}
