@@ -29,10 +29,14 @@ public class CdssUsageDeserializer extends StdDeserializer<CdssUsage> {
 	public CdssUsage deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException,
 	        JacksonException {
 		JsonNode rootNode = jsonParser.getCodec().readTree(jsonParser);
-		
+		Integer id = null;
 		// Check whether required fields exists
 		if (rootNode.isEmpty()) {
 			throw new IOException("Empty object when deserializing \"CdssUsage\"");
+		}
+		
+		if (rootNode.hasNonNull("id")) {
+			id = rootNode.get("id").asInt();
 		}
 		if (!rootNode.hasNonNull("vaccine")) {
 			throw new IOException("Required field \"vaccine\" was missing when deserializing \"CdssUsage\"");
@@ -67,6 +71,7 @@ public class CdssUsageDeserializer extends StdDeserializer<CdssUsage> {
 		        numRecommendations >= 4 ? recommendations.get(3) : null, numRecommendations >= 5 ? recommendations.get(4)
 		                : null, numRecommendations >= 6 ? recommendations.get(5) : null, status);
 		usage.setUuid(uuid);
+		usage.setId(id);
 		return usage;
 		
 	}
@@ -92,30 +97,30 @@ public class CdssUsageDeserializer extends StdDeserializer<CdssUsage> {
 	}
 	
 	private List<String> parseRecommendations(JsonNode rootNode) {
-		
-		TreeMap<Integer, String> recomendations = new TreeMap<>();
-		
-		for (Iterator<JsonNode> it = ((ArrayNode) rootNode.get("recommendations")).elements(); it.hasNext();) {
-			JsonNode node = it.next();
-			
-			Integer priority = null;
-			String recommendation = null;
-			for (Iterator<Map.Entry<String, JsonNode>> fields = node.fields(); fields.hasNext();) {
-				Map.Entry<String, JsonNode> entry = fields.next();
-				
-				if (entry.getKey().equalsIgnoreCase("priority")) {
-					priority = entry.getValue().asInt();
-				} else if (entry.getKey().equalsIgnoreCase("recommendation")) {
-					recommendation = entry.getValue().asText();
-				}
-			}
-			
-			if (priority == null || recommendation == null) {
-				throw new RuntimeException("Parsing recommendations resulted in null values!");
-			}
-			recomendations.put(priority, recommendation);
-		}
-		
-		return new ArrayList<String>(recomendations.values());
-	}
+
+        TreeMap<Integer, String> recomendations = new TreeMap<>();
+
+        for (Iterator<JsonNode> it = ((ArrayNode) rootNode.get("recommendations")).elements(); it.hasNext(); ) {
+            JsonNode node = it.next();
+
+            Integer priority = null;
+            String recommendation = null;
+            for (Iterator<Map.Entry<String, JsonNode>> fields = node.fields(); fields.hasNext(); ) {
+                Map.Entry<String, JsonNode> entry = fields.next();
+
+                if (entry.getKey().equalsIgnoreCase("priority")) {
+                    priority = entry.getValue().asInt();
+                } else if (entry.getKey().equalsIgnoreCase("recommendation")) {
+                    recommendation = entry.getValue().asText();
+                }
+            }
+
+            if (priority == null || recommendation == null) {
+                throw new RuntimeException("Parsing recommendations resulted in null values!");
+            }
+            recomendations.put(priority, recommendation);
+        }
+
+        return new ArrayList<String>(recomendations.values());
+    }
 }

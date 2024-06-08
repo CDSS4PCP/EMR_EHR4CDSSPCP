@@ -22,6 +22,9 @@ public class CdssUsageSerializer extends StdSerializer<CdssUsage> {
 	        throws IOException {
 		jsonGenerator.writeStartObject();
 		
+		if (cdssUsage.getId() != null) {
+			jsonGenerator.writeNumberField("id", cdssUsage.getId());
+		}
 		if (cdssUsage.getVaccine() == null) {
 			throw new IOException("Required field \"vaccine\" was null when serializing \"CdssUsage\"");
 		}
