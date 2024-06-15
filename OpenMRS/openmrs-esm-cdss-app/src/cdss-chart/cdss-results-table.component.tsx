@@ -95,7 +95,9 @@ const CdssResultsTableDataCell: React.FC<CdssResultsTableDataCellProps> = ({
       <TableCell>
         <UnorderedList>
           {data.map((d) => (
-            <ListItem>{JSON.stringify(d)}</ListItem>
+            <ListItem>
+              {d.recommendation != null ? d.recommendation : "Recommendations unavailable"}
+            </ListItem>
           ))}
         </UnorderedList>
       </TableCell>

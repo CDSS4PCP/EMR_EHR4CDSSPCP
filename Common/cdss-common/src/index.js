@@ -59,6 +59,10 @@ let endpoints = {
         address: null,
         method: "GET",
     },
+    "getRules":{
+        address: null,
+        method: "GET"
+    },
     "getUsages": {
         address: null,
         method: "GET"

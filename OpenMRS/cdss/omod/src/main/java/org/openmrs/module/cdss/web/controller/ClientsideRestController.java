@@ -56,7 +56,8 @@ public class ClientsideRestController {
 			String result = new BufferedReader(new InputStreamReader(is)).lines().collect(Collectors.joining("\n"));
 			
 			return result;
-		} else if (allowDownloads) {
+		}
+        else if (allowDownloads) {
 			// try to download the rule
 			String repoUrl = administrationService.getGlobalProperty("cdss.ruleRepoUrl");
 		}
