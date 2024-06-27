@@ -1,6 +1,9 @@
 package org.openmrs.module.cdss.web.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import org.apache.log4j.Logger;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.ServiceContext;
@@ -16,8 +19,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Base64;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -37,7 +42,8 @@ public class ClientsideRestController {
 	@Qualifier("adminService")
 	protected AdministrationService administrationService;
 	
-	private static String[] rules = new String[] { "MMR_Rule4.json", "MMR_Rule5.json", "MMR_Rule1.json", "age-1.json" };
+	private static String[] rules = new String[] { "MMR_Rule1.json", "MMR_Rule4.json", "MMR_Rule5.json", "MMR_Rule6.json",
+	        "MMR_Rule7.json", "MMR_Rule7.json", "MMR_Rule9.json", "MMR_Rule10.json", "MMR_Rule11.json" };
 	
 	@GetMapping(path = "/rule/{ruleId}", produces = "application/json")
 	public String getRule(@PathVariable(value = "ruleId") String ruleId) {
@@ -56,8 +62,7 @@ public class ClientsideRestController {
 			String result = new BufferedReader(new InputStreamReader(is)).lines().collect(Collectors.joining("\n"));
 			
 			return result;
-		}
-        else if (allowDownloads) {
+		} else if (allowDownloads) {
 			// try to download the rule
 			String repoUrl = administrationService.getGlobalProperty("cdss.ruleRepoUrl");
 		}
@@ -66,7 +71,6 @@ public class ClientsideRestController {
 	
 	@GetMapping(path = "/rule.form", produces = "application/json")
 	public String[] getRules() {
-		
 		return rules;
 	}
 	
@@ -117,5 +121,71 @@ public class ClientsideRestController {
 
 
         return new ResponseEntity<>(out, HttpStatus.OK);
+    }
+	
+	@RequestMapping(path = "/RetrieveSvsValueSet.form")
+    public ResponseEntity<String> getSvsValuesets(@RequestParam(required = true) String id, @RequestParam(required = false) String version) {
+        // Get the API key
+        final String apiKey = administrationService.getGlobalProperty("cdss.vsacApiKey");
+
+        // Create Http client
+        OkHttpClient client = new OkHttpClient();
+
+        // Encode basic authentication string
+        byte[] encodedBytes = Base64.getEncoder().encode(String.format(":%s", apiKey).getBytes());
+        String encoded = new String(encodedBytes);
+
+        // Build the url parameters
+        String params = String.format("%s=%s", "id", id);
+        if (version != null) params = String.format("%s=%s&%s=%s", "id", id, "version", version);
+
+        // Send the request
+        Request rq = new Request.Builder().get().url(String.format("%s?%s", "https://vsac.nlm.nih.gov/vsac/svs/RetrieveValueSet", params)).header("Authorization", "Basic " + encoded).build();
+
+        // Return response
+        try {
+            Response rs = client.newCall(rq).execute();
+            return new ResponseEntity<>(rs.body().string(), HttpStatus.OK);
+
+        } catch (IOException e) {
+            return new ResponseEntity<>("", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+	
+	@RequestMapping(path = "/RetrieveFhirValueSet/{id}.form")
+    public ResponseEntity<String> getFhirValuesets(@PathVariable(required = true) String id, @RequestParam(required = false) String version, @RequestParam(required = false) Integer offset) {
+
+        // Get the API key
+        final String apiKey = administrationService.getGlobalProperty("cdss.vsacApiKey");
+
+        // Create Http client
+        OkHttpClient client = new OkHttpClient();
+
+        // Encode basic authentication string
+        byte[] encodedBytes = Base64.getEncoder().encode(String.format(":%s", apiKey).getBytes());
+        String encoded = new String(encodedBytes);
+
+        // Build the url parameters
+        StringBuilder paramsBuilder = new StringBuilder();
+        if (version != null || offset != null)
+            paramsBuilder.append("?");
+
+        if (version != null) paramsBuilder.append(String.format("%s=%s", "version", version));
+
+        if (version != null && offset != null) paramsBuilder.append("&");
+
+        if (offset != null) paramsBuilder.append(String.format("%s=%s", "offset", offset));
+
+        // Send the request
+        Request rq = new Request.Builder().get().url(String.format("https://cts.nlm.nih.gov/fhir/ValueSet/%s/$expand%s", id, paramsBuilder.toString())).header("Authorization", "Basic " + encoded).build();
+
+        // Return response
+        try {
+            Response rs = client.newCall(rq).execute();
+            return new ResponseEntity<>(rs.body().string(), HttpStatus.OK);
+
+        } catch (IOException e) {
+            return new ResponseEntity<>("", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }

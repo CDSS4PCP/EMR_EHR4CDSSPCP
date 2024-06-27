@@ -80,6 +80,14 @@
         </description>
     </globalProperty>
 
+    <globalProperty>
+        <property>@MODULE_ID@.vsacApiKey</property>
+        <defaultValue>No key set</defaultValue>
+        <description>
+            The API key that will be used when downloading valuesets from Value Set Authority Center (https://vsac.nlm.nih.gov/)
+        </description>
+    </globalProperty>
+
     <!--
     <dwr>
         <allow>
