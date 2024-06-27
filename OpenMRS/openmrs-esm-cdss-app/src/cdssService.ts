@@ -4,6 +4,7 @@ import { types } from "sass";
 import List = types.List;
 import { CdssUsage } from "./cdssTypes";
 
+const VSAC_API_KEY = ""; // Your api key goes here
 function convertDateToTimestamp(date: Date) {
   return [
     date.getFullYear(),
@@ -129,6 +130,7 @@ function setupEndpointsMap() {
     metadata: {
       systemName: "OpenMRS",
       remoteAddress: "http://127.0.0.1:80/openmrs",
+      vsacApiKey: VSAC_API_KEY,
     },
     patientById: {
       address: async (patientId) => {
@@ -187,6 +189,15 @@ function setupEndpointsMap() {
         });
       },
       method: "POST",
+    },
+    vsacSvs: {
+      address: "http://localhost:8080/openmrs/cdss/RetrieveSvsValueSet.form",
+      method: "GET",
+    },
+    vsacFhir: {
+      address:
+        "http://localhost:8080/openmrs/cdss/RetrieveFhirValueSet/{{oid}}.form",
+      method: "GET",
     },
   };
 }

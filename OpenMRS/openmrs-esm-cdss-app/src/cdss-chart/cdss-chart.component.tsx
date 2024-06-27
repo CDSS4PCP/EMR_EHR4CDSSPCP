@@ -46,7 +46,7 @@ async function loadResults(patientUuid) {
       const result = await getRecommendations(patientUuid, rule);
       results.push(result);
     } catch (error) {
-      console.log("Ran into error getting Reccomendatiosn for ", rule);
+      console.log("Ran into error getting Recommendation for ", rule, error);
     }
   }
   return results;
