@@ -1,9 +1,8 @@
 import cql from 'cql-execution';
 import cqlfhir from 'cql-exec-fhir';
-import vsac from 'cql-exec-vsac';
+import vsac from 'browserfy-cql-exec-vsac';
 
 const DEBUG_MODE = false;
-
 
 const UsageStatus = Object.freeze({
     ACTED: "ACTED",
@@ -30,6 +29,8 @@ const ContainerTypes = Object.freeze({
 let endpoints = {
     "metadata": {
         "systemName": null, "remoteAddress": null,
+        vsacApiKey: null
+
     },
     "patientById": {
         address: null,
@@ -59,7 +60,7 @@ let endpoints = {
         address: null,
         method: "GET",
     },
-    "getRules":{
+    "getRules": {
         address: null,
         method: "GET"
     },
@@ -70,6 +71,13 @@ let endpoints = {
     "recordUsage": {
         address: null,
         method: "POST"
+    },
+    "vsacSvs": {
+        address: null, // This must be configured as a string, not function
+
+    },
+    "vsacFhir": {
+        address: null, // This must be configured as a string, not function
     }
 
 };
@@ -271,8 +279,7 @@ async function executeCql(patient, rule, libraries = null, parameters = null) {
 
     const fhirWrapper = cqlfhir.FHIRWrapper.FHIRv401(); // or .FHIRv102() or .FHIRv300() or .FHIRv401()
 
-
-    const codeService = new vsac.CodeService('vsac_cache', false);
+    let codeService = new vsac.CodeService(false, true, global.cdss.endpoints.vsacSvs.address, global.cdss.endpoints.vsacFhir.address);
 
     // Create a patient bundle if patient is not a bundle
     const patientBundle = createBundle(patient);
@@ -308,9 +315,15 @@ async function executeCql(patient, rule, libraries = null, parameters = null) {
     // Create the rule merged with libraries if necessary
     let ruleWithLibraries = libraryObject.length === 0 ? new cql.Library(rule) : new cql.Library(rule, new cql.Repository(libraryObject));
 
-    let success = await codeService.ensureValueSetsInLibraryWithAPIKey(rule, true, '5d7d49f3-4c14-4442-9b1d-a6895ca5a715');
+    try {
+        let success = await codeService.ensureValueSetsInLibraryWithAPIKey(rule.library, true, global.cdss.endpoints.metadata.vsacApiKey);
+
+    } catch (error) {
+        console.error(`Ran into error when gathering valuesets for library ${rule.library.identifier.id}-${rule.library.identifier.version}\n${error}`);
+        return null;
+    }
+
     let executor = new cql.Executor(ruleWithLibraries, codeService);
-    // let executor = new cql.Executor(ruleWithLibraries);
 
     // Create parameter object and make sure all expected parameters are provided
     let paramObject = {};
@@ -335,11 +348,12 @@ async function executeCql(patient, rule, libraries = null, parameters = null) {
                 paramObject[expectedParameter.name] = [];
 
                 if (res.entry != null) {
-
                     for (const entry of res.entry) {
                         let wrapped = fhirWrapper.wrap(entry.resource);
                         paramObject[expectedParameter.name].push(wrapped);
                     }
+
+                    console.log(paramObject)
                 }
             } else {
                 paramObject[expectedParameter.name] = fhirWrapper.wrap(res);
