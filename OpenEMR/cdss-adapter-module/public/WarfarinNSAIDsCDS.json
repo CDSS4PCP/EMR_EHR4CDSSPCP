@@ -1,0 +1,2959 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<library xmlns="urn:hl7-org:elm:r1" xmlns:t="urn:hl7-org:elm-types:r1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:fhir="http://hl7.org/fhir" xmlns:qdm43="urn:healthit-gov:qdm:v4_3" xmlns:qdm53="urn:healthit-gov:qdm:v5_3" xmlns:a="urn:hl7-org:cql-annotations:r1">
+   <annotation translatorVersion="2.4.0" translatorOptions="EnableAnnotations,EnableLocators,EnableResultTypes,DisableListDemotion,DisableListPromotion" xsi:type="a:CqlToElmInfo"/>
+   <annotation xsi:type="a:Annotation">
+      <a:s r="337">
+         <a:s>library WarfarinNSAIDsCDS version '1.0'</a:s>
+      </a:s>
+   </annotation>
+   <identifier id="WarfarinNSAIDsCDS" version="1.0"/>
+   <schemaIdentifier id="urn:hl7-org:elm" version="r1"/>
+   <usings>
+      <def localIdentifier="System" uri="urn:hl7-org:elm-types:r1"/>
+      <def localId="1" locator="3:1-3:26" localIdentifier="FHIR" uri="http://hl7.org/fhir" version="4.0.1">
+         <annotation xsi:type="a:Annotation">
+            <a:s r="1">
+               <a:s>using </a:s>
+               <a:s>
+                  <a:s>FHIR</a:s>
+               </a:s>
+               <a:s> version '4.0.1'</a:s>
+            </a:s>
+         </annotation>
+      </def>
+   </usings>
+   <includes>
+      <def localId="2" locator="4:1-4:54" localIdentifier="FHIRHelpers" path="http://hl7.org/fhir/FHIRHelpers" version="4.0.1">
+         <annotation xsi:type="a:Annotation">
+            <a:s r="2">
+               <a:s>include </a:s>
+               <a:s>
+                  <a:s>FHIRHelpers</a:s>
+               </a:s>
+               <a:s> version '4.0.1' called FHIRHelpers</a:s>
+            </a:s>
+         </annotation>
+      </def>
+   </includes>
+   <parameters>
+      <def localId="13" locator="20:1-20:65" name="ContextPrescriptionStatements" accessLevel="Public">
+         <annotation xsi:type="a:Annotation">
+            <a:s r="13">
+               <a:s>parameter ContextPrescriptionStatements </a:s>
+               <a:s r="12">
+                  <a:s>List&lt;</a:s>
+                  <a:s r="11">
+                     <a:s>MedicationStatement</a:s>
+                  </a:s>
+                  <a:s>></a:s>
+               </a:s>
+            </a:s>
+         </annotation>
+         <resultTypeSpecifier xsi:type="ListTypeSpecifier">
+            <elementType name="fhir:MedicationStatement" xsi:type="NamedTypeSpecifier"/>
+         </resultTypeSpecifier>
+         <parameterTypeSpecifier localId="12" locator="20:41-20:65" xsi:type="ListTypeSpecifier">
+            <resultTypeSpecifier xsi:type="ListTypeSpecifier">
+               <elementType name="fhir:MedicationStatement" xsi:type="NamedTypeSpecifier"/>
+            </resultTypeSpecifier>
+            <elementType localId="11" locator="20:46-20:64" resultTypeName="fhir:MedicationStatement" name="fhir:MedicationStatement" xsi:type="NamedTypeSpecifier"/>
+         </parameterTypeSpecifier>
+      </def>
+      <def localId="16" locator="21:1-21:61" name="ContextPrescriptionRequests" accessLevel="Public">
+         <annotation xsi:type="a:Annotation">
+            <a:s r="16">
+               <a:s>parameter ContextPrescriptionRequests </a:s>
+               <a:s r="15">
+                  <a:s>List&lt;</a:s>
+                  <a:s r="14">
+                     <a:s>MedicationRequest</a:s>
+                  </a:s>
+                  <a:s>></a:s>
+               </a:s>
+            </a:s>
+         </annotation>
+         <resultTypeSpecifier xsi:type="ListTypeSpecifier">
+            <elementType name="fhir:MedicationRequest" xsi:type="NamedTypeSpecifier"/>
+         </resultTypeSpecifier>
+         <parameterTypeSpecifier localId="15" locator="21:39-21:61" xsi:type="ListTypeSpecifier">
+            <resultTypeSpecifier xsi:type="ListTypeSpecifier">
+               <elementType name="fhir:MedicationRequest" xsi:type="NamedTypeSpecifier"/>
+            </resultTypeSpecifier>
+            <elementType localId="14" locator="21:44-21:60" resultTypeName="fhir:MedicationRequest" name="fhir:MedicationRequest" xsi:type="NamedTypeSpecifier"/>
+         </parameterTypeSpecifier>
+      </def>
+      <def localId="19" locator="22:1-22:43" name="ContextConditions" accessLevel="Public">
+         <annotation xsi:type="a:Annotation">
+            <a:s r="19">
+               <a:s>parameter ContextConditions </a:s>
+               <a:s r="18">
+                  <a:s>List&lt;</a:s>
+                  <a:s r="17">
+                     <a:s>Condition</a:s>
+                  </a:s>
+                  <a:s>></a:s>
+               </a:s>
+            </a:s>
+         </annotation>
+         <resultTypeSpecifier xsi:type="ListTypeSpecifier">
+            <elementType name="fhir:Condition" xsi:type="NamedTypeSpecifier"/>
+         </resultTypeSpecifier>
+         <parameterTypeSpecifier localId="18" locator="22:29-22:43" xsi:type="ListTypeSpecifier">
+            <resultTypeSpecifier xsi:type="ListTypeSpecifier">
+               <elementType name="fhir:Condition" xsi:type="NamedTypeSpecifier"/>
+            </resultTypeSpecifier>
+            <elementType localId="17" locator="22:34-22:42" resultTypeName="fhir:Condition" name="fhir:Condition" xsi:type="NamedTypeSpecifier"/>
+         </parameterTypeSpecifier>
+      </def>
+   </parameters>
+   <codeSystems>
+      <def localId="3" locator="8:1-8:66" resultTypeName="t:CodeSystem" name="RXNORM" id="http://www.nlm.nih.gov/research/umls/rxnorm" accessLevel="Public">
+         <annotation xsi:type="a:Annotation">
+            <a:s r="3">
+               <a:s>codesystem &quot;RXNORM&quot;: 'http://www.nlm.nih.gov/research/umls/rxnorm'</a:s>
+            </a:s>
+         </annotation>
+      </def>
+   </codeSystems>
+   <valueSets>
+      <def localId="4" locator="11:1-11:100" resultTypeName="t:ValueSet" name="Topical Diclofenac" id="http://hl7.org/fhir/ig/PDDI-CDS/ValueSet/valueset-topicaldiclofenac" accessLevel="Public">
+         <annotation xsi:type="a:Annotation">
+            <a:s r="4">
+               <a:s>// NOTE: Valuesets should reference valuesets url in external folder
+valueset &quot;Topical Diclofenac&quot;: 'http://hl7.org/fhir/ig/PDDI-CDS/ValueSet/valueset-topicaldiclofenac'</a:s>
+            </a:s>
+         </annotation>
+      </def>
+      <def localId="5" locator="12:1-12:82" resultTypeName="t:ValueSet" name="Warfarins" id="http://hl7.org/fhir/ig/PDDI-CDS/ValueSet/valueset-warfarin" accessLevel="Public">
+         <annotation xsi:type="a:Annotation">
+            <a:s r="5">
+               <a:s>valueset &quot;Warfarins&quot;: 'http://hl7.org/fhir/ig/PDDI-CDS/ValueSet/valueset-warfarin'</a:s>
+            </a:s>
+         </annotation>
+      </def>
+      <def localId="6" locator="13:1-13:77" resultTypeName="t:ValueSet" name="NSAIDs" id="http://hl7.org/fhir/ig/PDDI-CDS/ValueSet/valueset-NSAIDS" accessLevel="Public">
+         <annotation xsi:type="a:Annotation">
+            <a:s r="6">
+               <a:s>valueset &quot;NSAIDs&quot;: 'http://hl7.org/fhir/ig/PDDI-CDS/ValueSet/valueset-NSAIDS'</a:s>
+            </a:s>
+         </annotation>
+      </def>
+      <def localId="7" locator="14:1-14:90" resultTypeName="t:ValueSet" name="PPIs and Misoprostols" id="http://hl7.org/fhir/ig/PDDI-CDS/ValueSet/valueset-PPIS" accessLevel="Public">
+         <annotation xsi:type="a:Annotation">
+            <a:s r="7">
+               <a:s>valueset &quot;PPIs and Misoprostols&quot;: 'http://hl7.org/fhir/ig/PDDI-CDS/ValueSet/valueset-PPIS'</a:s>
+            </a:s>
+         </annotation>
+      </def>
+      <def localId="8" locator="15:1-15:99" resultTypeName="t:ValueSet" name="History of GI Bleeds" id="http://hl7.org/fhir/ig/PDDI-CDS/ValueSet/valueset-Hx-UGIB-snomed" accessLevel="Public">
+         <annotation xsi:type="a:Annotation">
+            <a:s r="8">
+               <a:s>valueset &quot;History of GI Bleeds&quot;: 'http://hl7.org/fhir/ig/PDDI-CDS/ValueSet/valueset-Hx-UGIB-snomed'</a:s>
+            </a:s>
+         </annotation>
+      </def>
+      <def localId="9" locator="16:1-16:51" resultTypeName="t:ValueSet" name="Systemic Corticosteroids" id="valueset-SCS" accessLevel="Public">
+         <annotation xsi:type="a:Annotation">
+            <a:s r="9">
+               <a:s>valueset &quot;Systemic Corticosteroids&quot;: 'valueset-SCS'</a:s>
+            </a:s>
+         </annotation>
+      </def>
+      <def localId="10" locator="17:1-17:50" resultTypeName="t:ValueSet" name="Aldosterone Antagonists" id="valueset-AAS" accessLevel="Public">
+         <annotation xsi:type="a:Annotation">
+            <a:s r="10">
+               <a:s>valueset &quot;Aldosterone Antagonists&quot;: 'valueset-AAS'</a:s>
+            </a:s>
+         </annotation>
+      </def>
+   </valueSets>
+   <contexts>
+      <def locator="25:1-25:15" name="Patient"/>
+   </contexts>
+   <statements>
+      <def locator="25:1-25:15" name="Patient" context="Patient">
+         <expression xsi:type="SingletonFrom">
+            <operand locator="25:1-25:15" dataType="fhir:Patient" templateId="http://hl7.org/fhir/StructureDefinition/Patient" xsi:type="Retrieve"/>
+         </expression>
+      </def>
+      <def localId="35" locator="52:1-53:76" resultTypeName="t:Quantity" name="ToQuantity" context="Patient" accessLevel="Public" xsi:type="FunctionDef">
+         <annotation xsi:type="a:Annotation">
+            <a:s r="35">
+               <a:s>define function ToQuantity(quantity </a:s>
+               <a:s r="27">
+                  <a:s>FHIR.Quantity</a:s>
+               </a:s>
+               <a:s>):
+  </a:s>
+               <a:s r="34">
+                  <a:s r="34">
+                     <a:s>System.Quantity { </a:s>
+                     <a:s>
+                        <a:s>value: </a:s>
+                        <a:s r="30">
+                           <a:s r="29">
+                              <a:s r="28">
+                                 <a:s>quantity</a:s>
+                              </a:s>
+                              <a:s>.</a:s>
+                              <a:s r="29">
+                                 <a:s>value</a:s>
+                              </a:s>
+                           </a:s>
+                           <a:s>.</a:s>
+                           <a:s r="30">
+                              <a:s>value</a:s>
+                           </a:s>
+                        </a:s>
+                     </a:s>
+                     <a:s>, </a:s>
+                     <a:s>
+                        <a:s>unit: </a:s>
+                        <a:s r="33">
+                           <a:s r="32">
+                              <a:s r="31">
+                                 <a:s>quantity</a:s>
+                              </a:s>
+                              <a:s>.</a:s>
+                              <a:s r="32">
+                                 <a:s>unit</a:s>
+                              </a:s>
+                           </a:s>
+                           <a:s>.</a:s>
+                           <a:s r="33">
+                              <a:s>value</a:s>
+                           </a:s>
+                        </a:s>
+                     </a:s>
+                     <a:s> }</a:s>
+                  </a:s>
+               </a:s>
+            </a:s>
+         </annotation>
+         <expression localId="34" locator="53:3-53:76" resultTypeName="t:Quantity" classType="t:Quantity" xsi:type="Instance">
+            <element name="value">
+               <value localId="30" locator="53:28-53:47" resultTypeName="t:Decimal" path="value" xsi:type="Property">
+                  <source localId="29" locator="53:28-53:41" resultTypeName="fhir:decimal" path="value" xsi:type="Property">
+                     <source localId="28" locator="53:28-53:35" resultTypeName="fhir:Quantity" name="quantity" xsi:type="OperandRef"/>
+                  </source>
+               </value>
+            </element>
+            <element name="unit">
+               <value localId="33" locator="53:56-53:74" resultTypeName="t:String" path="value" xsi:type="Property">
+                  <source localId="32" locator="53:56-53:68" resultTypeName="fhir:string" path="unit" xsi:type="Property">
+                     <source localId="31" locator="53:56-53:63" resultTypeName="fhir:Quantity" name="quantity" xsi:type="OperandRef"/>
+                  </source>
+               </value>
+            </element>
+         </expression>
+         <operand name="quantity">
+            <operandTypeSpecifier localId="27" locator="52:37-52:49" resultTypeName="fhir:Quantity" name="fhir:Quantity" xsi:type="NamedTypeSpecifier"/>
+         </operand>
+      </def>
+      <def localId="47" locator="27:1-32:11" resultTypeName="t:String" name="GetLevelAndDate" context="Patient" accessLevel="Public" xsi:type="FunctionDef">
+         <annotation xsi:type="a:Annotation">
+            <a:s r="47">
+               <a:s>// NOTE: These functions have been moved here from the Commmon library to boost performance
+define function GetLevelAndDate(observation </a:s>
+               <a:s r="20">
+                  <a:s>Observation</a:s>
+               </a:s>
+               <a:s>):
+  </a:s>
+               <a:s r="46">
+                  <a:s r="46">
+                     <a:s>if </a:s>
+                     <a:s r="22">
+                        <a:s r="21">
+                           <a:s>observation</a:s>
+                        </a:s>
+                        <a:s> is not null</a:s>
+                     </a:s>
+                     <a:s>
+    then </a:s>
+                     <a:s r="44">
+                        <a:s r="39">
+                           <a:s r="37">
+                              <a:s>ToString(</a:s>
+                              <a:s r="36">
+                                 <a:s>ToQuantity(</a:s>
+                                 <a:s r="26">
+                                    <a:s r="24">
+                                       <a:s r="23">
+                                          <a:s>observation</a:s>
+                                       </a:s>
+                                       <a:s>.</a:s>
+                                       <a:s r="24">
+                                          <a:s>value</a:s>
+                                       </a:s>
+                                    </a:s>
+                                    <a:s> as </a:s>
+                                    <a:s r="25">
+                                       <a:s>Quantity</a:s>
+                                    </a:s>
+                                 </a:s>
+                                 <a:s>)</a:s>
+                              </a:s>
+                              <a:s>)</a:s>
+                           </a:s>
+                           <a:s>
+      + </a:s>
+                           <a:s r="38">
+                              <a:s>' and '</a:s>
+                           </a:s>
+                        </a:s>
+                        <a:s>
+      + </a:s>
+                        <a:s r="43">
+                           <a:s>ToString(</a:s>
+                           <a:s r="42">
+                              <a:s r="41">
+                                 <a:s r="40">
+                                    <a:s>observation</a:s>
+                                 </a:s>
+                                 <a:s>.</a:s>
+                                 <a:s r="41">
+                                    <a:s>effective</a:s>
+                                 </a:s>
+                              </a:s>
+                              <a:s>.</a:s>
+                              <a:s r="42">
+                                 <a:s>value</a:s>
+                              </a:s>
+                           </a:s>
+                           <a:s>)</a:s>
+                        </a:s>
+                     </a:s>
+                     <a:s>
+  else </a:s>
+                     <a:s r="45">
+                        <a:s>'NA'</a:s>
+                     </a:s>
+                  </a:s>
+               </a:s>
+            </a:s>
+         </annotation>
+         <expression localId="46" locator="28:3-32:11" resultTypeName="t:String" xsi:type="If">
+            <condition localId="22" locator="28:6-28:28" resultTypeName="t:Boolean" xsi:type="Not">
+               <signature name="t:Boolean" xsi:type="NamedTypeSpecifier"/>
+               <operand locator="28:6-28:28" resultTypeName="t:Boolean" xsi:type="IsNull">
+                  <signature name="t:Any" xsi:type="NamedTypeSpecifier"/>
+                  <operand localId="21" locator="28:6-28:16" resultTypeName="fhir:Observation" name="observation" xsi:type="OperandRef"/>
+               </operand>
+            </condition>
+            <then localId="44" locator="29:10-31:45" resultTypeName="t:String" xsi:type="Concatenate">
+               <operand localId="39" locator="29:10-30:15" resultTypeName="t:String" xsi:type="Concatenate">
+                  <operand localId="37" locator="29:10-29:60" resultTypeName="t:String" xsi:type="ToString">
+                     <signature name="t:Quantity" xsi:type="NamedTypeSpecifier"/>
+                     <operand localId="36" locator="29:19-29:59" resultTypeName="t:Quantity" name="ToQuantity" xsi:type="FunctionRef">
+                        <signature name="fhir:Quantity" xsi:type="NamedTypeSpecifier"/>
+                        <operand localId="26" locator="29:30-29:58" resultTypeName="fhir:Quantity" strict="false" xsi:type="As">
+                           <operand localId="24" locator="29:30-29:46" path="value" xsi:type="Property">
+                              <resultTypeSpecifier xsi:type="ChoiceTypeSpecifier">
+                                 <choice name="fhir:Quantity" xsi:type="NamedTypeSpecifier"/>
+                                 <choice name="fhir:CodeableConcept" xsi:type="NamedTypeSpecifier"/>
+                                 <choice name="fhir:string" xsi:type="NamedTypeSpecifier"/>
+                                 <choice name="fhir:boolean" xsi:type="NamedTypeSpecifier"/>
+                                 <choice name="fhir:integer" xsi:type="NamedTypeSpecifier"/>
+                                 <choice name="fhir:Range" xsi:type="NamedTypeSpecifier"/>
+                                 <choice name="fhir:Ratio" xsi:type="NamedTypeSpecifier"/>
+                                 <choice name="fhir:SampledData" xsi:type="NamedTypeSpecifier"/>
+                                 <choice name="fhir:time" xsi:type="NamedTypeSpecifier"/>
+                                 <choice name="fhir:dateTime" xsi:type="NamedTypeSpecifier"/>
+                                 <choice name="fhir:Period" xsi:type="NamedTypeSpecifier"/>
+                              </resultTypeSpecifier>
+                              <source localId="23" locator="29:30-29:40" resultTypeName="fhir:Observation" name="observation" xsi:type="OperandRef"/>
+                           </operand>
+                           <asTypeSpecifier localId="25" locator="29:51-29:58" resultTypeName="fhir:Quantity" name="fhir:Quantity" xsi:type="NamedTypeSpecifier"/>
+                        </operand>
+                     </operand>
+                  </operand>
+                  <operand localId="38" locator="30:9-30:15" resultTypeName="t:String" valueType="t:String" value=" and " xsi:type="Literal"/>
+               </operand>
+               <operand localId="43" locator="31:9-31:45" resultTypeName="t:String" xsi:type="ToString">
+                  <signature name="t:DateTime" xsi:type="NamedTypeSpecifier"/>
+                  <operand localId="42" locator="31:18-31:44" resultTypeName="t:DateTime" path="value" xsi:type="Property">
+                     <source localId="41" locator="31:18-31:38" path="effective" xsi:type="Property">
+                        <resultTypeSpecifier xsi:type="ChoiceTypeSpecifier">
+                           <choice name="fhir:dateTime" xsi:type="NamedTypeSpecifier"/>
+                           <choice name="fhir:Period" xsi:type="NamedTypeSpecifier"/>
+                           <choice name="fhir:Timing" xsi:type="NamedTypeSpecifier"/>
+                           <choice name="fhir:instant" xsi:type="NamedTypeSpecifier"/>
+                        </resultTypeSpecifier>
+                        <source localId="40" locator="31:18-31:28" resultTypeName="fhir:Observation" name="observation" xsi:type="OperandRef"/>
+                     </source>
+                  </operand>
+               </operand>
+            </then>
+            <else localId="45" locator="32:8-32:11" resultTypeName="t:String" valueType="t:String" value="NA" xsi:type="Literal"/>
+         </expression>
+         <operand name="observation">
+            <operandTypeSpecifier localId="20" locator="27:45-27:55" resultTypeName="fhir:Observation" name="fhir:Observation" xsi:type="NamedTypeSpecifier"/>
+         </operand>
+      </def>
+      <def localId="71" locator="44:1-50:3" resultTypeName="t:Code" name="ToCode" context="Patient" accessLevel="Public" xsi:type="FunctionDef">
+         <annotation xsi:type="a:Annotation">
+            <a:s r="71">
+               <a:s>define function ToCode(coding </a:s>
+               <a:s r="57">
+                  <a:s>FHIR.Coding</a:s>
+               </a:s>
+               <a:s>):
+  </a:s>
+               <a:s r="70">
+                  <a:s r="70">
+                     <a:s>System.Code {
+    </a:s>
+                     <a:s>
+                        <a:s>code: </a:s>
+                        <a:s r="60">
+                           <a:s r="59">
+                              <a:s r="58">
+                                 <a:s>coding</a:s>
+                              </a:s>
+                              <a:s>.</a:s>
+                              <a:s r="59">
+                                 <a:s>code</a:s>
+                              </a:s>
+                           </a:s>
+                           <a:s>.</a:s>
+                           <a:s r="60">
+                              <a:s>value</a:s>
+                           </a:s>
+                        </a:s>
+                     </a:s>
+                     <a:s>,
+    </a:s>
+                     <a:s>
+                        <a:s>system: </a:s>
+                        <a:s r="63">
+                           <a:s r="62">
+                              <a:s r="61">
+                                 <a:s>coding</a:s>
+                              </a:s>
+                              <a:s>.</a:s>
+                              <a:s r="62">
+                                 <a:s>system</a:s>
+                              </a:s>
+                           </a:s>
+                           <a:s>.</a:s>
+                           <a:s r="63">
+                              <a:s>value</a:s>
+                           </a:s>
+                        </a:s>
+                     </a:s>
+                     <a:s>,
+    </a:s>
+                     <a:s>
+                        <a:s>version: </a:s>
+                        <a:s r="66">
+                           <a:s r="65">
+                              <a:s r="64">
+                                 <a:s>coding</a:s>
+                              </a:s>
+                              <a:s>.</a:s>
+                              <a:s r="65">
+                                 <a:s>version</a:s>
+                              </a:s>
+                           </a:s>
+                           <a:s>.</a:s>
+                           <a:s r="66">
+                              <a:s>value</a:s>
+                           </a:s>
+                        </a:s>
+                     </a:s>
+                     <a:s>,
+    </a:s>
+                     <a:s>
+                        <a:s>display: </a:s>
+                        <a:s r="69">
+                           <a:s r="68">
+                              <a:s r="67">
+                                 <a:s>coding</a:s>
+                              </a:s>
+                              <a:s>.</a:s>
+                              <a:s r="68">
+                                 <a:s>display</a:s>
+                              </a:s>
+                           </a:s>
+                           <a:s>.</a:s>
+                           <a:s r="69">
+                              <a:s>value</a:s>
+                           </a:s>
+                        </a:s>
+                     </a:s>
+                     <a:s>
+  }</a:s>
+                  </a:s>
+               </a:s>
+            </a:s>
+         </annotation>
+         <expression localId="70" locator="45:3-50:3" resultTypeName="t:Code" classType="t:Code" xsi:type="Instance">
+            <element name="code">
+               <value localId="60" locator="46:11-46:27" resultTypeName="t:String" path="value" xsi:type="Property">
+                  <source localId="59" locator="46:11-46:21" resultTypeName="fhir:code" path="code" xsi:type="Property">
+                     <source localId="58" locator="46:11-46:16" resultTypeName="fhir:Coding" name="coding" xsi:type="OperandRef"/>
+                  </source>
+               </value>
+            </element>
+            <element name="system">
+               <value localId="63" locator="47:13-47:31" resultTypeName="t:String" path="value" xsi:type="Property">
+                  <source localId="62" locator="47:13-47:25" resultTypeName="fhir:uri" path="system" xsi:type="Property">
+                     <source localId="61" locator="47:13-47:18" resultTypeName="fhir:Coding" name="coding" xsi:type="OperandRef"/>
+                  </source>
+               </value>
+            </element>
+            <element name="version">
+               <value localId="66" locator="48:14-48:33" resultTypeName="t:String" path="value" xsi:type="Property">
+                  <source localId="65" locator="48:14-48:27" resultTypeName="fhir:string" path="version" xsi:type="Property">
+                     <source localId="64" locator="48:14-48:19" resultTypeName="fhir:Coding" name="coding" xsi:type="OperandRef"/>
+                  </source>
+               </value>
+            </element>
+            <element name="display">
+               <value localId="69" locator="49:14-49:33" resultTypeName="t:String" path="value" xsi:type="Property">
+                  <source localId="68" locator="49:14-49:27" resultTypeName="fhir:string" path="display" xsi:type="Property">
+                     <source localId="67" locator="49:14-49:19" resultTypeName="fhir:Coding" name="coding" xsi:type="OperandRef"/>
+                  </source>
+               </value>
+            </element>
+         </expression>
+         <operand name="coding">
+            <operandTypeSpecifier localId="57" locator="44:31-44:41" resultTypeName="fhir:Coding" name="fhir:Coding" xsi:type="NamedTypeSpecifier"/>
+         </operand>
+      </def>
+      <def localId="76" locator="34:1-36:49" name="GetMedicationNames" context="Patient" accessLevel="Public" xsi:type="FunctionDef">
+         <annotation xsi:type="a:Annotation">
+            <a:s r="76">
+               <a:s>define function GetMedicationNames(medications </a:s>
+               <a:s r="49">
+                  <a:s>List&lt;</a:s>
+                  <a:s r="48">
+                     <a:s>MedicationStatement</a:s>
+                  </a:s>
+                  <a:s>></a:s>
+               </a:s>
+               <a:s>):
+  </a:s>
+               <a:s r="75">
+                  <a:s r="75">
+                     <a:s>
+                        <a:s r="51">
+                           <a:s r="50">
+                              <a:s>
+                                 <a:s>medications</a:s>
+                              </a:s>
+                           </a:s>
+                           <a:s> M</a:s>
+                        </a:s>
+                     </a:s>
+                     <a:s>
+    </a:s>
+                     <a:s r="74">
+                        <a:s>return </a:s>
+                        <a:s r="73">
+                           <a:s r="72">
+                              <a:s>ToCode(</a:s>
+                              <a:s r="56">
+                                 <a:s r="54">
+                                    <a:s r="53">
+                                       <a:s r="52">
+                                          <a:s>M</a:s>
+                                       </a:s>
+                                       <a:s>.</a:s>
+                                       <a:s r="53">
+                                          <a:s>medication</a:s>
+                                       </a:s>
+                                    </a:s>
+                                    <a:s>.</a:s>
+                                    <a:s r="54">
+                                       <a:s>coding</a:s>
+                                    </a:s>
+                                 </a:s>
+                                 <a:s r="55">[0]</a:s>
+                              </a:s>
+                              <a:s>)</a:s>
+                           </a:s>
+                           <a:s>.</a:s>
+                           <a:s r="73">
+                              <a:s>display</a:s>
+                           </a:s>
+                        </a:s>
+                     </a:s>
+                  </a:s>
+               </a:s>
+            </a:s>
+         </annotation>
+         <resultTypeSpecifier xsi:type="ListTypeSpecifier">
+            <elementType name="t:String" xsi:type="NamedTypeSpecifier"/>
+         </resultTypeSpecifier>
+         <expression localId="75" locator="35:3-36:49" xsi:type="Query">
+            <resultTypeSpecifier xsi:type="ListTypeSpecifier">
+               <elementType name="t:String" xsi:type="NamedTypeSpecifier"/>
+            </resultTypeSpecifier>
+            <source localId="51" locator="35:3-35:15" alias="M">
+               <resultTypeSpecifier xsi:type="ListTypeSpecifier">
+                  <elementType name="fhir:MedicationStatement" xsi:type="NamedTypeSpecifier"/>
+               </resultTypeSpecifier>
+               <expression localId="50" locator="35:3-35:13" name="medications" xsi:type="OperandRef">
+                  <resultTypeSpecifier xsi:type="ListTypeSpecifier">
+                     <elementType name="fhir:MedicationStatement" xsi:type="NamedTypeSpecifier"/>
+                  </resultTypeSpecifier>
+               </expression>
+            </source>
+            <return localId="74" locator="36:5-36:49">
+               <resultTypeSpecifier xsi:type="ListTypeSpecifier">
+                  <elementType name="t:String" xsi:type="NamedTypeSpecifier"/>
+               </resultTypeSpecifier>
+               <expression localId="73" locator="36:12-36:49" resultTypeName="t:String" path="display" xsi:type="Property">
+                  <source localId="72" locator="36:12-36:41" resultTypeName="t:Code" name="ToCode" xsi:type="FunctionRef">
+                     <signature name="fhir:Coding" xsi:type="NamedTypeSpecifier"/>
+                     <operand localId="56" locator="36:19-36:40" resultTypeName="fhir:Coding" xsi:type="Indexer">
+                        <signature xsi:type="ListTypeSpecifier">
+                           <elementType name="fhir:Coding" xsi:type="NamedTypeSpecifier"/>
+                        </signature>
+                        <signature name="t:Integer" xsi:type="NamedTypeSpecifier"/>
+                        <operand localId="54" locator="36:19-36:37" path="coding" xsi:type="Property">
+                           <resultTypeSpecifier xsi:type="ListTypeSpecifier">
+                              <elementType name="fhir:Coding" xsi:type="NamedTypeSpecifier"/>
+                           </resultTypeSpecifier>
+                           <source localId="53" locator="36:19-36:30" path="medication" scope="M" xsi:type="Property">
+                              <resultTypeSpecifier xsi:type="ChoiceTypeSpecifier">
+                                 <choice name="fhir:CodeableConcept" xsi:type="NamedTypeSpecifier"/>
+                                 <choice name="fhir:Reference" xsi:type="NamedTypeSpecifier"/>
+                              </resultTypeSpecifier>
+                           </source>
+                        </operand>
+                        <operand localId="55" locator="36:39" resultTypeName="t:Integer" valueType="t:Integer" value="0" xsi:type="Literal"/>
+                     </operand>
+                  </source>
+               </expression>
+            </return>
+         </expression>
+         <operand name="medications">
+            <operandTypeSpecifier localId="49" locator="34:48-34:72" xsi:type="ListTypeSpecifier">
+               <resultTypeSpecifier xsi:type="ListTypeSpecifier">
+                  <elementType name="fhir:MedicationStatement" xsi:type="NamedTypeSpecifier"/>
+               </resultTypeSpecifier>
+               <elementType localId="48" locator="34:53-34:71" resultTypeName="fhir:MedicationStatement" name="fhir:MedicationStatement" xsi:type="NamedTypeSpecifier"/>
+            </operandTypeSpecifier>
+         </operand>
+      </def>
+      <def localId="88" locator="38:1-42:11" resultTypeName="t:String" name="GetCodeNames" context="Patient" accessLevel="Public" xsi:type="FunctionDef">
+         <annotation xsi:type="a:Annotation">
+            <a:s r="88">
+               <a:s>define function GetCodeNames(codings </a:s>
+               <a:s r="78">
+                  <a:s>List&lt;</a:s>
+                  <a:s r="77">
+                     <a:s>FHIR.Coding</a:s>
+                  </a:s>
+                  <a:s>></a:s>
+               </a:s>
+               <a:s>):
+  </a:s>
+               <a:s r="87">
+                  <a:s r="87">
+                     <a:s>Combine(
+      </a:s>
+                     <a:s r="85">
+                        <a:s>
+                           <a:s r="80">
+                              <a:s r="79">
+                                 <a:s>
+                                    <a:s>codings</a:s>
+                                 </a:s>
+                              </a:s>
+                              <a:s> coding</a:s>
+                           </a:s>
+                        </a:s>
+                        <a:s>
+          </a:s>
+                        <a:s r="84">
+                           <a:s>return </a:s>
+                           <a:s r="83">
+                              <a:s r="82">
+                                 <a:s>ToCode(</a:s>
+                                 <a:s r="81">
+                                    <a:s>coding</a:s>
+                                 </a:s>
+                                 <a:s>)</a:s>
+                              </a:s>
+                              <a:s>.</a:s>
+                              <a:s r="83">
+                                 <a:s>display</a:s>
+                              </a:s>
+                           </a:s>
+                        </a:s>
+                     </a:s>
+                     <a:s>
+    , </a:s>
+                     <a:s r="86">
+                        <a:s>', '</a:s>
+                     </a:s>
+                     <a:s>)</a:s>
+                  </a:s>
+               </a:s>
+            </a:s>
+         </annotation>
+         <expression localId="87" locator="39:3-42:11" resultTypeName="t:String" xsi:type="Combine">
+            <signature xsi:type="ListTypeSpecifier">
+               <elementType name="t:String" xsi:type="NamedTypeSpecifier"/>
+            </signature>
+            <signature name="t:String" xsi:type="NamedTypeSpecifier"/>
+            <source localId="85" locator="40:7-41:39" xsi:type="Query">
+               <resultTypeSpecifier xsi:type="ListTypeSpecifier">
+                  <elementType name="t:String" xsi:type="NamedTypeSpecifier"/>
+               </resultTypeSpecifier>
+               <source localId="80" locator="40:7-40:20" alias="coding">
+                  <resultTypeSpecifier xsi:type="ListTypeSpecifier">
+                     <elementType name="fhir:Coding" xsi:type="NamedTypeSpecifier"/>
+                  </resultTypeSpecifier>
+                  <expression localId="79" locator="40:7-40:13" name="codings" xsi:type="OperandRef">
+                     <resultTypeSpecifier xsi:type="ListTypeSpecifier">
+                        <elementType name="fhir:Coding" xsi:type="NamedTypeSpecifier"/>
+                     </resultTypeSpecifier>
+                  </expression>
+               </source>
+               <return localId="84" locator="41:11-41:39">
+                  <resultTypeSpecifier xsi:type="ListTypeSpecifier">
+                     <elementType name="t:String" xsi:type="NamedTypeSpecifier"/>
+                  </resultTypeSpecifier>
+                  <expression localId="83" locator="41:18-41:39" resultTypeName="t:String" path="display" xsi:type="Property">
+                     <source localId="82" locator="41:18-41:31" resultTypeName="t:Code" name="ToCode" xsi:type="FunctionRef">
+                        <signature name="fhir:Coding" xsi:type="NamedTypeSpecifier"/>
+                        <operand localId="81" locator="41:25-41:30" resultTypeName="fhir:Coding" name="coding" xsi:type="AliasRef"/>
+                     </source>
+                  </expression>
+               </return>
+            </source>
+            <separator localId="86" locator="42:7-42:10" resultTypeName="t:String" valueType="t:String" value=", " xsi:type="Literal"/>
+         </expression>
+         <operand name="codings">
+            <operandTypeSpecifier localId="78" locator="38:38-38:54" xsi:type="ListTypeSpecifier">
+               <resultTypeSpecifier xsi:type="ListTypeSpecifier">
+                  <elementType name="fhir:Coding" xsi:type="NamedTypeSpecifier"/>
+               </resultTypeSpecifier>
+               <elementType localId="77" locator="38:43-38:53" resultTypeName="fhir:Coding" name="fhir:Coding" xsi:type="NamedTypeSpecifier"/>
+            </operandTypeSpecifier>
+         </operand>
+      </def>
+      <def localId="97" locator="55:1-55:64" resultTypeName="t:String" name="ToString" context="Patient" accessLevel="Public" xsi:type="FunctionDef">
+         <annotation xsi:type="a:Annotation">
+            <a:s r="97">
+               <a:s>define function ToString(value </a:s>
+               <a:s r="93">
+                  <a:s>FHIR.Coding</a:s>
+               </a:s>
+               <a:s>): </a:s>
+               <a:s r="96">
+                  <a:s r="96">
+                     <a:s r="95">
+                        <a:s r="94">
+                           <a:s>value</a:s>
+                        </a:s>
+                        <a:s>.</a:s>
+                        <a:s r="95">
+                           <a:s>display</a:s>
+                        </a:s>
+                     </a:s>
+                     <a:s>.</a:s>
+                     <a:s r="96">
+                        <a:s>value</a:s>
+                     </a:s>
+                  </a:s>
+               </a:s>
+            </a:s>
+         </annotation>
+         <expression localId="96" locator="55:46-55:64" resultTypeName="t:String" path="value" xsi:type="Property">
+            <source localId="95" locator="55:46-55:58" resultTypeName="fhir:string" path="display" xsi:type="Property">
+               <source localId="94" locator="55:46-55:50" resultTypeName="fhir:Coding" name="value" xsi:type="OperandRef"/>
+            </source>
+         </expression>
+         <operand name="value">
+            <operandTypeSpecifier localId="93" locator="55:32-55:42" resultTypeName="fhir:Coding" name="fhir:Coding" xsi:type="NamedTypeSpecifier"/>
+         </operand>
+      </def>
+      <def localId="101" locator="56:1-56:51" resultTypeName="t:String" name="ToString" context="Patient" accessLevel="Public" xsi:type="FunctionDef">
+         <annotation xsi:type="a:Annotation">
+            <a:s r="101">
+               <a:s>define function ToString(value </a:s>
+               <a:s r="98">
+                  <a:s>Code</a:s>
+               </a:s>
+               <a:s>): </a:s>
+               <a:s r="100">
+                  <a:s r="100">
+                     <a:s r="99">
+                        <a:s>value</a:s>
+                     </a:s>
+                     <a:s>.</a:s>
+                     <a:s r="100">
+                        <a:s>display</a:s>
+                     </a:s>
+                  </a:s>
+               </a:s>
+            </a:s>
+         </annotation>
+         <expression localId="100" locator="56:39-56:51" resultTypeName="t:String" path="display" xsi:type="Property">
+            <source localId="99" locator="56:39-56:43" resultTypeName="t:Code" name="value" xsi:type="OperandRef"/>
+         </expression>
+         <operand name="value">
+            <operandTypeSpecifier localId="98" locator="56:32-56:35" resultTypeName="t:Code" name="t:Code" xsi:type="NamedTypeSpecifier"/>
+         </operand>
+      </def>
+      <def localId="137" locator="64:1-75:3" name="Topical Diclofenac Prescription" context="Patient" accessLevel="Public">
+         <annotation xsi:type="a:Annotation">
+            <a:s r="137">
+               <a:s>define &quot;Topical Diclofenac Prescription&quot;:
+  </a:s>
+               <a:s r="136">
+                  <a:s r="118">
+                     <a:s>(
+   </a:s>
+                     <a:s r="118">
+                        <a:s>
+                           <a:s r="103">
+                              <a:s r="102">
+                                 <a:s>
+                                    <a:s>ContextPrescriptionStatements</a:s>
+                                 </a:s>
+                              </a:s>
+                              <a:s> P</a:s>
+                           </a:s>
+                        </a:s>
+                        <a:s>
+     </a:s>
+                        <a:s r="111">
+                           <a:s>where </a:s>
+                           <a:s r="111">
+                              <a:s r="109">
+                                 <a:s>ToCode(</a:s>
+                                 <a:s r="108">
+                                    <a:s r="106">
+                                       <a:s r="105">
+                                          <a:s r="104">
+                                             <a:s>P</a:s>
+                                          </a:s>
+                                          <a:s>.</a:s>
+                                          <a:s r="105">
+                                             <a:s>medication</a:s>
+                                          </a:s>
+                                       </a:s>
+                                       <a:s>.</a:s>
+                                       <a:s r="106">
+                                          <a:s>coding</a:s>
+                                       </a:s>
+                                    </a:s>
+                                    <a:s r="107">[0]</a:s>
+                                 </a:s>
+                                 <a:s>)</a:s>
+                              </a:s>
+                              <a:s> in </a:s>
+                              <a:s r="110">
+                                 <a:s>&quot;Topical Diclofenac&quot;</a:s>
+                              </a:s>
+                           </a:s>
+                        </a:s>
+                        <a:s>
+     </a:s>
+                        <a:s r="117">
+                           <a:s>return </a:s>
+                           <a:s r="116">
+                              <a:s r="114">
+                                 <a:s r="113">
+                                    <a:s r="112">
+                                       <a:s>P</a:s>
+                                    </a:s>
+                                    <a:s>.</a:s>
+                                    <a:s r="113">
+                                       <a:s>medication</a:s>
+                                    </a:s>
+                                 </a:s>
+                                 <a:s>.</a:s>
+                                 <a:s r="114">
+                                    <a:s>coding</a:s>
+                                 </a:s>
+                              </a:s>
+                              <a:s r="115">[0]</a:s>
+                           </a:s>
+                        </a:s>
+                     </a:s>
+                     <a:s>
+  )</a:s>
+                  </a:s>
+                  <a:s> 
+  union
+  </a:s>
+                  <a:s r="135">
+                     <a:s>(
+   </a:s>
+                     <a:s r="135">
+                        <a:s>
+                           <a:s r="120">
+                              <a:s r="119">
+                                 <a:s>
+                                    <a:s>ContextPrescriptionRequests</a:s>
+                                 </a:s>
+                              </a:s>
+                              <a:s> P</a:s>
+                           </a:s>
+                        </a:s>
+                        <a:s>
+     </a:s>
+                        <a:s r="128">
+                           <a:s>where </a:s>
+                           <a:s r="128">
+                              <a:s r="126">
+                                 <a:s>ToCode(</a:s>
+                                 <a:s r="125">
+                                    <a:s r="123">
+                                       <a:s r="122">
+                                          <a:s r="121">
+                                             <a:s>P</a:s>
+                                          </a:s>
+                                          <a:s>.</a:s>
+                                          <a:s r="122">
+                                             <a:s>medication</a:s>
+                                          </a:s>
+                                       </a:s>
+                                       <a:s>.</a:s>
+                                       <a:s r="123">
+                                          <a:s>coding</a:s>
+                                       </a:s>
+                                    </a:s>
+                                    <a:s r="124">[0]</a:s>
+                                 </a:s>
+                                 <a:s>)</a:s>
+                              </a:s>
+                              <a:s> in </a:s>
+                              <a:s r="127">
+                                 <a:s>&quot;Topical Diclofenac&quot;</a:s>
+                              </a:s>
+                           </a:s>
+                        </a:s>
+                        <a:s>
+     </a:s>
+                        <a:s r="134">
+                           <a:s>return </a:s>
+                           <a:s r="133">
+                              <a:s r="131">
+                                 <a:s r="130">
+                                    <a:s r="129">
+                                       <a:s>P</a:s>
+                                    </a:s>
+                                    <a:s>.</a:s>
+                                    <a:s r="130">
+                                       <a:s>medication</a:s>
+                                    </a:s>
+                                 </a:s>
+                                 <a:s>.</a:s>
+                                 <a:s r="131">
+                                    <a:s>coding</a:s>
+                                 </a:s>
+                              </a:s>
+                              <a:s r="132">[0]</a:s>
+                           </a:s>
+                        </a:s>
+                     </a:s>
+                     <a:s>
+  )</a:s>
+                  </a:s>
+               </a:s>
+            </a:s>
+         </annotation>
+         <resultTypeSpecifier xsi:type="ListTypeSpecifier">
+            <elementType name="fhir:Coding" xsi:type="NamedTypeSpecifier"/>
+         </resultTypeSpecifier>
+         <expression localId="136" locator="65:3-75:3" xsi:type="Union">
+            <resultTypeSpecifier xsi:type="ListTypeSpecifier">
+               <elementType name="fhir:Coding" xsi:type="NamedTypeSpecifier"/>
+            </resultTypeSpecifier>
+            <signature xsi:type="ListTypeSpecifier">
+               <elementType name="fhir:Coding" xsi:type="NamedTypeSpecifier"/>
+            </signature>
+            <signature xsi:type="ListTypeSpecifier">
+               <elementType name="fhir:Coding" xsi:type="NamedTypeSpecifier"/>
+            </signature>
+            <operand localId="118" locator="65:3-69:3" xsi:type="Query">
+               <resultTypeSpecifier xsi:type="ListTypeSpecifier">
+                  <elementType name="fhir:Coding" xsi:type="NamedTypeSpecifier"/>
+               </resultTypeSpecifier>
+               <source localId="103" locator="66:4-66:34" alias="P">
+                  <resultTypeSpecifier xsi:type="ListTypeSpecifier">
+                     <elementType name="fhir:MedicationStatement" xsi:type="NamedTypeSpecifier"/>
+                  </resultTypeSpecifier>
+                  <expression localId="102" locator="66:4-66:32" name="ContextPrescriptionStatements" xsi:type="ParameterRef">
+                     <resultTypeSpecifier xsi:type="ListTypeSpecifier">
+                        <elementType name="fhir:MedicationStatement" xsi:type="NamedTypeSpecifier"/>
+                     </resultTypeSpecifier>
+                  </expression>
+               </source>
+               <where localId="111" locator="67:6-67:65" resultTypeName="t:Boolean" xsi:type="InValueSet">
+                  <signature name="t:Code" xsi:type="NamedTypeSpecifier"/>
+                  <code localId="109" locator="67:12-67:41" resultTypeName="t:Code" name="ToCode" xsi:type="FunctionRef">
+                     <signature name="fhir:Coding" xsi:type="NamedTypeSpecifier"/>
+                     <operand localId="108" locator="67:19-67:40" resultTypeName="fhir:Coding" xsi:type="Indexer">
+                        <signature xsi:type="ListTypeSpecifier">
+                           <elementType name="fhir:Coding" xsi:type="NamedTypeSpecifier"/>
+                        </signature>
+                        <signature name="t:Integer" xsi:type="NamedTypeSpecifier"/>
+                        <operand localId="106" locator="67:19-67:37" path="coding" xsi:type="Property">
+                           <resultTypeSpecifier xsi:type="ListTypeSpecifier">
+                              <elementType name="fhir:Coding" xsi:type="NamedTypeSpecifier"/>
+                           </resultTypeSpecifier>
+                           <source localId="105" locator="67:19-67:30" path="medication" scope="P" xsi:type="Property">
+                              <resultTypeSpecifier xsi:type="ChoiceTypeSpecifier">
+                                 <choice name="fhir:CodeableConcept" xsi:type="NamedTypeSpecifier"/>
+                                 <choice name="fhir:Reference" xsi:type="NamedTypeSpecifier"/>
+                              </resultTypeSpecifier>
+                           </source>
+                        </operand>
+                        <operand localId="107" locator="67:39" resultTypeName="t:Integer" valueType="t:Integer" value="0" xsi:type="Literal"/>
+                     </operand>
+                  </code>
+                  <valueset localId="110" locator="67:46-67:65" resultTypeName="t:ValueSet" name="Topical Diclofenac" preserve="true"/>
+               </where>
+               <return localId="117" locator="68:6-68:34">
+                  <resultTypeSpecifier xsi:type="ListTypeSpecifier">
+                     <elementType name="fhir:Coding" xsi:type="NamedTypeSpecifier"/>
+                  </resultTypeSpecifier>
+                  <expression localId="116" locator="68:13-68:34" resultTypeName="fhir:Coding" xsi:type="Indexer">
+                     <signature xsi:type="ListTypeSpecifier">
+                        <elementType name="fhir:Coding" xsi:type="NamedTypeSpecifier"/>
+                     </signature>
+                     <signature name="t:Integer" xsi:type="NamedTypeSpecifier"/>
+                     <operand localId="114" locator="68:13-68:31" path="coding" xsi:type="Property">
+                        <resultTypeSpecifier xsi:type="ListTypeSpecifier">
+                           <elementType name="fhir:Coding" xsi:type="NamedTypeSpecifier"/>
+                        </resultTypeSpecifier>
+                        <source localId="113" locator="68:13-68:24" path="medication" scope="P" xsi:type="Property">
+                           <resultTypeSpecifier xsi:type="ChoiceTypeSpecifier">
+                              <choice name="fhir:CodeableConcept" xsi:type="NamedTypeSpecifier"/>
+                              <choice name="fhir:Reference" xsi:type="NamedTypeSpecifier"/>
+                           </resultTypeSpecifier>
+                        </source>
+                     </operand>
+                     <operand localId="115" locator="68:33" resultTypeName="t:Integer" valueType="t:Integer" value="0" xsi:type="Literal"/>
+                  </expression>
+               </return>
+            </operand>
+            <operand localId="135" locator="71:3-75:3" xsi:type="Query">
+               <resultTypeSpecifier xsi:type="ListTypeSpecifier">
+                  <elementType name="fhir:Coding" xsi:type="NamedTypeSpecifier"/>
+               </resultTypeSpecifier>
+               <source localId="120" locator="72:4-72:32" alias="P">
+                  <resultTypeSpecifier xsi:type="ListTypeSpecifier">
+                     <elementType name="fhir:MedicationRequest" xsi:type="NamedTypeSpecifier"/>
+                  </resultTypeSpecifier>
+                  <expression localId="119" locator="72:4-72:30" name="ContextPrescriptionRequests" xsi:type="ParameterRef">
+                     <resultTypeSpecifier xsi:type="ListTypeSpecifier">
+                        <elementType name="fhir:MedicationRequest" xsi:type="NamedTypeSpecifier"/>
+                     </resultTypeSpecifier>
+                  </expression>
+               </source>
+               <where localId="128" locator="73:6-73:65" resultTypeName="t:Boolean" xsi:type="InValueSet">
+                  <signature name="t:Code" xsi:type="NamedTypeSpecifier"/>
+                  <code localId="126" locator="73:12-73:41" resultTypeName="t:Code" name="ToCode" xsi:type="FunctionRef">
+                     <signature name="fhir:Coding" xsi:type="NamedTypeSpecifier"/>
+                     <operand localId="125" locator="73:19-73:40" resultTypeName="fhir:Coding" xsi:type="Indexer">
+                        <signature xsi:type="ListTypeSpecifier">
+                           <elementType name="fhir:Coding" xsi:type="NamedTypeSpecifier"/>
+                        </signature>
+                        <signature name="t:Integer" xsi:type="NamedTypeSpecifier"/>
+                        <operand localId="123" locator="73:19-73:37" path="coding" xsi:type="Property">
+                           <resultTypeSpecifier xsi:type="ListTypeSpecifier">
+                              <elementType name="fhir:Coding" xsi:type="NamedTypeSpecifier"/>
+                           </resultTypeSpecifier>
+                           <source localId="122" locator="73:19-73:30" path="medication" scope="P" xsi:type="Property">
+                              <resultTypeSpecifier xsi:type="ChoiceTypeSpecifier">
+                                 <choice name="fhir:CodeableConcept" xsi:type="NamedTypeSpecifier"/>
+                                 <choice name="fhir:Reference" xsi:type="NamedTypeSpecifier"/>
+                              </resultTypeSpecifier>
+                           </source>
+                        </operand>
+                        <operand localId="124" locator="73:39" resultTypeName="t:Integer" valueType="t:Integer" value="0" xsi:type="Literal"/>
+                     </operand>
+                  </code>
+                  <valueset localId="127" locator="73:46-73:65" resultTypeName="t:ValueSet" name="Topical Diclofenac" preserve="true"/>
+               </where>
+               <return localId="134" locator="74:6-74:34">
+                  <resultTypeSpecifier xsi:type="ListTypeSpecifier">
+                     <elementType name="fhir:Coding" xsi:type="NamedTypeSpecifier"/>
+                  </resultTypeSpecifier>
+                  <expression localId="133" locator="74:13-74:34" resultTypeName="fhir:Coding" xsi:type="Indexer">
+                     <signature xsi:type="ListTypeSpecifier">
+                        <elementType name="fhir:Coding" xsi:type="NamedTypeSpecifier"/>
+                     </signature>
+                     <signature name="t:Integer" xsi:type="NamedTypeSpecifier"/>
+                     <operand localId="131" locator="74:13-74:31" path="coding" xsi:type="Property">
+                        <resultTypeSpecifier xsi:type="ListTypeSpecifier">
+                           <elementType name="fhir:Coding" xsi:type="NamedTypeSpecifier"/>
+                        </resultTypeSpecifier>
+                        <source localId="130" locator="74:13-74:24" path="medication" scope="P" xsi:type="Property">
+                           <resultTypeSpecifier xsi:type="ChoiceTypeSpecifier">
+                              <choice name="fhir:CodeableConcept" xsi:type="NamedTypeSpecifier"/>
+                              <choice name="fhir:Reference" xsi:type="NamedTypeSpecifier"/>
+                           </resultTypeSpecifier>
+                        </source>
+                     </operand>
+                     <operand localId="132" locator="74:33" resultTypeName="t:Integer" valueType="t:Integer" value="0" xsi:type="Literal"/>
+                  </expression>
+               </return>
+            </operand>
+         </expression>
+      </def>
+      <def localId="140" locator="58:1-59:44" resultTypeName="t:Boolean" name="Is context medication topical diclofenac" context="Patient" accessLevel="Public">
+         <annotation xsi:type="a:Annotation">
+            <a:s r="140">
+               <a:s>define &quot;Is context medication topical diclofenac&quot;:
+  </a:s>
+               <a:s r="139">
+                  <a:s>exists </a:s>
+                  <a:s r="138">
+                     <a:s>(</a:s>
+                     <a:s r="138">
+                        <a:s>&quot;Topical Diclofenac Prescription&quot;</a:s>
+                     </a:s>
+                     <a:s>)</a:s>
+                  </a:s>
+               </a:s>
+            </a:s>
+         </annotation>
+         <expression localId="139" locator="59:3-59:44" resultTypeName="t:Boolean" xsi:type="Exists">
+            <signature xsi:type="ListTypeSpecifier">
+               <elementType name="fhir:Coding" xsi:type="NamedTypeSpecifier"/>
+            </signature>
+            <operand localId="138" locator="59:10-59:44" name="Topical Diclofenac Prescription" xsi:type="ExpressionRef">
+               <resultTypeSpecifier xsi:type="ListTypeSpecifier">
+                  <elementType name="fhir:Coding" xsi:type="NamedTypeSpecifier"/>
+               </resultTypeSpecifier>
+            </operand>
+         </expression>
+      </def>
+      <def localId="144" locator="61:1-62:48" resultTypeName="t:Boolean" name="Is not context medication topical diclofenac" context="Patient" accessLevel="Public">
+         <annotation xsi:type="a:Annotation">
+            <a:s r="144">
+               <a:s>define &quot;Is not context medication topical diclofenac&quot;:
+  </a:s>
+               <a:s r="143">
+                  <a:s>not </a:s>
+                  <a:s r="142">
+                     <a:s>exists </a:s>
+                     <a:s r="141">
+                        <a:s>(</a:s>
+                        <a:s r="141">
+                           <a:s>&quot;Topical Diclofenac Prescription&quot;</a:s>
+                        </a:s>
+                        <a:s>)</a:s>
+                     </a:s>
+                  </a:s>
+               </a:s>
+            </a:s>
+         </annotation>
+         <expression localId="143" locator="62:3-62:48" resultTypeName="t:Boolean" xsi:type="Not">
+            <signature name="t:Boolean" xsi:type="NamedTypeSpecifier"/>
+            <operand localId="142" locator="62:7-62:48" resultTypeName="t:Boolean" xsi:type="Exists">
+               <signature xsi:type="ListTypeSpecifier">
+                  <elementType name="fhir:Coding" xsi:type="NamedTypeSpecifier"/>
+               </signature>
+               <operand localId="141" locator="62:14-62:48" name="Topical Diclofenac Prescription" xsi:type="ExpressionRef">
+                  <resultTypeSpecifier xsi:type="ListTypeSpecifier">
+                     <elementType name="fhir:Coding" xsi:type="NamedTypeSpecifier"/>
+                  </resultTypeSpecifier>
+               </operand>
+            </operand>
+         </expression>
+      </def>
+      <def localId="179" locator="102:1-113:3" name="NSAID Prescription" context="Patient" accessLevel="Public">
+         <annotation xsi:type="a:Annotation">
+            <a:s r="179">
+               <a:s>define &quot;NSAID Prescription&quot;:
+ </a:s>
+               <a:s r="178">
+                  <a:s r="161">
+                     <a:s>( 
+    </a:s>
+                     <a:s r="161">
+                        <a:s>
+                           <a:s r="146">
+                              <a:s r="145">
+                                 <a:s r="145">
+                                    <a:s>[MedicationStatement: </a:s>
+                                    <a:s>
+                                       <a:s>&quot;NSAIDs&quot;</a:s>
+                                    </a:s>
+                                    <a:s>]</a:s>
+                                 </a:s>
+                              </a:s>
+                              <a:s> P</a:s>
+                           </a:s>
+                        </a:s>
+                        <a:s>
+      </a:s>
+                        <a:s r="154">
+                           <a:s>where </a:s>
+                           <a:s r="154">
+                              <a:s r="150">
+                                 <a:s r="149">
+                                    <a:s r="148">
+                                       <a:s r="147">
+                                          <a:s>P</a:s>
+                                       </a:s>
+                                       <a:s>.</a:s>
+                                       <a:s r="148">
+                                          <a:s>effective</a:s>
+                                       </a:s>
+                                    </a:s>
+                                    <a:s>.</a:s>
+                                    <a:s r="149">
+                                       <a:s>start</a:s>
+                                    </a:s>
+                                 </a:s>
+                                 <a:s>.</a:s>
+                                 <a:s r="150">
+                                    <a:s>value</a:s>
+                                 </a:s>
+                              </a:s>
+                              <a:s> > </a:s>
+                              <a:s r="153">
+                                 <a:s>(</a:s>
+                                 <a:s r="153">
+                                    <a:s r="151">
+                                       <a:s>Today()</a:s>
+                                    </a:s>
+                                    <a:s> - </a:s>
+                                    <a:s r="152">
+                                       <a:s>100 days</a:s>
+                                    </a:s>
+                                 </a:s>
+                                 <a:s>)</a:s>
+                              </a:s>
+                           </a:s>
+                        </a:s>
+                        <a:s> // or, could be hard-coded e.g., > @2022-11-01 
+     </a:s>
+                        <a:s r="160">
+                           <a:s>return </a:s>
+                           <a:s r="159">
+                              <a:s r="157">
+                                 <a:s r="156">
+                                    <a:s r="155">
+                                       <a:s>P</a:s>
+                                    </a:s>
+                                    <a:s>.</a:s>
+                                    <a:s r="156">
+                                       <a:s>medication</a:s>
+                                    </a:s>
+                                 </a:s>
+                                 <a:s>.</a:s>
+                                 <a:s r="157">
+                                    <a:s>coding</a:s>
+                                 </a:s>
+                              </a:s>
+                              <a:s r="158">[0]</a:s>
+                           </a:s>
+                        </a:s>
+                     </a:s>
+                     <a:s>
+  )</a:s>
+                  </a:s>
+                  <a:s>
+  union 
+  </a:s>
+                  <a:s r="177">
+                     <a:s>( 
+    </a:s>
+                     <a:s r="177">
+                        <a:s>
+                           <a:s r="163">
+                              <a:s r="162">
+                                 <a:s r="162">
+                                    <a:s>[MedicationRequest: </a:s>
+                                    <a:s>
+                                       <a:s>&quot;NSAIDs&quot;</a:s>
+                                    </a:s>
+                                    <a:s>]</a:s>
+                                 </a:s>
+                              </a:s>
+                              <a:s> P</a:s>
+                           </a:s>
+                        </a:s>
+                        <a:s>
+      </a:s>
+                        <a:s r="170">
+                           <a:s>where </a:s>
+                           <a:s r="170">
+                              <a:s r="166">
+                                 <a:s r="165">
+                                    <a:s r="164">
+                                       <a:s>P</a:s>
+                                    </a:s>
+                                    <a:s>.</a:s>
+                                    <a:s r="165">
+                                       <a:s>authoredOn</a:s>
+                                    </a:s>
+                                 </a:s>
+                                 <a:s>.</a:s>
+                                 <a:s r="166">
+                                    <a:s>value</a:s>
+                                 </a:s>
+                              </a:s>
+                              <a:s> > </a:s>
+                              <a:s r="169">
+                                 <a:s>(</a:s>
+                                 <a:s r="169">
+                                    <a:s r="167">
+                                       <a:s>Today()</a:s>
+                                    </a:s>
+                                    <a:s> - </a:s>
+                                    <a:s r="168">
+                                       <a:s>100 days</a:s>
+                                    </a:s>
+                                 </a:s>
+                                 <a:s>)</a:s>
+                              </a:s>
+                           </a:s>
+                        </a:s>
+                        <a:s> // or, could be hard-coded e.g., > @2022-11-01 
+     </a:s>
+                        <a:s r="176">
+                           <a:s>return </a:s>
+                           <a:s r="175">
+                              <a:s r="173">
+                                 <a:s r="172">
+                                    <a:s r="171">
+                                       <a:s>P</a:s>
+                                    </a:s>
+                                    <a:s>.</a:s>
+                                    <a:s r="172">
+                                       <a:s>medication</a:s>
+                                    </a:s>
+                                 </a:s>
+                                 <a:s>.</a:s>
+                                 <a:s r="173">
+                                    <a:s>coding</a:s>
+                                 </a:s>
+                              </a:s>
+                              <a:s r="174">[0]</a:s>
+                           </a:s>
+                        </a:s>
+                     </a:s>
+                     <a:s>
+  )</a:s>
+                  </a:s>
+               </a:s>
+            </a:s>
+         </annotation>
+         <resultTypeSpecifier xsi:type="ListTypeSpecifier">
+            <elementType name="fhir:Coding" xsi:type="NamedTypeSpecifier"/>
+         </resultTypeSpecifier>
+         <expression localId="178" locator="103:2-113:3" xsi:type="Union">
+            <resultTypeSpecifier xsi:type="ListTypeSpecifier">
+               <elementType name="fhir:Coding" xsi:type="NamedTypeSpecifier"/>
+            </resultTypeSpecifier>
+            <signature xsi:type="ListTypeSpecifier">
+               <elementType name="fhir:Coding" xsi:type="NamedTypeSpecifier"/>
+            </signature>
+            <signature xsi:type="ListTypeSpecifier">
+               <elementType name="fhir:Coding" xsi:type="NamedTypeSpecifier"/>
+            </signature>
+            <operand localId="161" locator="103:2-107:3" xsi:type="Query">
+               <resultTypeSpecifier xsi:type="ListTypeSpecifier">
+                  <elementType name="fhir:Coding" xsi:type="NamedTypeSpecifier"/>
+               </resultTypeSpecifier>
+               <source localId="146" locator="104:5-104:37" alias="P">
+                  <resultTypeSpecifier xsi:type="ListTypeSpecifier">
+                     <elementType name="fhir:MedicationStatement" xsi:type="NamedTypeSpecifier"/>
+                  </resultTypeSpecifier>
+                  <expression localId="145" locator="104:5-104:35" xsi:type="Union">
+                     <resultTypeSpecifier xsi:type="ListTypeSpecifier">
+                        <elementType name="fhir:MedicationStatement" xsi:type="NamedTypeSpecifier"/>
+                     </resultTypeSpecifier>
+                     <signature xsi:type="ListTypeSpecifier">
+                        <elementType name="fhir:MedicationStatement" xsi:type="NamedTypeSpecifier"/>
+                     </signature>
+                     <signature xsi:type="ListTypeSpecifier">
+                        <elementType name="fhir:MedicationStatement" xsi:type="NamedTypeSpecifier"/>
+                     </signature>
+                     <operand dataType="fhir:MedicationStatement" templateId="http://hl7.org/fhir/StructureDefinition/MedicationStatement" codeProperty="medication" codeComparator="in" xsi:type="Retrieve">
+                        <codes locator="104:27-104:34" resultTypeName="t:ValueSet" name="NSAIDs" preserve="true" xsi:type="ValueSetRef"/>
+                     </operand>
+                     <operand locator="104:5-104:35" dataType="fhir:MedicationStatement" templateId="http://hl7.org/fhir/StructureDefinition/MedicationStatement" codeProperty="medication" codeComparator="in" xsi:type="Retrieve">
+                        <resultTypeSpecifier xsi:type="ListTypeSpecifier">
+                           <elementType name="fhir:MedicationStatement" xsi:type="NamedTypeSpecifier"/>
+                        </resultTypeSpecifier>
+                        <codes locator="104:27-104:34" resultTypeName="t:ValueSet" name="NSAIDs" preserve="true" xsi:type="ValueSetRef"/>
+                     </operand>
+                  </expression>
+               </source>
+               <where localId="154" locator="105:7-105:58" resultTypeName="t:Boolean" xsi:type="Greater">
+                  <signature name="t:DateTime" xsi:type="NamedTypeSpecifier"/>
+                  <signature name="t:DateTime" xsi:type="NamedTypeSpecifier"/>
+                  <operand localId="150" locator="105:13-105:35" resultTypeName="t:DateTime" path="value" xsi:type="Property">
+                     <source localId="149" locator="105:13-105:29" resultTypeName="fhir:dateTime" path="start" xsi:type="Property">
+                        <source localId="148" locator="105:13-105:23" path="effective" scope="P" xsi:type="Property">
+                           <resultTypeSpecifier xsi:type="ChoiceTypeSpecifier">
+                              <choice name="fhir:dateTime" xsi:type="NamedTypeSpecifier"/>
+                              <choice name="fhir:Period" xsi:type="NamedTypeSpecifier"/>
+                           </resultTypeSpecifier>
+                        </source>
+                     </source>
+                  </operand>
+                  <operand xsi:type="ToDateTime">
+                     <signature name="t:Date" xsi:type="NamedTypeSpecifier"/>
+                     <operand localId="153" locator="105:39-105:58" resultTypeName="t:Date" xsi:type="Subtract">
+                        <signature name="t:Date" xsi:type="NamedTypeSpecifier"/>
+                        <signature name="t:Quantity" xsi:type="NamedTypeSpecifier"/>
+                        <operand localId="151" locator="105:40-105:46" resultTypeName="t:Date" xsi:type="Today"/>
+                        <operand localId="152" locator="105:50-105:57" resultTypeName="t:Quantity" value="100" unit="days" xsi:type="Quantity"/>
+                     </operand>
+                  </operand>
+               </where>
+               <return localId="160" locator="106:6-106:34">
+                  <resultTypeSpecifier xsi:type="ListTypeSpecifier">
+                     <elementType name="fhir:Coding" xsi:type="NamedTypeSpecifier"/>
+                  </resultTypeSpecifier>
+                  <expression localId="159" locator="106:13-106:34" resultTypeName="fhir:Coding" xsi:type="Indexer">
+                     <signature xsi:type="ListTypeSpecifier">
+                        <elementType name="fhir:Coding" xsi:type="NamedTypeSpecifier"/>
+                     </signature>
+                     <signature name="t:Integer" xsi:type="NamedTypeSpecifier"/>
+                     <operand localId="157" locator="106:13-106:31" path="coding" xsi:type="Property">
+                        <resultTypeSpecifier xsi:type="ListTypeSpecifier">
+                           <elementType name="fhir:Coding" xsi:type="NamedTypeSpecifier"/>
+                        </resultTypeSpecifier>
+                        <source localId="156" locator="106:13-106:24" path="medication" scope="P" xsi:type="Property">
+                           <resultTypeSpecifier xsi:type="ChoiceTypeSpecifier">
+                              <choice name="fhir:CodeableConcept" xsi:type="NamedTypeSpecifier"/>
+                              <choice name="fhir:Reference" xsi:type="NamedTypeSpecifier"/>
+                           </resultTypeSpecifier>
+                        </source>
+                     </operand>
+                     <operand localId="158" locator="106:33" resultTypeName="t:Integer" valueType="t:Integer" value="0" xsi:type="Literal"/>
+                  </expression>
+               </return>
+            </operand>
+            <operand localId="177" locator="109:3-113:3" xsi:type="Query">
+               <resultTypeSpecifier xsi:type="ListTypeSpecifier">
+                  <elementType name="fhir:Coding" xsi:type="NamedTypeSpecifier"/>
+               </resultTypeSpecifier>
+               <source localId="163" locator="110:5-110:35" alias="P">
+                  <resultTypeSpecifier xsi:type="ListTypeSpecifier">
+                     <elementType name="fhir:MedicationRequest" xsi:type="NamedTypeSpecifier"/>
+                  </resultTypeSpecifier>
+                  <expression localId="162" locator="110:5-110:33" xsi:type="Union">
+                     <resultTypeSpecifier xsi:type="ListTypeSpecifier">
+                        <elementType name="fhir:MedicationRequest" xsi:type="NamedTypeSpecifier"/>
+                     </resultTypeSpecifier>
+                     <signature xsi:type="ListTypeSpecifier">
+                        <elementType name="fhir:MedicationRequest" xsi:type="NamedTypeSpecifier"/>
+                     </signature>
+                     <signature xsi:type="ListTypeSpecifier">
+                        <elementType name="fhir:MedicationRequest" xsi:type="NamedTypeSpecifier"/>
+                     </signature>
+                     <operand dataType="fhir:MedicationRequest" templateId="http://hl7.org/fhir/StructureDefinition/MedicationRequest" codeProperty="medication" codeComparator="in" xsi:type="Retrieve">
+                        <codes locator="110:25-110:32" resultTypeName="t:ValueSet" name="NSAIDs" preserve="true" xsi:type="ValueSetRef"/>
+                     </operand>
+                     <operand locator="110:5-110:33" dataType="fhir:MedicationRequest" templateId="http://hl7.org/fhir/StructureDefinition/MedicationRequest" codeProperty="medication" codeComparator="in" xsi:type="Retrieve">
+                        <resultTypeSpecifier xsi:type="ListTypeSpecifier">
+                           <elementType name="fhir:MedicationRequest" xsi:type="NamedTypeSpecifier"/>
+                        </resultTypeSpecifier>
+                        <codes locator="110:25-110:32" resultTypeName="t:ValueSet" name="NSAIDs" preserve="true" xsi:type="ValueSetRef"/>
+                     </operand>
+                  </expression>
+               </source>
+               <where localId="170" locator="111:7-111:53" resultTypeName="t:Boolean" xsi:type="Greater">
+                  <signature name="t:DateTime" xsi:type="NamedTypeSpecifier"/>
+                  <signature name="t:DateTime" xsi:type="NamedTypeSpecifier"/>
+                  <operand localId="166" locator="111:13-111:30" resultTypeName="t:DateTime" path="value" xsi:type="Property">
+                     <source localId="165" locator="111:13-111:24" resultTypeName="fhir:dateTime" path="authoredOn" scope="P" xsi:type="Property"/>
+                  </operand>
+                  <operand xsi:type="ToDateTime">
+                     <signature name="t:Date" xsi:type="NamedTypeSpecifier"/>
+                     <operand localId="169" locator="111:34-111:53" resultTypeName="t:Date" xsi:type="Subtract">
+                        <signature name="t:Date" xsi:type="NamedTypeSpecifier"/>
+                        <signature name="t:Quantity" xsi:type="NamedTypeSpecifier"/>
+                        <operand localId="167" locator="111:35-111:41" resultTypeName="t:Date" xsi:type="Today"/>
+                        <operand localId="168" locator="111:45-111:52" resultTypeName="t:Quantity" value="100" unit="days" xsi:type="Quantity"/>
+                     </operand>
+                  </operand>
+               </where>
+               <return localId="176" locator="112:6-112:34">
+                  <resultTypeSpecifier xsi:type="ListTypeSpecifier">
+                     <elementType name="fhir:Coding" xsi:type="NamedTypeSpecifier"/>
+                  </resultTypeSpecifier>
+                  <expression localId="175" locator="112:13-112:34" resultTypeName="fhir:Coding" xsi:type="Indexer">
+                     <signature xsi:type="ListTypeSpecifier">
+                        <elementType name="fhir:Coding" xsi:type="NamedTypeSpecifier"/>
+                     </signature>
+                     <signature name="t:Integer" xsi:type="NamedTypeSpecifier"/>
+                     <operand localId="173" locator="112:13-112:31" path="coding" xsi:type="Property">
+                        <resultTypeSpecifier xsi:type="ListTypeSpecifier">
+                           <elementType name="fhir:Coding" xsi:type="NamedTypeSpecifier"/>
+                        </resultTypeSpecifier>
+                        <source localId="172" locator="112:13-112:24" path="medication" scope="P" xsi:type="Property">
+                           <resultTypeSpecifier xsi:type="ChoiceTypeSpecifier">
+                              <choice name="fhir:CodeableConcept" xsi:type="NamedTypeSpecifier"/>
+                              <choice name="fhir:Reference" xsi:type="NamedTypeSpecifier"/>
+                           </resultTypeSpecifier>
+                        </source>
+                     </operand>
+                     <operand localId="174" locator="112:33" resultTypeName="t:Integer" valueType="t:Integer" value="0" xsi:type="Literal"/>
+                  </expression>
+               </return>
+            </operand>
+         </expression>
+      </def>
+      <def localId="182" locator="99:1-100:31" resultTypeName="t:Boolean" name="NSAID Rx exists" context="Patient" accessLevel="Public">
+         <annotation xsi:type="a:Annotation">
+            <a:s r="182">
+               <a:s>define &quot;NSAID Rx exists&quot;:
+  </a:s>
+               <a:s r="181">
+                  <a:s>exists </a:s>
+                  <a:s r="180">
+                     <a:s>(</a:s>
+                     <a:s r="180">
+                        <a:s>&quot;NSAID Prescription&quot;</a:s>
+                     </a:s>
+                     <a:s>)</a:s>
+                  </a:s>
+               </a:s>
+            </a:s>
+         </annotation>
+         <expression localId="181" locator="100:3-100:31" resultTypeName="t:Boolean" xsi:type="Exists">
+            <signature xsi:type="ListTypeSpecifier">
+               <elementType name="fhir:Coding" xsi:type="NamedTypeSpecifier"/>
+            </signature>
+            <operand localId="180" locator="100:10-100:31" name="NSAID Prescription" xsi:type="ExpressionRef">
+               <resultTypeSpecifier xsi:type="ListTypeSpecifier">
+                  <elementType name="fhir:Coding" xsi:type="NamedTypeSpecifier"/>
+               </resultTypeSpecifier>
+            </operand>
+         </expression>
+      </def>
+      <def localId="218" locator="86:1-97:5" name="Warfarin Rx" context="Patient" accessLevel="Public">
+         <annotation xsi:type="a:Annotation">
+            <a:s r="218">
+               <a:s>define &quot;Warfarin Rx&quot;:
+   </a:s>
+               <a:s r="217">
+                  <a:s r="200">
+                     <a:s>(
+      </a:s>
+                     <a:s r="200">
+                        <a:s>
+                           <a:s r="185">
+                              <a:s r="184">
+                                 <a:s r="184">
+                                    <a:s>[MedicationStatement: </a:s>
+                                    <a:s>
+                                       <a:s>&quot;Warfarins&quot;</a:s>
+                                    </a:s>
+                                    <a:s>]</a:s>
+                                 </a:s>
+                              </a:s>
+                              <a:s> MS</a:s>
+                           </a:s>
+                        </a:s>
+                        <a:s>
+        </a:s>
+                        <a:s r="193">
+                           <a:s>where </a:s>
+                           <a:s r="193">
+                              <a:s r="188">
+                                 <a:s>(</a:s>
+                                 <a:s r="188">
+                                    <a:s r="186">
+                                       <a:s>Today()</a:s>
+                                    </a:s>
+                                    <a:s> - </a:s>
+                                    <a:s r="187">
+                                       <a:s>100 days</a:s>
+                                    </a:s>
+                                 </a:s>
+                                 <a:s>)</a:s>
+                              </a:s>
+                              <a:s> &lt; </a:s>
+                              <a:s r="192">
+                                 <a:s r="191">
+                                    <a:s r="190">
+                                       <a:s r="189">
+                                          <a:s>MS</a:s>
+                                       </a:s>
+                                       <a:s>.</a:s>
+                                       <a:s r="190">
+                                          <a:s>effective</a:s>
+                                       </a:s>
+                                    </a:s>
+                                    <a:s>.</a:s>
+                                    <a:s r="191">
+                                       <a:s>start</a:s>
+                                    </a:s>
+                                 </a:s>
+                                 <a:s>.</a:s>
+                                 <a:s r="192">
+                                    <a:s>value</a:s>
+                                 </a:s>
+                              </a:s>
+                           </a:s>
+                        </a:s>
+                        <a:s>  // or, could be hard-coded e.g., > @2022-11-01 
+        </a:s>
+                        <a:s r="199">
+                           <a:s>return </a:s>
+                           <a:s r="198">
+                              <a:s r="196">
+                                 <a:s r="195">
+                                    <a:s r="194">
+                                       <a:s>MS</a:s>
+                                    </a:s>
+                                    <a:s>.</a:s>
+                                    <a:s r="195">
+                                       <a:s>medication</a:s>
+                                    </a:s>
+                                 </a:s>
+                                 <a:s>.</a:s>
+                                 <a:s r="196">
+                                    <a:s>coding</a:s>
+                                 </a:s>
+                              </a:s>
+                              <a:s r="197">[0]</a:s>
+                           </a:s>
+                        </a:s>
+                     </a:s>
+                     <a:s>
+    )</a:s>
+                  </a:s>
+                  <a:s>
+    union
+    </a:s>
+                  <a:s r="216">
+                     <a:s>(
+      </a:s>
+                     <a:s r="216">
+                        <a:s>
+                           <a:s r="202">
+                              <a:s r="201">
+                                 <a:s r="201">
+                                    <a:s>[MedicationRequest: </a:s>
+                                    <a:s>
+                                       <a:s>&quot;Warfarins&quot;</a:s>
+                                    </a:s>
+                                    <a:s>]</a:s>
+                                 </a:s>
+                              </a:s>
+                              <a:s> MR</a:s>
+                           </a:s>
+                        </a:s>
+                        <a:s>
+      </a:s>
+                        <a:s r="209">
+                           <a:s>where </a:s>
+                           <a:s r="209">
+                              <a:s r="205">
+                                 <a:s r="204">
+                                    <a:s r="203">
+                                       <a:s>MR</a:s>
+                                    </a:s>
+                                    <a:s>.</a:s>
+                                    <a:s r="204">
+                                       <a:s>authoredOn</a:s>
+                                    </a:s>
+                                 </a:s>
+                                 <a:s>.</a:s>
+                                 <a:s r="205">
+                                    <a:s>value</a:s>
+                                 </a:s>
+                              </a:s>
+                              <a:s> > </a:s>
+                              <a:s r="208">
+                                 <a:s>(</a:s>
+                                 <a:s r="208">
+                                    <a:s r="206">
+                                       <a:s>Today()</a:s>
+                                    </a:s>
+                                    <a:s> - </a:s>
+                                    <a:s r="207">
+                                       <a:s>100 days</a:s>
+                                    </a:s>
+                                 </a:s>
+                                 <a:s>)</a:s>
+                              </a:s>
+                           </a:s>
+                        </a:s>
+                        <a:s> // or, could be hard-coded e.g., > @2022-11-01 
+      </a:s>
+                        <a:s r="215">
+                           <a:s>return </a:s>
+                           <a:s r="214">
+                              <a:s r="212">
+                                 <a:s r="211">
+                                    <a:s r="210">
+                                       <a:s>MR</a:s>
+                                    </a:s>
+                                    <a:s>.</a:s>
+                                    <a:s r="211">
+                                       <a:s>medication</a:s>
+                                    </a:s>
+                                 </a:s>
+                                 <a:s>.</a:s>
+                                 <a:s r="212">
+                                    <a:s>coding</a:s>
+                                 </a:s>
+                              </a:s>
+                              <a:s r="213">[0]</a:s>
+                           </a:s>
+                        </a:s>
+                     </a:s>
+                     <a:s>
+    )</a:s>
+                  </a:s>
+               </a:s>
+            </a:s>
+         </annotation>
+         <resultTypeSpecifier xsi:type="ListTypeSpecifier">
+            <elementType name="fhir:Coding" xsi:type="NamedTypeSpecifier"/>
+         </resultTypeSpecifier>
+         <expression localId="217" locator="87:4-97:5" xsi:type="Union">
+            <resultTypeSpecifier xsi:type="ListTypeSpecifier">
+               <elementType name="fhir:Coding" xsi:type="NamedTypeSpecifier"/>
+            </resultTypeSpecifier>
+            <signature xsi:type="ListTypeSpecifier">
+               <elementType name="fhir:Coding" xsi:type="NamedTypeSpecifier"/>
+            </signature>
+            <signature xsi:type="ListTypeSpecifier">
+               <elementType name="fhir:Coding" xsi:type="NamedTypeSpecifier"/>
+            </signature>
+            <operand localId="200" locator="87:4-91:5" xsi:type="Query">
+               <resultTypeSpecifier xsi:type="ListTypeSpecifier">
+                  <elementType name="fhir:Coding" xsi:type="NamedTypeSpecifier"/>
+               </resultTypeSpecifier>
+               <source localId="185" locator="88:7-88:43" alias="MS">
+                  <resultTypeSpecifier xsi:type="ListTypeSpecifier">
+                     <elementType name="fhir:MedicationStatement" xsi:type="NamedTypeSpecifier"/>
+                  </resultTypeSpecifier>
+                  <expression localId="184" locator="88:7-88:40" xsi:type="Union">
+                     <resultTypeSpecifier xsi:type="ListTypeSpecifier">
+                        <elementType name="fhir:MedicationStatement" xsi:type="NamedTypeSpecifier"/>
+                     </resultTypeSpecifier>
+                     <signature xsi:type="ListTypeSpecifier">
+                        <elementType name="fhir:MedicationStatement" xsi:type="NamedTypeSpecifier"/>
+                     </signature>
+                     <signature xsi:type="ListTypeSpecifier">
+                        <elementType name="fhir:MedicationStatement" xsi:type="NamedTypeSpecifier"/>
+                     </signature>
+                     <operand dataType="fhir:MedicationStatement" templateId="http://hl7.org/fhir/StructureDefinition/MedicationStatement" codeProperty="medication" codeComparator="in" xsi:type="Retrieve">
+                        <codes locator="88:29-88:39" resultTypeName="t:ValueSet" name="Warfarins" preserve="true" xsi:type="ValueSetRef"/>
+                     </operand>
+                     <operand locator="88:7-88:40" dataType="fhir:MedicationStatement" templateId="http://hl7.org/fhir/StructureDefinition/MedicationStatement" codeProperty="medication" codeComparator="in" xsi:type="Retrieve">
+                        <resultTypeSpecifier xsi:type="ListTypeSpecifier">
+                           <elementType name="fhir:MedicationStatement" xsi:type="NamedTypeSpecifier"/>
+                        </resultTypeSpecifier>
+                        <codes locator="88:29-88:39" resultTypeName="t:ValueSet" name="Warfarins" preserve="true" xsi:type="ValueSetRef"/>
+                     </operand>
+                  </expression>
+               </source>
+               <where localId="193" locator="89:9-89:61" resultTypeName="t:Boolean" xsi:type="Less">
+                  <signature name="t:DateTime" xsi:type="NamedTypeSpecifier"/>
+                  <signature name="t:DateTime" xsi:type="NamedTypeSpecifier"/>
+                  <operand xsi:type="ToDateTime">
+                     <signature name="t:Date" xsi:type="NamedTypeSpecifier"/>
+                     <operand localId="188" locator="89:15-89:34" resultTypeName="t:Date" xsi:type="Subtract">
+                        <signature name="t:Date" xsi:type="NamedTypeSpecifier"/>
+                        <signature name="t:Quantity" xsi:type="NamedTypeSpecifier"/>
+                        <operand localId="186" locator="89:16-89:22" resultTypeName="t:Date" xsi:type="Today"/>
+                        <operand localId="187" locator="89:26-89:33" resultTypeName="t:Quantity" value="100" unit="days" xsi:type="Quantity"/>
+                     </operand>
+                  </operand>
+                  <operand localId="192" locator="89:38-89:61" resultTypeName="t:DateTime" path="value" xsi:type="Property">
+                     <source localId="191" locator="89:38-89:55" resultTypeName="fhir:dateTime" path="start" xsi:type="Property">
+                        <source localId="190" locator="89:38-89:49" path="effective" scope="MS" xsi:type="Property">
+                           <resultTypeSpecifier xsi:type="ChoiceTypeSpecifier">
+                              <choice name="fhir:dateTime" xsi:type="NamedTypeSpecifier"/>
+                              <choice name="fhir:Period" xsi:type="NamedTypeSpecifier"/>
+                           </resultTypeSpecifier>
+                        </source>
+                     </source>
+                  </operand>
+               </where>
+               <return localId="199" locator="90:9-90:38">
+                  <resultTypeSpecifier xsi:type="ListTypeSpecifier">
+                     <elementType name="fhir:Coding" xsi:type="NamedTypeSpecifier"/>
+                  </resultTypeSpecifier>
+                  <expression localId="198" locator="90:16-90:38" resultTypeName="fhir:Coding" xsi:type="Indexer">
+                     <signature xsi:type="ListTypeSpecifier">
+                        <elementType name="fhir:Coding" xsi:type="NamedTypeSpecifier"/>
+                     </signature>
+                     <signature name="t:Integer" xsi:type="NamedTypeSpecifier"/>
+                     <operand localId="196" locator="90:16-90:35" path="coding" xsi:type="Property">
+                        <resultTypeSpecifier xsi:type="ListTypeSpecifier">
+                           <elementType name="fhir:Coding" xsi:type="NamedTypeSpecifier"/>
+                        </resultTypeSpecifier>
+                        <source localId="195" locator="90:16-90:28" path="medication" scope="MS" xsi:type="Property">
+                           <resultTypeSpecifier xsi:type="ChoiceTypeSpecifier">
+                              <choice name="fhir:CodeableConcept" xsi:type="NamedTypeSpecifier"/>
+                              <choice name="fhir:Reference" xsi:type="NamedTypeSpecifier"/>
+                           </resultTypeSpecifier>
+                        </source>
+                     </operand>
+                     <operand localId="197" locator="90:37" resultTypeName="t:Integer" valueType="t:Integer" value="0" xsi:type="Literal"/>
+                  </expression>
+               </return>
+            </operand>
+            <operand localId="216" locator="93:5-97:5" xsi:type="Query">
+               <resultTypeSpecifier xsi:type="ListTypeSpecifier">
+                  <elementType name="fhir:Coding" xsi:type="NamedTypeSpecifier"/>
+               </resultTypeSpecifier>
+               <source localId="202" locator="94:7-94:41" alias="MR">
+                  <resultTypeSpecifier xsi:type="ListTypeSpecifier">
+                     <elementType name="fhir:MedicationRequest" xsi:type="NamedTypeSpecifier"/>
+                  </resultTypeSpecifier>
+                  <expression localId="201" locator="94:7-94:38" xsi:type="Union">
+                     <resultTypeSpecifier xsi:type="ListTypeSpecifier">
+                        <elementType name="fhir:MedicationRequest" xsi:type="NamedTypeSpecifier"/>
+                     </resultTypeSpecifier>
+                     <signature xsi:type="ListTypeSpecifier">
+                        <elementType name="fhir:MedicationRequest" xsi:type="NamedTypeSpecifier"/>
+                     </signature>
+                     <signature xsi:type="ListTypeSpecifier">
+                        <elementType name="fhir:MedicationRequest" xsi:type="NamedTypeSpecifier"/>
+                     </signature>
+                     <operand dataType="fhir:MedicationRequest" templateId="http://hl7.org/fhir/StructureDefinition/MedicationRequest" codeProperty="medication" codeComparator="in" xsi:type="Retrieve">
+                        <codes locator="94:27-94:37" resultTypeName="t:ValueSet" name="Warfarins" preserve="true" xsi:type="ValueSetRef"/>
+                     </operand>
+                     <operand locator="94:7-94:38" dataType="fhir:MedicationRequest" templateId="http://hl7.org/fhir/StructureDefinition/MedicationRequest" codeProperty="medication" codeComparator="in" xsi:type="Retrieve">
+                        <resultTypeSpecifier xsi:type="ListTypeSpecifier">
+                           <elementType name="fhir:MedicationRequest" xsi:type="NamedTypeSpecifier"/>
+                        </resultTypeSpecifier>
+                        <codes locator="94:27-94:37" resultTypeName="t:ValueSet" name="Warfarins" preserve="true" xsi:type="ValueSetRef"/>
+                     </operand>
+                  </expression>
+               </source>
+               <where localId="209" locator="95:7-95:54" resultTypeName="t:Boolean" xsi:type="Greater">
+                  <signature name="t:DateTime" xsi:type="NamedTypeSpecifier"/>
+                  <signature name="t:DateTime" xsi:type="NamedTypeSpecifier"/>
+                  <operand localId="205" locator="95:13-95:31" resultTypeName="t:DateTime" path="value" xsi:type="Property">
+                     <source localId="204" locator="95:13-95:25" resultTypeName="fhir:dateTime" path="authoredOn" scope="MR" xsi:type="Property"/>
+                  </operand>
+                  <operand xsi:type="ToDateTime">
+                     <signature name="t:Date" xsi:type="NamedTypeSpecifier"/>
+                     <operand localId="208" locator="95:35-95:54" resultTypeName="t:Date" xsi:type="Subtract">
+                        <signature name="t:Date" xsi:type="NamedTypeSpecifier"/>
+                        <signature name="t:Quantity" xsi:type="NamedTypeSpecifier"/>
+                        <operand localId="206" locator="95:36-95:42" resultTypeName="t:Date" xsi:type="Today"/>
+                        <operand localId="207" locator="95:46-95:53" resultTypeName="t:Quantity" value="100" unit="days" xsi:type="Quantity"/>
+                     </operand>
+                  </operand>
+               </where>
+               <return localId="215" locator="96:7-96:36">
+                  <resultTypeSpecifier xsi:type="ListTypeSpecifier">
+                     <elementType name="fhir:Coding" xsi:type="NamedTypeSpecifier"/>
+                  </resultTypeSpecifier>
+                  <expression localId="214" locator="96:14-96:36" resultTypeName="fhir:Coding" xsi:type="Indexer">
+                     <signature xsi:type="ListTypeSpecifier">
+                        <elementType name="fhir:Coding" xsi:type="NamedTypeSpecifier"/>
+                     </signature>
+                     <signature name="t:Integer" xsi:type="NamedTypeSpecifier"/>
+                     <operand localId="212" locator="96:14-96:33" path="coding" xsi:type="Property">
+                        <resultTypeSpecifier xsi:type="ListTypeSpecifier">
+                           <elementType name="fhir:Coding" xsi:type="NamedTypeSpecifier"/>
+                        </resultTypeSpecifier>
+                        <source localId="211" locator="96:14-96:26" path="medication" scope="MR" xsi:type="Property">
+                           <resultTypeSpecifier xsi:type="ChoiceTypeSpecifier">
+                              <choice name="fhir:CodeableConcept" xsi:type="NamedTypeSpecifier"/>
+                              <choice name="fhir:Reference" xsi:type="NamedTypeSpecifier"/>
+                           </resultTypeSpecifier>
+                        </source>
+                     </operand>
+                     <operand localId="213" locator="96:35" resultTypeName="t:Integer" valueType="t:Integer" value="0" xsi:type="Literal"/>
+                  </expression>
+               </return>
+            </operand>
+         </expression>
+      </def>
+      <def localId="221" locator="83:1-84:24" resultTypeName="t:Boolean" name="Warfarin Rx exists" context="Patient" accessLevel="Public">
+         <annotation xsi:type="a:Annotation">
+            <a:s r="221">
+               <a:s>define &quot;Warfarin Rx exists&quot;:
+  </a:s>
+               <a:s r="220">
+                  <a:s>exists </a:s>
+                  <a:s r="219">
+                     <a:s>(</a:s>
+                     <a:s r="219">
+                        <a:s>&quot;Warfarin Rx&quot;</a:s>
+                     </a:s>
+                     <a:s>)</a:s>
+                  </a:s>
+               </a:s>
+            </a:s>
+         </annotation>
+         <expression localId="220" locator="84:3-84:24" resultTypeName="t:Boolean" xsi:type="Exists">
+            <signature xsi:type="ListTypeSpecifier">
+               <elementType name="fhir:Coding" xsi:type="NamedTypeSpecifier"/>
+            </signature>
+            <operand localId="219" locator="84:10-84:24" name="Warfarin Rx" xsi:type="ExpressionRef">
+               <resultTypeSpecifier xsi:type="ListTypeSpecifier">
+                  <elementType name="fhir:Coding" xsi:type="NamedTypeSpecifier"/>
+               </resultTypeSpecifier>
+            </operand>
+         </expression>
+      </def>
+      <def localId="224" locator="77:1-80:22" resultTypeName="t:Boolean" name="Inclusion Criteria" context="Patient" accessLevel="Public">
+         <annotation xsi:type="a:Annotation">
+            <a:s r="224">
+               <a:s>define &quot;Inclusion Criteria&quot;:
+   </a:s>
+               <a:s r="223">
+                  <a:s r="183">
+                     <a:s>&quot;NSAID Rx exists&quot;</a:s>
+                  </a:s>
+                  <a:s> 
+    and 
+  </a:s>
+                  <a:s r="222">
+                     <a:s>&quot;Warfarin Rx exists&quot;</a:s>
+                  </a:s>
+               </a:s>
+            </a:s>
+         </annotation>
+         <expression localId="223" locator="78:4-80:22" resultTypeName="t:Boolean" xsi:type="And">
+            <signature name="t:Boolean" xsi:type="NamedTypeSpecifier"/>
+            <signature name="t:Boolean" xsi:type="NamedTypeSpecifier"/>
+            <operand localId="183" locator="78:4-78:20" resultTypeName="t:Boolean" name="NSAID Rx exists" xsi:type="ExpressionRef"/>
+            <operand localId="222" locator="80:3-80:22" resultTypeName="t:Boolean" name="Warfarin Rx exists" xsi:type="ExpressionRef"/>
+         </expression>
+      </def>
+      <def localId="236" locator="115:1-120:10" resultTypeName="t:String" name="Get Base Summary" context="Patient" accessLevel="Public">
+         <annotation xsi:type="a:Annotation">
+            <a:s r="236">
+               <a:s>// Card 1: Base
+define &quot;Get Base Summary&quot;:
+  </a:s>
+               <a:s r="235">
+                  <a:s r="233">
+                     <a:s r="230">
+                        <a:s r="228">
+                           <a:s r="225">
+                              <a:s>'Potential Drug-Drug Interaction between warfarin ('</a:s>
+                           </a:s>
+                           <a:s>
+    + </a:s>
+                           <a:s r="227">
+                              <a:s>GetCodeNames(</a:s>
+                              <a:s r="226">
+                                 <a:s>&quot;Warfarin Rx&quot;</a:s>
+                              </a:s>
+                              <a:s>)</a:s>
+                           </a:s>
+                        </a:s>
+                        <a:s>
+    + </a:s>
+                        <a:s r="229">
+                           <a:s>') and NSAID ('</a:s>
+                        </a:s>
+                     </a:s>
+                     <a:s>
+    + </a:s>
+                     <a:s r="232">
+                        <a:s>GetCodeNames(</a:s>
+                        <a:s r="231">
+                           <a:s>&quot;NSAID Prescription&quot;</a:s>
+                        </a:s>
+                        <a:s>)</a:s>
+                     </a:s>
+                  </a:s>
+                  <a:s>
+    + </a:s>
+                  <a:s r="234">
+                     <a:s>').'</a:s>
+                  </a:s>
+               </a:s>
+            </a:s>
+         </annotation>
+         <expression localId="235" locator="116:3-120:10" resultTypeName="t:String" xsi:type="Concatenate">
+            <operand localId="233" locator="116:3-119:40" resultTypeName="t:String" xsi:type="Concatenate">
+               <operand localId="230" locator="116:3-118:21" resultTypeName="t:String" xsi:type="Concatenate">
+                  <operand localId="228" locator="116:3-117:33" resultTypeName="t:String" xsi:type="Concatenate">
+                     <operand localId="225" locator="116:3-116:54" resultTypeName="t:String" valueType="t:String" value="Potential Drug-Drug Interaction between warfarin (" xsi:type="Literal"/>
+                     <operand localId="227" locator="117:7-117:33" resultTypeName="t:String" name="GetCodeNames" xsi:type="FunctionRef">
+                        <signature xsi:type="ListTypeSpecifier">
+                           <elementType name="fhir:Coding" xsi:type="NamedTypeSpecifier"/>
+                        </signature>
+                        <operand localId="226" locator="117:20-117:32" name="Warfarin Rx" xsi:type="ExpressionRef">
+                           <resultTypeSpecifier xsi:type="ListTypeSpecifier">
+                              <elementType name="fhir:Coding" xsi:type="NamedTypeSpecifier"/>
+                           </resultTypeSpecifier>
+                        </operand>
+                     </operand>
+                  </operand>
+                  <operand localId="229" locator="118:7-118:21" resultTypeName="t:String" valueType="t:String" value=") and NSAID (" xsi:type="Literal"/>
+               </operand>
+               <operand localId="232" locator="119:7-119:40" resultTypeName="t:String" name="GetCodeNames" xsi:type="FunctionRef">
+                  <signature xsi:type="ListTypeSpecifier">
+                     <elementType name="fhir:Coding" xsi:type="NamedTypeSpecifier"/>
+                  </signature>
+                  <operand localId="231" locator="119:20-119:39" name="NSAID Prescription" xsi:type="ExpressionRef">
+                     <resultTypeSpecifier xsi:type="ListTypeSpecifier">
+                        <elementType name="fhir:Coding" xsi:type="NamedTypeSpecifier"/>
+                     </resultTypeSpecifier>
+                  </operand>
+               </operand>
+            </operand>
+            <operand localId="234" locator="120:7-120:10" resultTypeName="t:String" valueType="t:String" value=")." xsi:type="Literal"/>
+         </expression>
+      </def>
+      <def localId="241" locator="122:1-125:722" resultTypeName="t:String" name="Get Concomitant Description" context="Patient" accessLevel="Public">
+         <annotation xsi:type="a:Annotation">
+            <a:s r="241">
+               <a:s>define &quot;Get Concomitant Description&quot;:
+  </a:s>
+               <a:s r="240">
+                  <a:s>if </a:s>
+                  <a:s r="237">
+                     <a:s>&quot;Is context medication topical diclofenac&quot;</a:s>
+                  </a:s>
+                  <a:s>
+    then </a:s>
+                  <a:s r="238">
+                     <a:s>'Topical diclofenac has relatively low systemic absorption; in one study a topical gel (16 g/day) produced about 6% of the absorption seen with systemic administration of 150 mg/day. A higher than recommended dose of topical gel (48 g/day) produced 20% of a systemic dose of diclofenac.'</a:s>
+                  </a:s>
+                  <a:s>
+  else </a:s>
+                  <a:s r="239">
+                     <a:s>'Increased risk of bleeding. \nBleeding is a serious potential clinical consequence because it can result in death, life-threatening hospitalization, and disability. \nNon-steroidal anti-inflammatory drugs (NSAIDs) have antiplatelet effects which increase the bleeding risk when combined with oral anticoagulants such as warfarin. The antiplatelet effect of NSAIDs lasts only as long as the NSAID is present in the circulation, unlike aspirin�s antiplatelet effect, which lasts for up to 2 weeks after aspirin is discontinued. NSAIDs also can cause peptic ulcers and most of the evidence for increased bleeding risk with NSAIDs plus warfarin is due to upper gastrointestinal bleeding (UGIB). \nunknown. \n unknown.'</a:s>
+                  </a:s>
+               </a:s>
+            </a:s>
+         </annotation>
+         <expression localId="240" locator="123:3-125:722" resultTypeName="t:String" xsi:type="If">
+            <condition localId="237" locator="123:6-123:47" resultTypeName="t:Boolean" name="Is context medication topical diclofenac" xsi:type="ExpressionRef"/>
+            <then localId="238" locator="124:10-124:296" resultTypeName="t:String" valueType="t:String" value="Topical diclofenac has relatively low systemic absorption; in one study a topical gel (16 g/day) produced about 6% of the absorption seen with systemic administration of 150 mg/day. A higher than recommended dose of topical gel (48 g/day) produced 20% of a systemic dose of diclofenac." xsi:type="Literal"/>
+            <else localId="239" locator="125:8-125:722" resultTypeName="t:String" valueType="t:String" value="Increased risk of bleeding. &#xa;Bleeding is a serious potential clinical consequence because it can result in death, life-threatening hospitalization, and disability. &#xa;Non-steroidal anti-inflammatory drugs (NSAIDs) have antiplatelet effects which increase the bleeding risk when combined with oral anticoagulants such as warfarin. The antiplatelet effect of NSAIDs lasts only as long as the NSAID is present in the circulation, unlike aspirin�s antiplatelet effect, which lasts for up to 2 weeks after aspirin is discontinued. NSAIDs also can cause peptic ulcers and most of the evidence for increased bleeding risk with NSAIDs plus warfarin is due to upper gastrointestinal bleeding (UGIB). &#xa;unknown. &#xa; unknown." xsi:type="Literal"/>
+         </expression>
+      </def>
+      <def localId="246" locator="127:1-130:16" resultTypeName="t:String" name="Get Base Indicator" context="Patient" accessLevel="Public">
+         <annotation xsi:type="a:Annotation">
+            <a:s r="246">
+               <a:s>define &quot;Get Base Indicator&quot;:
+  </a:s>
+               <a:s r="245">
+                  <a:s>if </a:s>
+                  <a:s r="242">
+                     <a:s>&quot;Is context medication topical diclofenac&quot;</a:s>
+                  </a:s>
+                  <a:s>
+    then </a:s>
+                  <a:s r="243">
+                     <a:s>'info'</a:s>
+                  </a:s>
+                  <a:s>
+  else </a:s>
+                  <a:s r="244">
+                     <a:s>'warning'</a:s>
+                  </a:s>
+               </a:s>
+            </a:s>
+         </annotation>
+         <expression localId="245" locator="128:3-130:16" resultTypeName="t:String" xsi:type="If">
+            <condition localId="242" locator="128:6-128:47" resultTypeName="t:Boolean" name="Is context medication topical diclofenac" xsi:type="ExpressionRef"/>
+            <then localId="243" locator="129:10-129:15" resultTypeName="t:String" valueType="t:String" value="info" xsi:type="Literal"/>
+            <else localId="244" locator="130:8-130:16" resultTypeName="t:String" valueType="t:String" value="warning" xsi:type="Literal"/>
+         </expression>
+      </def>
+      <def localId="249" locator="133:1-133:101" resultTypeName="t:Code" name="Acetaminophen 325 MG" context="Patient" accessLevel="Public">
+         <annotation xsi:type="a:Annotation">
+            <a:s r="249">
+               <a:s>define &quot;Acetaminophen 325 MG&quot;: </a:s>
+               <a:s r="248">
+                  <a:s>Code '313782' from </a:s>
+                  <a:s r="247">
+                     <a:s>&quot;RXNORM&quot;</a:s>
+                  </a:s>
+                  <a:s> display 'Acetaminophen 325 MG Oral Tablet'</a:s>
+               </a:s>
+            </a:s>
+         </annotation>
+         <expression localId="248" locator="133:32-133:101" resultTypeName="t:Code" code="313782" display="Acetaminophen 325 MG Oral Tablet" xsi:type="Code">
+            <system localId="247" locator="133:51-133:58" resultTypeName="t:CodeSystem" name="RXNORM"/>
+         </expression>
+      </def>
+      <def localId="252" locator="134:1-134:101" resultTypeName="t:Code" name="Acetaminophen 500 MG" context="Patient" accessLevel="Public">
+         <annotation xsi:type="a:Annotation">
+            <a:s r="252">
+               <a:s>define &quot;Acetaminophen 500 MG&quot;: </a:s>
+               <a:s r="251">
+                  <a:s>Code '198440' from </a:s>
+                  <a:s r="250">
+                     <a:s>&quot;RXNORM&quot;</a:s>
+                  </a:s>
+                  <a:s> display 'Acetaminophen 500 MG Oral Tablet'</a:s>
+               </a:s>
+            </a:s>
+         </annotation>
+         <expression localId="251" locator="134:32-134:101" resultTypeName="t:Code" code="198440" display="Acetaminophen 500 MG Oral Tablet" xsi:type="Code">
+            <system localId="250" locator="134:51-134:58" resultTypeName="t:CodeSystem" name="RXNORM"/>
+         </expression>
+      </def>
+      <def localId="264" locator="136:1-141:8" resultTypeName="t:String" name="Get Base Label 1" context="Patient" accessLevel="Public">
+         <annotation xsi:type="a:Annotation">
+            <a:s r="264">
+               <a:s>define &quot;Get Base Label 1&quot;:
+  </a:s>
+               <a:s r="263">
+                  <a:s r="261">
+                     <a:s r="258">
+                        <a:s r="256">
+                           <a:s r="253">
+                              <a:s>'Substitute NSAID ('</a:s>
+                           </a:s>
+                           <a:s>
+  + </a:s>
+                           <a:s r="255">
+                              <a:s>GetCodeNames(</a:s>
+                              <a:s r="254">
+                                 <a:s>&quot;NSAID Prescription&quot;</a:s>
+                              </a:s>
+                              <a:s>)</a:s>
+                           </a:s>
+                        </a:s>
+                        <a:s>
+  + </a:s>
+                        <a:s r="257">
+                           <a:s>') with APAP ('</a:s>
+                        </a:s>
+                     </a:s>
+                     <a:s>
+  + </a:s>
+                     <a:s r="260">
+                        <a:s>ToString(</a:s>
+                        <a:s r="259">
+                           <a:s>&quot;Acetaminophen 325 MG&quot;</a:s>
+                        </a:s>
+                        <a:s>)</a:s>
+                     </a:s>
+                  </a:s>
+                  <a:s>
+  + </a:s>
+                  <a:s r="262">
+                     <a:s>').'</a:s>
+                  </a:s>
+               </a:s>
+            </a:s>
+         </annotation>
+         <expression localId="263" locator="137:3-141:8" resultTypeName="t:String" xsi:type="Concatenate">
+            <operand localId="261" locator="137:3-140:36" resultTypeName="t:String" xsi:type="Concatenate">
+               <operand localId="258" locator="137:3-139:19" resultTypeName="t:String" xsi:type="Concatenate">
+                  <operand localId="256" locator="137:3-138:38" resultTypeName="t:String" xsi:type="Concatenate">
+                     <operand localId="253" locator="137:3-137:22" resultTypeName="t:String" valueType="t:String" value="Substitute NSAID (" xsi:type="Literal"/>
+                     <operand localId="255" locator="138:5-138:38" resultTypeName="t:String" name="GetCodeNames" xsi:type="FunctionRef">
+                        <signature xsi:type="ListTypeSpecifier">
+                           <elementType name="fhir:Coding" xsi:type="NamedTypeSpecifier"/>
+                        </signature>
+                        <operand localId="254" locator="138:18-138:37" name="NSAID Prescription" xsi:type="ExpressionRef">
+                           <resultTypeSpecifier xsi:type="ListTypeSpecifier">
+                              <elementType name="fhir:Coding" xsi:type="NamedTypeSpecifier"/>
+                           </resultTypeSpecifier>
+                        </operand>
+                     </operand>
+                  </operand>
+                  <operand localId="257" locator="139:5-139:19" resultTypeName="t:String" valueType="t:String" value=") with APAP (" xsi:type="Literal"/>
+               </operand>
+               <operand localId="260" locator="140:5-140:36" resultTypeName="t:String" name="ToString" xsi:type="FunctionRef">
+                  <signature name="t:Code" xsi:type="NamedTypeSpecifier"/>
+                  <operand localId="259" locator="140:14-140:35" resultTypeName="t:Code" name="Acetaminophen 325 MG" xsi:type="ExpressionRef"/>
+               </operand>
+            </operand>
+            <operand localId="262" locator="141:5-141:8" resultTypeName="t:String" valueType="t:String" value=")." xsi:type="Literal"/>
+         </expression>
+      </def>
+      <def localId="276" locator="143:1-148:8" resultTypeName="t:String" name="Get Base Label 2" context="Patient" accessLevel="Public">
+         <annotation xsi:type="a:Annotation">
+            <a:s r="276">
+               <a:s>define &quot;Get Base Label 2&quot;:
+  </a:s>
+               <a:s r="275">
+                  <a:s r="273">
+                     <a:s r="270">
+                        <a:s r="268">
+                           <a:s r="265">
+                              <a:s>'Substitute NSAID ('</a:s>
+                           </a:s>
+                           <a:s>
+  + </a:s>
+                           <a:s r="267">
+                              <a:s>GetCodeNames(</a:s>
+                              <a:s r="266">
+                                 <a:s>&quot;NSAID Prescription&quot;</a:s>
+                              </a:s>
+                              <a:s>)</a:s>
+                           </a:s>
+                        </a:s>
+                        <a:s>
+  + </a:s>
+                        <a:s r="269">
+                           <a:s>') with APAP ('</a:s>
+                        </a:s>
+                     </a:s>
+                     <a:s>
+  + </a:s>
+                     <a:s r="272">
+                        <a:s>ToString(</a:s>
+                        <a:s r="271">
+                           <a:s>&quot;Acetaminophen 500 MG&quot;</a:s>
+                        </a:s>
+                        <a:s>)</a:s>
+                     </a:s>
+                  </a:s>
+                  <a:s>
+  + </a:s>
+                  <a:s r="274">
+                     <a:s>').'</a:s>
+                  </a:s>
+               </a:s>
+            </a:s>
+         </annotation>
+         <expression localId="275" locator="144:3-148:8" resultTypeName="t:String" xsi:type="Concatenate">
+            <operand localId="273" locator="144:3-147:36" resultTypeName="t:String" xsi:type="Concatenate">
+               <operand localId="270" locator="144:3-146:19" resultTypeName="t:String" xsi:type="Concatenate">
+                  <operand localId="268" locator="144:3-145:38" resultTypeName="t:String" xsi:type="Concatenate">
+                     <operand localId="265" locator="144:3-144:22" resultTypeName="t:String" valueType="t:String" value="Substitute NSAID (" xsi:type="Literal"/>
+                     <operand localId="267" locator="145:5-145:38" resultTypeName="t:String" name="GetCodeNames" xsi:type="FunctionRef">
+                        <signature xsi:type="ListTypeSpecifier">
+                           <elementType name="fhir:Coding" xsi:type="NamedTypeSpecifier"/>
+                        </signature>
+                        <operand localId="266" locator="145:18-145:37" name="NSAID Prescription" xsi:type="ExpressionRef">
+                           <resultTypeSpecifier xsi:type="ListTypeSpecifier">
+                              <elementType name="fhir:Coding" xsi:type="NamedTypeSpecifier"/>
+                           </resultTypeSpecifier>
+                        </operand>
+                     </operand>
+                  </operand>
+                  <operand localId="269" locator="146:5-146:19" resultTypeName="t:String" valueType="t:String" value=") with APAP (" xsi:type="Literal"/>
+               </operand>
+               <operand localId="272" locator="147:5-147:36" resultTypeName="t:String" name="ToString" xsi:type="FunctionRef">
+                  <signature name="t:Code" xsi:type="NamedTypeSpecifier"/>
+                  <operand localId="271" locator="147:14-147:35" resultTypeName="t:Code" name="Acetaminophen 500 MG" xsi:type="ExpressionRef"/>
+               </operand>
+            </operand>
+            <operand localId="274" locator="148:5-148:8" resultTypeName="t:String" valueType="t:String" value=")." xsi:type="Literal"/>
+         </expression>
+      </def>
+      <def localId="294" locator="175:1-180:5" name="PPIs and Misoprostols Rx" context="Patient" accessLevel="Public">
+         <annotation xsi:type="a:Annotation">
+            <a:s r="294">
+               <a:s>define &quot;PPIs and Misoprostols Rx&quot;:
+    </a:s>
+               <a:s r="293">
+                  <a:s>(
+      </a:s>
+                  <a:s r="293">
+                     <a:s>
+                        <a:s r="278">
+                           <a:s r="277">
+                              <a:s r="277">
+                                 <a:s>[MedicationStatement: </a:s>
+                                 <a:s>
+                                    <a:s>&quot;PPIs and Misoprostols&quot;</a:s>
+                                 </a:s>
+                                 <a:s>]</a:s>
+                              </a:s>
+                           </a:s>
+                           <a:s> MS</a:s>
+                        </a:s>
+                     </a:s>
+                     <a:s>
+        </a:s>
+                     <a:s r="286">
+                        <a:s>where </a:s>
+                        <a:s r="286">
+                           <a:s r="282">
+                              <a:s r="281">
+                                 <a:s r="280">
+                                    <a:s r="279">
+                                       <a:s>MS</a:s>
+                                    </a:s>
+                                    <a:s>.</a:s>
+                                    <a:s r="280">
+                                       <a:s>effective</a:s>
+                                    </a:s>
+                                 </a:s>
+                                 <a:s>.</a:s>
+                                 <a:s r="281">
+                                    <a:s>start</a:s>
+                                 </a:s>
+                              </a:s>
+                              <a:s>.</a:s>
+                              <a:s r="282">
+                                 <a:s>value</a:s>
+                              </a:s>
+                           </a:s>
+                           <a:s> > </a:s>
+                           <a:s r="285">
+                              <a:s>(</a:s>
+                              <a:s r="285">
+                                 <a:s r="283">
+                                    <a:s>Today()</a:s>
+                                 </a:s>
+                                 <a:s> - </a:s>
+                                 <a:s r="284">
+                                    <a:s>100 days</a:s>
+                                 </a:s>
+                              </a:s>
+                              <a:s>)</a:s>
+                           </a:s>
+                        </a:s>
+                     </a:s>
+                     <a:s> // or, could be hard-coded e.g., > @2022-11-01 
+        </a:s>
+                     <a:s r="292">
+                        <a:s>return </a:s>
+                        <a:s r="291">
+                           <a:s r="289">
+                              <a:s r="288">
+                                 <a:s r="287">
+                                    <a:s>MS</a:s>
+                                 </a:s>
+                                 <a:s>.</a:s>
+                                 <a:s r="288">
+                                    <a:s>medication</a:s>
+                                 </a:s>
+                              </a:s>
+                              <a:s>.</a:s>
+                              <a:s r="289">
+                                 <a:s>coding</a:s>
+                              </a:s>
+                           </a:s>
+                           <a:s r="290">[0]</a:s>
+                        </a:s>
+                     </a:s>
+                  </a:s>
+                  <a:s>
+    )</a:s>
+               </a:s>
+            </a:s>
+         </annotation>
+         <resultTypeSpecifier xsi:type="ListTypeSpecifier">
+            <elementType name="fhir:Coding" xsi:type="NamedTypeSpecifier"/>
+         </resultTypeSpecifier>
+         <expression localId="293" locator="176:5-180:5" xsi:type="Query">
+            <resultTypeSpecifier xsi:type="ListTypeSpecifier">
+               <elementType name="fhir:Coding" xsi:type="NamedTypeSpecifier"/>
+            </resultTypeSpecifier>
+            <source localId="278" locator="177:7-177:55" alias="MS">
+               <resultTypeSpecifier xsi:type="ListTypeSpecifier">
+                  <elementType name="fhir:MedicationStatement" xsi:type="NamedTypeSpecifier"/>
+               </resultTypeSpecifier>
+               <expression localId="277" locator="177:7-177:52" xsi:type="Union">
+                  <resultTypeSpecifier xsi:type="ListTypeSpecifier">
+                     <elementType name="fhir:MedicationStatement" xsi:type="NamedTypeSpecifier"/>
+                  </resultTypeSpecifier>
+                  <signature xsi:type="ListTypeSpecifier">
+                     <elementType name="fhir:MedicationStatement" xsi:type="NamedTypeSpecifier"/>
+                  </signature>
+                  <signature xsi:type="ListTypeSpecifier">
+                     <elementType name="fhir:MedicationStatement" xsi:type="NamedTypeSpecifier"/>
+                  </signature>
+                  <operand dataType="fhir:MedicationStatement" templateId="http://hl7.org/fhir/StructureDefinition/MedicationStatement" codeProperty="medication" codeComparator="in" xsi:type="Retrieve">
+                     <codes locator="177:29-177:51" resultTypeName="t:ValueSet" name="PPIs and Misoprostols" preserve="true" xsi:type="ValueSetRef"/>
+                  </operand>
+                  <operand locator="177:7-177:52" dataType="fhir:MedicationStatement" templateId="http://hl7.org/fhir/StructureDefinition/MedicationStatement" codeProperty="medication" codeComparator="in" xsi:type="Retrieve">
+                     <resultTypeSpecifier xsi:type="ListTypeSpecifier">
+                        <elementType name="fhir:MedicationStatement" xsi:type="NamedTypeSpecifier"/>
+                     </resultTypeSpecifier>
+                     <codes locator="177:29-177:51" resultTypeName="t:ValueSet" name="PPIs and Misoprostols" preserve="true" xsi:type="ValueSetRef"/>
+                  </operand>
+               </expression>
+            </source>
+            <where localId="286" locator="178:9-178:61" resultTypeName="t:Boolean" xsi:type="Greater">
+               <signature name="t:DateTime" xsi:type="NamedTypeSpecifier"/>
+               <signature name="t:DateTime" xsi:type="NamedTypeSpecifier"/>
+               <operand localId="282" locator="178:15-178:38" resultTypeName="t:DateTime" path="value" xsi:type="Property">
+                  <source localId="281" locator="178:15-178:32" resultTypeName="fhir:dateTime" path="start" xsi:type="Property">
+                     <source localId="280" locator="178:15-178:26" path="effective" scope="MS" xsi:type="Property">
+                        <resultTypeSpecifier xsi:type="ChoiceTypeSpecifier">
+                           <choice name="fhir:dateTime" xsi:type="NamedTypeSpecifier"/>
+                           <choice name="fhir:Period" xsi:type="NamedTypeSpecifier"/>
+                        </resultTypeSpecifier>
+                     </source>
+                  </source>
+               </operand>
+               <operand xsi:type="ToDateTime">
+                  <signature name="t:Date" xsi:type="NamedTypeSpecifier"/>
+                  <operand localId="285" locator="178:42-178:61" resultTypeName="t:Date" xsi:type="Subtract">
+                     <signature name="t:Date" xsi:type="NamedTypeSpecifier"/>
+                     <signature name="t:Quantity" xsi:type="NamedTypeSpecifier"/>
+                     <operand localId="283" locator="178:43-178:49" resultTypeName="t:Date" xsi:type="Today"/>
+                     <operand localId="284" locator="178:53-178:60" resultTypeName="t:Quantity" value="100" unit="days" xsi:type="Quantity"/>
+                  </operand>
+               </operand>
+            </where>
+            <return localId="292" locator="179:9-179:38">
+               <resultTypeSpecifier xsi:type="ListTypeSpecifier">
+                  <elementType name="fhir:Coding" xsi:type="NamedTypeSpecifier"/>
+               </resultTypeSpecifier>
+               <expression localId="291" locator="179:16-179:38" resultTypeName="fhir:Coding" xsi:type="Indexer">
+                  <signature xsi:type="ListTypeSpecifier">
+                     <elementType name="fhir:Coding" xsi:type="NamedTypeSpecifier"/>
+                  </signature>
+                  <signature name="t:Integer" xsi:type="NamedTypeSpecifier"/>
+                  <operand localId="289" locator="179:16-179:35" path="coding" xsi:type="Property">
+                     <resultTypeSpecifier xsi:type="ListTypeSpecifier">
+                        <elementType name="fhir:Coding" xsi:type="NamedTypeSpecifier"/>
+                     </resultTypeSpecifier>
+                     <source localId="288" locator="179:16-179:28" path="medication" scope="MS" xsi:type="Property">
+                        <resultTypeSpecifier xsi:type="ChoiceTypeSpecifier">
+                           <choice name="fhir:CodeableConcept" xsi:type="NamedTypeSpecifier"/>
+                           <choice name="fhir:Reference" xsi:type="NamedTypeSpecifier"/>
+                        </resultTypeSpecifier>
+                     </source>
+                  </operand>
+                  <operand localId="290" locator="179:37" resultTypeName="t:Integer" valueType="t:Integer" value="0" xsi:type="Literal"/>
+               </expression>
+            </return>
+         </expression>
+      </def>
+      <def localId="297" locator="172:1-173:37" resultTypeName="t:Boolean" name="Taking PPI or misoprostol" context="Patient" accessLevel="Public">
+         <annotation xsi:type="a:Annotation">
+            <a:s r="297">
+               <a:s>define &quot;Taking PPI or misoprostol&quot;:
+  </a:s>
+               <a:s r="296">
+                  <a:s>exists </a:s>
+                  <a:s r="295">
+                     <a:s>(</a:s>
+                     <a:s r="295">
+                        <a:s>&quot;PPIs and Misoprostols Rx&quot;</a:s>
+                     </a:s>
+                     <a:s>)</a:s>
+                  </a:s>
+               </a:s>
+            </a:s>
+         </annotation>
+         <expression localId="296" locator="173:3-173:37" resultTypeName="t:Boolean" xsi:type="Exists">
+            <signature xsi:type="ListTypeSpecifier">
+               <elementType name="fhir:Coding" xsi:type="NamedTypeSpecifier"/>
+            </signature>
+            <operand localId="295" locator="173:10-173:37" name="PPIs and Misoprostols Rx" xsi:type="ExpressionRef">
+               <resultTypeSpecifier xsi:type="ListTypeSpecifier">
+                  <elementType name="fhir:Coding" xsi:type="NamedTypeSpecifier"/>
+               </resultTypeSpecifier>
+            </operand>
+         </expression>
+      </def>
+      <def localId="302" locator="151:1-154:17" resultTypeName="t:String" name="Get Card 2 Indicator" context="Patient" accessLevel="Public">
+         <annotation xsi:type="a:Annotation">
+            <a:s r="302">
+               <a:s>// Card 2: PPI or misoprostol
+define &quot;Get Card 2 Indicator&quot;:
+  </a:s>
+               <a:s r="301">
+                  <a:s>if </a:s>
+                  <a:s r="298">
+                     <a:s>&quot;Taking PPI or misoprostol&quot;</a:s>
+                  </a:s>
+                  <a:s>
+    then </a:s>
+                  <a:s r="299">
+                     <a:s>'info'</a:s>
+                  </a:s>
+                  <a:s>
+  else </a:s>
+                  <a:s r="300">
+                     <a:s>'critical'</a:s>
+                  </a:s>
+               </a:s>
+            </a:s>
+         </annotation>
+         <expression localId="301" locator="152:3-154:17" resultTypeName="t:String" xsi:type="If">
+            <condition localId="298" locator="152:6-152:32" resultTypeName="t:Boolean" name="Taking PPI or misoprostol" xsi:type="ExpressionRef"/>
+            <then localId="299" locator="153:10-153:15" resultTypeName="t:String" valueType="t:String" value="info" xsi:type="Literal"/>
+            <else localId="300" locator="154:8-154:17" resultTypeName="t:String" valueType="t:String" value="critical" xsi:type="Literal"/>
+         </expression>
+      </def>
+      <def localId="312" locator="156:1-161:70" resultTypeName="t:String" name="Get Card 2 Summary" context="Patient" accessLevel="Public">
+         <annotation xsi:type="a:Annotation">
+            <a:s r="312">
+               <a:s>define &quot;Get Card 2 Summary&quot;:
+  </a:s>
+               <a:s r="311">
+                  <a:s>if </a:s>
+                  <a:s r="303">
+                     <a:s>&quot;Taking PPI or misoprostol&quot;</a:s>
+                  </a:s>
+                  <a:s>
+    then </a:s>
+                  <a:s r="309">
+                     <a:s r="307">
+                        <a:s r="304">
+                           <a:s>'Patient is taking a proton pump inhibitor ('</a:s>
+                        </a:s>
+                        <a:s>
+    + </a:s>
+                        <a:s r="306">
+                           <a:s>GetCodeNames(</a:s>
+                           <a:s r="305">
+                              <a:s>&quot;PPIs and Misoprostols Rx&quot;</a:s>
+                           </a:s>
+                           <a:s>)</a:s>
+                        </a:s>
+                     </a:s>
+                     <a:s>
+    + </a:s>
+                     <a:s r="308">
+                        <a:s>').'</a:s>
+                     </a:s>
+                  </a:s>
+                  <a:s> 
+  else </a:s>
+                  <a:s r="310">
+                     <a:s>'Patient is not taking a proton pump inhibitor or misoprostol.'</a:s>
+                  </a:s>
+               </a:s>
+            </a:s>
+         </annotation>
+         <expression localId="311" locator="157:3-161:70" resultTypeName="t:String" xsi:type="If">
+            <condition localId="303" locator="157:6-157:32" resultTypeName="t:Boolean" name="Taking PPI or misoprostol" xsi:type="ExpressionRef"/>
+            <then localId="309" locator="158:10-160:10" resultTypeName="t:String" xsi:type="Concatenate">
+               <operand localId="307" locator="158:10-159:46" resultTypeName="t:String" xsi:type="Concatenate">
+                  <operand localId="304" locator="158:10-158:54" resultTypeName="t:String" valueType="t:String" value="Patient is taking a proton pump inhibitor (" xsi:type="Literal"/>
+                  <operand localId="306" locator="159:7-159:46" resultTypeName="t:String" name="GetCodeNames" xsi:type="FunctionRef">
+                     <signature xsi:type="ListTypeSpecifier">
+                        <elementType name="fhir:Coding" xsi:type="NamedTypeSpecifier"/>
+                     </signature>
+                     <operand localId="305" locator="159:20-159:45" name="PPIs and Misoprostols Rx" xsi:type="ExpressionRef">
+                        <resultTypeSpecifier xsi:type="ListTypeSpecifier">
+                           <elementType name="fhir:Coding" xsi:type="NamedTypeSpecifier"/>
+                        </resultTypeSpecifier>
+                     </operand>
+                  </operand>
+               </operand>
+               <operand localId="308" locator="160:7-160:10" resultTypeName="t:String" valueType="t:String" value=")." xsi:type="Literal"/>
+            </then>
+            <else localId="310" locator="161:8-161:70" resultTypeName="t:String" valueType="t:String" value="Patient is not taking a proton pump inhibitor or misoprostol." xsi:type="Literal"/>
+         </expression>
+      </def>
+      <def localId="314" locator="163:1-164:113" resultTypeName="t:String" name="Get Card 2 Detail" context="Patient" accessLevel="Public">
+         <annotation xsi:type="a:Annotation">
+            <a:s r="314">
+               <a:s>define &quot;Get Card 2 Detail&quot;:
+  </a:s>
+               <a:s r="313">
+                  <a:s>'Proton pump inhibitors and misoprostol may reduce the risk of UGIB in patients receiving NSAIDs and warfarin.'</a:s>
+               </a:s>
+            </a:s>
+         </annotation>
+         <expression localId="313" locator="164:3-164:113" resultTypeName="t:String" valueType="t:String" value="Proton pump inhibitors and misoprostol may reduce the risk of UGIB in patients receiving NSAIDs and warfarin." xsi:type="Literal"/>
+      </def>
+      <def localId="319" locator="166:1-169:44" resultTypeName="t:String" name="Get Card 2 Label" context="Patient" accessLevel="Public">
+         <annotation xsi:type="a:Annotation">
+            <a:s r="319">
+               <a:s>define &quot;Get Card 2 Label&quot;:
+  </a:s>
+               <a:s r="318">
+                  <a:s>if </a:s>
+                  <a:s r="315">
+                     <a:s>&quot;Taking PPI or misoprostol&quot;</a:s>
+                  </a:s>
+                  <a:s>
+    then </a:s>
+                  <a:s r="316">
+                     <a:s>'Assess risk and take action if necessary.'</a:s>
+                  </a:s>
+                  <a:s>
+  else </a:s>
+                  <a:s r="317">
+                     <a:s>'Use only if benefit outweighs risk.'</a:s>
+                  </a:s>
+               </a:s>
+            </a:s>
+         </annotation>
+         <expression localId="318" locator="167:3-169:44" resultTypeName="t:String" xsi:type="If">
+            <condition localId="315" locator="167:6-167:32" resultTypeName="t:Boolean" name="Taking PPI or misoprostol" xsi:type="ExpressionRef"/>
+            <then localId="316" locator="168:10-168:52" resultTypeName="t:String" valueType="t:String" value="Assess risk and take action if necessary." xsi:type="Literal"/>
+            <else localId="317" locator="169:8-169:44" resultTypeName="t:String" valueType="t:String" value="Use only if benefit outweighs risk." xsi:type="Literal"/>
+         </expression>
+      </def>
+      <def localId="337" locator="213:1-218:8" name="GI Bleeds Condition" context="Patient" accessLevel="Public">
+         <annotation xsi:type="a:Annotation">
+            <a:s r="337">
+               <a:s>define &quot;GI Bleeds Condition&quot;:
+      </a:s>
+               <a:s r="336">
+                  <a:s>(
+       </a:s>
+                  <a:s r="336">
+                     <a:s>
+                        <a:s r="321">
+                           <a:s r="320">
+                              <a:s r="320">
+                                 <a:s>[Condition]</a:s>
+                              </a:s>
+                           </a:s>
+                           <a:s> C</a:s>
+                        </a:s>
+                     </a:s>
+                     <a:s>  // This fails using [Condition &quot;History of GI Bleeds&quot;] using the OMOPonFHIR server with synthetic data due to an internal error
+       </a:s>
+                     <a:s r="329">
+                        <a:s>where </a:s>
+                        <a:s r="329">
+                           <a:s r="327">
+                              <a:s>ToCode(</a:s>
+                              <a:s r="326">
+                                 <a:s r="324">
+                                    <a:s r="323">
+                                       <a:s r="322">
+                                          <a:s>C</a:s>
+                                       </a:s>
+                                       <a:s>.</a:s>
+                                       <a:s r="323">
+                                          <a:s>code</a:s>
+                                       </a:s>
+                                    </a:s>
+                                    <a:s>.</a:s>
+                                    <a:s r="324">
+                                       <a:s>coding</a:s>
+                                    </a:s>
+                                 </a:s>
+                                 <a:s r="325">[0]</a:s>
+                              </a:s>
+                              <a:s>)</a:s>
+                           </a:s>
+                           <a:s> in </a:s>
+                           <a:s r="328">
+                              <a:s>&quot;History of GI Bleeds&quot;</a:s>
+                           </a:s>
+                        </a:s>
+                     </a:s>
+                     <a:s>
+       </a:s>
+                     <a:s r="335">
+                        <a:s>return </a:s>
+                        <a:s r="334">
+                           <a:s r="332">
+                              <a:s r="331">
+                                 <a:s r="330">
+                                    <a:s>C</a:s>
+                                 </a:s>
+                                 <a:s>.</a:s>
+                                 <a:s r="331">
+                                    <a:s>code</a:s>
+                                 </a:s>
+                              </a:s>
+                              <a:s>.</a:s>
+                              <a:s r="332">
+                                 <a:s>coding</a:s>
+                              </a:s>
+                           </a:s>
+                           <a:s r="333">[0]</a:s>
+                        </a:s>
+                     </a:s>
+                  </a:s>
+                  <a:s>
+       )</a:s>
+               </a:s>
+            </a:s>
+         </annotation>
+         <resultTypeSpecifier xsi:type="ListTypeSpecifier">
+            <elementType name="fhir:Coding" xsi:type="NamedTypeSpecifier"/>
+         </resultTypeSpecifier>
+         <expression localId="336" locator="214:7-218:8" xsi:type="Query">
+            <resultTypeSpecifier xsi:type="ListTypeSpecifier">
+               <elementType name="fhir:Coding" xsi:type="NamedTypeSpecifier"/>
+            </resultTypeSpecifier>
+            <source localId="321" locator="215:8-215:20" alias="C">
+               <resultTypeSpecifier xsi:type="ListTypeSpecifier">
+                  <elementType name="fhir:Condition" xsi:type="NamedTypeSpecifier"/>
+               </resultTypeSpecifier>
+               <expression localId="320" locator="215:8-215:18" dataType="fhir:Condition" templateId="http://hl7.org/fhir/StructureDefinition/Condition" xsi:type="Retrieve">
+                  <resultTypeSpecifier xsi:type="ListTypeSpecifier">
+                     <elementType name="fhir:Condition" xsi:type="NamedTypeSpecifier"/>
+                  </resultTypeSpecifier>
+               </expression>
+            </source>
+            <where localId="329" locator="216:8-216:63" resultTypeName="t:Boolean" xsi:type="InValueSet">
+               <signature name="t:Code" xsi:type="NamedTypeSpecifier"/>
+               <code localId="327" locator="216:14-216:37" resultTypeName="t:Code" name="ToCode" xsi:type="FunctionRef">
+                  <signature name="fhir:Coding" xsi:type="NamedTypeSpecifier"/>
+                  <operand localId="326" locator="216:21-216:36" resultTypeName="fhir:Coding" xsi:type="Indexer">
+                     <signature xsi:type="ListTypeSpecifier">
+                        <elementType name="fhir:Coding" xsi:type="NamedTypeSpecifier"/>
+                     </signature>
+                     <signature name="t:Integer" xsi:type="NamedTypeSpecifier"/>
+                     <operand localId="324" locator="216:21-216:33" path="coding" xsi:type="Property">
+                        <resultTypeSpecifier xsi:type="ListTypeSpecifier">
+                           <elementType name="fhir:Coding" xsi:type="NamedTypeSpecifier"/>
+                        </resultTypeSpecifier>
+                        <source localId="323" locator="216:21-216:26" resultTypeName="fhir:CodeableConcept" path="code" scope="C" xsi:type="Property"/>
+                     </operand>
+                     <operand localId="325" locator="216:35" resultTypeName="t:Integer" valueType="t:Integer" value="0" xsi:type="Literal"/>
+                  </operand>
+               </code>
+               <valueset localId="328" locator="216:42-216:63" resultTypeName="t:ValueSet" name="History of GI Bleeds" preserve="true"/>
+            </where>
+            <return localId="335" locator="217:8-217:30">
+               <resultTypeSpecifier xsi:type="ListTypeSpecifier">
+                  <elementType name="fhir:Coding" xsi:type="NamedTypeSpecifier"/>
+               </resultTypeSpecifier>
+               <expression localId="334" locator="217:15-217:30" resultTypeName="fhir:Coding" xsi:type="Indexer">
+                  <signature xsi:type="ListTypeSpecifier">
+                     <elementType name="fhir:Coding" xsi:type="NamedTypeSpecifier"/>
+                  </signature>
+                  <signature name="t:Integer" xsi:type="NamedTypeSpecifier"/>
+                  <operand localId="332" locator="217:15-217:27" path="coding" xsi:type="Property">
+                     <resultTypeSpecifier xsi:type="ListTypeSpecifier">
+                        <elementType name="fhir:Coding" xsi:type="NamedTypeSpecifier"/>
+                     </resultTypeSpecifier>
+                     <source localId="331" locator="217:15-217:20" resultTypeName="fhir:CodeableConcept" path="code" scope="C" xsi:type="Property"/>
+                  </operand>
+                  <operand localId="333" locator="217:29" resultTypeName="t:Integer" valueType="t:Integer" value="0" xsi:type="Literal"/>
+               </expression>
+            </return>
+         </expression>
+      </def>
+      <def localId="344" locator="208:1-211:20" resultTypeName="t:Boolean" name="Age > 65 years or Hx UGIB" context="Patient" accessLevel="Public">
+         <annotation xsi:type="a:Annotation">
+            <a:s r="344">
+               <a:s>define &quot;Age > 65 years or Hx UGIB&quot;:
+   </a:s>
+               <a:s r="343">
+                  <a:s r="339">
+                     <a:s r="338">
+                        <a:s>&quot;GI Bleeds Condition&quot;</a:s>
+                     </a:s>
+                     <a:s> is not null</a:s>
+                  </a:s>
+                  <a:s>
+   or
+   </a:s>
+                  <a:s r="342">
+                     <a:s r="340">
+                        <a:s>AgeInYears()</a:s>
+                     </a:s>
+                     <a:s r="341"> > 65</a:s>
+                  </a:s>
+               </a:s>
+            </a:s>
+         </annotation>
+         <expression localId="343" locator="209:4-211:20" resultTypeName="t:Boolean" xsi:type="Or">
+            <signature name="t:Boolean" xsi:type="NamedTypeSpecifier"/>
+            <signature name="t:Boolean" xsi:type="NamedTypeSpecifier"/>
+            <operand localId="339" locator="209:4-209:36" resultTypeName="t:Boolean" xsi:type="Not">
+               <signature name="t:Boolean" xsi:type="NamedTypeSpecifier"/>
+               <operand locator="209:4-209:36" resultTypeName="t:Boolean" xsi:type="IsNull">
+                  <signature name="t:Any" xsi:type="NamedTypeSpecifier"/>
+                  <operand localId="338" locator="209:4-209:24" name="GI Bleeds Condition" xsi:type="ExpressionRef">
+                     <resultTypeSpecifier xsi:type="ListTypeSpecifier">
+                        <elementType name="fhir:Coding" xsi:type="NamedTypeSpecifier"/>
+                     </resultTypeSpecifier>
+                  </operand>
+               </operand>
+            </operand>
+            <operand localId="342" locator="211:4-211:20" resultTypeName="t:Boolean" xsi:type="Greater">
+               <signature name="t:Integer" xsi:type="NamedTypeSpecifier"/>
+               <signature name="t:Integer" xsi:type="NamedTypeSpecifier"/>
+               <operand localId="340" locator="211:4-211:15" resultTypeName="t:Integer" precision="Year" xsi:type="CalculateAge">
+                  <signature name="t:Date" xsi:type="NamedTypeSpecifier"/>
+                  <operand path="birthDate.value" xsi:type="Property">
+                     <source name="Patient" xsi:type="ExpressionRef"/>
+                  </operand>
+               </operand>
+               <operand localId="341" locator="211:19-211:20" resultTypeName="t:Integer" valueType="t:Integer" value="65" xsi:type="Literal"/>
+            </operand>
+         </expression>
+      </def>
+      <def localId="349" locator="183:1-186:13" resultTypeName="t:String" name="Get Card 3 Indicator" context="Patient" accessLevel="Public">
+         <annotation xsi:type="a:Annotation">
+            <a:s r="349">
+               <a:s>// Card 3: History of UGIB/peptic ulcer or > 65 years old
+define &quot;Get Card 3 Indicator&quot;:
+  </a:s>
+               <a:s r="348">
+                  <a:s>if </a:s>
+                  <a:s r="345">
+                     <a:s>&quot;Age > 65 years or Hx UGIB&quot;</a:s>
+                  </a:s>
+                  <a:s>
+    then </a:s>
+                  <a:s r="346">
+                     <a:s>'warning'</a:s>
+                  </a:s>
+                  <a:s>
+  else </a:s>
+                  <a:s r="347">
+                     <a:s>'info'</a:s>
+                  </a:s>
+               </a:s>
+            </a:s>
+         </annotation>
+         <expression localId="348" locator="184:3-186:13" resultTypeName="t:String" xsi:type="If">
+            <condition localId="345" locator="184:6-184:32" resultTypeName="t:Boolean" name="Age > 65 years or Hx UGIB" xsi:type="ExpressionRef"/>
+            <then localId="346" locator="185:10-185:18" resultTypeName="t:String" valueType="t:String" value="warning" xsi:type="Literal"/>
+            <else localId="347" locator="186:8-186:13" resultTypeName="t:String" valueType="t:String" value="info" xsi:type="Literal"/>
+         </expression>
+      </def>
+      <def localId="366" locator="188:1-194:93" resultTypeName="t:String" name="Get Card 3 Summary" context="Patient" accessLevel="Public">
+         <annotation xsi:type="a:Annotation">
+            <a:s r="366">
+               <a:s>define &quot;Get Card 3 Summary&quot;:
+  </a:s>
+               <a:s r="365">
+                  <a:s>if </a:s>
+                  <a:s r="350">
+                     <a:s>&quot;Age > 65 years or Hx UGIB&quot;</a:s>
+                  </a:s>
+                  <a:s>
+    then </a:s>
+                  <a:s r="363">
+                     <a:s r="361">
+                        <a:s r="358">
+                           <a:s r="356">
+                              <a:s r="353">
+                                 <a:s r="351">
+                                    <a:s>'Patient\'s age is at least 65 years old or the patient does have a history of upper gastrointestinal bleed '</a:s>
+                                 </a:s>
+                                 <a:s>
+    + </a:s>
+                                 <a:s r="352">
+                                    <a:s>' (patient is '</a:s>
+                                 </a:s>
+                              </a:s>
+                              <a:s> + </a:s>
+                              <a:s r="355">
+                                 <a:s>ToString(</a:s>
+                                 <a:s r="354">
+                                    <a:s>AgeInYears()</a:s>
+                                 </a:s>
+                                 <a:s>)</a:s>
+                              </a:s>
+                           </a:s>
+                           <a:s> + </a:s>
+                           <a:s r="357">
+                              <a:s>' years old. GI condition on record: '</a:s>
+                           </a:s>
+                        </a:s>
+                        <a:s>
+    + </a:s>
+                        <a:s r="360">
+                           <a:s>GetCodeNames(</a:s>
+                           <a:s r="359">
+                              <a:s>&quot;GI Bleeds Condition&quot;</a:s>
+                           </a:s>
+                           <a:s>)</a:s>
+                        </a:s>
+                     </a:s>
+                     <a:s>
+    + </a:s>
+                     <a:s r="362">
+                        <a:s>').'</a:s>
+                     </a:s>
+                  </a:s>
+                  <a:s> 
+    else </a:s>
+                  <a:s r="364">
+                     <a:s>'Patient is not 65 y/o and does not have a history of upper gastrointestinal bleed.'</a:s>
+                  </a:s>
+               </a:s>
+            </a:s>
+         </annotation>
+         <expression localId="365" locator="189:3-194:93" resultTypeName="t:String" xsi:type="If">
+            <condition localId="350" locator="189:6-189:32" resultTypeName="t:Boolean" name="Age > 65 years or Hx UGIB" xsi:type="ExpressionRef"/>
+            <then localId="363" locator="190:10-193:10" resultTypeName="t:String" xsi:type="Concatenate">
+               <operand localId="361" locator="190:10-192:41" resultTypeName="t:String" xsi:type="Concatenate">
+                  <operand localId="358" locator="190:10-191:87" resultTypeName="t:String" xsi:type="Concatenate">
+                     <operand localId="356" locator="190:10-191:46" resultTypeName="t:String" xsi:type="Concatenate">
+                        <operand localId="353" locator="190:10-191:21" resultTypeName="t:String" xsi:type="Concatenate">
+                           <operand localId="351" locator="190:10-190:118" resultTypeName="t:String" valueType="t:String" value="Patient's age is at least 65 years old or the patient does have a history of upper gastrointestinal bleed " xsi:type="Literal"/>
+                           <operand localId="352" locator="191:7-191:21" resultTypeName="t:String" valueType="t:String" value=" (patient is " xsi:type="Literal"/>
+                        </operand>
+                        <operand localId="355" locator="191:25-191:46" resultTypeName="t:String" xsi:type="ToString">
+                           <signature name="t:Integer" xsi:type="NamedTypeSpecifier"/>
+                           <operand localId="354" locator="191:34-191:45" resultTypeName="t:Integer" precision="Year" xsi:type="CalculateAge">
+                              <signature name="t:Date" xsi:type="NamedTypeSpecifier"/>
+                              <operand path="birthDate.value" xsi:type="Property">
+                                 <source name="Patient" xsi:type="ExpressionRef"/>
+                              </operand>
+                           </operand>
+                        </operand>
+                     </operand>
+                     <operand localId="357" locator="191:50-191:87" resultTypeName="t:String" valueType="t:String" value=" years old. GI condition on record: " xsi:type="Literal"/>
+                  </operand>
+                  <operand localId="360" locator="192:7-192:41" resultTypeName="t:String" name="GetCodeNames" xsi:type="FunctionRef">
+                     <signature xsi:type="ListTypeSpecifier">
+                        <elementType name="fhir:Coding" xsi:type="NamedTypeSpecifier"/>
+                     </signature>
+                     <operand localId="359" locator="192:20-192:40" name="GI Bleeds Condition" xsi:type="ExpressionRef">
+                        <resultTypeSpecifier xsi:type="ListTypeSpecifier">
+                           <elementType name="fhir:Coding" xsi:type="NamedTypeSpecifier"/>
+                        </resultTypeSpecifier>
+                     </operand>
+                  </operand>
+               </operand>
+               <operand localId="362" locator="193:7-193:10" resultTypeName="t:String" valueType="t:String" value=")." xsi:type="Literal"/>
+            </then>
+            <else localId="364" locator="194:10-194:93" resultTypeName="t:String" valueType="t:String" value="Patient is not 65 y/o and does not have a history of upper gastrointestinal bleed." xsi:type="Literal"/>
+         </expression>
+      </def>
+      <def localId="368" locator="197:1-198:282" resultTypeName="t:String" name="Get Card 3 Detail" context="Patient" accessLevel="Public">
+         <annotation xsi:type="a:Annotation">
+            <a:s r="368">
+               <a:s>define &quot;Get Card 3 Detail&quot;:
+  </a:s>
+               <a:s r="367">
+                  <a:s>'Patients with a history of UGIB or peptic ulcer may have an increased risk of UGIB from this interaction. The extent to which older age is an independent risk factor for UGIB due to these interactions is not firmly established, but UGIB in general is known to increase with age.'</a:s>
+               </a:s>
+            </a:s>
+         </annotation>
+         <expression localId="367" locator="198:3-198:282" resultTypeName="t:String" valueType="t:String" value="Patients with a history of UGIB or peptic ulcer may have an increased risk of UGIB from this interaction. The extent to which older age is an independent risk factor for UGIB due to these interactions is not firmly established, but UGIB in general is known to increase with age." xsi:type="Literal"/>
+      </def>
+      <def localId="376" locator="200:1-205:50" resultTypeName="t:String" name="Get Card 3 Label" context="Patient" accessLevel="Public">
+         <annotation xsi:type="a:Annotation">
+            <a:s r="376">
+               <a:s>define &quot;Get Card 3 Label&quot;:
+  </a:s>
+               <a:s r="375">
+                  <a:s>if </a:s>
+                  <a:s r="369">
+                     <a:s>&quot;Taking PPI or misoprostol&quot;</a:s>
+                  </a:s>
+                  <a:s>
+    then </a:s>
+                  <a:s r="370">
+                     <a:s>'Assess risk and take action if necessary.'</a:s>
+                  </a:s>
+                  <a:s>
+  else </a:s>
+                  <a:s r="374">
+                     <a:s>if </a:s>
+                     <a:s r="371">
+                        <a:s>&quot;Age > 65 years or Hx UGIB&quot;</a:s>
+                     </a:s>
+                     <a:s>
+    then </a:s>
+                     <a:s r="372">
+                        <a:s>'Use only if benefit outweighs risk.'</a:s>
+                     </a:s>
+                     <a:s>
+  else </a:s>
+                     <a:s r="373">
+                        <a:s>'Assess risk and take action if necessary.'</a:s>
+                     </a:s>
+                  </a:s>
+               </a:s>
+            </a:s>
+         </annotation>
+         <expression localId="375" locator="201:3-205:50" resultTypeName="t:String" xsi:type="If">
+            <condition localId="369" locator="201:6-201:32" resultTypeName="t:Boolean" name="Taking PPI or misoprostol" xsi:type="ExpressionRef"/>
+            <then localId="370" locator="202:10-202:52" resultTypeName="t:String" valueType="t:String" value="Assess risk and take action if necessary." xsi:type="Literal"/>
+            <else localId="374" locator="203:8-205:50" resultTypeName="t:String" xsi:type="If">
+               <condition localId="371" locator="203:11-203:37" resultTypeName="t:Boolean" name="Age > 65 years or Hx UGIB" xsi:type="ExpressionRef"/>
+               <then localId="372" locator="204:10-204:46" resultTypeName="t:String" valueType="t:String" value="Use only if benefit outweighs risk." xsi:type="Literal"/>
+               <else localId="373" locator="205:8-205:50" resultTypeName="t:String" valueType="t:String" value="Assess risk and take action if necessary." xsi:type="Literal"/>
+            </else>
+         </expression>
+      </def>
+   </statements>
+</library>

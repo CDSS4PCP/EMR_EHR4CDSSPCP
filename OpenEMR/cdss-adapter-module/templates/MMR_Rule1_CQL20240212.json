@@ -1,0 +1,249 @@
+{
+   "library": {
+     "annotation": [
+       {
+         "translatorOptions": "",
+         "type": "CqlToElmInfo"
+       },
+       {
+         "libraryId": "MMR1regularyoungerthan12monthsNoMMRRecommendation",
+         "libraryVersion": "1",
+         "startLine": 31,
+         "startChar": 14,
+         "endLine": 31,
+         "endChar": 19,
+         "message": "Could not resolve identifier Common in the current library.",
+         "errorType": "semantic",
+         "errorSeverity": "error",
+         "type": "CqlToElmError"
+       },
+       {
+         "libraryId": "MMR1regularyoungerthan12monthsNoMMRRecommendation",
+         "libraryVersion": "1",
+         "startLine": 36,
+         "startChar": 4,
+         "endLine": 36,
+         "endChar": 22,
+         "message": "Could not validate reference to expression MMRVaccine_NonExist because its definition contains errors.",
+         "errorType": "semantic",
+         "errorSeverity": "error",
+         "type": "CqlToElmError"
+       },
+       {
+         "libraryId": "MMR1regularyoungerthan12monthsNoMMRRecommendation",
+         "libraryVersion": "1",
+         "startLine": 39,
+         "startChar": 5,
+         "endLine": 39,
+         "endChar": 16,
+         "message": "Could not validate reference to expression InPopulation because its definition contains errors.",
+         "errorType": "semantic",
+         "errorSeverity": "error",
+         "type": "CqlToElmError"
+       }
+     ],
+     "identifier": {
+       "id": "MMR1regularyoungerthan12monthsNoMMRRecommendation",
+       "version": "1"
+     },
+     "schemaIdentifier": {
+       "id": "urn:hl7-org:elm",
+       "version": "r1"
+     },
+     "usings": {
+       "def": [
+         {
+           "localIdentifier": "System",
+           "uri": "urn:hl7-org:elm-types:r1"
+         },
+         {
+           "localIdentifier": "FHIR",
+           "uri": "http://hl7.org/fhir",
+           "version": "4.0.1"
+         }
+       ]
+     },
+     "includes": {
+       "def": [
+         {
+           "localIdentifier": "FHIRHelpers",
+           "path": "FHIRHelpers",
+           "version": "4.0.1"
+         }
+       ]
+     },
+     "parameters": {
+       "def": [
+         {
+           "name": "Imm",
+           "accessLevel": "Public",
+           "parameterTypeSpecifier": {
+             "name": "{http://hl7.org/fhir}Immunization",
+             "type": "NamedTypeSpecifier"
+           }
+         }
+       ]
+     },
+     "codeSystems": {
+       "def": [
+         {
+           "name": "Other",
+           "id": "http://hl7.org/fhir/sid/cvx",
+           "accessLevel": "Public"
+         }
+       ]
+     },
+     "valueSets": {
+       "def": [
+         {
+           "name": "Measles, Mumps and Rubella (MMR) Vaccine Administered VS",
+           "id": "https://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.110.11.1086",
+           "accessLevel": "Public"
+         },
+         {
+           "name": "Measles, Mumps and Rubella (MMR) Vaccine VS",
+           "id": "https://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.196.11.1235",
+           "accessLevel": "Public"
+         },
+         {
+           "name": "Measles, Mumps and Rubella (MMR) Vaccine VS_1",
+           "id": "https://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.196.12.1224",
+           "accessLevel": "Public"
+         },
+         {
+           "name": "Measles, Mumps and Rubella (MMR) Vaccine Administered VS_1",
+           "id": "https://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.110.12.1031",
+           "accessLevel": "Public"
+         },
+         {
+           "name": "Measles, Mumps and Rubella (MMR) Vaccine Administered VS_2",
+           "id": "https://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.110.11.1085",
+           "accessLevel": "Public"
+         }
+       ]
+     },
+     "codes": {
+       "def": [
+         {
+           "name": "measles, mumps, rubella, and varicella virus vaccine code",
+           "id": "94",
+           "display": "measles, mumps, rubella, and varicella virus vaccine",
+           "accessLevel": "Public",
+           "codeSystem": {
+             "name": "Other"
+           }
+         },
+         {
+           "name": "measles, mumps and rubella virus vaccine code",
+           "id": "03",
+           "display": "measles, mumps and rubella virus vaccine",
+           "accessLevel": "Public",
+           "codeSystem": {
+             "name": "Other"
+           }
+         }
+       ]
+     },
+     "contexts": {
+       "def": [
+         {
+           "name": "Patient"
+         }
+       ]
+     },
+     "statements": {
+       "def": [
+         {
+           "name": "Patient",
+           "context": "Patient",
+           "expression": {
+             "type": "SingletonFrom",
+             "operand": {
+               "dataType": "{http://hl7.org/fhir}Patient",
+               "templateId": "http://hl7.org/fhir/StructureDefinition/Patient",
+               "type": "Retrieve"
+             }
+           }
+         },
+         {
+           "name": "CurrentAge",
+           "context": "Patient",
+           "accessLevel": "Public",
+           "expression": {
+             "type": "And",
+             "operand": [
+               {
+                 "type": "GreaterOrEqual",
+                 "operand": [
+                   {
+                     "precision": "Month",
+                     "type": "CalculateAge",
+                     "operand": {
+                       "path": "birthDate.value",
+                       "type": "Property",
+                       "source": {
+                         "name": "Patient",
+                         "type": "ExpressionRef"
+                       }
+                     }
+                   },
+                   {
+                     "valueType": "{urn:hl7-org:elm-types:r1}Integer",
+                     "value": "0",
+                     "type": "Literal"
+                   }
+                 ]
+               },
+               {
+                 "type": "Less",
+                 "operand": [
+                   {
+                     "precision": "Month",
+                     "type": "CalculateAge",
+                     "operand": {
+                       "path": "birthDate.value",
+                       "type": "Property",
+                       "source": {
+                         "name": "Patient",
+                         "type": "ExpressionRef"
+                       }
+                     }
+                   },
+                   {
+                     "valueType": "{urn:hl7-org:elm-types:r1}Integer",
+                     "value": "12",
+                     "type": "Literal"
+                   }
+                 ]
+               }
+             ]
+           }
+         },
+         {
+           "name": "MMRVaccine_NonExist",
+           "context": "Patient",
+           "accessLevel": "Public",
+           "expression": {
+             "type": "Null"
+           }
+         },
+         {
+           "name": "InPopulation",
+           "context": "Patient",
+           "accessLevel": "Public",
+           "expression": {
+             "type": "Null"
+           }
+         },
+         {
+           "name": "Recommendation",
+           "context": "Patient",
+           "accessLevel": "Public",
+           "expression": {
+             "type": "Null"
+           }
+         }
+       ]
+     }
+   }
+ }
