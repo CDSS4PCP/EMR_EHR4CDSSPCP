@@ -10,6 +10,7 @@
 package org.openmrs.module.cdss.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.openmrs.annotation.Authorized;
 import org.openmrs.api.OpenmrsService;
 
 /**
@@ -18,6 +19,7 @@ import org.openmrs.api.OpenmrsService;
  */
 public interface CDSSService extends OpenmrsService {
 	
+	@Authorized
 	ObjectMapper getCdssObjectMapper();
 	
 }

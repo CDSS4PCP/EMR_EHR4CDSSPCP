@@ -5,26 +5,25 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import org.apache.log4j.Logger;
+import org.openmrs.api.APIAuthenticationException;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.ServiceContext;
 import org.openmrs.module.cdss.api.CDSSService;
 import org.openmrs.module.cdss.api.RuleLoggerService;
+import org.openmrs.module.cdss.api.RuleManagerService;
 import org.openmrs.module.cdss.api.dao.CDSSDao;
 import org.openmrs.module.cdss.api.data.CdssUsage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.Base64;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/cdss")
@@ -42,36 +41,26 @@ public class ClientsideRestController {
 	@Qualifier("adminService")
 	protected AdministrationService administrationService;
 	
-	private static String[] rules = new String[] { "MMR_Rule1.json", "MMR_Rule4.json", "MMR_Rule5.json", "MMR_Rule6.json",
-	        "MMR_Rule7.json", "MMR_Rule7.json", "MMR_Rule9.json", "MMR_Rule10.json", "MMR_Rule11.json" };
+	@GetMapping(path = "/rule/{ruleId}", produces = {"application/json"})
+    public ResponseEntity<String> getRule(@PathVariable(value = "ruleId") String ruleId) throws APIAuthenticationException {
+
+        RuleManagerService service = ServiceContext.getInstance().getService(RuleManagerService.class);
+        try {
+            String rule = service.getRule(ruleId);
+            return ResponseEntity.ok(rule);
+        } catch (NullPointerException e) {
+            return new ResponseEntity<>("Rule " + ruleId + " Not found", HttpStatus.NOT_FOUND);
+        }
+
+    }
 	
-	@GetMapping(path = "/rule/{ruleId}", produces = "application/json")
-	public String getRule(@PathVariable(value = "ruleId") String ruleId) {
+	@GetMapping(path = "/rule.form", produces = { "application/json" })
+	public ResponseEntity<String[]> getRules() throws APIAuthenticationException {
+		RuleManagerService service = ServiceContext.getInstance().getService(RuleManagerService.class);
 		
-		final Boolean allowDownloads = Boolean.parseBoolean(administrationService
-		        .getGlobalProperty("cdss.allowRuleDownloads"));
-		String path = "cql/" + ruleId;
-		log.debug(ruleId + " ending = " + ruleId.endsWith(".json"));
-		if (!ruleId.endsWith(".json")) {
-			path = path + ".json";
-		}
-		ClassLoader classloader = Thread.currentThread().getContextClassLoader();
-		InputStream is = classloader.getResourceAsStream(path);
+		String[] rules = service.getRules();
+		return ResponseEntity.ok(rules);
 		
-		if (is != null) { // Rule was not found
-			String result = new BufferedReader(new InputStreamReader(is)).lines().collect(Collectors.joining("\n"));
-			
-			return result;
-		} else if (allowDownloads) {
-			// try to download the rule
-			String repoUrl = administrationService.getGlobalProperty("cdss.ruleRepoUrl");
-		}
-		throw new ResponseStatusException(HttpStatus.NOT_FOUND, path + " not found");
-	}
-	
-	@GetMapping(path = "/rule.form", produces = "application/json")
-	public String[] getRules() {
-		return rules;
 	}
 	
 	@RequestMapping(path = "/record-usage.form", produces = "application/json", method = {RequestMethod.POST})
@@ -86,7 +75,10 @@ public class ClientsideRestController {
             return new ResponseEntity<>("Internal Error encountered", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        CdssUsage saved = dao.saveEngineUsage(newUsage);
+        RuleLoggerService service = ServiceContext.getInstance().getService(RuleLoggerService.class);
+        CdssUsage saved = service.recordRuleUsage(newUsage);
+
+//        CdssUsage saved = dao.saveEngineUsage(newUsage);
         if (saved == null) {
             log.warn("Attempted to save CdssUsage but could not");
             return new ResponseEntity<>("Internal Issue Encountered", HttpStatus.OK);
@@ -187,5 +179,15 @@ public class ClientsideRestController {
         } catch (IOException e) {
             return new ResponseEntity<>("", HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+	
+	@ExceptionHandler({APIAuthenticationException.class})
+    public ResponseEntity<Throwable> handleApiAuthException(APIAuthenticationException e) {
+        MultiValueMap<String, String> headers = new HttpHeaders();
+        headers.set("Content-Type", "application/json");
+
+        // Send error stacktrace as json
+        ResponseEntity<Throwable> response = new ResponseEntity<>(e, headers, HttpStatus.UNAUTHORIZED);
+        return response;
     }
 }

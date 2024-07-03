@@ -1,19 +1,16 @@
 package org.openmrs.module.cdss.api.impl;
 
 import org.apache.log4j.Logger;
-import org.openmrs.annotation.Authorized;
-import org.openmrs.api.context.Context;
+import org.openmrs.api.APIAuthenticationException;
 import org.openmrs.api.impl.BaseOpenmrsService;
-import org.openmrs.module.cdss.CDSSActivator;
 import org.openmrs.module.cdss.CDSSConfig;
 import org.openmrs.module.cdss.api.RuleManagerService;
-import org.openmrs.module.cdss.api.data.Action;
-import org.openmrs.module.cdss.api.data.Rule;
-import org.springframework.transaction.annotation.Transactional;
-//import org.openmrs.module.fhir2.api.FhirPatientService;
 
-import java.util.ArrayList;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleManagerService {
 	
@@ -37,76 +34,29 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
 	}
 	
 	@Override
-	@Transactional
-	@Authorized
-	public Boolean modifyRule(int ruleId, Rule rule) {
-		return CDSSActivator.getSampleData().modifyRule(ruleId, rule);
-	}
-	
-	@Override
-	@Transactional
-	@Authorized
-	public Boolean deleteRule(int ruleId) {
-		return CDSSActivator.getSampleData().deleteRule(ruleId);
-	}
-	
-	@Override
-	@Transactional
-	@Authorized
-	public Boolean addRule(Rule rule) {
-		return CDSSActivator.getSampleData().addRule(rule);
-	}
-	
-	@Override
-	public Rule getRuleById(Integer id) {
-		return CDSSActivator.getSampleData().getRuleById(id);
-	}
-	
-	@Override
-	public List<Rule> getRulesByVaccine(String vaccine) {
-		ArrayList<Rule> rules = new ArrayList<Rule>();
-		
-		for (Rule rule : CDSSActivator.getSampleData().getRules()) {
-			if (rule.getVaccine().equals(vaccine)) {
-				rules.add(rule);
-			}
-		}
-		
-		return rules;
-	}
-	
-	@Override
-	public List<Rule> getAllRules() {
-		return CDSSActivator.getSampleData().getRules();
-	}
-	
-	@Override
-	public boolean addVaccine(String vaccine) {
-		if (CDSSConfig.VACCINE_CODES.contains(vaccine)) {
-			return false;
-		}
-		
-		return CDSSConfig.VACCINE_CODES.add(vaccine);
-	}
-	
-	@Override
-	public List<Action> getAllActions() {
-		return CDSSActivator.getSampleData().getActions();
-	}
-	
-	@Override
-	public boolean addAction(Action action) {
-		return CDSSActivator.getSampleData().addAction(action);
-	}
-	
-	@Override
-	public Action getActionById(Integer id) {
-		
-		return CDSSActivator.getSampleData().getActionById(id);
-	}
-	
-	@Override
 	public List<String> getLoadedVaccineRulesets() {
 		return CDSSConfig.VACCINE_CODES;
+	}
+	
+	@Override
+	public String[] getRules() throws APIAuthenticationException {
+		return new String[] { "MMR_Rule1.json", "MMR_Rule4.json", "MMR_Rule5.json", "MMR_Rule6.json", "MMR_Rule7.json",
+		        "MMR_Rule7.json", "MMR_Rule9.json", "MMR_Rule10.json", "MMR_Rule11.json" };
+	}
+	
+	@Override
+	public String getRule(String ruleId) throws APIAuthenticationException, NullPointerException {
+		String path = "rules/elm/" + ruleId;
+		
+		if (!ruleId.endsWith(".json")) {
+			path = path + ".json";
+		}
+		if (!ruleId.endsWith(".json")) {
+			path = path + ".json";
+		}
+		ClassLoader classloader = Thread.currentThread().getContextClassLoader();
+		InputStream is = classloader.getResourceAsStream(path);
+		String result = new BufferedReader(new InputStreamReader(is)).lines().collect(Collectors.joining("\n"));
+		return result;
 	}
 }

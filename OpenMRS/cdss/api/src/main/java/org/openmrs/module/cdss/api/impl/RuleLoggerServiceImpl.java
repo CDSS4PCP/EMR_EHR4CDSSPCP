@@ -71,8 +71,8 @@ public class RuleLoggerServiceImpl extends BaseOpenmrsService implements RuleLog
 	}
 	
 	@Override
-	public void recordRuleUsage(CdssUsage usage) {
-		
+	public CdssUsage recordRuleUsage(CdssUsage usage) {
+		return dao.saveEngineUsage(usage);
 	}
 	
 	@Override

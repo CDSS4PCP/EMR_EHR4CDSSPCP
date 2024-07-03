@@ -94,7 +94,7 @@ public class RuleEngineServiceImpl extends BaseOpenmrsService implements RuleEng
 			return null;
 		}
 		
-		List<Rule> rules = service.getRulesByVaccine(vaccine);
+		//		List<Rule> rules = service.getRulesByVaccine(vaccine);
 		
 		List<Rule> applicableRules = new ArrayList<Rule>();
 		
