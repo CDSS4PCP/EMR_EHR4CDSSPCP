@@ -1,0 +1,1220 @@
+{
+   "library": {
+       "annotation": [
+           {
+               "translatorVersion": "3.7.1",
+               "translatorOptions": "",
+               "signatureLevel": "None",
+               "type": "CqlToElmInfo"
+           },
+           {
+               "libraryId": "\"age_condition\"",
+               "startLine": 72,
+               "startChar": 49,
+               "endLine": 72,
+               "endChar": 49,
+               "message": "Syntax error at =",
+               "errorType": "syntax",
+               "errorSeverity": "error",
+               "type": "CqlToElmError"
+           },
+           {
+               "libraryId": "age_condition",
+               "libraryVersion": "1",
+               "startLine": 27,
+               "startChar": 24,
+               "endLine": 27,
+               "endChar": 28,
+               "message": "List-valued expression was demoted to a singleton.",
+               "errorType": "semantic",
+               "errorSeverity": "warning",
+               "type": "CqlToElmError"
+           },
+           {
+               "libraryId": "age_condition",
+               "libraryVersion": "1",
+               "startLine": 27,
+               "startChar": 24,
+               "endLine": 27,
+               "endChar": 28,
+               "message": "List-valued expression was demoted to a singleton.",
+               "errorType": "semantic",
+               "errorSeverity": "warning",
+               "type": "CqlToElmError"
+           },
+           {
+               "libraryId": "age_condition",
+               "libraryVersion": "1",
+               "startLine": 27,
+               "startChar": 58,
+               "endLine": 27,
+               "endChar": 62,
+               "message": "List-valued expression was demoted to a singleton.",
+               "errorType": "semantic",
+               "errorSeverity": "warning",
+               "type": "CqlToElmError"
+           },
+           {
+               "libraryId": "age_condition",
+               "libraryVersion": "1",
+               "startLine": 27,
+               "startChar": 58,
+               "endLine": 27,
+               "endChar": 62,
+               "message": "List-valued expression was demoted to a singleton.",
+               "errorType": "semantic",
+               "errorSeverity": "warning",
+               "type": "CqlToElmError"
+           },
+           {
+               "libraryId": "age_condition",
+               "libraryVersion": "1",
+               "startLine": 36,
+               "startChar": 5,
+               "endLine": 36,
+               "endChar": 9,
+               "message": "Could not resolve identifier MMR in the current library.",
+               "errorType": "semantic",
+               "errorSeverity": "error",
+               "type": "CqlToElmError"
+           },
+           {
+               "libraryId": "age_condition",
+               "libraryVersion": "1",
+               "startLine": 75,
+               "startChar": 5,
+               "endLine": 75,
+               "endChar": 28,
+               "message": "Could not resolve identifier Between 4 yr and 18 yr in the current library.",
+               "errorType": "semantic",
+               "errorSeverity": "error",
+               "type": "CqlToElmError"
+           },
+           {
+               "libraryId": "age_condition",
+               "libraryVersion": "1",
+               "startLine": 79,
+               "startChar": 5,
+               "endLine": 79,
+               "endChar": 28,
+               "message": "Could not validate reference to expression MeetsInclusionCriteria because its definition contains errors.",
+               "errorType": "semantic",
+               "errorSeverity": "error",
+               "type": "CqlToElmError"
+           },
+           {
+               "libraryId": "age_condition",
+               "libraryVersion": "1",
+               "startLine": 82,
+               "startChar": 8,
+               "endLine": 82,
+               "endChar": 29,
+               "message": "Could not validate reference to expression MeetsInclusionCriteria because its definition contains errors.",
+               "errorType": "semantic",
+               "errorSeverity": "error",
+               "type": "CqlToElmError"
+           }
+       ],
+       "identifier": {
+           "id": "age_condition",
+           "version": "1"
+       },
+       "schemaIdentifier": {
+           "id": "urn:hl7-org:elm",
+           "version": "r1"
+       },
+       "usings": {
+           "def": [
+               {
+                   "localIdentifier": "System",
+                   "uri": "urn:hl7-org:elm-types:r1",
+                   "annotation": []
+               },
+               {
+                   "localIdentifier": "FHIR",
+                   "uri": "http://hl7.org/fhir",
+                   "version": "4.0.1",
+                   "annotation": []
+               }
+           ]
+       },
+       "includes": {
+           "def": [
+               {
+                   "localIdentifier": "FHIRHelpers",
+                   "path": "FHIRHelpers",
+                   "version": "4.0.1",
+                   "annotation": []
+               }
+           ]
+       },
+       "parameters": {
+           "def": [
+               {
+                   "name": "ImmunizationData",
+                   "accessLevel": "Public",
+                   "annotation": [],
+                   "parameterTypeSpecifier": {
+                       "type": "ListTypeSpecifier",
+                       "annotation": [],
+                       "elementType": {
+                           "name": "{http://hl7.org/fhir}Immunization",
+                           "type": "NamedTypeSpecifier",
+                           "annotation": []
+                       }
+                   }
+               }
+           ]
+       },
+       "codeSystems": {
+           "def": [
+               {
+                   "name": "VaccineCVX",
+                   "id": "http://hl7.org/fhir/sid/cvx",
+                   "accessLevel": "Public",
+                   "annotation": []
+               }
+           ]
+       },
+       "codes": {
+           "def": [
+               {
+                   "name": "mmr code",
+                   "id": "3",
+                   "display": "mmr",
+                   "accessLevel": "Public",
+                   "annotation": [],
+                   "codeSystem": {
+                       "name": "VaccineCVX",
+                       "annotation": []
+                   }
+               }
+           ]
+       },
+       "contexts": {
+           "def": [
+               {
+                   "name": "Patient",
+                   "annotation": []
+               }
+           ]
+       },
+       "statements": {
+           "def": [
+               {
+                   "name": "ToCode",
+                   "context": "Unfiltered",
+                   "accessLevel": "Public",
+                   "type": "FunctionDef",
+                   "annotation": [],
+                   "expression": {
+                       "classType": "{urn:hl7-org:elm-types:r1}Code",
+                       "type": "Instance",
+                       "annotation": [],
+                       "element": [
+                           {
+                               "name": "code",
+                               "value": {
+                                   "path": "value",
+                                   "type": "Property",
+                                   "annotation": [],
+                                   "source": {
+                                       "path": "code",
+                                       "type": "Property",
+                                       "annotation": [],
+                                       "source": {
+                                           "name": "coding",
+                                           "type": "OperandRef",
+                                           "annotation": []
+                                       }
+                                   }
+                               }
+                           },
+                           {
+                               "name": "system",
+                               "value": {
+                                   "path": "value",
+                                   "type": "Property",
+                                   "annotation": [],
+                                   "source": {
+                                       "path": "system",
+                                       "type": "Property",
+                                       "annotation": [],
+                                       "source": {
+                                           "name": "coding",
+                                           "type": "OperandRef",
+                                           "annotation": []
+                                       }
+                                   }
+                               }
+                           },
+                           {
+                               "name": "display",
+                               "value": {
+                                   "valueType": "{urn:hl7-org:elm-types:r1}String",
+                                   "value": "mmr",
+                                   "type": "Literal",
+                                   "annotation": []
+                               }
+                           }
+                       ]
+                   },
+                   "operand": [
+                       {
+                           "name": "coding",
+                           "annotation": [],
+                           "operandTypeSpecifier": {
+                               "name": "{http://hl7.org/fhir}Coding",
+                               "type": "NamedTypeSpecifier",
+                               "annotation": []
+                           }
+                       }
+                   ]
+               },
+               {
+                   "name": "Patient",
+                   "context": "Patient",
+                   "annotation": [],
+                   "expression": {
+                       "type": "SingletonFrom",
+                       "annotation": [],
+                       "signature": [],
+                       "operand": {
+                           "dataType": "{http://hl7.org/fhir}Patient",
+                           "templateId": "http://hl7.org/fhir/StructureDefinition/Patient",
+                           "type": "Retrieve",
+                           "annotation": [],
+                           "include": [],
+                           "codeFilter": [],
+                           "dateFilter": [],
+                           "otherFilter": []
+                       }
+                   }
+               },
+               {
+                   "name": "Name",
+                   "context": "Patient",
+                   "accessLevel": "Public",
+                   "annotation": [],
+                   "expression": {
+                       "type": "Concatenate",
+                       "annotation": [],
+                       "signature": [],
+                       "operand": [
+                           {
+                               "type": "Coalesce",
+                               "annotation": [],
+                               "signature": [],
+                               "operand": [
+                                   {
+                                       "type": "Concatenate",
+                                       "annotation": [],
+                                       "signature": [],
+                                       "operand": [
+                                           {
+                                               "type": "Coalesce",
+                                               "annotation": [],
+                                               "signature": [],
+                                               "operand": [
+                                                   {
+                                                       "type": "SingletonFrom",
+                                                       "annotation": [],
+                                                       "signature": [],
+                                                       "operand": {
+                                                           "type": "Query",
+                                                           "annotation": [],
+                                                           "source": [
+                                                               {
+                                                                   "alias": "$this",
+                                                                   "annotation": [],
+                                                                   "expression": {
+                                                                       "type": "Flatten",
+                                                                       "annotation": [],
+                                                                       "signature": [],
+                                                                       "operand": {
+                                                                           "type": "Query",
+                                                                           "annotation": [],
+                                                                           "source": [
+                                                                               {
+                                                                                   "alias": "$this",
+                                                                                   "annotation": [],
+                                                                                   "expression": {
+                                                                                       "path": "name",
+                                                                                       "type": "Property",
+                                                                                       "annotation": [],
+                                                                                       "source": {
+                                                                                           "name": "Patient",
+                                                                                           "type": "ExpressionRef",
+                                                                                           "annotation": []
+                                                                                       }
+                                                                                   }
+                                                                               }
+                                                                           ],
+                                                                           "let": [],
+                                                                           "relationship": [],
+                                                                           "where": {
+                                                                               "type": "Not",
+                                                                               "annotation": [],
+                                                                               "signature": [],
+                                                                               "operand": {
+                                                                                   "type": "IsNull",
+                                                                                   "annotation": [],
+                                                                                   "signature": [],
+                                                                                   "operand": {
+                                                                                       "path": "given",
+                                                                                       "type": "Property",
+                                                                                       "annotation": [],
+                                                                                       "source": {
+                                                                                           "name": "$this",
+                                                                                           "type": "AliasRef",
+                                                                                           "annotation": []
+                                                                                       }
+                                                                                   }
+                                                                               }
+                                                                           },
+                                                                           "return": {
+                                                                               "distinct": false,
+                                                                               "annotation": [],
+                                                                               "expression": {
+                                                                                   "path": "given",
+                                                                                   "type": "Property",
+                                                                                   "annotation": [],
+                                                                                   "source": {
+                                                                                       "name": "$this",
+                                                                                       "type": "AliasRef",
+                                                                                       "annotation": []
+                                                                                   }
+                                                                               }
+                                                                           }
+                                                                       }
+                                                                   }
+                                                               }
+                                                           ],
+                                                           "let": [],
+                                                           "relationship": [],
+                                                           "where": {
+                                                               "type": "Not",
+                                                               "annotation": [],
+                                                               "signature": [],
+                                                               "operand": {
+                                                                   "type": "IsNull",
+                                                                   "annotation": [],
+                                                                   "signature": [],
+                                                                   "operand": {
+                                                                       "path": "value",
+                                                                       "type": "Property",
+                                                                       "annotation": [],
+                                                                       "source": {
+                                                                           "name": "$this",
+                                                                           "type": "AliasRef",
+                                                                           "annotation": []
+                                                                       }
+                                                                   }
+                                                               }
+                                                           },
+                                                           "return": {
+                                                               "distinct": false,
+                                                               "annotation": [],
+                                                               "expression": {
+                                                                   "path": "value",
+                                                                   "type": "Property",
+                                                                   "annotation": [],
+                                                                   "source": {
+                                                                       "name": "$this",
+                                                                       "type": "AliasRef",
+                                                                       "annotation": []
+                                                                   }
+                                                               }
+                                                           }
+                                                       }
+                                                   },
+                                                   {
+                                                       "valueType": "{urn:hl7-org:elm-types:r1}String",
+                                                       "value": "",
+                                                       "type": "Literal",
+                                                       "annotation": []
+                                                   }
+                                               ]
+                                           },
+                                           {
+                                               "type": "Coalesce",
+                                               "annotation": [],
+                                               "signature": [],
+                                               "operand": [
+                                                   {
+                                                       "valueType": "{urn:hl7-org:elm-types:r1}String",
+                                                       "value": " ",
+                                                       "type": "Literal",
+                                                       "annotation": []
+                                                   },
+                                                   {
+                                                       "valueType": "{urn:hl7-org:elm-types:r1}String",
+                                                       "value": "",
+                                                       "type": "Literal",
+                                                       "annotation": []
+                                                   }
+                                               ]
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       "valueType": "{urn:hl7-org:elm-types:r1}String",
+                                       "value": "",
+                                       "type": "Literal",
+                                       "annotation": []
+                                   }
+                               ]
+                           },
+                           {
+                               "type": "Coalesce",
+                               "annotation": [],
+                               "signature": [],
+                               "operand": [
+                                   {
+                                       "type": "SingletonFrom",
+                                       "annotation": [],
+                                       "signature": [],
+                                       "operand": {
+                                           "type": "Query",
+                                           "annotation": [],
+                                           "source": [
+                                               {
+                                                   "alias": "$this",
+                                                   "annotation": [],
+                                                   "expression": {
+                                                       "type": "Query",
+                                                       "annotation": [],
+                                                       "source": [
+                                                           {
+                                                               "alias": "$this",
+                                                               "annotation": [],
+                                                               "expression": {
+                                                                   "path": "name",
+                                                                   "type": "Property",
+                                                                   "annotation": [],
+                                                                   "source": {
+                                                                       "name": "Patient",
+                                                                       "type": "ExpressionRef",
+                                                                       "annotation": []
+                                                                   }
+                                                               }
+                                                           }
+                                                       ],
+                                                       "let": [],
+                                                       "relationship": [],
+                                                       "where": {
+                                                           "type": "Not",
+                                                           "annotation": [],
+                                                           "signature": [],
+                                                           "operand": {
+                                                               "type": "IsNull",
+                                                               "annotation": [],
+                                                               "signature": [],
+                                                               "operand": {
+                                                                   "path": "family",
+                                                                   "type": "Property",
+                                                                   "annotation": [],
+                                                                   "source": {
+                                                                       "name": "$this",
+                                                                       "type": "AliasRef",
+                                                                       "annotation": []
+                                                                   }
+                                                               }
+                                                           }
+                                                       },
+                                                       "return": {
+                                                           "distinct": false,
+                                                           "annotation": [],
+                                                           "expression": {
+                                                               "path": "family",
+                                                               "type": "Property",
+                                                               "annotation": [],
+                                                               "source": {
+                                                                   "name": "$this",
+                                                                   "type": "AliasRef",
+                                                                   "annotation": []
+                                                               }
+                                                           }
+                                                       }
+                                                   }
+                                               }
+                                           ],
+                                           "let": [],
+                                           "relationship": [],
+                                           "where": {
+                                               "type": "Not",
+                                               "annotation": [],
+                                               "signature": [],
+                                               "operand": {
+                                                   "type": "IsNull",
+                                                   "annotation": [],
+                                                   "signature": [],
+                                                   "operand": {
+                                                       "path": "value",
+                                                       "type": "Property",
+                                                       "annotation": [],
+                                                       "source": {
+                                                           "name": "$this",
+                                                           "type": "AliasRef",
+                                                           "annotation": []
+                                                       }
+                                                   }
+                                               }
+                                           },
+                                           "return": {
+                                               "distinct": false,
+                                               "annotation": [],
+                                               "expression": {
+                                                   "path": "value",
+                                                   "type": "Property",
+                                                   "annotation": [],
+                                                   "source": {
+                                                       "name": "$this",
+                                                       "type": "AliasRef",
+                                                       "annotation": []
+                                                   }
+                                               }
+                                           }
+                                       }
+                                   },
+                                   {
+                                       "valueType": "{urn:hl7-org:elm-types:r1}String",
+                                       "value": "",
+                                       "type": "Literal",
+                                       "annotation": []
+                                   }
+                               ]
+                           }
+                       ]
+                   }
+               },
+               {
+                   "name": "age",
+                   "context": "Patient",
+                   "accessLevel": "Public",
+                   "annotation": [],
+                   "expression": {
+                       "path": "birthDate",
+                       "type": "Property",
+                       "annotation": [],
+                       "source": {
+                           "name": "Patient",
+                           "type": "ExpressionRef",
+                           "annotation": []
+                       }
+                   }
+               },
+               {
+                   "name": "gender",
+                   "context": "Patient",
+                   "accessLevel": "Public",
+                   "annotation": [],
+                   "expression": {
+                       "path": "gender",
+                       "type": "Property",
+                       "annotation": [],
+                       "source": {
+                           "name": "Patient",
+                           "type": "ExpressionRef",
+                           "annotation": []
+                       }
+                   }
+               },
+               {
+                   "name": "vaccine",
+                   "context": "Patient",
+                   "accessLevel": "Public",
+                   "annotation": [],
+                   "expression": {
+                       "type": "Null",
+                       "annotation": []
+                   }
+               },
+               {
+                   "name": "Between 12 mon and 4 yr",
+                   "context": "Patient",
+                   "accessLevel": "Public",
+                   "annotation": [],
+                   "expression": {
+                       "type": "And",
+                       "annotation": [],
+                       "signature": [],
+                       "operand": [
+                           {
+                               "type": "GreaterOrEqual",
+                               "annotation": [],
+                               "signature": [],
+                               "operand": [
+                                   {
+                                       "precision": "Month",
+                                       "type": "CalculateAge",
+                                       "annotation": [],
+                                       "signature": [],
+                                       "operand": {
+                                           "path": "birthDate.value",
+                                           "type": "Property",
+                                           "annotation": [],
+                                           "source": {
+                                               "name": "Patient",
+                                               "type": "ExpressionRef",
+                                               "annotation": []
+                                           }
+                                       }
+                                   },
+                                   {
+                                       "valueType": "{urn:hl7-org:elm-types:r1}Integer",
+                                       "value": "12",
+                                       "type": "Literal",
+                                       "annotation": []
+                                   }
+                               ]
+                           },
+                           {
+                               "type": "LessOrEqual",
+                               "annotation": [],
+                               "signature": [],
+                               "operand": [
+                                   {
+                                       "precision": "Month",
+                                       "type": "CalculateAge",
+                                       "annotation": [],
+                                       "signature": [],
+                                       "operand": {
+                                           "path": "birthDate.value",
+                                           "type": "Property",
+                                           "annotation": [],
+                                           "source": {
+                                               "name": "Patient",
+                                               "type": "ExpressionRef",
+                                               "annotation": []
+                                           }
+                                       }
+                                   },
+                                   {
+                                       "valueType": "{urn:hl7-org:elm-types:r1}Integer",
+                                       "value": "48",
+                                       "type": "Literal",
+                                       "annotation": []
+                                   }
+                               ]
+                           }
+                       ]
+                   }
+               },
+               {
+                   "name": "MMRVaccinationDates",
+                   "context": "Patient",
+                   "accessLevel": "Public",
+                   "type": "FunctionDef",
+                   "annotation": [],
+                   "expression": {
+                       "type": "Query",
+                       "annotation": [],
+                       "source": [
+                           {
+                               "alias": "I",
+                               "annotation": [],
+                               "expression": {
+                                   "name": "Immunizations",
+                                   "type": "OperandRef",
+                                   "annotation": []
+                               }
+                           }
+                       ],
+                       "let": [],
+                       "relationship": [],
+                       "where": {
+                           "type": "Equivalent",
+                           "annotation": [],
+                           "signature": [],
+                           "operand": [
+                               {
+                                   "name": "ToCode",
+                                   "type": "FunctionRef",
+                                   "annotation": [],
+                                   "signature": [],
+                                   "operand": [
+                                       {
+                                           "type": "Indexer",
+                                           "annotation": [],
+                                           "signature": [],
+                                           "operand": [
+                                               {
+                                                   "path": "coding",
+                                                   "type": "Property",
+                                                   "annotation": [],
+                                                   "source": {
+                                                       "path": "vaccineCode",
+                                                       "scope": "I",
+                                                       "type": "Property",
+                                                       "annotation": []
+                                                   }
+                                               },
+                                               {
+                                                   "valueType": "{urn:hl7-org:elm-types:r1}Integer",
+                                                   "value": "0",
+                                                   "type": "Literal",
+                                                   "annotation": []
+                                               }
+                                           ]
+                                       }
+                                   ]
+                               },
+                               {
+                                   "name": "mmr code",
+                                   "type": "CodeRef",
+                                   "annotation": []
+                               }
+                           ]
+                       },
+                       "return": {
+                           "annotation": [],
+                           "expression": {
+                               "type": "Tuple",
+                               "annotation": [],
+                               "element": [
+                                   {
+                                       "name": "date",
+                                       "value": {
+                                           "type": "Date",
+                                           "annotation": [],
+                                           "signature": [],
+                                           "year": {
+                                               "precision": "Year",
+                                               "type": "DateTimeComponentFrom",
+                                               "annotation": [],
+                                               "signature": [],
+                                               "operand": {
+                                                   "asType": "{urn:hl7-org:elm-types:r1}DateTime",
+                                                   "type": "As",
+                                                   "annotation": [],
+                                                   "signature": [],
+                                                   "operand": {
+                                                       "path": "value",
+                                                       "type": "Property",
+                                                       "annotation": [],
+                                                       "source": {
+                                                           "path": "occurrence",
+                                                           "scope": "I",
+                                                           "type": "Property",
+                                                           "annotation": []
+                                                       }
+                                                   }
+                                               }
+                                           },
+                                           "month": {
+                                               "precision": "Month",
+                                               "type": "DateTimeComponentFrom",
+                                               "annotation": [],
+                                               "signature": [],
+                                               "operand": {
+                                                   "asType": "{urn:hl7-org:elm-types:r1}DateTime",
+                                                   "type": "As",
+                                                   "annotation": [],
+                                                   "signature": [],
+                                                   "operand": {
+                                                       "path": "value",
+                                                       "type": "Property",
+                                                       "annotation": [],
+                                                       "source": {
+                                                           "path": "occurrence",
+                                                           "scope": "I",
+                                                           "type": "Property",
+                                                           "annotation": []
+                                                       }
+                                                   }
+                                               }
+                                           },
+                                           "day": {
+                                               "precision": "Day",
+                                               "type": "DateTimeComponentFrom",
+                                               "annotation": [],
+                                               "signature": [],
+                                               "operand": {
+                                                   "asType": "{urn:hl7-org:elm-types:r1}DateTime",
+                                                   "type": "As",
+                                                   "annotation": [],
+                                                   "signature": [],
+                                                   "operand": {
+                                                       "path": "value",
+                                                       "type": "Property",
+                                                       "annotation": [],
+                                                       "source": {
+                                                           "path": "occurrence",
+                                                           "scope": "I",
+                                                           "type": "Property",
+                                                           "annotation": []
+                                                       }
+                                                   }
+                                               }
+                                           }
+                                       }
+                                   }
+                               ]
+                           }
+                       },
+                       "sort": {
+                           "annotation": [],
+                           "by": [
+                               {
+                                   "direction": "asc",
+                                   "path": "date",
+                                   "type": "ByColumn",
+                                   "annotation": []
+                               }
+                           ]
+                       }
+                   },
+                   "operand": [
+                       {
+                           "name": "Immunizations",
+                           "annotation": [],
+                           "operandTypeSpecifier": {
+                               "type": "ListTypeSpecifier",
+                               "annotation": [],
+                               "elementType": {
+                                   "name": "{http://hl7.org/fhir}Immunization",
+                                   "type": "NamedTypeSpecifier",
+                                   "annotation": []
+                               }
+                           }
+                       }
+                   ]
+               },
+               {
+                   "name": "MMRImmunizationDates",
+                   "context": "Patient",
+                   "accessLevel": "Public",
+                   "annotation": [],
+                   "expression": {
+                       "name": "MMRVaccinationDates",
+                       "type": "FunctionRef",
+                       "annotation": [],
+                       "signature": [],
+                       "operand": [
+                           {
+                               "name": "ImmunizationData",
+                               "type": "ParameterRef",
+                               "annotation": []
+                           }
+                       ]
+                   }
+               },
+               {
+                   "name": "firstDoseDate",
+                   "context": "Patient",
+                   "accessLevel": "Public",
+                   "annotation": [],
+                   "expression": {
+                       "type": "If",
+                       "annotation": [],
+                       "condition": {
+                           "type": "Exists",
+                           "annotation": [],
+                           "signature": [],
+                           "operand": {
+                               "name": "MMRVaccinationDates",
+                               "type": "FunctionRef",
+                               "annotation": [],
+                               "signature": [],
+                               "operand": [
+                                   {
+                                       "name": "ImmunizationData",
+                                       "type": "ParameterRef",
+                                       "annotation": []
+                                   }
+                               ]
+                           }
+                       },
+                       "then": {
+                           "path": "date",
+                           "type": "Property",
+                           "annotation": [],
+                           "source": {
+                               "type": "Indexer",
+                               "annotation": [],
+                               "signature": [],
+                               "operand": [
+                                   {
+                                       "name": "MMRVaccinationDates",
+                                       "type": "FunctionRef",
+                                       "annotation": [],
+                                       "signature": [],
+                                       "operand": [
+                                           {
+                                               "name": "ImmunizationData",
+                                               "type": "ParameterRef",
+                                               "annotation": []
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       "valueType": "{urn:hl7-org:elm-types:r1}Integer",
+                                       "value": "0",
+                                       "type": "Literal",
+                                       "annotation": []
+                                   }
+                               ]
+                           }
+                       },
+                       "else": {
+                           "asType": "{urn:hl7-org:elm-types:r1}Date",
+                           "type": "As",
+                           "annotation": [],
+                           "signature": [],
+                           "operand": {
+                               "type": "Null",
+                               "annotation": []
+                           }
+                       }
+                   }
+               },
+               {
+                   "name": "AgeAtImmunization",
+                   "context": "Patient",
+                   "accessLevel": "Public",
+                   "annotation": [],
+                   "expression": {
+                       "precision": "Month",
+                       "type": "DifferenceBetween",
+                       "annotation": [],
+                       "signature": [],
+                       "operand": [
+                           {
+                               "name": "ToDate",
+                               "libraryName": "FHIRHelpers",
+                               "type": "FunctionRef",
+                               "annotation": [],
+                               "signature": [],
+                               "operand": [
+                                   {
+                                       "path": "birthDate",
+                                       "type": "Property",
+                                       "annotation": [],
+                                       "source": {
+                                           "name": "Patient",
+                                           "type": "ExpressionRef",
+                                           "annotation": []
+                                       }
+                                   }
+                               ]
+                           },
+                           {
+                               "name": "firstDoseDate",
+                               "type": "ExpressionRef",
+                               "annotation": []
+                           }
+                       ]
+                   }
+               },
+               {
+                   "name": "AgeAtImmunizationBetween12To15Months",
+                   "context": "Patient",
+                   "accessLevel": "Public",
+                   "annotation": [],
+                   "expression": {
+                       "type": "And",
+                       "annotation": [],
+                       "signature": [],
+                       "operand": [
+                           {
+                               "type": "GreaterOrEqual",
+                               "annotation": [],
+                               "signature": [],
+                               "operand": [
+                                   {
+                                       "name": "AgeAtImmunization",
+                                       "type": "ExpressionRef",
+                                       "annotation": []
+                                   },
+                                   {
+                                       "valueType": "{urn:hl7-org:elm-types:r1}Integer",
+                                       "value": "12",
+                                       "type": "Literal",
+                                       "annotation": []
+                                   }
+                               ]
+                           },
+                           {
+                               "type": "LessOrEqual",
+                               "annotation": [],
+                               "signature": [],
+                               "operand": [
+                                   {
+                                       "name": "AgeAtImmunization",
+                                       "type": "ExpressionRef",
+                                       "annotation": []
+                                   },
+                                   {
+                                       "valueType": "{urn:hl7-org:elm-types:r1}Integer",
+                                       "value": "15",
+                                       "type": "Literal",
+                                       "annotation": []
+                                   }
+                               ]
+                           }
+                       ]
+                   }
+               },
+               {
+                   "name": "CountMMRVaccinations",
+                   "context": "Patient",
+                   "accessLevel": "Public",
+                   "type": "FunctionDef",
+                   "annotation": [],
+                   "expression": {
+                       "type": "Query",
+                       "annotation": [],
+                       "source": [
+                           {
+                               "alias": "I",
+                               "annotation": [],
+                               "expression": {
+                                   "name": "Immunizations",
+                                   "type": "OperandRef",
+                                   "annotation": []
+                               }
+                           }
+                       ],
+                       "let": [],
+                       "relationship": [],
+                       "where": {
+                           "type": "Equivalent",
+                           "annotation": [],
+                           "signature": [],
+                           "operand": [
+                               {
+                                   "name": "ToCode",
+                                   "type": "FunctionRef",
+                                   "annotation": [],
+                                   "signature": [],
+                                   "operand": [
+                                       {
+                                           "type": "Indexer",
+                                           "annotation": [],
+                                           "signature": [],
+                                           "operand": [
+                                               {
+                                                   "path": "coding",
+                                                   "type": "Property",
+                                                   "annotation": [],
+                                                   "source": {
+                                                       "path": "vaccineCode",
+                                                       "scope": "I",
+                                                       "type": "Property",
+                                                       "annotation": []
+                                                   }
+                                               },
+                                               {
+                                                   "valueType": "{urn:hl7-org:elm-types:r1}Integer",
+                                                   "value": "0",
+                                                   "type": "Literal",
+                                                   "annotation": []
+                                               }
+                                           ]
+                                       }
+                                   ]
+                               },
+                               {
+                                   "name": "mmr code",
+                                   "type": "CodeRef",
+                                   "annotation": []
+                               }
+                           ]
+                       },
+                       "return": {
+                           "annotation": [],
+                           "expression": {
+                               "name": "I",
+                               "type": "AliasRef",
+                               "annotation": []
+                           }
+                       }
+                   },
+                   "operand": [
+                       {
+                           "name": "Immunizations",
+                           "annotation": [],
+                           "operandTypeSpecifier": {
+                               "type": "ListTypeSpecifier",
+                               "annotation": [],
+                               "elementType": {
+                                   "name": "{http://hl7.org/fhir}Immunization",
+                                   "type": "NamedTypeSpecifier",
+                                   "annotation": []
+                               }
+                           }
+                       }
+                   ]
+               },
+               {
+                   "name": "HasOnlyOneMMRVaccinations",
+                   "context": "Patient",
+                   "accessLevel": "Public",
+                   "annotation": [],
+                   "expression": {
+                       "type": "Equal",
+                       "annotation": [],
+                       "signature": [],
+                       "operand": [
+                           {
+                               "type": "Count",
+                               "annotation": [],
+                               "signature": [],
+                               "source": {
+                                   "name": "CountMMRVaccinations",
+                                   "type": "FunctionRef",
+                                   "annotation": [],
+                                   "signature": [],
+                                   "operand": [
+                                       {
+                                           "name": "ImmunizationData",
+                                           "type": "ParameterRef",
+                                           "annotation": []
+                                       }
+                                   ]
+                               }
+                           },
+                           {
+                               "valueType": "{urn:hl7-org:elm-types:r1}Integer",
+                               "value": "1",
+                               "type": "Literal",
+                               "annotation": []
+                           }
+                       ]
+                   }
+               },
+               {
+                   "name": "MeetsInclusionCriteria",
+                   "context": "Patient",
+                   "accessLevel": "Public",
+                   "annotation": [],
+                   "expression": {
+                       "type": "Null",
+                       "annotation": []
+                   }
+               },
+               {
+                   "name": "InPopulation",
+                   "context": "Patient",
+                   "accessLevel": "Public",
+                   "annotation": [],
+                   "expression": {
+                       "type": "Null",
+                       "annotation": []
+                   }
+               },
+               {
+                   "name": "Recommendation",
+                   "context": "Patient",
+                   "accessLevel": "Public",
+                   "annotation": [],
+                   "expression": {
+                       "type": "Null",
+                       "annotation": []
+                   }
+               }
+           ]
+       }
+   }
+}
