@@ -1,9 +1,6 @@
 package org.openmrs.module.cdss.web.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 import org.apache.log4j.Logger;
 import org.openmrs.api.APIAuthenticationException;
 import org.openmrs.api.AdministrationService;
@@ -11,8 +8,10 @@ import org.openmrs.api.context.ServiceContext;
 import org.openmrs.module.cdss.api.CDSSService;
 import org.openmrs.module.cdss.api.RuleLoggerService;
 import org.openmrs.module.cdss.api.RuleManagerService;
+import org.openmrs.module.cdss.api.ValueSetService;
 import org.openmrs.module.cdss.api.dao.CDSSDao;
 import org.openmrs.module.cdss.api.data.CdssUsage;
+import org.openmrs.module.cdss.api.util.ValueSetResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpHeaders;
@@ -21,8 +20,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
-import java.util.Base64;
 import java.util.List;
 
 @RestController
@@ -41,12 +38,17 @@ public class ClientsideRestController {
 	@Qualifier("adminService")
 	protected AdministrationService administrationService;
 	
+	@Autowired
+	protected RuleLoggerService ruleLoggerService;
+	
+	@Autowired
+	protected RuleManagerService ruleManagerService;
+	
 	@GetMapping(path = "/rule/{ruleId}", produces = {"application/json"})
     public ResponseEntity<String> getRule(@PathVariable(value = "ruleId") String ruleId) throws APIAuthenticationException {
 
-        RuleManagerService service = ServiceContext.getInstance().getService(RuleManagerService.class);
         try {
-            String rule = service.getRule(ruleId);
+            String rule = ruleManagerService.getRule(ruleId);
             return ResponseEntity.ok(rule);
         } catch (NullPointerException e) {
             return new ResponseEntity<>("Rule " + ruleId + " Not found", HttpStatus.NOT_FOUND);
@@ -56,9 +58,7 @@ public class ClientsideRestController {
 	
 	@GetMapping(path = "/rule.form", produces = { "application/json" })
 	public ResponseEntity<String[]> getRules() throws APIAuthenticationException {
-		RuleManagerService service = ServiceContext.getInstance().getService(RuleManagerService.class);
-		
-		String[] rules = service.getRules();
+		String[] rules = ruleManagerService.getRules();
 		return ResponseEntity.ok(rules);
 		
 	}
@@ -75,10 +75,8 @@ public class ClientsideRestController {
             return new ResponseEntity<>("Internal Error encountered", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        RuleLoggerService service = ServiceContext.getInstance().getService(RuleLoggerService.class);
-        CdssUsage saved = service.recordRuleUsage(newUsage);
+        CdssUsage saved = ruleLoggerService.recordRuleUsage(newUsage);
 
-//        CdssUsage saved = dao.saveEngineUsage(newUsage);
         if (saved == null) {
             log.warn("Attempted to save CdssUsage but could not");
             return new ResponseEntity<>("Internal Issue Encountered", HttpStatus.OK);
@@ -99,8 +97,7 @@ public class ClientsideRestController {
 	
 	@RequestMapping(path = "/usages.form", produces = "application/json", method = {RequestMethod.GET})
     public ResponseEntity<String> getUsages() {
-        RuleLoggerService service = ServiceContext.getInstance().getService(RuleLoggerService.class);
-        List<CdssUsage> usages = service.getRuleUsages();
+        List<CdssUsage> usages = ruleLoggerService.getRuleUsages();
 
         String out = null;
         try {
@@ -115,70 +112,28 @@ public class ClientsideRestController {
         return new ResponseEntity<>(out, HttpStatus.OK);
     }
 	
-	@RequestMapping(path = "/RetrieveSvsValueSet.form")
+	@RequestMapping(path = "/RetrieveSvsValueSet.form", produces = "application/xml")
     public ResponseEntity<String> getSvsValuesets(@RequestParam(required = true) String id, @RequestParam(required = false) String version) {
-        // Get the API key
+
         final String apiKey = administrationService.getGlobalProperty("cdss.vsacApiKey");
+        ValueSetService valueSetService = ServiceContext.getInstance().getService(ValueSetService.class);
+        ValueSetResponse valueset = valueSetService.getSvsValueSet(apiKey, id, version);
 
-        // Create Http client
-        OkHttpClient client = new OkHttpClient();
+        if (valueset != null)
+            return new ResponseEntity<>(valueset.getContent(), HttpStatus.valueOf(valueset.getStatus()));
+        return new ResponseEntity<>("", HttpStatus.INTERNAL_SERVER_ERROR);
 
-        // Encode basic authentication string
-        byte[] encodedBytes = Base64.getEncoder().encode(String.format(":%s", apiKey).getBytes());
-        String encoded = new String(encodedBytes);
-
-        // Build the url parameters
-        String params = String.format("%s=%s", "id", id);
-        if (version != null) params = String.format("%s=%s&%s=%s", "id", id, "version", version);
-
-        // Send the request
-        Request rq = new Request.Builder().get().url(String.format("%s?%s", "https://vsac.nlm.nih.gov/vsac/svs/RetrieveValueSet", params)).header("Authorization", "Basic " + encoded).build();
-
-        // Return response
-        try {
-            Response rs = client.newCall(rq).execute();
-            return new ResponseEntity<>(rs.body().string(), HttpStatus.OK);
-
-        } catch (IOException e) {
-            return new ResponseEntity<>("", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
     }
 	
-	@RequestMapping(path = "/RetrieveFhirValueSet/{id}.form")
+	@RequestMapping(path = "/RetrieveFhirValueSet/{id}.form", produces = "application/json")
     public ResponseEntity<String> getFhirValuesets(@PathVariable(required = true) String id, @RequestParam(required = false) String version, @RequestParam(required = false) Integer offset) {
 
-        // Get the API key
         final String apiKey = administrationService.getGlobalProperty("cdss.vsacApiKey");
-
-        // Create Http client
-        OkHttpClient client = new OkHttpClient();
-
-        // Encode basic authentication string
-        byte[] encodedBytes = Base64.getEncoder().encode(String.format(":%s", apiKey).getBytes());
-        String encoded = new String(encodedBytes);
-
-        // Build the url parameters
-        StringBuilder paramsBuilder = new StringBuilder();
-        if (version != null || offset != null)
-            paramsBuilder.append("?");
-
-        if (version != null) paramsBuilder.append(String.format("%s=%s", "version", version));
-
-        if (version != null && offset != null) paramsBuilder.append("&");
-
-        if (offset != null) paramsBuilder.append(String.format("%s=%s", "offset", offset));
-
-        // Send the request
-        Request rq = new Request.Builder().get().url(String.format("https://cts.nlm.nih.gov/fhir/ValueSet/%s/$expand%s", id, paramsBuilder.toString())).header("Authorization", "Basic " + encoded).build();
-
-        // Return response
-        try {
-            Response rs = client.newCall(rq).execute();
-            return new ResponseEntity<>(rs.body().string(), HttpStatus.OK);
-
-        } catch (IOException e) {
-            return new ResponseEntity<>("", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        ValueSetService valueSetService = ServiceContext.getInstance().getService(ValueSetService.class);
+        ValueSetResponse valueset = valueSetService.getFhirValueSet(apiKey, id, version, offset);
+        if (valueset != null)
+            return new ResponseEntity<>(valueset.getContent(), HttpStatus.valueOf(valueset.getStatus()));
+        return new ResponseEntity<>("", HttpStatus.INTERNAL_SERVER_ERROR);
     }
 	
 	@ExceptionHandler({APIAuthenticationException.class})
