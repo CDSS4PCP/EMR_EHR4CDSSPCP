@@ -25,26 +25,34 @@ import java.util.List;
 @RestController
 @RequestMapping("/cdss")
 public class ClientsideRestController {
-	
-	Logger log = Logger.getLogger(ClientsideRestController.class);
-	
-	@Autowired
-	CDSSDao dao;
-	
-	@Autowired
-	CDSSService cdssService;
-	
-	@Autowired
-	@Qualifier("adminService")
-	protected AdministrationService administrationService;
-	
-	@Autowired
-	protected RuleLoggerService ruleLoggerService;
-	
-	@Autowired
-	protected RuleManagerService ruleManagerService;
-	
-	@GetMapping(path = "/rule/{ruleId}", produces = {"application/json"})
+
+    Logger log = Logger.getLogger(ClientsideRestController.class);
+
+    @Autowired
+    CDSSDao dao;
+
+    @Autowired
+    CDSSService cdssService;
+
+    @Autowired
+    @Qualifier("adminService")
+    protected AdministrationService administrationService;
+
+    @Autowired
+    protected RuleLoggerService ruleLoggerService;
+
+    @Autowired
+    protected RuleManagerService ruleManagerService;
+
+    /**
+     * Retrieves a specific rule based on the provided ruleId.
+     *
+     * @param ruleId the unique identifier of the rule to retrieve
+     * @return ResponseEntity<String> containing the rule in JSON format if found
+     * HttpStatus.NOT_FOUND if the rule is not found
+     * @throws APIAuthenticationException if there is an issue with API authentication
+     */
+    @GetMapping(path = "/rule/{ruleId}", produces = {"application/json"})
     public ResponseEntity<String> getRule(@PathVariable(value = "ruleId") String ruleId) throws APIAuthenticationException {
 
         try {
@@ -55,15 +63,28 @@ public class ClientsideRestController {
         }
 
     }
-	
-	@GetMapping(path = "/rule.form", produces = { "application/json" })
-	public ResponseEntity<String[]> getRules() throws APIAuthenticationException {
-		String[] rules = ruleManagerService.getRules();
-		return ResponseEntity.ok(rules);
-		
-	}
-	
-	@RequestMapping(path = "/record-usage.form", produces = "application/json", method = {RequestMethod.POST})
+
+    /**
+     * Retrieves all rules.
+     *
+     * @return ResponseEntity<String [ ]> containing an array of rules in JSON format
+     * @throws APIAuthenticationException if there is an issue with API authentication
+     */
+    @GetMapping(path = "/rule.form", produces = {"application/json"})
+    public ResponseEntity<String[]> getRules() throws APIAuthenticationException {
+        String[] rules = ruleManagerService.getRules();
+        return ResponseEntity.ok(rules);
+
+    }
+
+    /**
+     * Records the usage of a Clinical Decision Support System (CDSS) based on the provided newUsageString.
+     *
+     * @param newUsageString the JSON string representing the new CdssUsage to be recorded
+     * @return ResponseEntity<String> containing the JSON string of the saved CdssUsage if successful
+     * HttpStatus.INTERNAL_SERVER_ERROR if there is an error during processing
+     */
+    @RequestMapping(path = "/record-usage.form", produces = "application/json", method = {RequestMethod.POST})
     public ResponseEntity<String> recordUsage(@RequestBody String newUsageString) {
         CdssUsage newUsage;
         try {
@@ -94,8 +115,15 @@ public class ClientsideRestController {
 
         }
     }
-	
-	@RequestMapping(path = "/usages.form", produces = "application/json", method = {RequestMethod.GET})
+
+    /**
+     * Retrieves the list of CdssUsage objects and serializes them into a JSON string using the CdssObjectMapper.
+     * Returns a ResponseEntity with the JSON string if successful, or an INTERNAL_SERVER_ERROR status if there is an error during processing.
+     *
+     * @return ResponseEntity<String> containing the JSON string of CdssUsage objects if successful
+     * HttpStatus.INTERNAL_SERVER_ERROR if there is an error during processing
+     */
+    @RequestMapping(path = "/usages.form", produces = "application/json", method = {RequestMethod.GET})
     public ResponseEntity<String> getUsages() {
         List<CdssUsage> usages = ruleLoggerService.getRuleUsages();
 
@@ -111,8 +139,16 @@ public class ClientsideRestController {
 
         return new ResponseEntity<>(out, HttpStatus.OK);
     }
-	
-	@RequestMapping(path = "/RetrieveSvsValueSet.form", produces = "application/xml")
+
+    /**
+     * Retrieves the valuesets based on the provided id and version.
+     *
+     * @param id      the unique identifier of the valueset to retrieve
+     * @param version the version of the valueset (optional)
+     * @return ResponseEntity<String> containing the content of the valueset if found
+     * HttpStatus.INTERNAL_SERVER_ERROR if there is an error during processing
+     */
+    @RequestMapping(path = "/RetrieveSvsValueSet.form", produces = "application/xml")
     public ResponseEntity<String> getSvsValuesets(@RequestParam(required = true) String id, @RequestParam(required = false) String version) {
 
         final String apiKey = administrationService.getGlobalProperty("cdss.vsacApiKey");
@@ -121,11 +157,21 @@ public class ClientsideRestController {
 
         if (valueset != null)
             return new ResponseEntity<>(valueset.getContent(), HttpStatus.valueOf(valueset.getStatus()));
-        return new ResponseEntity<>("", HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>("Valueset was null", HttpStatus.INTERNAL_SERVER_ERROR);
 
     }
-	
-	@RequestMapping(path = "/RetrieveFhirValueSet/{id}.form", produces = "application/json")
+
+
+    /**
+     * Retrieves FHIR value sets based on the provided id, version, and offset.
+     *
+     * @param id      the unique identifier of the value set to retrieve
+     * @param version the version of the value set (optional)
+     * @param offset  the offset for pagination (optional)
+     * @return ResponseEntity<String> containing the content of the value set if found
+     * HttpStatus.INTERNAL_SERVER_ERROR if there is an error during processing
+     */
+    @RequestMapping(path = "/RetrieveFhirValueSet/{id}.form", produces = "application/json")
     public ResponseEntity<String> getFhirValuesets(@PathVariable(required = true) String id, @RequestParam(required = false) String version, @RequestParam(required = false) Integer offset) {
 
         final String apiKey = administrationService.getGlobalProperty("cdss.vsacApiKey");
@@ -133,16 +179,22 @@ public class ClientsideRestController {
         ValueSetResponse valueset = valueSetService.getFhirValueSet(apiKey, id, version, offset);
         if (valueset != null)
             return new ResponseEntity<>(valueset.getContent(), HttpStatus.valueOf(valueset.getStatus()));
-        return new ResponseEntity<>("", HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>("Valueset was null", HttpStatus.INTERNAL_SERVER_ERROR);
     }
-	
-	@ExceptionHandler({APIAuthenticationException.class})
-    public ResponseEntity<Throwable> handleApiAuthException(APIAuthenticationException e) {
+
+    /**
+     * Handles APIAuthenticationException by creating a ResponseEntity with the exception details.
+     *
+     * @param error the APIAuthenticationException to handle
+     * @return ResponseEntity<Throwable> containing the exception details in JSON format
+     */
+    @ExceptionHandler({APIAuthenticationException.class})
+    public ResponseEntity<Throwable> handleApiAuthException(APIAuthenticationException error) {
         MultiValueMap<String, String> headers = new HttpHeaders();
         headers.set("Content-Type", "application/json");
 
         // Send error stacktrace as json
-        ResponseEntity<Throwable> response = new ResponseEntity<>(e, headers, HttpStatus.UNAUTHORIZED);
+        ResponseEntity<Throwable> response = new ResponseEntity<>(error, headers, HttpStatus.UNAUTHORIZED);
         return response;
     }
 }

@@ -3,7 +3,6 @@ package org.openmrs.module.cdss.api.impl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.openmrs.api.APIAuthenticationException;
 import org.openmrs.api.impl.BaseOpenmrsService;
@@ -27,7 +26,17 @@ public class ValueSetServiceImpl extends BaseOpenmrsService implements ValueSetS
 		// Create Http client
 		client = new OkHttpClient();
 	}
-	
+
+	/**
+	 * Retrieves a FHIR ValueSet from a specified URL using the provided API key, OID, version, and offset.
+	 *
+	 * @param apiKey the API key for authentication
+	 * @param oid the OID (Object Identifier) of the ValueSet
+	 * @param version the version of the ValueSet (optional)
+	 * @param offset the offset for pagination (optional)
+	 * @return a ValueSetResponse object containing the HTTP status code and the content of the response
+	 * @throws APIAuthenticationException if there is an issue with API authentication
+	 */
 	@Override
 	public ValueSetResponse getFhirValueSet(String apiKey, String oid, String version, Integer offset)
 	        throws APIAuthenticationException {
@@ -68,7 +77,16 @@ public class ValueSetServiceImpl extends BaseOpenmrsService implements ValueSetS
 			return null;
 		}
 	}
-	
+
+	/**
+	 * Retrieves a SVS ValueSet from a specified URL using the provided API key, OID, and version.
+	 *
+	 * @param apiKey the API key for authentication
+	 * @param oid the OID (Object Identifier) of the ValueSet
+	 * @param version the version of the ValueSet (optional)
+	 * @return a ValueSetResponse object containing the HTTP status code and the content of the response
+	 * @throws APIAuthenticationException if there is an issue with API authentication
+	 */
 	@Override
 	public ValueSetResponse getSvsValueSet(String apiKey, String oid, String version) throws APIAuthenticationException {
 		// Encode basic authentication string

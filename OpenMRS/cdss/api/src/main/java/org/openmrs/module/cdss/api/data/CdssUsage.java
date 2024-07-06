@@ -11,6 +11,12 @@ import org.openmrs.module.cdss.api.serialization.CdssUsageSerializer;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
+/**
+ * Represents a CdssUsage entity that stores information about the usage of a Clinical Decision Support System (CDSS).
+ * This entity includes details such as the vaccine used, patient ID, timestamp of the usage, rules applied, recommendations given,
+ * status of the usage, and a unique identifier (UUID).
+ * The CdssUsage entity can have multiple recommendations associated with it, up to a maximum of six.
+ */
 @Data
 @Entity(name = "cdss_usage")
 @JsonSerialize(using = CdssUsageSerializer.class)

@@ -7,6 +7,11 @@ import org.openmrs.module.cdss.api.data.CdssUsage;
 import org.openmrs.module.cdss.api.serialization.CdssUsageDeserializer;
 import org.openmrs.module.cdss.api.serialization.CdssUsageSerializer;
 
+/**
+ * CdssServiceImpl class implements the CDSSService interface and provides methods to manage Clinical Decision Support System (CDSS) functionality.
+ * It initializes an ObjectMapper and a SimpleModule to handle serialization and deserialization of CdssUsage objects.
+ * The CdssServiceImpl class is responsible for setting up the ObjectMapper with custom serializers and deserializers for CdssUsage objects.
+ */
 public class CdssServiceImpl implements CDSSService {
 	
 	private ObjectMapper objectMapper;
