@@ -13,9 +13,6 @@ import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 public class RuleLoggerServiceImpl extends BaseOpenmrsService implements RuleLoggerService {
-	
-	PrintWriter writer;
-	
 	private final Logger log = Logger.getLogger(getClass());
 	
 	CDSSDao dao;
@@ -33,19 +30,7 @@ public class RuleLoggerServiceImpl extends BaseOpenmrsService implements RuleLog
 	@Override
 	public void onStartup() {
 		
-		try {
-			writer = new PrintWriter("CDSS-Log.txt", "UTF-8");
-			log.info("Created log file at CDSS-Log.txt");
-			
-		}
-		catch (FileNotFoundException e) {
-			log.info("Unable to create log file at CDSS-Log.txt");
-			
-		}
-		catch (UnsupportedEncodingException e) {
-			log.info("Unable to encode log file at CDSS-Log.txt");
-			
-		}
+
 		
 		log.info("CDSS Vaccine Logger service started...");
 	}
@@ -56,12 +41,7 @@ public class RuleLoggerServiceImpl extends BaseOpenmrsService implements RuleLog
 	@Override
 	public void onShutdown() {
 		
-		if (writer != null) {
-			writer.flush();
-			writer.close();
-			
-			log.info("Saving log file at CDSS-Log.txt");
-		}
+
 		log.info("CDSS Vaccine Logger service stopped...");
 		
 	}
