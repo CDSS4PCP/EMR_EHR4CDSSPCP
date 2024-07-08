@@ -37,28 +37,30 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
 	public List<String> getLoadedVaccineRulesets() {
 		return CDSSConfig.VACCINE_CODES;
 	}
-
+	
 	/**
-	 * Retrieves an array of strings representing the rules available for the CDSS (Clinical Decision Support System).
-	 * These rules are identified by their file names.
-	 *
+	 * Retrieves an array of strings representing the rules available for the CDSS (Clinical
+	 * Decision Support System). These rules are identified by their file names.
+	 * 
 	 * @return An array of strings containing the names of the rule files.
-	 * @throws APIAuthenticationException if there is an issue with authentication while retrieving the rules.
+	 * @throws APIAuthenticationException if there is an issue with authentication while retrieving
+	 *             the rules.
 	 */
 	@Override
 	public String[] getRules() throws APIAuthenticationException {
 		return new String[] { "MMR_Rule1.json", "MMR_Rule4.json", "MMR_Rule5.json", "MMR_Rule6.json", "MMR_Rule7.json",
 		        "MMR_Rule7.json", "MMR_Rule9.json", "MMR_Rule10.json", "MMR_Rule11.json" };
 	}
-
+	
 	/**
-	 * Retrieves the content of a specific rule file based on the provided rule ID.
-	 * If the rule ID does not end with '.json', it appends '.json' to the ID.
-	 * Uses the current thread's context class loader to load the file as an input stream.
-	 *
+	 * Retrieves the content of a specific rule file based on the provided rule ID. If the rule ID
+	 * does not end with '.json', it appends '.json' to the ID. Uses the current thread's context
+	 * class loader to load the file as an input stream.
+	 * 
 	 * @param ruleId the identifier of the rule file to retrieve
 	 * @return the content of the rule file as a single string
-	 * @throws APIAuthenticationException if there is an issue with authentication while retrieving the rule
+	 * @throws APIAuthenticationException if there is an issue with authentication while retrieving
+	 *             the rule
 	 * @throws NullPointerException if the provided rule ID is null
 	 */
 	@Override

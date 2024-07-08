@@ -55,11 +55,12 @@
 
 
     <!-- Required Privileges
-    <privilege>
-        <name>Form Entry</name>
-        <description>Allows user to access Form Entry pages/functions</description>
-    </privilege>
+
      /Required Privileges -->
+    <privilege>
+        <name>CDSS Privilege</name>
+        <description>Allows user do CDSS</description>
+    </privilege>
 
 
     <!--	Required Global Properties -->

@@ -12,6 +12,7 @@ package org.openmrs.module.cdss.api;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.openmrs.annotation.Authorized;
 import org.openmrs.api.OpenmrsService;
+import org.openmrs.module.cdss.CDSSConfig;
 
 /**
  * The main service of this module, which is exposed for other modules. See
@@ -19,7 +20,7 @@ import org.openmrs.api.OpenmrsService;
  */
 public interface CDSSService extends OpenmrsService {
 	
-	@Authorized
+	@Authorized({ CDSSConfig.MODULE_PRIVILEGE })
 	ObjectMapper getCdssObjectMapper();
 	
 }

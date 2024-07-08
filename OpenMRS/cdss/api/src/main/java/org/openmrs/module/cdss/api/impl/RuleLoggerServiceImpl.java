@@ -65,7 +65,7 @@ public class RuleLoggerServiceImpl extends BaseOpenmrsService implements RuleLog
 		log.info("CDSS Vaccine Logger service stopped...");
 		
 	}
-
+	
 	/**
 	 * Retrieves the list of loaded vaccine rulesets from the CDSSConfig class.
 	 */
@@ -73,7 +73,7 @@ public class RuleLoggerServiceImpl extends BaseOpenmrsService implements RuleLog
 	public List<String> getLoadedVaccineRulesets() {
 		return CDSSConfig.VACCINE_CODES;
 	}
-
+	
 	/**
 	 * Records the rule usage by saving it using the CDSSDao's saveEngineUsage method.
 	 */
@@ -81,10 +81,10 @@ public class RuleLoggerServiceImpl extends BaseOpenmrsService implements RuleLog
 	public CdssUsage recordRuleUsage(CdssUsage usage) {
 		return dao.saveEngineUsage(usage);
 	}
-
+	
 	/**
 	 * Retrieves a list of CdssUsage objects representing the rule usages.
-	 *
+	 * 
 	 * @return A list of CdssUsage objects representing the rule usages.
 	 */
 	@Override

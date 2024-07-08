@@ -26,15 +26,17 @@ public class ValueSetServiceImpl extends BaseOpenmrsService implements ValueSetS
 		// Create Http client
 		client = new OkHttpClient();
 	}
-
+	
 	/**
-	 * Retrieves a FHIR ValueSet from a specified URL using the provided API key, OID, version, and offset.
-	 *
+	 * Retrieves a FHIR ValueSet from a specified URL using the provided API key, OID, version, and
+	 * offset.
+	 * 
 	 * @param apiKey the API key for authentication
 	 * @param oid the OID (Object Identifier) of the ValueSet
 	 * @param version the version of the ValueSet (optional)
 	 * @param offset the offset for pagination (optional)
-	 * @return a ValueSetResponse object containing the HTTP status code and the content of the response
+	 * @return a ValueSetResponse object containing the HTTP status code and the content of the
+	 *         response
 	 * @throws APIAuthenticationException if there is an issue with API authentication
 	 */
 	@Override
@@ -77,14 +79,15 @@ public class ValueSetServiceImpl extends BaseOpenmrsService implements ValueSetS
 			return null;
 		}
 	}
-
+	
 	/**
 	 * Retrieves a SVS ValueSet from a specified URL using the provided API key, OID, and version.
-	 *
+	 * 
 	 * @param apiKey the API key for authentication
 	 * @param oid the OID (Object Identifier) of the ValueSet
 	 * @param version the version of the ValueSet (optional)
-	 * @return a ValueSetResponse object containing the HTTP status code and the content of the response
+	 * @return a ValueSetResponse object containing the HTTP status code and the content of the
+	 *         response
 	 * @throws APIAuthenticationException if there is an issue with API authentication
 	 */
 	@Override
