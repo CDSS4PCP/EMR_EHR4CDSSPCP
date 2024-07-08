@@ -6,15 +6,33 @@ import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.cdss.CDSSConfig;
 import org.openmrs.module.cdss.api.RuleManagerService;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
+class JsonFilenameFilter implements FilenameFilter {
+	
+	// Allow only alphanumeric,period, hyphen, underscore
+	private static final String INVALID_REGX = "[^-_.A-Za-z0-9]";
+	
+	@Override
+	public boolean accept(File dir, String name) {
+		
+		Pattern p = Pattern.compile(INVALID_REGX);
+		boolean found = p.matcher(name).find();// If true, then it is invalid
+		return name.endsWith(".json") && !found;
+	}
+}
 
 public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleManagerService {
 	
 	private final Logger log = Logger.getLogger(getClass());
+	
+	// The directory in the resources folder where ELM rules are stored
+	private static final String RULE_DIRECTORY_PATH = "rules/elm/";
 	
 	/**
 	 * Logic that is run when this service is started. At the moment, this method is not used.
@@ -48,8 +66,20 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
 	 */
 	@Override
 	public String[] getRules() throws APIAuthenticationException {
-		return new String[] { "MMR_Rule1.json", "MMR_Rule4.json", "MMR_Rule5.json", "MMR_Rule6.json", "MMR_Rule7.json",
-		        "MMR_Rule7.json", "MMR_Rule9.json", "MMR_Rule10.json", "MMR_Rule11.json" };
+		ClassLoader classloader = Thread.currentThread().getContextClassLoader();
+		
+		URL url = classloader.getResource(RULE_DIRECTORY_PATH);
+		
+		String directoryPath = url.getPath();
+		File directoryFile = new File(directoryPath);
+		File[] files = directoryFile.listFiles(new JsonFilenameFilter());
+		String[] filenames = new String[files.length];
+		
+		for (int i = 0; i < files.length; i++) {
+			filenames[i] = files[i].getName();
+		}
+		return filenames;
+		
 	}
 	
 	/**
@@ -65,17 +95,20 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
 	 */
 	@Override
 	public String getRule(String ruleId) throws APIAuthenticationException, NullPointerException {
-		String path = "rules/elm/" + ruleId;
+		if (!isRuleIdValid(ruleId)) {
+			return null;
+		}
 		
-		if (!ruleId.endsWith(".json")) {
-			path = path + ".json";
-		}
-		if (!ruleId.endsWith(".json")) {
-			path = path + ".json";
-		}
+		String path = RULE_DIRECTORY_PATH + ruleId;
+		
 		ClassLoader classloader = Thread.currentThread().getContextClassLoader();
 		InputStream is = classloader.getResourceAsStream(path);
 		String result = new BufferedReader(new InputStreamReader(is)).lines().collect(Collectors.joining("\n"));
 		return result;
+	}
+	
+	private boolean isRuleIdValid(String ruleId) {
+		
+		return new JsonFilenameFilter().accept(null, ruleId);
 	}
 }
