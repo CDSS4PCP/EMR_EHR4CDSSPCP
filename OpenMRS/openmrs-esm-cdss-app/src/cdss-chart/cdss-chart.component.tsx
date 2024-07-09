@@ -13,14 +13,14 @@ import {
   useConnectivity,
   navigate as openmrsNavigate,
   Session,
-  openmrsFetch,
+  openmrsFetch
 } from "@openmrs/esm-framework";
 import {
   CardHeader,
   EmptyState,
   ErrorState,
   launchPatientWorkspace,
-  PatientChartPagination,
+  PatientChartPagination
 } from "@openmrs/esm-patient-common-lib";
 
 import "./../cdss.js";
@@ -32,7 +32,7 @@ import {
   getRecommendations,
   getRules,
   getUsages,
-  recordRuleUsage,
+  recordRuleUsage
 } from "../cdssService";
 import { types } from "sass";
 import { CdssUsage } from "../cdssTypes";
@@ -57,8 +57,8 @@ export interface CdssChartComponentProps {
 }
 
 export const CdssChart: React.FC<CdssChartComponentProps> = ({
-  patientUuid,
-}) => {
+                                                               patientUuid
+                                                             }) => {
   const { t } = useTranslation();
 
   // const ruleId = "MMR_Rule4";
@@ -82,12 +82,6 @@ export const CdssChart: React.FC<CdssChartComponentProps> = ({
     });
   }, []);
 
-  const loadingProps = () => ({
-    active: true,
-    withOverlay: false,
-    small: false,
-    description: "Active loading indicator",
-  });
   return (
     <div>
       <Modal
@@ -156,7 +150,12 @@ export const CdssChart: React.FC<CdssChartComponentProps> = ({
       {/*  <pre> {JSON.stringify(results, null, 2)}</pre>*/}
       {/*</p>*/}
 
-      {results != null ? (
+      {results == null || (Array.isArray(results) && results.length == 0) ? (
+        <div style={{ justifyContent: "center" }}>
+          <Loading withOverlay={false} small={true} active={true}></Loading>
+          Results Loading...
+        </div>
+      ) : (
         <CdssResultsTable
           patientUuid={patientUuid}
           patientResults={results}
@@ -179,8 +178,6 @@ export const CdssChart: React.FC<CdssChartComponentProps> = ({
             // )
           }}
         ></CdssResultsTable>
-      ) : (
-        <div></div>
       )}
 
       {/*{results ? (*/}
