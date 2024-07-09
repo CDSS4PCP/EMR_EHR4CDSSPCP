@@ -55,6 +55,12 @@
       "route": "cdss/reports",
       "online": true,
       "offline": true
+    },
+    {
+      "component": "cdssModificationPage",
+      "route": "cdss/edit",
+      "online": true,
+      "offline": true
     }
   ]
 }
