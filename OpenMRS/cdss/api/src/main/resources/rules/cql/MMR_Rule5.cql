@@ -1,4 +1,4 @@
-library "MMR6regular12months_4yrs_OneDoseOutOf12to15MonRecommendation" version '1'
+library "MMR5regular12months_4yrs_OneDoseOutOf12to15MonRecommendation" version '1'
 
 include "MMR_Common_Library" version '1' called Common
 using FHIR version '4.0.1'
@@ -19,7 +19,7 @@ define "VaccineName":
 
 
 
-
+//Parameters-Age1, Age2
 define "CurrentAge":
   AgeInMonths() > 12
     and AgeInYears() < 4
@@ -31,6 +31,7 @@ define "CurrentAge":
 
 //this one dose can be from (MMR valueses OR CVS codes,) or MMR admin, however only one from either set
 
+//Parameters-Immunization record and dose
 
 define "MMR_Vaccine_OneDose":
     Count (Common.FindValidVaccines (Imm))=1
@@ -61,12 +62,12 @@ define "WeeksFromFirstDose":
 
 
 define "InPopulation":
-    MMR_Vaccine_OneDose and AgeFirstMMRIn and CurrentAge and WeeksFromFirstDose < 4
+    MMR_Vaccine_OneDose and AgeFirstMMRIn and CurrentAge and WeeksFromFirstDose >= 4
 
 //parameters-Todo1
  define "Recommendation1":
      if InPopulation then
-        'Schedule 2nd dose >= 4 wk of 1st dose'
+        'Administer 2nd dose MMR'
      else
         null
 

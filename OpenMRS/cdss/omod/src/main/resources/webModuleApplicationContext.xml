@@ -22,7 +22,4 @@
 
 	<context:component-scan base-package="org.openmrs.module.cdss.web.controller" />
 
-	<bean class="org.openmrs.ui.framework.StandardModuleUiConfiguration">
-		<property name="moduleId" value="${project.parent.artifactId}"/>
-	</bean>
 </beans>

@@ -13,6 +13,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 public class RuleLoggerServiceImpl extends BaseOpenmrsService implements RuleLoggerService {
+	
 	private final Logger log = Logger.getLogger(getClass());
 	
 	CDSSDao dao;
@@ -30,8 +31,6 @@ public class RuleLoggerServiceImpl extends BaseOpenmrsService implements RuleLog
 	@Override
 	public void onStartup() {
 		
-
-		
 		log.info("CDSS Vaccine Logger service started...");
 	}
 	
@@ -41,7 +40,6 @@ public class RuleLoggerServiceImpl extends BaseOpenmrsService implements RuleLog
 	@Override
 	public void onShutdown() {
 		
-
 		log.info("CDSS Vaccine Logger service stopped...");
 		
 	}

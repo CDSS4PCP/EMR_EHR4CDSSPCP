@@ -19,8 +19,6 @@ import java.io.UnsupportedEncodingException;
  */
 public class CDSSActivator extends BaseModuleActivator {
 	
-	private static SampleData sampleData;
-	
 	private final Logger log = Logger.getLogger(getClass());
 	
 	/**
@@ -32,14 +30,6 @@ public class CDSSActivator extends BaseModuleActivator {
 		
 		CDSSConfig.VACCINE_CODES.add("MMR");
 		CDSSConfig.VACCINE_CODES.add("HPV");
-		
-		sampleData = new SampleData();
-		try {
-			sampleData.loadSampleDataJson();
-		}
-		catch (UnsupportedEncodingException e) {
-			throw new RuntimeException(e);
-		}
 		
 	}
 	
@@ -57,7 +47,4 @@ public class CDSSActivator extends BaseModuleActivator {
 		
 	}
 	
-	public static SampleData getSampleData() {
-		return sampleData;
-	}
 }

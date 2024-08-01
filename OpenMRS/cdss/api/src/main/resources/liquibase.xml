@@ -39,8 +39,9 @@
 
     <changeSet id="cdss-2024-5-14-2" author="raff">
 
-
+        <preConditions onFail="MARK_RAN"><tableExists tableName="cdss_usage"/></preConditions>
         <dropTable tableName="cdss_usage"></dropTable>
+
         <comment>
             Creating the cdss_usage table
         </comment>
