@@ -19,6 +19,7 @@ import { CdssUsage } from "../cdssTypes";
 interface CdssResultsTableDataCellProps {
   data: any;
 }
+
 interface CdssResultsTableHeaderProps {
   visibleColumns: Array<string>;
 }
@@ -44,7 +45,6 @@ export interface CdssChartResultsTableProps {
 }
 
 function doesActionApply(patientId, rule, patientResult, existingUsages) {
-  // console.log("ActionApply: ", existingUsages);
   if (
     patientId == null ||
     rule == null ||
@@ -96,7 +96,9 @@ const CdssResultsTableDataCell: React.FC<CdssResultsTableDataCellProps> = ({
         <UnorderedList>
           {data.map((d) => (
             <ListItem>
-              {d.recommendation != null ? d.recommendation : "Recommendations unavailable"}
+              {d.recommendation != null
+                ? d.recommendation
+                : "Recommendations unavailable"}
             </ListItem>
           ))}
         </UnorderedList>

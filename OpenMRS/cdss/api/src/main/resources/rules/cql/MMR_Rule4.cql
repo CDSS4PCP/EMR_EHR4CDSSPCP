@@ -32,6 +32,25 @@ context Patient
 define "VaccineName":
     'Measles, Mumps, and Rubella Virus Vaccine'
 
+//define generic MMR valuesets groups and codes union
+//
+//define "MMR_Vaccine_valuesets":
+//       "Measles, Mumps and Rubella (MMR) Vaccine VS"
+//    union  "Measles, Mumps and Rubella (MMR) Vaccine VS_1"
+//
+//define "MMR_Vaccine_Admin_valuesets":
+//    "Measles, Mumps and Rubella (MMR) Vaccine Administered VS"
+//        union  "Measles, Mumps and Rubella (MMR) Vaccine Administered VS_1"
+//    union  "Measles, Mumps and Rubella (MMR) Vaccine Administered VS_2"
+//
+//define "MMR_Vaccine_CVXCodes":
+//   "measles, mumps, rubella, and varicella virus vaccine code"
+//    union "measles, mumps and rubella virus vaccine code"
+//
+//define "MMR_Vaccine_union":
+//    "MMR_Vaccine_valuesets" union "MMR_Vaccine_Admin_valuesets" union "MMR_Vaccine_CVXCodes" union "MMR_Vaccine_CVXCodes"
+//
+
 define "CurrentAge":
     AgeInMonths() > 12 and AgeInYears() < 4
 
@@ -43,6 +62,19 @@ define function FindValidCodes(codes List<FHIR.Coding>):
 define function FindValidVaccines(Immunizations List<Immunization>):
     Immunizations Temp where  (FindValidCodes(Temp.vaccineCode.coding)) is not null
 
+//check to see if any existing immunization record is in MMR_Vaccine_union
+//will all the vacines in the list be gone through one by one? if not, how to make them be checked one by one?
+
+//this one dose can be from (MMR valueses OR CVS codes,) or MMR admin, however only one from either set
+
+
+//define function CheckMMRdose(Immunizations List<FHIR.Immunization>):
+//    Immunizations Temp where  (ToCode(Temp.vaccineCode.coding)) in ("MMR_Vaccine_CVXCodes" union "MMR_Vaccine_valuesets")
+//	return Temp
+
+//define function CheckMMRAdmin(Immunizations List<FHIR.Immunization>):
+//    Immunizations TempAdm where (ToCode(TempAdm.vaccineCode.coding[0])) in "MMR_Vaccine_Admin_valuesets"
+//	return TempAdm
 
 
 define "MMR_Vaccine_OneDose":

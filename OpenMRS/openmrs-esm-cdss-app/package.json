@@ -2,7 +2,7 @@
   "name": "@openmrs/esm-cdss-app",
   "version": "3.0.0",
   "license": "MPL-2.0",
-  "description": "An OpenMRS seed application for building microfrontends",
+  "description": "An OpenMRS GUI module for CDSS",
   "browser": "dist/openmrs-esm-cdss-app.js",
   "main": "src/index.ts",
   "source": true,
@@ -106,7 +106,8 @@
     "turbo": "^1.10.7",
     "typescript": "^4.9.5",
     "webpack": "^5.88.1",
-    "webpack-cli": "^5.1.4"
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^5.0.4"
   },
   "packageManager": "yarn@3.6.1"
 }

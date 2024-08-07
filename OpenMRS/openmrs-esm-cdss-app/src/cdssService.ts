@@ -5,6 +5,8 @@ import List = types.List;
 import { CdssUsage } from "./cdssTypes";
 
 const VSAC_API_KEY = ""; // Your api key goes here
+const SERVER_URL = "http://localhost:8080";
+
 function convertDateToTimestamp(date: Date) {
   return [
     date.getFullYear(),
@@ -12,7 +14,7 @@ function convertDateToTimestamp(date: Date) {
     date.getDay(),
     date.getHours(),
     date.getMinutes(),
-    date.getSeconds()
+    date.getSeconds(),
   ];
 }
 
@@ -95,7 +97,7 @@ const recordRuleUsage = (usage: CdssUsage) => {
     timestamp: convertDateToTimestamp(usage.timestamp),
     rule: usage.ruleId,
     recommendations: usage.recommendations,
-    status: usage.status
+    status: usage.status,
   };
 
   // console.log("Sending: ", payload);
@@ -103,7 +105,7 @@ const recordRuleUsage = (usage: CdssUsage) => {
     signal: ac.signal,
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: payload
+    body: payload,
   })
     // .then((result) => console.log("Received: ", result.data))
     .catch((error) => console.log(error));
@@ -114,7 +116,7 @@ async function getUsages() {
   const response = await openmrsFetch(`/cdss/usages.form`, {
     signal: ac.signal,
     method: "GET",
-    headers: { "Content-Type": "application/json" }
+    headers: { "Content-Type": "application/json" },
   });
 
   return await response.json();
@@ -130,7 +132,7 @@ async function getRules() {
   const response = await openmrsFetch(`/cdss/rule.form`, {
     signal: ac.signal,
     method: "GET",
-    headers: { "Content-Type": "application/json" }
+    headers: { "Content-Type": "application/json" },
   });
 
   return await response.json();
@@ -141,59 +143,56 @@ function setupEndpointsMap() {
   global.cdss.endpoints = {
     metadata: {
       systemName: "OpenMRS",
-      remoteAddress: "http://127.0.0.1:80/openmrs",
-      vsacApiKey: VSAC_API_KEY
+      remoteAddress: `${SERVER_URL}/openmrs`,
+      vsacApiKey: VSAC_API_KEY,
     },
     patientById: {
       address: async (patientId) => {
         return await loadPatient(patientId);
       },
-      method: "GET"
+      method: "GET",
     },
     medicationRequestByPatientId: {
-      address:
-        "http://127.0.0.1:80/openmrs/ws/fhir2/R4/MedicationRequest/{{medicationRequestId}}",
-      method: "GET"
+      address: `${SERVER_URL}/openmrs/ws/fhir2/R4/MedicationRequest/{{medicationRequestId}}`,
+      method: "GET",
     },
     medicationByMedicationRequestId: {
-      address:
-        "http://127.0.0.1:80/openmrs/ws/fhir2/R4/Medication/{{medicationId}}",
-      method: "GET"
+      address: `${SERVER_URL}/openmrs/ws/fhir2/R4/Medication/{{medicationId}}`,
+      method: "GET",
     },
     immunizationByPatientId: {
       address: async (patientId) => {
         return await loadImmunizations(patientId);
       },
-      method: "GET"
+      method: "GET",
     },
     conditionByPatientId: {
       address: async (patientId) => {
         return await loadConditions(patientId);
       },
-      method: "GET"
+      method: "GET",
     },
     observationByPatientId: {
-      address:
-        "http://127.0.0.1:80/openmrs/ws/fhir2/R4/Observation/{{patientId}}",
-      method: "GET"
+      address: `${SERVER_URL}/openmrs/ws/fhir2/R4/Observation/{{patientId}}`,
+      method: "GET",
     },
     ruleById: {
       address: async (ruleId) => {
         return await loadRule(ruleId);
       },
-      method: "GET"
+      method: "GET",
     },
     getRules: {
       address: async () => {
         return await getRules();
       },
-      method: "GET"
+      method: "GET",
     },
     getUsages: {
       address: async () => {
         return await getUsages();
       },
-      method: "GET"
+      method: "GET",
     },
     recordUsage: {
       address: async (ruleId, patientId, vaccine, recommendation, status) => {
@@ -203,20 +202,19 @@ function setupEndpointsMap() {
           vaccine: vaccine,
           recommendations: recommendation,
           status: status,
-          timestamp: new Date()
+          timestamp: new Date(),
         });
       },
-      method: "POST"
+      method: "POST",
     },
     vsacSvs: {
-      address: "http://localhost:8080/openmrs/cdss/RetrieveSvsValueSet.form",
-      method: "GET"
+      address: `${SERVER_URL}/openmrs/cdss/RetrieveSvsValueSet.form`,
+      method: "GET",
     },
     vsacFhir: {
-      address:
-        "http://localhost:8080/openmrs/cdss/RetrieveFhirValueSet/{{oid}}.form",
-      method: "GET"
-    }
+      address: `${SERVER_URL}/openmrs/cdss/RetrieveFhirValueSet/{{oid}}.form`,
+      method: "GET",
+    },
   };
 }
 
@@ -229,5 +227,5 @@ export {
   loadPatient,
   loadRule,
   getRecommendations,
-  getRules
+  getRules,
 };
