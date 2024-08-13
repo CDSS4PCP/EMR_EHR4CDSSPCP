@@ -100,7 +100,7 @@ async function recordRoutineUsage(ruleId, patientId, vaccine, recommendations) {
             status: UsageStatus.ROUTINE
         };
 
-        console.log("Sending...", options.body);
+        // console.log("Sending...", options.body);
         let response = await fetch(url, options);
         if (response.status !== 200) {
             throw new Error("Rule responded with HTTP " + response.status);
@@ -324,8 +324,22 @@ async function executeRuleWithPatient(patientId, ruleId) {
 
         }
 
+    // console.log("Passing libraries", libraries);
+    // console.log("Passing params", parameters);
     const codeService = new vsac.CodeService(false, true, global.cdss.endpoints.vsacSvs.address, global.cdss.endpoints.vsacFhir.address);
+    // console.log(`using SVS address ---> ${global.cdss.endpoints.vsacSvs.address}`)
+    // console.log(`using FHIR address ---> ${global.cdss.endpoints.vsacFhir.address}`)
+    let results = await executeCql(patient, rule, libraries, parameters, codeService, global.cdss.endpoints.metadata.vsacApiKey);
+    await recordRoutineUsage(rule.library.identifier.id, patient.id, results[patient.id].VaccineName, results[patient.id].Recommendations);
 
+    return results
+}
+
+async function executeRuleWithPatientLibsParams(patient, rule, libraries, parameters) {
+
+    const codeService = new vsac.CodeService(true, true, global.cdss.endpoints.vsacSvs.address, global.cdss.endpoints.vsacFhir.address);
+    // console.log(`using SVS address ---> ${global.cdss.endpoints.vsacSvs.address}`)
+    // console.log(`using FHIR address ---> ${global.cdss.endpoints.vsacFhir.address}`)
     let results = await executeCql(patient, rule, libraries, parameters, codeService, global.cdss.endpoints.metadata.vsacApiKey);
     await recordRoutineUsage(rule.library.identifier.id, patient.id, results[patient.id].VaccineName, results[patient.id].Recommendations);
 
@@ -340,6 +354,7 @@ global.cdss = {
     getListOfExpectedParameters: getListOfExpectedParameters,
     getListOfExpectedLibraries: getListOfExpectedLibraries,
     executeRuleWithPatient: executeRuleWithPatient,
+    executeRuleWithPatientLibsParams: executeRuleWithPatientLibsParams,
     DEBUG_MODE: DEBUG_MODE
 };
 
@@ -349,6 +364,7 @@ export {
     executeCql,
     getListOfExpectedParameters,
     getListOfExpectedLibraries,
-    executeRuleWithPatient
+    executeRuleWithPatient,
+    executeRuleWithPatientLibsParams
 }
 
