@@ -98,6 +98,7 @@ public class ClientsideRestController {
     public ResponseEntity<String> recordUsage(@RequestBody String newUsageString) {
         checkAuthorizationAndPrivilege();
 
+		log.debug("Received new usage string: \n" + newUsageString + "\n will attempt to parse");
         CdssUsage newUsage;
         try {
             newUsage = cdssService.getCdssObjectMapper().readValue(newUsageString, CdssUsage.class);
@@ -112,7 +113,7 @@ public class ClientsideRestController {
 
         if (saved == null) {
             log.warn("Attempted to save CdssUsage but could not");
-            return new ResponseEntity<>("Internal Issue Encountered", HttpStatus.OK);
+            return new ResponseEntity<>("Internal Issue Encountered", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
         try {
@@ -185,7 +186,7 @@ public class ClientsideRestController {
 	 * @return ResponseEntity<String> containing the content of the value set if found
 	 *         HttpStatus.INTERNAL_SERVER_ERROR if there is an error during processing
 	 */
-	@RequestMapping(path = "/RetrieveFhirValueSet/{id}.form", produces = "application/json")
+	@RequestMapping(path = "/RetrieveFhirValueSet/{id}.form", produces = "application/json", method = {RequestMethod.GET, RequestMethod.OPTIONS})
     public ResponseEntity<String> getFhirValuesets(@PathVariable(required = true) String id, @RequestParam(required = false) String version, @RequestParam(required = false) Integer offset) {
         checkAuthorizationAndPrivilege();
 

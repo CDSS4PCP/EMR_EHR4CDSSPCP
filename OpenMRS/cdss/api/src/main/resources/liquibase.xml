@@ -13,34 +13,16 @@
         for a list of supported elements and attributes
     -->
 
-    <!-- Uncomment the changeset below if you want to make the Item class persistable, see also Item and CDSSDaoTest -->
-    <!--
-   <changeSet id="cdss-2016-08-02-12-21" author="raff">
-       <preConditions onFail="MARK_RAN">
-           <not><tableExists tableName="cdss_item"/></not>
-       </preConditions>
-       <comment>
-           Creating the cdss_item table
-       </comment>
-       <createTable tableName="cdss_item">
-           <column name="cdss_item_id" type="int" autoIncrement="true">
-               <constraints primaryKey="true" nullable="false"/>
-           </column>
-           <column name="uuid" type="char(38)">
-               <constraints nullable="false" unique="true"></constraints>
-           </column>
-           <column name="owner" type="int" />
-           <column name="description" type="varchar(255)" />
-       </createTable>
-       <addForeignKeyConstraint constraintName="cdss_item_owner_fk" baseTableName="cdss_item" baseColumnNames="owner"  referencedTableName="users"
-                                referencedColumnNames="user_id" />
-   </changeSet> -->
+    <changeSet id="cdss-2024-8-07-05" author="raff">
 
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="cdss_usage"/>
 
-    <changeSet id="cdss-2024-8-07" author="raff">
+            </not>
 
-        <preConditions onFail="MARK_RAN"><tableExists tableName="cdss_usage"/></preConditions>
-        <dropTable tableName="cdss_usage"></dropTable>
+        </preConditions>
+        <!--        <dropTable tableName="cdss_usage"></dropTable>-->
 
         <comment>
             Creating the cdss_usage table
@@ -137,7 +119,8 @@
             <column name="cdss_usage_patient">71a8fef3-52cc-46a1-9c1c-b834acae5b6f</column>
             <column name="cdss_usage_date">2024-04-01 01:20:14</column>
             <column name="cdss_usage_rule">MMR4regular12months_4yrs_OneMMRRecommendation</column>
-            <column name="cdss_usage_recommendation1">Recommendation 1: Schedule 2nd dose MMR when patient is 4-6 years old
+            <column name="cdss_usage_recommendation1">Recommendation 1: Schedule 2nd dose MMR when patient is 4-6 years
+                old
             </column>
             <column name="cdss_usage_status">ACTED</column>
             <!--                    <column name="creator">0</column>-->

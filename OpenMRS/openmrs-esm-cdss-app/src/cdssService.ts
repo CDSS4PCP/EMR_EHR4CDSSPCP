@@ -98,7 +98,7 @@ const recordRuleUsage = (usage: CdssUsage) => {
     timestamp: convertDateToTimestamp(usage.timestamp),
     rule: usage.ruleId,
     recommendations: usage.recommendations,
-    status: usage.status
+    status: usage.status,
   };
 
   // console.log("Sending: ", payload);
@@ -108,7 +108,6 @@ const recordRuleUsage = (usage: CdssUsage) => {
     headers: { "Content-Type": "application/json" },
     body: payload
   })
-    // .then((result) => console.log("Received: ", result.data))
     .catch((error) => console.log(error));
 };
 
