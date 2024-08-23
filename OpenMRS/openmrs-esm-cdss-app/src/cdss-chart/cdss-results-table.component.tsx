@@ -10,11 +10,13 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  UnorderedList,
+  UnorderedList
 } from "@carbon/react";
 import { types } from "sass";
 import List = types.List;
 import { CdssUsage } from "../cdssTypes";
+
+import { CloseOutline, CheckmarkOutline } from "@carbon/react/icons";
 
 interface CdssResultsTableDataCellProps {
   data: any;
@@ -84,8 +86,8 @@ function doesActionApply(patientId, rule, patientResult, existingUsages) {
 }
 
 const CdssResultsTableDataCell: React.FC<CdssResultsTableDataCellProps> = ({
-  data,
-}) => {
+                                                                             data
+                                                                           }) => {
   if (data == null) {
     return <TableCell></TableCell>;
   } else if (typeof data == "string") {
@@ -108,8 +110,8 @@ const CdssResultsTableDataCell: React.FC<CdssResultsTableDataCellProps> = ({
 };
 
 const CdssResultsTableHeader: React.FC<CdssResultsTableHeaderProps> = ({
-  visibleColumns,
-}) => {
+                                                                         visibleColumns
+                                                                       }) => {
   return (
     <TableHead>
       <TableRow>
@@ -126,13 +128,13 @@ const CdssResultsTableHeader: React.FC<CdssResultsTableHeaderProps> = ({
 };
 
 const CdssResultsTableRow: React.FC<CdssResultsTableRowProps> = ({
-  visibleColumns,
-  patientResults,
-  patientUuid,
-  existingUsages,
-  takeAction,
-  declineAction,
-}) => {
+                                                                   visibleColumns,
+                                                                   patientResults,
+                                                                   patientUuid,
+                                                                   existingUsages,
+                                                                   takeAction,
+                                                                   declineAction
+                                                                 }) => {
   return (
     <TableRow>
       <CdssResultsTableDataCell
@@ -156,6 +158,7 @@ const CdssResultsTableRow: React.FC<CdssResultsTableRowProps> = ({
           <div>
             <Button
               kind={"primary"}
+              aria-label={"Take action"}
               onClick={(e) => {
                 const usage: CdssUsage = {
                   ruleId: patientResults?.["library"]?.["name"],
@@ -164,16 +167,19 @@ const CdssResultsTableRow: React.FC<CdssResultsTableRowProps> = ({
                   timestamp: new Date(),
                   recommendations:
                     patientResults?.[patientUuid]?.["Recommendations"],
-                  status: "ACTED",
+                  status: "ACTED"
                 };
                 takeAction(usage);
               }}
+              renderIcon={CheckmarkOutline}
+
             >
-              Take action
+              {/*Take action*/}
             </Button>
 
             <Button
               kind={"secondary"}
+              aria-label={"Decline action"}
               onClick={(e) => {
                 const usage: CdssUsage = {
                   ruleId: patientResults?.["library"]?.["name"],
@@ -182,12 +188,13 @@ const CdssResultsTableRow: React.FC<CdssResultsTableRowProps> = ({
                   timestamp: new Date(),
                   recommendations:
                     patientResults?.[patientUuid]?.["Recommendations"],
-                  status: "ACTED",
+                  status: "ACTED"
                 };
                 declineAction(usage);
               }}
+              renderIcon={CloseOutline}
             >
-              Decline action
+              {/*Decline action*/}
             </Button>
           </div>
         ) : (
@@ -200,15 +207,15 @@ const CdssResultsTableRow: React.FC<CdssResultsTableRowProps> = ({
   );
 };
 export const CdssResultsTable: React.FC<CdssChartResultsTableProps> = ({
-  patientUuid,
-  // ruleId,
-  patientResults,
-  debug,
-  visibleColumns,
-  existingUsages,
-  takeAction,
-  declineAction,
-}) => {
+                                                                         patientUuid,
+                                                                         // ruleId,
+                                                                         patientResults,
+                                                                         debug,
+                                                                         visibleColumns,
+                                                                         existingUsages,
+                                                                         takeAction,
+                                                                         declineAction
+                                                                       }) => {
   if (patientResults == null) {
     return <div></div>;
   } else

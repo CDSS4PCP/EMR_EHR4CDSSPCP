@@ -13,14 +13,14 @@ import {
   useConnectivity,
   navigate as openmrsNavigate,
   Session,
-  openmrsFetch
+  openmrsFetch,
 } from "@openmrs/esm-framework";
 import {
   CardHeader,
   EmptyState,
   ErrorState,
   launchPatientWorkspace,
-  PatientChartPagination
+  PatientChartPagination,
 } from "@openmrs/esm-patient-common-lib";
 
 import "./../cdss.js";
@@ -32,7 +32,7 @@ import {
   getRecommendations,
   getRules,
   getUsages,
-  recordRuleUsage
+  recordRuleUsage,
 } from "../cdssService";
 import { types } from "sass";
 import { CdssUsage } from "../cdssTypes";
@@ -57,11 +57,10 @@ export interface CdssChartComponentProps {
 }
 
 export const CdssChart: React.FC<CdssChartComponentProps> = ({
-                                                               patientUuid
-                                                             }) => {
+  patientUuid,
+}) => {
   const { t } = useTranslation();
 
-  // const ruleId = "MMR_Rule4";
   const [results, setResults] = useState([]);
   const [usages, setExistingUsages] = useState([]);
   const [actionConfirmDialogOpen, setActionConfirmDialogOpen] = useState(false);
@@ -77,7 +76,6 @@ export const CdssChart: React.FC<CdssChartComponentProps> = ({
 
   useEffect(() => {
     getUsages().then((usageList) => {
-      console.log(usageList);
       setExistingUsages(usageList);
     });
   }, []);
