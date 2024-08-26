@@ -157,7 +157,6 @@ export const CdssChart: React.FC<CdssChartComponentProps> = ({
         <CdssResultsTable
           patientUuid={patientUuid}
           patientResults={results}
-          // ruleId={ruleId}
           existingUsages={usages}
           visibleColumns={["VaccineName", "Recommendations"]}
           takeAction={(usage) => {

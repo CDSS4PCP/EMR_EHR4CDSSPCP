@@ -10,7 +10,7 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  UnorderedList
+  UnorderedList,
 } from "@carbon/react";
 import { types } from "sass";
 import List = types.List;
@@ -56,14 +56,13 @@ function doesActionApply(patientId, rule, patientResult, existingUsages) {
     return false;
   }
   // TODO move this functionality to the common module
-  if (patientResult["Recommendation"] == "Does not apply") {
-    return false;
-  }
+  // if (patientResult["Recommendation"] == "Does not apply") {
+  //   return false;
+  // }
   const recommendationSet = new Set<string>();
   patientResult["Recommendations"].forEach((r) =>
     recommendationSet.add(r.recommendation)
   );
-
   for (const usage of existingUsages) {
     let condition =
       patientId == usage["patientId"] &&
@@ -76,6 +75,7 @@ function doesActionApply(patientId, rule, patientResult, existingUsages) {
     const diff = new Set(
       [...recommendationSet].filter((x) => !recommendations.has(x))
     ).size;
+
     condition = condition && diff == 0;
     if (condition) {
       // Does not apply because previous action was taken
@@ -86,8 +86,8 @@ function doesActionApply(patientId, rule, patientResult, existingUsages) {
 }
 
 const CdssResultsTableDataCell: React.FC<CdssResultsTableDataCellProps> = ({
-                                                                             data
-                                                                           }) => {
+  data,
+}) => {
   if (data == null) {
     return <TableCell></TableCell>;
   } else if (typeof data == "string") {
@@ -110,8 +110,8 @@ const CdssResultsTableDataCell: React.FC<CdssResultsTableDataCellProps> = ({
 };
 
 const CdssResultsTableHeader: React.FC<CdssResultsTableHeaderProps> = ({
-                                                                         visibleColumns
-                                                                       }) => {
+  visibleColumns,
+}) => {
   return (
     <TableHead>
       <TableRow>
@@ -128,13 +128,13 @@ const CdssResultsTableHeader: React.FC<CdssResultsTableHeaderProps> = ({
 };
 
 const CdssResultsTableRow: React.FC<CdssResultsTableRowProps> = ({
-                                                                   visibleColumns,
-                                                                   patientResults,
-                                                                   patientUuid,
-                                                                   existingUsages,
-                                                                   takeAction,
-                                                                   declineAction
-                                                                 }) => {
+  visibleColumns,
+  patientResults,
+  patientUuid,
+  existingUsages,
+  takeAction,
+  declineAction,
+}) => {
   return (
     <TableRow>
       <CdssResultsTableDataCell
@@ -149,73 +149,61 @@ const CdssResultsTableRow: React.FC<CdssResultsTableRowProps> = ({
       })}
 
       <TableCell>
-        {doesActionApply(
-          patientUuid,
-          patientResults?.["library"]?.["name"],
-          patientResults[patientUuid],
-          existingUsages
-        ) ? (
-          <div>
-            <Button
-              kind={"primary"}
-              aria-label={"Take action"}
-              onClick={(e) => {
-                const usage: CdssUsage = {
-                  ruleId: patientResults?.["library"]?.["name"],
-                  patientId: patientUuid,
-                  vaccine: patientResults?.[patientUuid]?.["VaccineName"],
-                  timestamp: new Date(),
-                  recommendations:
-                    patientResults?.[patientUuid]?.["Recommendations"],
-                  status: "ACTED"
-                };
-                takeAction(usage);
-              }}
-              renderIcon={CheckmarkOutline}
+        <div>
+          <Button
+            kind={"primary"}
+            aria-label={"Take action"}
+            onClick={(e) => {
+              const usage: CdssUsage = {
+                ruleId: patientResults?.["library"]?.["name"],
+                patientId: patientUuid,
+                vaccine: patientResults?.[patientUuid]?.["VaccineName"],
+                timestamp: new Date(),
+                recommendations:
+                  patientResults?.[patientUuid]?.["Recommendations"],
+                status: "ACTED",
+              };
+              takeAction(usage);
+            }}
+            renderIcon={CheckmarkOutline}
+          >
+            {/*Take action*/}
+          </Button>
 
-            >
-              {/*Take action*/}
-            </Button>
-
-            <Button
-              kind={"secondary"}
-              aria-label={"Decline action"}
-              onClick={(e) => {
-                const usage: CdssUsage = {
-                  ruleId: patientResults?.["library"]?.["name"],
-                  patientId: patientUuid,
-                  vaccine: patientResults?.[patientUuid]?.["VaccineName"],
-                  timestamp: new Date(),
-                  recommendations:
-                    patientResults?.[patientUuid]?.["Recommendations"],
-                  status: "ACTED"
-                };
-                declineAction(usage);
-              }}
-              renderIcon={CloseOutline}
-            >
-              {/*Decline action*/}
-            </Button>
-          </div>
-        ) : (
-          <div>
-            <Button disabled>No action Needed</Button>
-          </div>
-        )}
+          <Button
+            kind={"secondary"}
+            aria-label={"Decline action"}
+            onClick={(e) => {
+              const usage: CdssUsage = {
+                ruleId: patientResults?.["library"]?.["name"],
+                patientId: patientUuid,
+                vaccine: patientResults?.[patientUuid]?.["VaccineName"],
+                timestamp: new Date(),
+                recommendations:
+                  patientResults?.[patientUuid]?.["Recommendations"],
+                status: "ACTED",
+              };
+              declineAction(usage);
+            }}
+            renderIcon={CloseOutline}
+          >
+            {/*Decline action*/}
+          </Button>
+        </div>
       </TableCell>
     </TableRow>
   );
 };
 export const CdssResultsTable: React.FC<CdssChartResultsTableProps> = ({
-                                                                         patientUuid,
-                                                                         // ruleId,
-                                                                         patientResults,
-                                                                         debug,
-                                                                         visibleColumns,
-                                                                         existingUsages,
-                                                                         takeAction,
-                                                                         declineAction
-                                                                       }) => {
+  patientUuid,
+  // ruleId,
+  patientResults,
+  debug,
+  visibleColumns,
+  existingUsages,
+  takeAction,
+  declineAction,
+}) => {
   if (patientResults == null) {
     return <div></div>;
   } else
@@ -228,6 +216,21 @@ export const CdssResultsTable: React.FC<CdssChartResultsTableProps> = ({
 
           <TableBody>
             {patientResults.map((result) => {
+              const applicable = doesActionApply(
+                patientUuid,
+                result?.["library"]?.["name"],
+                result[patientUuid],
+                existingUsages
+              );
+
+              if (
+                !debug &&
+                (result[patientUuid]?.Recommendations === undefined ||
+                  result[patientUuid].Recommendations.length === 0 ||
+                  !applicable)
+              ) {
+                return <></>;
+              }
               return (
                 <CdssResultsTableRow
                   visibleColumns={visibleColumns}
@@ -240,90 +243,6 @@ export const CdssResultsTable: React.FC<CdssChartResultsTableProps> = ({
               );
             })}
           </TableBody>
-
-          {/*<TableBody>*/}
-          {/*  <TableRow>*/}
-          {/*    <TableCell>{patientResults[0]["library"].name}</TableCell>*/}
-          {/*    {Object.keys(patientResults[0][patientUuid])*/}
-          {/*      .filter((m) => m !== "Patient")*/}
-          {/*      .filter((m) =>*/}
-          {/*        visibleColumns != null ? visibleColumns.includes(m) : m*/}
-          {/*      )*/}
-          {/*      .map((m) => {*/}
-          {/*        if (typeof patientResults[0][patientUuid][m] == "string")*/}
-          {/*          return (*/}
-          {/*            <TableCell>{patientResults[0][patientUuid][m]}</TableCell>*/}
-          {/*          );*/}
-          {/*        else if (Array.isArray(patientResults[0][patientUuid][m])) {*/}
-          {/*          return (*/}
-          {/*            <TableCell>*/}
-          {/*              <UnorderedList>*/}
-          {/*                {patientResults[0][patientUuid][m].map((e) => {*/}
-          {/*                  if (e.recommendation == undefined) {*/}
-          {/*                    return <></>;*/}
-          {/*                  } else*/}
-          {/*                    return <ListItem>{e.recommendation}</ListItem>;*/}
-          {/*                })}*/}
-          {/*              </UnorderedList>*/}
-          {/*            </TableCell>*/}
-          {/*          );*/}
-          {/*        }*/}
-          {/*      })}*/}
-
-          {/*    <td>*/}
-          {/*      {doesActionApply(*/}
-          {/*        patientUuid,*/}
-          {/*        ruleId,*/}
-          {/*        patientResults[0][patientUuid],*/}
-          {/*        existingUsages*/}
-          {/*      ) ? (*/}
-          {/*        <div>*/}
-          {/*          <Button*/}
-          {/*            kind={"primary"}*/}
-          {/*            onClick={(e) => {*/}
-          {/*              const usage: CdssUsage = {*/}
-          {/*                ruleId: ruleId,*/}
-          {/*                patientId: patientUuid,*/}
-          {/*                vaccine:*/}
-          {/*                  patientResults[0][patientUuid]["VaccineName"],*/}
-          {/*                timestamp: new Date(),*/}
-          {/*                recommendations:*/}
-          {/*                  patientResults[0][patientUuid]["Recommendations"],*/}
-          {/*                status: "ACTED",*/}
-          {/*              };*/}
-          {/*              takeAction(usage);*/}
-          {/*            }}*/}
-          {/*          >*/}
-          {/*            Take action*/}
-          {/*          </Button>*/}
-
-          {/*          <Button*/}
-          {/*            kind={"secondary"}*/}
-          {/*            onClick={(e) => {*/}
-          {/*              const usage: CdssUsage = {*/}
-          {/*                ruleId: ruleId,*/}
-          {/*                patientId: patientUuid,*/}
-          {/*                vaccine:*/}
-          {/*                  patientResults[0][patientUuid]["VaccineName"],*/}
-          {/*                timestamp: new Date(),*/}
-          {/*                recommendations:*/}
-          {/*                  patientResults[0][patientUuid]["Recommendations"],*/}
-          {/*                status: "ACTED",*/}
-          {/*              };*/}
-          {/*              declineAction(usage);*/}
-          {/*            }}*/}
-          {/*          >*/}
-          {/*            Decline action*/}
-          {/*          </Button>*/}
-          {/*        </div>*/}
-          {/*      ) : (*/}
-          {/*        <div>*/}
-          {/*          <Button disabled>No action Needed</Button>*/}
-          {/*        </div>*/}
-          {/*      )}*/}
-          {/*    </td>*/}
-          {/*  </TableRow>*/}
-          {/*</TableBody>*/}
         </Table>
       </TableContainer>
     );

@@ -269,7 +269,7 @@ async function executeCql(patient, rule, libraries = null, parameters = null, co
                         let wrapped = fhirWrapper.wrap(entry.resource);
                         paramObject[expectedParameter.name].push(wrapped);
                     }
-                } else if (Array.isArray(res)){
+                } else if (Array.isArray(res)) {
                     // console.log("Is the issue here?")
                     for (const resource of res) {
 
@@ -337,7 +337,8 @@ function extractRecommendations(patientResults) {
         for (const recommendationKey of recommendationKeys) {
             const numberSubstring = recommendationKey.substring(recommendationKey.lastIndexOf('Recommendation') + 14);
             const num = new Number(numberSubstring);
-            recommendationKeyOrder[num] = recommendationKey;
+            if (patientResults[recommendationKey] != null)
+                recommendationKeyOrder[num] = recommendationKey;
         }
 
         return Object.keys(recommendationKeyOrder)
