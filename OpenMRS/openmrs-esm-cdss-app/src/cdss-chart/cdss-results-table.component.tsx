@@ -1,7 +1,9 @@
 import React from "react";
 import {
+  IconButton,
   Button,
   DataTable,
+  Stack,
   Link,
   ListItem,
   Table,
@@ -149,8 +151,8 @@ const CdssResultsTableRow: React.FC<CdssResultsTableRowProps> = ({
       })}
 
       <TableCell>
-        <div>
-          <Button
+        <Stack orientation={"horizontal"}>
+          <IconButton
             kind={"primary"}
             aria-label={"Take action"}
             onClick={(e) => {
@@ -165,12 +167,10 @@ const CdssResultsTableRow: React.FC<CdssResultsTableRowProps> = ({
               };
               takeAction(usage);
             }}
-            renderIcon={CheckmarkOutline}
           >
-            {/*Take action*/}
-          </Button>
-
-          <Button
+            <CheckmarkOutline></CheckmarkOutline>
+          </IconButton>
+          <IconButton
             kind={"secondary"}
             aria-label={"Decline action"}
             onClick={(e) => {
@@ -185,11 +185,10 @@ const CdssResultsTableRow: React.FC<CdssResultsTableRowProps> = ({
               };
               declineAction(usage);
             }}
-            renderIcon={CloseOutline}
           >
-            {/*Decline action*/}
-          </Button>
-        </div>
+            <CloseOutline></CloseOutline>
+          </IconButton>
+        </Stack>
       </TableCell>
     </TableRow>
   );
