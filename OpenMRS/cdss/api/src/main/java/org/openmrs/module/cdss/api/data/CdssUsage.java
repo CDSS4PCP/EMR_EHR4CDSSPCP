@@ -68,7 +68,7 @@ public class CdssUsage implements OpenmrsObject {
 	@Column(name = "cdss_usage_rule", nullable = false)
 	private String rule;
 	
-	@Column(name = "cdss_usage_recommendation1", nullable = false)
+	@Column(name = "cdss_usage_recommendation1", nullable = true)
 	private String recommendation1;
 	
 	@Column(name = "cdss_usage_recommendation2", nullable = true)

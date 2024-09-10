@@ -270,7 +270,6 @@ async function executeCql(patient, rule, libraries = null, parameters = null, co
                         paramObject[expectedParameter.name].push(wrapped);
                     }
                 } else if (Array.isArray(res)) {
-                    // console.log("Is the issue here?")
                     for (const resource of res) {
 
                         let wrapped = fhirWrapper.wrap(resource);
@@ -306,8 +305,13 @@ async function executeCql(patient, rule, libraries = null, parameters = null, co
     return patientResults;
 }
 
+/**
+ * Extracts recommendations from the given patient results.
+ *
+ * @param {Object} patientResults - The patient results object containing recommendations.
+ * @returns {Array|null} An array of recommendations with priority or null if no recommendations found.
+ */
 function extractRecommendations(patientResults) {
-
     if (patientResults === null) {
         return null;
     }

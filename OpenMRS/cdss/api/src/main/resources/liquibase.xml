@@ -13,7 +13,7 @@
         for a list of supported elements and attributes
     -->
 
-    <changeSet id="cdss-2024-8-07-05" author="raff">
+    <changeSet id="cdss-2024-09-09-02" author="raff">
 
         <preConditions onFail="MARK_RAN">
             <not>
@@ -49,7 +49,7 @@
                 <constraints nullable="false"/>
             </column>
             <column name="cdss_usage_recommendation1" type="varchar(255)">
-                <constraints nullable="false"/>
+                <constraints nullable="true"/>
             </column>
             <column name="cdss_usage_recommendation2" type="varchar(255)">
             </column>
@@ -113,29 +113,29 @@
                                  baseColumnNames="cdss_usage_patient" referencedTableName="person"
                                  referencedColumnNames="uuid"/>
 
-        <insert tableName="cdss_usage">
-            <column name="cdss_usage_id">0</column>
-            <column name="cdss_usage_vaccine">Measles, Mumps, and Rubella Virus Vaccine</column>
-            <column name="cdss_usage_patient">71a8fef3-52cc-46a1-9c1c-b834acae5b6f</column>
-            <column name="cdss_usage_date">2024-04-01 01:20:14</column>
-            <column name="cdss_usage_rule">MMR4regular12months_4yrs_OneMMRRecommendation</column>
-            <column name="cdss_usage_recommendation1">Recommendation 1: Schedule 2nd dose MMR when patient is 4-6 years
-                old
-            </column>
-            <column name="cdss_usage_status">ACTED</column>
-            <!--                    <column name="creator">0</column>-->
-            <!--                    <column name="date_created">2024-04-01 01:20:14</column>-->
-            <!--                    <column name="changed_by">null</column>-->
-            <!--                    <column name="retired">0</column>-->
-            <!--                    <column name="retired_by">null</column>-->
-            <!--                    <column name="date_retired">null</column>-->
-            <!--                    <column name="retire_reason">null</column>-->
-            <!--                    <column name="voided">null</column>-->
-            <!--                    <column name="voided_by">null</column>-->
-            <!--                    <column name="date_voided">null</column>-->
-            <!--                    <column name="void_reason">null</column>-->
-            <column name="uuid">29080fbe-f38a-11ee-a25e-0242ac130002</column>
-        </insert>
+<!--        <insert tableName="cdss_usage">-->
+<!--            <column name="cdss_usage_id">0</column>-->
+<!--            <column name="cdss_usage_vaccine">Measles, Mumps, and Rubella Virus Vaccine</column>-->
+<!--            <column name="cdss_usage_patient">71a8fef3-52cc-46a1-9c1c-b834acae5b6f</column>-->
+<!--            <column name="cdss_usage_date">2024-04-01 01:20:14</column>-->
+<!--            <column name="cdss_usage_rule">MMR4regular12months_4yrs_OneMMRRecommendation</column>-->
+<!--            <column name="cdss_usage_recommendation1">Recommendation 1: Schedule 2nd dose MMR when patient is 4-6 years-->
+<!--                old-->
+<!--            </column>-->
+<!--            <column name="cdss_usage_status">ACTED</column>-->
+<!--            &lt;!&ndash;                    <column name="creator">0</column>&ndash;&gt;-->
+<!--            &lt;!&ndash;                    <column name="date_created">2024-04-01 01:20:14</column>&ndash;&gt;-->
+<!--            &lt;!&ndash;                    <column name="changed_by">null</column>&ndash;&gt;-->
+<!--            &lt;!&ndash;                    <column name="retired">0</column>&ndash;&gt;-->
+<!--            &lt;!&ndash;                    <column name="retired_by">null</column>&ndash;&gt;-->
+<!--            &lt;!&ndash;                    <column name="date_retired">null</column>&ndash;&gt;-->
+<!--            &lt;!&ndash;                    <column name="retire_reason">null</column>&ndash;&gt;-->
+<!--            &lt;!&ndash;                    <column name="voided">null</column>&ndash;&gt;-->
+<!--            &lt;!&ndash;                    <column name="voided_by">null</column>&ndash;&gt;-->
+<!--            &lt;!&ndash;                    <column name="date_voided">null</column>&ndash;&gt;-->
+<!--            &lt;!&ndash;                    <column name="void_reason">null</column>&ndash;&gt;-->
+<!--            <column name="uuid">29080fbe-f38a-11ee-a25e-0242ac130002</column>-->
+<!--        </insert>-->
     </changeSet>
 
 </databaseChangeLog>
