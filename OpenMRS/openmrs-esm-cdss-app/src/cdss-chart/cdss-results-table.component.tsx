@@ -1,7 +1,9 @@
 import React from "react";
 import {
+  IconButton,
   Button,
   DataTable,
+  Stack,
   Link,
   ListItem,
   Table,
@@ -15,6 +17,8 @@ import {
 import { types } from "sass";
 import List = types.List;
 import { CdssUsage } from "../cdssTypes";
+
+import { CloseOutline, CheckmarkOutline } from "@carbon/react/icons";
 
 interface CdssResultsTableDataCellProps {
   data: any;
@@ -54,14 +58,13 @@ function doesActionApply(patientId, rule, patientResult, existingUsages) {
     return false;
   }
   // TODO move this functionality to the common module
-  if (patientResult["Recommendation"] == "Does not apply") {
-    return false;
-  }
+  // if (patientResult["Recommendation"] == "Does not apply") {
+  //   return false;
+  // }
   const recommendationSet = new Set<string>();
   patientResult["Recommendations"].forEach((r) =>
     recommendationSet.add(r.recommendation)
   );
-
   for (const usage of existingUsages) {
     let condition =
       patientId == usage["patientId"] &&
@@ -74,6 +77,7 @@ function doesActionApply(patientId, rule, patientResult, existingUsages) {
     const diff = new Set(
       [...recommendationSet].filter((x) => !recommendations.has(x))
     ).size;
+
     condition = condition && diff == 0;
     if (condition) {
       // Does not apply because previous action was taken
@@ -147,54 +151,44 @@ const CdssResultsTableRow: React.FC<CdssResultsTableRowProps> = ({
       })}
 
       <TableCell>
-        {doesActionApply(
-          patientUuid,
-          patientResults?.["library"]?.["name"],
-          patientResults[patientUuid],
-          existingUsages
-        ) ? (
-          <div>
-            <Button
-              kind={"primary"}
-              onClick={(e) => {
-                const usage: CdssUsage = {
-                  ruleId: patientResults?.["library"]?.["name"],
-                  patientId: patientUuid,
-                  vaccine: patientResults?.[patientUuid]?.["VaccineName"],
-                  timestamp: new Date(),
-                  recommendations:
-                    patientResults?.[patientUuid]?.["Recommendations"],
-                  status: "ACTED",
-                };
-                takeAction(usage);
-              }}
-            >
-              Take action
-            </Button>
-
-            <Button
-              kind={"secondary"}
-              onClick={(e) => {
-                const usage: CdssUsage = {
-                  ruleId: patientResults?.["library"]?.["name"],
-                  patientId: patientUuid,
-                  vaccine: patientResults?.[patientUuid]?.["VaccineName"],
-                  timestamp: new Date(),
-                  recommendations:
-                    patientResults?.[patientUuid]?.["Recommendations"],
-                  status: "ACTED",
-                };
-                declineAction(usage);
-              }}
-            >
-              Decline action
-            </Button>
-          </div>
-        ) : (
-          <div>
-            <Button disabled>No action Needed</Button>
-          </div>
-        )}
+        <Stack orientation={"horizontal"}>
+          <IconButton
+            kind={"primary"}
+            aria-label={"Take action"}
+            onClick={(e) => {
+              const usage: CdssUsage = {
+                ruleId: patientResults?.["library"]?.["name"],
+                patientId: patientUuid,
+                vaccine: patientResults?.[patientUuid]?.["VaccineName"],
+                timestamp: new Date(),
+                recommendations:
+                  patientResults?.[patientUuid]?.["Recommendations"],
+                status: "ACTED",
+              };
+              takeAction(usage);
+            }}
+          >
+            <CheckmarkOutline></CheckmarkOutline>
+          </IconButton>
+          <IconButton
+            kind={"secondary"}
+            aria-label={"Decline action"}
+            onClick={(e) => {
+              const usage: CdssUsage = {
+                ruleId: patientResults?.["library"]?.["name"],
+                patientId: patientUuid,
+                vaccine: patientResults?.[patientUuid]?.["VaccineName"],
+                timestamp: new Date(),
+                recommendations:
+                  patientResults?.[patientUuid]?.["Recommendations"],
+                status: "ACTED",
+              };
+              declineAction(usage);
+            }}
+          >
+            <CloseOutline></CloseOutline>
+          </IconButton>
+        </Stack>
       </TableCell>
     </TableRow>
   );
@@ -221,6 +215,21 @@ export const CdssResultsTable: React.FC<CdssChartResultsTableProps> = ({
 
           <TableBody>
             {patientResults.map((result) => {
+              const applicable = doesActionApply(
+                patientUuid,
+                result?.["library"]?.["name"],
+                result[patientUuid],
+                existingUsages
+              );
+
+              if (
+                !debug &&
+                (result[patientUuid]?.Recommendations === undefined ||
+                  result[patientUuid].Recommendations.length === 0 ||
+                  !applicable)
+              ) {
+                return <></>;
+              }
               return (
                 <CdssResultsTableRow
                   visibleColumns={visibleColumns}
@@ -233,90 +242,6 @@ export const CdssResultsTable: React.FC<CdssChartResultsTableProps> = ({
               );
             })}
           </TableBody>
-
-          {/*<TableBody>*/}
-          {/*  <TableRow>*/}
-          {/*    <TableCell>{patientResults[0]["library"].name}</TableCell>*/}
-          {/*    {Object.keys(patientResults[0][patientUuid])*/}
-          {/*      .filter((m) => m !== "Patient")*/}
-          {/*      .filter((m) =>*/}
-          {/*        visibleColumns != null ? visibleColumns.includes(m) : m*/}
-          {/*      )*/}
-          {/*      .map((m) => {*/}
-          {/*        if (typeof patientResults[0][patientUuid][m] == "string")*/}
-          {/*          return (*/}
-          {/*            <TableCell>{patientResults[0][patientUuid][m]}</TableCell>*/}
-          {/*          );*/}
-          {/*        else if (Array.isArray(patientResults[0][patientUuid][m])) {*/}
-          {/*          return (*/}
-          {/*            <TableCell>*/}
-          {/*              <UnorderedList>*/}
-          {/*                {patientResults[0][patientUuid][m].map((e) => {*/}
-          {/*                  if (e.recommendation == undefined) {*/}
-          {/*                    return <></>;*/}
-          {/*                  } else*/}
-          {/*                    return <ListItem>{e.recommendation}</ListItem>;*/}
-          {/*                })}*/}
-          {/*              </UnorderedList>*/}
-          {/*            </TableCell>*/}
-          {/*          );*/}
-          {/*        }*/}
-          {/*      })}*/}
-
-          {/*    <td>*/}
-          {/*      {doesActionApply(*/}
-          {/*        patientUuid,*/}
-          {/*        ruleId,*/}
-          {/*        patientResults[0][patientUuid],*/}
-          {/*        existingUsages*/}
-          {/*      ) ? (*/}
-          {/*        <div>*/}
-          {/*          <Button*/}
-          {/*            kind={"primary"}*/}
-          {/*            onClick={(e) => {*/}
-          {/*              const usage: CdssUsage = {*/}
-          {/*                ruleId: ruleId,*/}
-          {/*                patientId: patientUuid,*/}
-          {/*                vaccine:*/}
-          {/*                  patientResults[0][patientUuid]["VaccineName"],*/}
-          {/*                timestamp: new Date(),*/}
-          {/*                recommendations:*/}
-          {/*                  patientResults[0][patientUuid]["Recommendations"],*/}
-          {/*                status: "ACTED",*/}
-          {/*              };*/}
-          {/*              takeAction(usage);*/}
-          {/*            }}*/}
-          {/*          >*/}
-          {/*            Take action*/}
-          {/*          </Button>*/}
-
-          {/*          <Button*/}
-          {/*            kind={"secondary"}*/}
-          {/*            onClick={(e) => {*/}
-          {/*              const usage: CdssUsage = {*/}
-          {/*                ruleId: ruleId,*/}
-          {/*                patientId: patientUuid,*/}
-          {/*                vaccine:*/}
-          {/*                  patientResults[0][patientUuid]["VaccineName"],*/}
-          {/*                timestamp: new Date(),*/}
-          {/*                recommendations:*/}
-          {/*                  patientResults[0][patientUuid]["Recommendations"],*/}
-          {/*                status: "ACTED",*/}
-          {/*              };*/}
-          {/*              declineAction(usage);*/}
-          {/*            }}*/}
-          {/*          >*/}
-          {/*            Decline action*/}
-          {/*          </Button>*/}
-          {/*        </div>*/}
-          {/*      ) : (*/}
-          {/*        <div>*/}
-          {/*          <Button disabled>No action Needed</Button>*/}
-          {/*        </div>*/}
-          {/*      )}*/}
-          {/*    </td>*/}
-          {/*  </TableRow>*/}
-          {/*</TableBody>*/}
         </Table>
       </TableContainer>
     );
