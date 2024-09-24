@@ -7,17 +7,17 @@ const fhirHelpers = require('./testResources/fhirHelpers.json');
 
 // Mock data for testing
 const mockRule = {
-    library: {
-        includes: {
-            def: [{localIdentifier: 'lib1', path: '/path/to/lib1'}, {localIdentifier: 'lib2', path: '/path/to/lib2'},],
-        }, parameters: {
-            def: [{
-                name: 'par1', accessLevel: 'Public', parameterTypeSpecifier: {
-                    name: 'Number', type: 'NamedTypeSpecifier'
-                }
-            }]
+  library: {
+    includes: {
+      def: [{localIdentifier: 'lib1', path: '/path/to/lib1'}, {localIdentifier: 'lib2', path: '/path/to/lib2'},],
+    }, parameters: {
+      def: [{
+        name: 'par1', accessLevel: 'Public', parameterTypeSpecifier: {
+          name: 'Number', type: 'NamedTypeSpecifier'
         }
+      }]
     }
+  }
 };
 
 
@@ -33,56 +33,56 @@ const imm1 = require('./testResources/imm1.json');
 
 function testEndpoints() {
 
-    function endpoints_metadata() {
-        test.object(global.cdss.endpoints).hasProperty("metadata");
-        test.object(global.cdss.endpoints["metadata"]).hasProperty("systemName");
-        test.object(global.cdss.endpoints["metadata"]).hasProperty("remoteAddress");
-    }
+  function endpoints_metadata() {
+    test.object(global.cdss.endpoints).hasProperty('metadata');
+    test.object(global.cdss.endpoints['metadata']).hasProperty('systemName');
+    test.object(global.cdss.endpoints['metadata']).hasProperty('remoteAddress');
+  }
 
-    function endpoints_patientById() {
-        test.object(global.cdss.endpoints).hasProperty("patientById");
-        test.object(global.cdss.endpoints["patientById"]).hasProperty("address");
-        test.object(global.cdss.endpoints["patientById"]).hasProperty("method");
-    }
+  function endpoints_patientById() {
+    test.object(global.cdss.endpoints).hasProperty('patientById');
+    test.object(global.cdss.endpoints['patientById']).hasProperty('address');
+    test.object(global.cdss.endpoints['patientById']).hasProperty('method');
+  }
 
-    function endpoints_medicationRequestByPatientId() {
-        test.object(global.cdss.endpoints).hasProperty("medicationRequestByPatientId");
-        test.object(global.cdss.endpoints["patientById"]).hasProperty("address");
-        test.object(global.cdss.endpoints["patientById"]).hasProperty("method");
-    }
+  function endpoints_medicationRequestByPatientId() {
+    test.object(global.cdss.endpoints).hasProperty('medicationRequestByPatientId');
+    test.object(global.cdss.endpoints['patientById']).hasProperty('address');
+    test.object(global.cdss.endpoints['patientById']).hasProperty('method');
+  }
 
-    function endpoints_medicationByMedicationRequestId() {
-        test.object(global.cdss.endpoints).hasProperty("medicationByMedicationRequestId");
-        test.object(global.cdss.endpoints["patientById"]).hasProperty("address");
-        test.object(global.cdss.endpoints["patientById"]).hasProperty("method");
-    }
+  function endpoints_medicationByMedicationRequestId() {
+    test.object(global.cdss.endpoints).hasProperty('medicationByMedicationRequestId');
+    test.object(global.cdss.endpoints['patientById']).hasProperty('address');
+    test.object(global.cdss.endpoints['patientById']).hasProperty('method');
+  }
 
-    function endpoints_immunizationByPatientId() {
-        test.object(global.cdss.endpoints).hasProperty("immunizationByPatientId");
-        test.object(global.cdss.endpoints["patientById"]).hasProperty("address");
-        test.object(global.cdss.endpoints["patientById"]).hasProperty("method");
-    }
+  function endpoints_immunizationByPatientId() {
+    test.object(global.cdss.endpoints).hasProperty('immunizationByPatientId');
+    test.object(global.cdss.endpoints['patientById']).hasProperty('address');
+    test.object(global.cdss.endpoints['patientById']).hasProperty('method');
+  }
 
-    function endpoints_conditionByPatientId() {
-        test.object(global.cdss.endpoints).hasProperty("conditionByPatientId");
-        test.object(global.cdss.endpoints["conditionByPatientId"]).hasProperty("address");
-        test.object(global.cdss.endpoints["conditionByPatientId"]).hasProperty("method");
-    }
+  function endpoints_conditionByPatientId() {
+    test.object(global.cdss.endpoints).hasProperty('conditionByPatientId');
+    test.object(global.cdss.endpoints['conditionByPatientId']).hasProperty('address');
+    test.object(global.cdss.endpoints['conditionByPatientId']).hasProperty('method');
+  }
 
-    function endpoints_ruleById() {
-        test.object(global.cdss.endpoints).hasProperty("ruleById");
-        test.object(global.cdss.endpoints["patientById"]).hasProperty("address");
-        test.object(global.cdss.endpoints["patientById"]).hasProperty("method");
-    }
+  function endpoints_ruleById() {
+    test.object(global.cdss.endpoints).hasProperty('ruleById');
+    test.object(global.cdss.endpoints['patientById']).hasProperty('address');
+    test.object(global.cdss.endpoints['patientById']).hasProperty('method');
+  }
 
 
-    endpoints_metadata();
-    endpoints_patientById();
-    endpoints_medicationRequestByPatientId();
-    endpoints_medicationByMedicationRequestId();
-    endpoints_immunizationByPatientId();
-    endpoints_conditionByPatientId();
-    endpoints_ruleById();
+  endpoints_metadata();
+  endpoints_patientById();
+  endpoints_medicationRequestByPatientId();
+  endpoints_medicationByMedicationRequestId();
+  endpoints_immunizationByPatientId();
+  endpoints_conditionByPatientId();
+  endpoints_ruleById();
 }
 
 
@@ -422,6 +422,6 @@ testEndpoints();
 // testExecuteCql();
 
 setTimeout(() => {
-    console.log("All tests passed");
-}, 500)
+  console.log('All tests passed');
+}, 500);
 
