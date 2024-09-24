@@ -341,7 +341,7 @@ async function executeRuleWithPatientLibsParams(patient, rule, libraries, parame
     // console.log(`using SVS address ---> ${global.cdss.endpoints.vsacSvs.address}`)
     // console.log(`using FHIR address ---> ${global.cdss.endpoints.vsacFhir.address}`)
     let results = await executeCql(patient, rule, libraries, parameters, codeService, global.cdss.endpoints.metadata.vsacApiKey);
-    await recordRoutineUsage(rule.library.identifier.id, patient.id, results[patient.id].VaccineName, results[patient.id].Recommendations);
+    // await recordRoutineUsage(rule.library.identifier.id, patient.id, results[patient.id].VaccineName, results[patient.id].Recommendations);
 
     return results
 }

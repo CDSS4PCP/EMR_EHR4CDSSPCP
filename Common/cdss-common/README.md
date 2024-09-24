@@ -1,9 +1,11 @@
 # cdss-common
 The common module that is used for CDS (Clinical Decision Support) for the [CDSS4PCP Project](https://cdss4pcp.com/). This Javacript module integrates with target EMRS
 
+## cdss-module.js
+Defines constants, enums, and utility functions for recording usage of rules, retrieving FHIR resources, and executing CQL rules on FHIR patients.
 
 ## index.js
-Defines constants, enums, and utility functions for recording usage of rules, retrieving FHIR resources, and executing CQL rules on FHIR patients.
+Defines clientside functionality for CDSS including the endpoints map
 
 ## Inputs
 * Constants for usage status and FHIR resource types

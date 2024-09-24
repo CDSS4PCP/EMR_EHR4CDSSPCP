@@ -244,6 +244,7 @@ async function executeCql(patient, rule, libraries = null, parameters = null, co
     // Create parameter object and make sure all expected parameters are provided
     let paramObject = {};
     const expectedParameters = getListOfExpectedParameters(rule);
+
     if (expectedParameters !== undefined && expectedParameters.length > 0) {
 
         if (parameters === null || parameters === undefined) {
