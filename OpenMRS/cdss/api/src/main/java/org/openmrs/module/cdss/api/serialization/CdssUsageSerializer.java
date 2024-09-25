@@ -60,7 +60,6 @@ public class CdssUsageSerializer extends StdSerializer<CdssUsage> {
 		}
 		jsonGenerator.writeStringField("rule", cdssUsage.getRule());
 		
-
 		jsonGenerator.writeFieldName("recommendations");
 		jsonGenerator.writeStartArray();
 		
