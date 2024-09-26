@@ -10,13 +10,13 @@
     "test-all": "jest src/test/cdss-module.test.js && node src/test/index.test.js",
     "lint": "eslint .",
     "lint-fix": "eslint . --fix",
-    "test-compile": "eslint . --fix && jest src/test/cdss-module.test.js && node src/test/index.test.js && webpack"
+    "all": "eslint . --fix && jest src/test/cdss-module.test.js && webpack && node src/test/index.test.js "
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "browserfy-cql-exec-vsac": "2.2.0",
+    "browserfy-cql-exec-vsac": "git+https://github.com/sorliog/browserfy-cql-exec-vsac.git",
     "browserify-fs": "^1.0.0",
     "buffer": "^6.0.3",
     "cql-exec-fhir": "^2.1.5",
