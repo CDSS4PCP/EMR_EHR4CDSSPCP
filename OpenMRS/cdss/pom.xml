@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.openmrs.maven.parents</groupId>
         <artifactId>maven-parent-openmrs-module</artifactId>
-        <version>1.1.0</version>
+        <version>1.0.9</version>
     </parent>
 
     <groupId>org.openmrs.module</groupId>
@@ -22,9 +22,9 @@
     </organization>
 
     <scm>
-        <connection>scm:git:git@github.com:openmrs/openmrs-module-cdss.git</connection>
-        <developerConnection>scm:git:git@github.com:openmrs/openmrs-module-cdss.git</developerConnection>
-        <url>https://github.com/openmrs/openmrs-module-cdss/</url>
+        <connection>scm:git:git@github.com:xjing16/EMR_EHR4CDSSPCP.git</connection>
+        <developerConnection>scm:git:git@github.com:xjing16/EMR_EHR4CDSSPCP.git</developerConnection>
+        <url>https://github.com/xjing16/EMR_EHR4CDSSPCP</url>
     </scm>
 
     <modules>
@@ -78,23 +78,37 @@
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-core</artifactId>
                 <version>${jacksonVersion}</version>
+                <scope>compile</scope>
+
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-annotations</artifactId>
                 <version>${jacksonVersion}</version>
+                <scope>compile</scope>
+
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
                 <version>${jacksonVersion}</version>
+                <scope>compile</scope>
+
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.datatype</groupId>
                 <artifactId>jackson-datatype-jsr310</artifactId>
                 <version>${jacksonVersion}</version>
+                <scope>compile</scope>
+
             </dependency>
 
+            <dependency>
+                <groupId>org.openmrs.module</groupId>
+                <artifactId>serialization.xstream-api-2.0</artifactId>
+                <version>${xstreamVersion}</version>
+                <scope>test</scope>
+            </dependency>
 
         </dependencies>
     </dependencyManagement>
@@ -129,6 +143,7 @@
         <fhir2APIVersion>1.10.0</fhir2APIVersion>
         <hapiFhirVersion>5.4.0</hapiFhirVersion>
         <jacksonVersion>2.17.1</jacksonVersion>
+        <xstreamVersion>0.2.16</xstreamVersion>
 
     </properties>
 </project>

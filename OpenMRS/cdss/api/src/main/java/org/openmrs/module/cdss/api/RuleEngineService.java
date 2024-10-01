@@ -3,6 +3,7 @@ package org.openmrs.module.cdss.api;
 import org.openmrs.Patient;
 import org.openmrs.annotation.Authorized;
 import org.openmrs.api.APIException;
+import org.openmrs.module.cdss.CDSSConfig;
 import org.openmrs.module.cdss.Item;
 import org.openmrs.module.cdss.EngineResult;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,7 +20,7 @@ public interface RuleEngineService extends CdssVaccineService {
 	 * @return
 	 * @throws APIException
 	 */
-	@Authorized()
+	@Authorized({ CDSSConfig.MODULE_PRIVILEGE })
 	@Transactional(readOnly = true)
 	Item getItemByUuid(String uuid) throws APIException;
 	

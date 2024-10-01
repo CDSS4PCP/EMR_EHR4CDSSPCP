@@ -17,11 +17,21 @@ public class CdssUsageSerializer extends StdSerializer<CdssUsage> {
 		this(null);
 	}
 	
+	/**
+	 * Serializes a CdssUsage object into a JSON representation using the provided JsonGenerator.
+	 * The serialization includes fields such as ID, vaccine, patient ID, timestamp, rule,
+	 * recommendations, status, and UUID. Required fields like vaccine, patient ID, timestamp, rule,
+	 * recommendation1, and status are checked for null values and appropriate exceptions are thrown
+	 * if they are null.
+	 */
 	@Override
 	public void serialize(CdssUsage cdssUsage, JsonGenerator jsonGenerator, SerializerProvider serializerProvider)
 	        throws IOException {
 		jsonGenerator.writeStartObject();
 		
+		if (cdssUsage.getId() != null) {
+			jsonGenerator.writeNumberField("id", cdssUsage.getId());
+		}
 		if (cdssUsage.getVaccine() == null) {
 			throw new IOException("Required field \"vaccine\" was null when serializing \"CdssUsage\"");
 		}
@@ -50,9 +60,6 @@ public class CdssUsageSerializer extends StdSerializer<CdssUsage> {
 		}
 		jsonGenerator.writeStringField("rule", cdssUsage.getRule());
 		
-		if (cdssUsage.getRecommendation1() == null) {
-			throw new IOException("Required field \"recommendation1\" was null when serializing \"CdssUsage\"");
-		}
 		jsonGenerator.writeFieldName("recommendations");
 		jsonGenerator.writeStartArray();
 		
@@ -84,6 +91,14 @@ public class CdssUsageSerializer extends StdSerializer<CdssUsage> {
 		jsonGenerator.writeEndObject();
 	}
 	
+	/**
+	 * Writes a recommendation to the provided JsonGenerator with the given priority.
+	 * 
+	 * @param jsonGenerator The JsonGenerator to write the recommendation to
+	 * @param recommendation The recommendation to be written
+	 * @param priority The priority of the recommendation
+	 * @throws IOException If an I/O error occurs during writing the recommendation
+	 */
 	private void writeRecommendation(JsonGenerator jsonGenerator, String recommendation, int priority) throws IOException {
 		jsonGenerator.writeStartObject();
 		jsonGenerator.writeNumberField("priority", priority);

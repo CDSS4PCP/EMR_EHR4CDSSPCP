@@ -17,7 +17,7 @@ import {
   TableHeader,
   TableRow,
   Tile,
-  UnorderedList
+  UnorderedList,
 } from "@carbon/react";
 import { openmrsFetch, useConfig } from "@openmrs/esm-framework";
 
@@ -99,7 +99,7 @@ function getStatsOnUsages(usages) {
     numUniqueUsedRules: uniqueRules.size,
     numUniqueUsedRulesActed: uniqueRulesActed.size,
     numUniqueUsedRulesDeclined: uniqueRulesDeclined.size,
-    numUniqueUsedRulesRoutine: uniqueRulesRoutine.size
+    numUniqueUsedRulesRoutine: uniqueRulesRoutine.size,
   };
 }
 
@@ -116,7 +116,6 @@ export const CdssReportsPage: React.FC = () => {
         )}:${getSecond(r.timestamp)}`;
       }
       setUsages(json);
-
       const stats = getStatsOnUsages(json);
 
       setUsageStats(stats);
@@ -130,7 +129,7 @@ export const CdssReportsPage: React.FC = () => {
     { key: "rule", header: "Rule" },
     { key: "recommendations", header: "Recommendations" },
     { key: "timestamp", header: "Occurrence Time" },
-    { key: "status", header: "Status" }
+    { key: "status", header: "Status" },
   ];
 
   return (
@@ -138,6 +137,7 @@ export const CdssReportsPage: React.FC = () => {
       <div className={styles.reportsHeaderContainer}>
         <span className={styles.reportsHeader}>All Reports</span>
       </div>
+
       <div className={styles.reportStatsContainer}>
         <div style={{ flexGrow: "1" }}>
           <div>
@@ -162,7 +162,7 @@ export const CdssReportsPage: React.FC = () => {
                     justifySelf: "flex-end",
                     columnGap: "0.5rem",
                     rowGap: "0.5rem",
-                    margin: "0.5rem"
+                    margin: "0.5rem",
                   }}
                 >
                   <p className={styles.reportStatsDataPointHeader}>ROUTINE</p>
@@ -211,7 +211,7 @@ export const CdssReportsPage: React.FC = () => {
                     justifySelf: "flex-end",
                     columnGap: "0.5rem",
                     rowGap: "0.5rem",
-                    margin: "0.5rem"
+                    margin: "0.5rem",
                   }}
                 >
                   <p className={styles.reportStatsDataPointHeader}>ROUTINE</p>
@@ -260,7 +260,7 @@ export const CdssReportsPage: React.FC = () => {
                     justifySelf: "flex-end",
                     columnGap: "0.5rem",
                     rowGap: "0.5rem",
-                    margin: "0.5rem"
+                    margin: "0.5rem",
                   }}
                 >
                   <p className={styles.reportStatsDataPointHeader}>ROUTINE</p>
@@ -289,61 +289,63 @@ export const CdssReportsPage: React.FC = () => {
       </div>
 
       <DataTable headers={headers} rows={usages} isSortable>
-        {({ rows, headers, getHeaderProps, getRowProps, getTableProps }) => (
-          <TableContainer style={{ padding: "10px" }}>
-            <Table {...getTableProps()}>
-              <TableHead>
-                <TableRow>
-                  {headers.map((header) => {
-                    if (header.key == "recommendations") {
-                      return (
-                        <TableHeader key={header.key}>
-                          {header.header}
-                        </TableHeader>
-                      );
-                    } else
-                      return (
-                        <TableHeader
-                          key={header.key}
-                          {...getHeaderProps({ header })}
-                        >
-                          {header.header}
-                        </TableHeader>
-                      );
-                  })}
-                </TableRow>
-              </TableHead>
+        {({ rows, headers, getHeaderProps, getRowProps, getTableProps }) => {
+          return (
+            <TableContainer style={{ padding: "10px" }}>
+              <Table {...getTableProps()}>
+                <TableHead>
+                  <TableRow>
+                    {headers.map((header) => {
+                      if (header.key == "recommendations") {
+                        return (
+                          <TableHeader key={header.key}>
+                            {header.header}
+                          </TableHeader>
+                        );
+                      } else
+                        return (
+                          <TableHeader
+                            key={header.key}
+                            {...getHeaderProps({ header })}
+                          >
+                            {header.header}
+                          </TableHeader>
+                        );
+                    })}
+                  </TableRow>
+                </TableHead>
 
-              <TableBody>
-                {rows.map((row) => {
-                  return (
-                    <TableRow key={row.id} {...getRowProps({ row })}>
-                      {row.cells.map((cell) => {
-                        if (cell.info.header == "recommendations") {
-                          const v = (
-                            <TableCell key={cell.id}>
-                              <UnorderedList key={cell.id}>
-                                {cell.value.map((r) => {
-                                  return (
-                                    <ListItem>{r.recommendation}</ListItem>
-                                  );
-                                })}
-                              </UnorderedList>
-                            </TableCell>
-                          );
-                          return v;
-                        } else
-                          return (
-                            <TableCell key={cell.id}>{cell.value}</TableCell>
-                          );
-                      })}
-                    </TableRow>
-                  );
-                })}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        )}
+                <TableBody>
+                  {rows.map((row) => {
+                    return (
+                      <TableRow key={row.id} {...getRowProps({ row })}>
+                        {row.cells.map((cell) => {
+                          if (cell.info.header == "recommendations") {
+                            const v = (
+                              <TableCell key={cell.id}>
+                                <UnorderedList key={cell.id}>
+                                  {cell.value.map((r) => {
+                                    return (
+                                      <ListItem>{r.recommendation}</ListItem>
+                                    );
+                                  })}
+                                </UnorderedList>
+                              </TableCell>
+                            );
+                            return v;
+                          } else
+                            return (
+                              <TableCell key={cell.id}>{cell.value}</TableCell>
+                            );
+                        })}
+                      </TableRow>
+                    );
+                  })}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          );
+        }}
       </DataTable>
     </div>
   );

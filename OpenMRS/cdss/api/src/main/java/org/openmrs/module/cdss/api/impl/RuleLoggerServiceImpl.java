@@ -14,8 +14,6 @@ import java.util.List;
 
 public class RuleLoggerServiceImpl extends BaseOpenmrsService implements RuleLoggerService {
 	
-	PrintWriter writer;
-	
 	private final Logger log = Logger.getLogger(getClass());
 	
 	CDSSDao dao;
@@ -33,20 +31,6 @@ public class RuleLoggerServiceImpl extends BaseOpenmrsService implements RuleLog
 	@Override
 	public void onStartup() {
 		
-		try {
-			writer = new PrintWriter("CDSS-Log.txt", "UTF-8");
-			log.info("Created log file at CDSS-Log.txt");
-			
-		}
-		catch (FileNotFoundException e) {
-			log.info("Unable to create log file at CDSS-Log.txt");
-			
-		}
-		catch (UnsupportedEncodingException e) {
-			log.info("Unable to encode log file at CDSS-Log.txt");
-			
-		}
-		
 		log.info("CDSS Vaccine Logger service started...");
 	}
 	
@@ -56,25 +40,31 @@ public class RuleLoggerServiceImpl extends BaseOpenmrsService implements RuleLog
 	@Override
 	public void onShutdown() {
 		
-		if (writer != null) {
-			writer.flush();
-			writer.close();
-			
-			log.info("Saving log file at CDSS-Log.txt");
-		}
 		log.info("CDSS Vaccine Logger service stopped...");
 		
 	}
 	
+	/**
+	 * Retrieves the list of loaded vaccine rulesets from the CDSSConfig class.
+	 */
+	@Override
 	public List<String> getLoadedVaccineRulesets() {
 		return CDSSConfig.VACCINE_CODES;
 	}
 	
+	/**
+	 * Records the rule usage by saving it using the CDSSDao's saveEngineUsage method.
+	 */
 	@Override
-	public void recordRuleUsage(CdssUsage usage) {
-		
+	public CdssUsage recordRuleUsage(CdssUsage usage) {
+		return dao.saveEngineUsage(usage);
 	}
 	
+	/**
+	 * Retrieves a list of CdssUsage objects representing the rule usages.
+	 * 
+	 * @return A list of CdssUsage objects representing the rule usages.
+	 */
 	@Override
 	public List<CdssUsage> getRuleUsages() {
 		log.debug("CDSS: getRuleUsages() in RuleLoggerServiceImpl.java");
