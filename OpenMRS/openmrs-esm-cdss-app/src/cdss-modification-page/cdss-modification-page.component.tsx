@@ -4,9 +4,10 @@ import {
   Tab,
   Table,
   TableBody,
-  TableCell, TableHead,
+  TableCell,
+  TableHead,
   TableHeader,
-  TableRow
+  TableRow,
 } from "@carbon/react";
 import mmr from "./MMR_descriptor.json";
 
@@ -15,7 +16,7 @@ export const CdssModificationPage: React.FC = () => {
     <div>
       <h1>Rule Modification</h1>
       {/*{JSON.stringify(mmr, null, 2)}*/}
-      <Table>
+      <Table useZebraStyles>
         <TableHead>
           <TableRow>
             {mmr.columns.map((m) => {
@@ -34,15 +35,6 @@ export const CdssModificationPage: React.FC = () => {
                 })}
               </TableRow>
             ))}
-
-          {/*<TableRow>*/}
-          {/*  <TableCell>*/}
-          {/*    Regular and catch-up without prior vaccination records*/}
-          {/*  </TableCell>*/}
-          {/*  <TableCell>*/}
-          {/*    sadas*/}
-          {/*  </TableCell>*/}
-          {/*</TableRow>*/}
         </TableBody>
       </Table>
     </div>

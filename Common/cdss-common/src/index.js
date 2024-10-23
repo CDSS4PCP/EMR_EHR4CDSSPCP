@@ -31,6 +31,10 @@ let endpoints = {
         address: null,
         method: 'GET',
     },
+    'medicationStatementByPatientId': {
+        address: null,
+        method: 'GET',
+    },
     'medicationByMedicationRequestId': {
         address: null,
         method: 'GET'
@@ -242,6 +246,12 @@ async function getFhirResource(patientId, resourceType) {
             response = await fetch(global.cdss.endpoints.medicationRequestByPatientId.address.replace('{{patientId}}', patientId), endpoints.medicationRequestByPatientId);
         else if (typeof global.cdss.endpoints.medicationRequestByPatientId.address == 'function')
             res = await global.cdss.endpoints.medicationRequestByPatientId.address(patientId);
+        break;
+    case ContainerTypes.LIST(FhirTypes.MEDICATION_STATEMENT):
+        if (typeof global.cdss.endpoints.medicationStatementByPatientId.address == 'string')
+            response = await fetch(global.cdss.endpoints.medicationStatementByPatientId.address.replace('{{patientId}}', patientId), endpoints.medicationStatementByPatientId);
+        else if (typeof global.cdss.endpoints.medicationStatementByPatientId.address == 'function')
+            res = await global.cdss.endpoints.medicationStatementByPatientId.address(patientId);
         break;
     case ContainerTypes.LIST(FhirTypes.CONDITION):
         if (typeof global.cdss.endpoints.conditionByPatientId.address == 'string')

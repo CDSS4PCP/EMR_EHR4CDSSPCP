@@ -24,6 +24,7 @@ const FhirTypes = Object.freeze({
     PATIENT: '{http://hl7.org/fhir}Patient',
     IMMUNIZATION: '{http://hl7.org/fhir}Immunization',
     MEDICATION_REQUEST: '{http://hl7.org/fhir}MedicationRequest',
+    MEDICATION_STATEMENT: '{http://hl7.org/fhir}MedicationStatement',
     MEDICATION: '{http://hl7.org/fhir}Medication',
     OBSERVATION: '{http://hl7.org/fhir}Observation',
     CONDITION: '{http://hl7.org/fhir}Condition',
@@ -258,7 +259,7 @@ async function executeCql(patient, rule, libraries = null, parameters = null, co
         version: rule.library.identifier.version,
     };
 
-    let recommendations = []; 
+    let recommendations = [];
 
     patientIds.forEach(patientId => patientResults[patientId].Recommendations = extractRecommendations(patientResults[patientId]));
 
