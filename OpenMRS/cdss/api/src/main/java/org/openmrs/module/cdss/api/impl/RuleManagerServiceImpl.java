@@ -137,7 +137,7 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
      * @throws NullPointerException       if the provided rule ID is null
      */
     @Override
-    public String getElmRule(String ruleId) throws APIAuthenticationException, NullPointerException {
+    public String getElmRule(String ruleId) throws RuleNotEnabledException, APIAuthenticationException, NullPointerException {
         for (RuleDescriptor descriptor : ruleManifest.getRules()) {
             if (descriptor.getId().equals(ruleId)) {
                 String path = RULE_DIRECTORY_PATH + descriptor.getElmFilePath();
@@ -166,7 +166,7 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
      * @throws NullPointerException       if the provided rule ID is null
      */
     @Override
-    public String getCqlRule(String ruleId) throws APIAuthenticationException, NullPointerException {
+    public String getCqlRule(String ruleId) throws RuleNotEnabledException, APIAuthenticationException, NullPointerException {
         for (RuleDescriptor descriptor : ruleManifest.getRules()) {
             if (descriptor.getId().equals(ruleId)) {
                 if (!descriptor.isEnabled()) {

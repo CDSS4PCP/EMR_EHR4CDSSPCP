@@ -47,9 +47,7 @@ public class RuleManifestDeserializer extends StdDeserializer<RuleManifest> {
                 RuleDescriptor descriptor = parseRuleDescriptor(node);
                 rules.add(descriptor);
             }
-            RuleManifest manifest = new RuleManifest();
-            manifest.setRules(rules);
-            return manifest;
+            return new RuleManifest(rules);
         }
         return null;
     }

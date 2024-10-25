@@ -4,8 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import org.apache.log4j.Logger;
 import org.openmrs.api.APIAuthenticationException;
 import org.openmrs.api.AdministrationService;
-import org.openmrs.api.context.Context;
-import org.openmrs.module.cdss.CDSSConfig;
 import org.openmrs.module.cdss.api.CDSSService;
 import org.openmrs.module.cdss.api.RuleLoggerService;
 import org.openmrs.module.cdss.api.RuleManagerService;
@@ -25,15 +23,15 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/cdss")
-public class ClientsideRestController {
+public class ClientsideRestController extends CdssRestController {
 
     Logger log = Logger.getLogger(ClientsideRestController.class);
 
     @Autowired
-    CDSSDao dao;
+    protected CDSSDao dao;
 
     @Autowired
-    CDSSService cdssService;
+    protected CDSSService cdssService;
 
     @Autowired
     @Qualifier("adminService")
@@ -48,79 +46,6 @@ public class ClientsideRestController {
     @Autowired
     protected ValueSetService valueSetService;
 
-    /**
-     * Retrieves a specific rule based on the provided ruleId.
-     *
-     * @param ruleId the unique identifier of the rule to retrieve
-     * @return ResponseEntity<String> containing the rule in JSON format if found
-     * HttpStatus.NOT_FOUND if the rule is not found
-     * @throws APIAuthenticationException if there is an issue with API authentication
-     */
-    @GetMapping(path = "/elm-rule/{ruleId}.form", produces = {"application/json"})
-    public ResponseEntity<String> getRule(@PathVariable(value = "ruleId") String ruleId) throws APIAuthenticationException {
-        checkAuthorizationAndPrivilege();
-
-        try {
-            String rule = ruleManagerService.getElmRule(ruleId);
-            return ResponseEntity.ok(rule);
-        } catch (NullPointerException e) {
-            return new ResponseEntity<>("Rule " + ruleId + " Not found", HttpStatus.NOT_FOUND);
-        }
-    }
-
-    /**
-     * Retrieves a specific rule based on the provided ruleId.
-     *
-     * @param ruleId the unique identifier of the rule to retrieve
-     * @return ResponseEntity<String> containing the rule in JSON format if found
-     * HttpStatus.NOT_FOUND if the rule is not found
-     * @throws APIAuthenticationException if there is an issue with API authentication
-     */
-    @GetMapping(path = "/cql-rule/{ruleId}.form", produces = {"application/json"})
-    public ResponseEntity<String> getCqlRule(@PathVariable(value = "ruleId") String ruleId) throws APIAuthenticationException {
-        checkAuthorizationAndPrivilege();
-
-        try {
-            String rule = ruleManagerService.getCqlRule(ruleId);
-            return ResponseEntity.ok(rule);
-        } catch (NullPointerException e) {
-            return new ResponseEntity<>("Rule " + ruleId + " Not found", HttpStatus.NOT_FOUND);
-        }
-    }
-
-    /**
-     * Retrieves all rules.
-     *
-     * @return ResponseEntity<String [ ]> containing an array of rules in JSON format
-     * @throws APIAuthenticationException if there is an issue with API authentication
-     */
-    @GetMapping(path = "/rule.form", produces = {"application/json"})
-    public ResponseEntity<String[]> getRules(@RequestParam Boolean allRules) throws APIAuthenticationException {
-        checkAuthorizationAndPrivilege();
-        String[] rules;
-        if (allRules) {
-            rules = ruleManagerService.getRules();
-        } else {
-            rules = ruleManagerService.getEnabledRules();
-        }
-        return ResponseEntity.ok(rules);
-
-    }
-
-    /**
-     * Retrieves all rules.
-     *
-     * @return ResponseEntity<String [ ]> containing an array of rules in JSON format
-     * @throws APIAuthenticationException if there is an issue with API authentication
-     */
-    @GetMapping(path = "/rule-manifest.form", produces = {"application/json"})
-    public ResponseEntity<String> getRuleManifest() throws APIAuthenticationException, JsonProcessingException {
-        checkAuthorizationAndPrivilege();
-        String val = cdssService.getCdssObjectMapper().writeValueAsString(ruleManagerService.getRuleManifest());
-
-        return ResponseEntity.ok(val);
-
-    }
 
     /**
      * Records the usage of a Clinical Decision Support System (CDSS) based on the provided
@@ -234,31 +159,7 @@ public class ClientsideRestController {
 
     }
 
-    /**
-     * Handles APIAuthenticationException by creating a ResponseEntity with the exception details.
-     *
-     * @param error the APIAuthenticationException to handle
-     * @return ResponseEntity<Throwable> containing the exception details in JSON format
-     */
-    @ExceptionHandler({APIAuthenticationException.class})
-    public ResponseEntity<Throwable> handleApiAuthException(APIAuthenticationException error) {
-        MultiValueMap<String, String> headers = new HttpHeaders();
-        headers.set("Content-Type", "application/json");
 
-        // Send error stacktrace as json
-        ResponseEntity<Throwable> response = new ResponseEntity<>(error, headers, HttpStatus.UNAUTHORIZED);
-        return response;
-    }
 
-    private void checkAuthorizationAndPrivilege() {
-        if (!Context.isAuthenticated()) {
-            throw new APIAuthenticationException("User is not authenticated. Log in first.");
 
-        }
-        if (!Context.hasPrivilege(CDSSConfig.MODULE_PRIVILEGE)) {
-            throw new APIAuthenticationException(String.format("User does not have privilege '%s'",
-                    CDSSConfig.MODULE_PRIVILEGE));
-        }
-
-    }
 }
