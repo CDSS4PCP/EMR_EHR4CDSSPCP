@@ -1,0 +1,55 @@
+{
+  "rules": [
+    {
+      "id": "FHIRHelpers",
+      "version": "1",
+      "cqlFilePath": "cql/FHIRHelpers.cql",
+      "elmFilePath": "elm/FHIRHelpers.json",
+      "description": "",
+      "role": "support",
+      "enabled": true,
+      "params": {
+      }
+    },
+    {
+      "id": "MMR_Common_Library",
+      "version": "1",
+      "cqlFilePath": "cql/MMR_Common_Library.cql",
+      "elmFilePath": "elm/MMR_Common_Library.json",
+      "description": "",
+      "role": "support",
+      "enabled": true
+    },
+    {
+      "id": "MMR1regularyoungerthan12monthsNoMMRRecommendation",
+      "version": "1",
+      "cqlFilePath": "cql/MMR_Rule1.cql",
+      "elmFilePath": "elm/MMR_Rule1.json",
+      "description": "",
+      "role": "rule",
+      "enabled": true,
+      "params": {
+        "$Age1": {
+          "type": "Integer",
+          "value": 0,
+          "default": 0
+        },
+        "$Age1_unit": {
+          "type": "String",
+          "value": "month",
+          "default": "month"
+        },
+        "$Age2": {
+          "type": "Integer",
+          "value": 12,
+          "default": 12
+        },
+        "$Age2_unit": {
+          "type": "String",
+          "value": "month",
+          "default": "month"
+        }
+      }
+    }
+  ]
+}

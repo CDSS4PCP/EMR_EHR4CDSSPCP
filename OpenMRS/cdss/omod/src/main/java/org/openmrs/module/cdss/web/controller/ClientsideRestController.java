@@ -21,44 +21,42 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
 @RequestMapping("/cdss")
 public class ClientsideRestController {
-	
-	Logger log = Logger.getLogger(ClientsideRestController.class);
-	
-	@Autowired
-	CDSSDao dao;
-	
-	@Autowired
-	CDSSService cdssService;
-	
-	@Autowired
-	@Qualifier("adminService")
-	protected AdministrationService administrationService;
-	
-	@Autowired
-	protected RuleLoggerService ruleLoggerService;
-	
-	@Autowired
-	protected RuleManagerService ruleManagerService;
-	
-	@Autowired
-	protected ValueSetService valueSetService;
-	
-	/**
-	 * Retrieves a specific rule based on the provided ruleId.
-	 * 
-	 * @param ruleId the unique identifier of the rule to retrieve
-	 * @return ResponseEntity<String> containing the rule in JSON format if found
-	 *         HttpStatus.NOT_FOUND if the rule is not found
-	 * @throws APIAuthenticationException if there is an issue with API authentication
-	 */
-	@GetMapping(path = "/rule/{ruleId}", produces = {"application/json"})
+
+    Logger log = Logger.getLogger(ClientsideRestController.class);
+
+    @Autowired
+    CDSSDao dao;
+
+    @Autowired
+    CDSSService cdssService;
+
+    @Autowired
+    @Qualifier("adminService")
+    protected AdministrationService administrationService;
+
+    @Autowired
+    protected RuleLoggerService ruleLoggerService;
+
+    @Autowired
+    protected RuleManagerService ruleManagerService;
+
+    @Autowired
+    protected ValueSetService valueSetService;
+
+    /**
+     * Retrieves a specific rule based on the provided ruleId.
+     *
+     * @param ruleId the unique identifier of the rule to retrieve
+     * @return ResponseEntity<String> containing the rule in JSON format if found
+     * HttpStatus.NOT_FOUND if the rule is not found
+     * @throws APIAuthenticationException if there is an issue with API authentication
+     */
+    @GetMapping(path = "/rule/{ruleId}", produces = {"application/json"})
     public ResponseEntity<String> getRule(@PathVariable(value = "ruleId") String ruleId) throws APIAuthenticationException {
         checkAuthorizationAndPrivilege();
 
@@ -70,35 +68,51 @@ public class ClientsideRestController {
         }
 
     }
-	
-	/**
-	 * Retrieves all rules.
-	 * 
-	 * @return ResponseEntity<String [ ]> containing an array of rules in JSON format
-	 * @throws APIAuthenticationException if there is an issue with API authentication
-	 */
-	@GetMapping(path = "/rule.form", produces = { "application/json" })
-	public ResponseEntity<String[]> getRules() throws APIAuthenticationException {
-		checkAuthorizationAndPrivilege();
-		
-		String[] rules = ruleManagerService.getRules();
-		return ResponseEntity.ok(rules);
-		
-	}
-	
-	/**
-	 * Records the usage of a Clinical Decision Support System (CDSS) based on the provided
-	 * newUsageString.
-	 * 
-	 * @param newUsageString the JSON string representing the new CdssUsage to be recorded
-	 * @return ResponseEntity<String> containing the JSON string of the saved CdssUsage if
-	 *         successful HttpStatus.INTERNAL_SERVER_ERROR if there is an error during processing
-	 */
-	@RequestMapping(path = "/record-usage.form", produces = "application/json", method = {RequestMethod.POST})
+
+    /**
+     * Retrieves all rules.
+     *
+     * @return ResponseEntity<String [ ]> containing an array of rules in JSON format
+     * @throws APIAuthenticationException if there is an issue with API authentication
+     */
+    @GetMapping(path = "/rule.form", produces = {"application/json"})
+    public ResponseEntity<String[]> getRules() throws APIAuthenticationException {
+        checkAuthorizationAndPrivilege();
+
+        String[] rules = ruleManagerService.getRules();
+        return ResponseEntity.ok(rules);
+
+    }
+
+    /**
+     * Retrieves all rules.
+     *
+     * @return ResponseEntity<String [ ]> containing an array of rules in JSON format
+     * @throws APIAuthenticationException if there is an issue with API authentication
+     */
+    @GetMapping(path = "/rule-manifest.form", produces = {"application/json"})
+    public ResponseEntity<String> getRuleManifest() throws APIAuthenticationException, JsonProcessingException {
+        checkAuthorizationAndPrivilege();
+        String val = cdssService.getCdssObjectMapper().writeValueAsString(ruleManagerService.getRuleManifest());
+        log.info("CDSS rule manifest: " + ruleManagerService.getRuleManifest());
+
+        return ResponseEntity.ok(val);
+
+    }
+
+    /**
+     * Records the usage of a Clinical Decision Support System (CDSS) based on the provided
+     * newUsageString.
+     *
+     * @param newUsageString the JSON string representing the new CdssUsage to be recorded
+     * @return ResponseEntity<String> containing the JSON string of the saved CdssUsage if
+     * successful HttpStatus.INTERNAL_SERVER_ERROR if there is an error during processing
+     */
+    @RequestMapping(path = "/record-usage.form", produces = "application/json", method = {RequestMethod.POST})
     public ResponseEntity<String> recordUsage(@RequestBody String newUsageString) {
         checkAuthorizationAndPrivilege();
 
-		log.debug("Received new usage string: \n" + newUsageString + "\n will attempt to parse");
+        log.debug("Received new usage string: \n" + newUsageString + "\n will attempt to parse");
         CdssUsage newUsage;
         try {
             newUsage = cdssService.getCdssObjectMapper().readValue(newUsageString, CdssUsage.class);
@@ -128,16 +142,16 @@ public class ClientsideRestController {
 
         }
     }
-	
-	/**
-	 * Retrieves the list of CdssUsage objects and serializes them into a JSON string using the
-	 * CdssObjectMapper. Returns a ResponseEntity with the JSON string if successful, or an
-	 * INTERNAL_SERVER_ERROR status if there is an error during processing.
-	 * 
-	 * @return ResponseEntity<String> containing the JSON string of CdssUsage objects if successful
-	 *         HttpStatus.INTERNAL_SERVER_ERROR if there is an error during processing
-	 */
-	@RequestMapping(path = "/usages.form", produces = "application/json", method = {RequestMethod.GET})
+
+    /**
+     * Retrieves the list of CdssUsage objects and serializes them into a JSON string using the
+     * CdssObjectMapper. Returns a ResponseEntity with the JSON string if successful, or an
+     * INTERNAL_SERVER_ERROR status if there is an error during processing.
+     *
+     * @return ResponseEntity<String> containing the JSON string of CdssUsage objects if successful
+     * HttpStatus.INTERNAL_SERVER_ERROR if there is an error during processing
+     */
+    @RequestMapping(path = "/usages.form", produces = "application/json", method = {RequestMethod.GET})
     public ResponseEntity<String> getUsages() {
         checkAuthorizationAndPrivilege();
 
@@ -155,16 +169,16 @@ public class ClientsideRestController {
 
         return new ResponseEntity<>(out, HttpStatus.OK);
     }
-	
-	/**
-	 * Retrieves the valuesets based on the provided id and version.
-	 * 
-	 * @param id the unique identifier of the valueset to retrieve
-	 * @param version the version of the valueset (optional)
-	 * @return ResponseEntity<String> containing the content of the valueset if found
-	 *         HttpStatus.INTERNAL_SERVER_ERROR if there is an error during processing
-	 */
-	@RequestMapping(path = "/RetrieveSvsValueSet.form", produces = "application/xml")
+
+    /**
+     * Retrieves the valuesets based on the provided id and version.
+     *
+     * @param id      the unique identifier of the valueset to retrieve
+     * @param version the version of the valueset (optional)
+     * @return ResponseEntity<String> containing the content of the valueset if found
+     * HttpStatus.INTERNAL_SERVER_ERROR if there is an error during processing
+     */
+    @RequestMapping(path = "/RetrieveSvsValueSet.form", produces = "application/xml")
     public ResponseEntity<String> getSvsValuesets(@RequestParam(required = true) String id, @RequestParam(required = false) String version) {
         checkAuthorizationAndPrivilege();
 
@@ -176,17 +190,17 @@ public class ClientsideRestController {
         return new ResponseEntity<>("Valueset was null", HttpStatus.INTERNAL_SERVER_ERROR);
 
     }
-	
-	/**
-	 * Retrieves FHIR value sets based on the provided id, version, and offset.
-	 * 
-	 * @param id the unique identifier of the value set to retrieve
-	 * @param version the version of the value set (optional)
-	 * @param offset the offset for pagination (optional)
-	 * @return ResponseEntity<String> containing the content of the value set if found
-	 *         HttpStatus.INTERNAL_SERVER_ERROR if there is an error during processing
-	 */
-	@RequestMapping(path = "/RetrieveFhirValueSet/{id}.form", produces = "application/json", method = {RequestMethod.GET, RequestMethod.OPTIONS})
+
+    /**
+     * Retrieves FHIR value sets based on the provided id, version, and offset.
+     *
+     * @param id      the unique identifier of the value set to retrieve
+     * @param version the version of the value set (optional)
+     * @param offset  the offset for pagination (optional)
+     * @return ResponseEntity<String> containing the content of the value set if found
+     * HttpStatus.INTERNAL_SERVER_ERROR if there is an error during processing
+     */
+    @RequestMapping(path = "/RetrieveFhirValueSet/{id}.form", produces = "application/json", method = {RequestMethod.GET, RequestMethod.OPTIONS})
     public ResponseEntity<String> getFhirValuesets(@PathVariable(required = true) String id, @RequestParam(required = false) String version, @RequestParam(required = false) Integer offset) {
         checkAuthorizationAndPrivilege();
 
@@ -197,14 +211,14 @@ public class ClientsideRestController {
         return new ResponseEntity<>("Valueset was null", HttpStatus.INTERNAL_SERVER_ERROR);
 
     }
-	
-	/**
-	 * Handles APIAuthenticationException by creating a ResponseEntity with the exception details.
-	 * 
-	 * @param error the APIAuthenticationException to handle
-	 * @return ResponseEntity<Throwable> containing the exception details in JSON format
-	 */
-	@ExceptionHandler({APIAuthenticationException.class})
+
+    /**
+     * Handles APIAuthenticationException by creating a ResponseEntity with the exception details.
+     *
+     * @param error the APIAuthenticationException to handle
+     * @return ResponseEntity<Throwable> containing the exception details in JSON format
+     */
+    @ExceptionHandler({APIAuthenticationException.class})
     public ResponseEntity<Throwable> handleApiAuthException(APIAuthenticationException error) {
         MultiValueMap<String, String> headers = new HttpHeaders();
         headers.set("Content-Type", "application/json");
@@ -213,16 +227,16 @@ public class ClientsideRestController {
         ResponseEntity<Throwable> response = new ResponseEntity<>(error, headers, HttpStatus.UNAUTHORIZED);
         return response;
     }
-	
-	private void checkAuthorizationAndPrivilege() {
-		if (!Context.isAuthenticated()) {
-			throw new APIAuthenticationException("User is not authenticated. Log in first.");
-			
-		}
-		if (!Context.hasPrivilege(CDSSConfig.MODULE_PRIVILEGE)) {
-			throw new APIAuthenticationException(String.format("User does not have privilege '%s'",
-			    CDSSConfig.MODULE_PRIVILEGE));
-		}
-		
-	}
+
+    private void checkAuthorizationAndPrivilege() {
+        if (!Context.isAuthenticated()) {
+            throw new APIAuthenticationException("User is not authenticated. Log in first.");
+
+        }
+        if (!Context.hasPrivilege(CDSSConfig.MODULE_PRIVILEGE)) {
+            throw new APIAuthenticationException(String.format("User does not have privilege '%s'",
+                    CDSSConfig.MODULE_PRIVILEGE));
+        }
+
+    }
 }
