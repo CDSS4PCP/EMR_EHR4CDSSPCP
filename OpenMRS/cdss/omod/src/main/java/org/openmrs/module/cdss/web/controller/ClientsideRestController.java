@@ -56,17 +56,36 @@ public class ClientsideRestController {
      * HttpStatus.NOT_FOUND if the rule is not found
      * @throws APIAuthenticationException if there is an issue with API authentication
      */
-    @GetMapping(path = "/rule/{ruleId}", produces = {"application/json"})
+    @GetMapping(path = "/elm-rule/{ruleId}.form", produces = {"application/json"})
     public ResponseEntity<String> getRule(@PathVariable(value = "ruleId") String ruleId) throws APIAuthenticationException {
         checkAuthorizationAndPrivilege();
 
         try {
-            String rule = ruleManagerService.getRule(ruleId);
+            String rule = ruleManagerService.getElmRule(ruleId);
             return ResponseEntity.ok(rule);
         } catch (NullPointerException e) {
             return new ResponseEntity<>("Rule " + ruleId + " Not found", HttpStatus.NOT_FOUND);
         }
+    }
 
+    /**
+     * Retrieves a specific rule based on the provided ruleId.
+     *
+     * @param ruleId the unique identifier of the rule to retrieve
+     * @return ResponseEntity<String> containing the rule in JSON format if found
+     * HttpStatus.NOT_FOUND if the rule is not found
+     * @throws APIAuthenticationException if there is an issue with API authentication
+     */
+    @GetMapping(path = "/cql-rule/{ruleId}.form", produces = {"application/json"})
+    public ResponseEntity<String> getCqlRule(@PathVariable(value = "ruleId") String ruleId) throws APIAuthenticationException {
+        checkAuthorizationAndPrivilege();
+
+        try {
+            String rule = ruleManagerService.getCqlRule(ruleId);
+            return ResponseEntity.ok(rule);
+        } catch (NullPointerException e) {
+            return new ResponseEntity<>("Rule " + ruleId + " Not found", HttpStatus.NOT_FOUND);
+        }
     }
 
     /**
@@ -76,10 +95,14 @@ public class ClientsideRestController {
      * @throws APIAuthenticationException if there is an issue with API authentication
      */
     @GetMapping(path = "/rule.form", produces = {"application/json"})
-    public ResponseEntity<String[]> getRules() throws APIAuthenticationException {
+    public ResponseEntity<String[]> getRules(@RequestParam Boolean allRules) throws APIAuthenticationException {
         checkAuthorizationAndPrivilege();
-
-        String[] rules = ruleManagerService.getRules();
+        String[] rules;
+        if (allRules) {
+            rules = ruleManagerService.getRules();
+        } else {
+            rules = ruleManagerService.getEnabledRules();
+        }
         return ResponseEntity.ok(rules);
 
     }
@@ -94,7 +117,6 @@ public class ClientsideRestController {
     public ResponseEntity<String> getRuleManifest() throws APIAuthenticationException, JsonProcessingException {
         checkAuthorizationAndPrivilege();
         String val = cdssService.getCdssObjectMapper().writeValueAsString(ruleManagerService.getRuleManifest());
-        log.info("CDSS rule manifest: " + ruleManagerService.getRuleManifest());
 
         return ResponseEntity.ok(val);
 

@@ -11,7 +11,13 @@ public interface RuleManagerService extends CdssVaccineService {
     String[] getRules() throws APIAuthenticationException;
 
     @Authorized({CDSSConfig.MODULE_PRIVILEGE})
-    String getRule(String ruleId) throws APIAuthenticationException;
+    String[] getEnabledRules() throws APIAuthenticationException;
+
+    @Authorized({CDSSConfig.MODULE_PRIVILEGE})
+    String getElmRule(String ruleId) throws APIAuthenticationException;
+
+    @Authorized({CDSSConfig.MODULE_PRIVILEGE})
+    String getCqlRule(String ruleId) throws APIAuthenticationException;
 
     @Authorized({CDSSConfig.MODULE_PRIVILEGE})
     RuleManifest getRuleManifest() throws APIAuthenticationException;

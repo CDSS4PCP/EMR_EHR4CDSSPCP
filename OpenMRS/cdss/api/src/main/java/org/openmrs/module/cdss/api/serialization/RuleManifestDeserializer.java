@@ -70,17 +70,13 @@ public class RuleManifestDeserializer extends StdDeserializer<RuleManifest> {
         descriptor.setDescription(description);
         descriptor.setEnabled(enabled);
 
-//        log.debug("CDSS node.has(\"params\") " + node.has("params") + "\t\tnode = " + node.toPrettyString());
         Map<String, ParamDescriptor> paramDescriptors = new HashMap<>();
-        // Caused by: java.lang.ClassCastException: com.fasterxml.jackson.databind.node.ObjectNode cannot be cast to com.fasterxml.jackson.databind.node.ArrayNode
+
         if (node.has("params"))
             for (Iterator<Map.Entry<String, JsonNode>> it = ((ObjectNode) node.get("params")).fields(); it.hasNext(); ) {
 
                 Map.Entry<String, JsonNode> entry = it.next();
                 JsonNode paramNode = entry.getValue();
-
-
-                log.debug("CDSS paramNode = " + paramNode);
 
                 ParamDescriptor paramDescriptor = parseParam(paramNode);
                 paramDescriptors.put(entry.getKey(), paramDescriptor);
