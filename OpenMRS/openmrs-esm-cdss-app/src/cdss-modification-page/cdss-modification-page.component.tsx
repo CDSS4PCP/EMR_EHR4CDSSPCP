@@ -15,6 +15,7 @@ import {
   TableExpandRow,
   TableExpandedRow,
   TextInput,
+  Button,
 } from "@carbon/react";
 import { openmrsFetch } from "@openmrs/esm-framework";
 import { TableCellProps } from "@carbon/react/lib/components/DataTable/TableCell";
@@ -22,6 +23,10 @@ import {
   NumberInput,
   NumberInputProps,
 } from "@carbon/react/lib/components/NumberInput/NumberInput";
+import { EventEmitter } from "events";
+
+const eventEmitter = new EventEmitter();
+const pendingParameterChanges = {};
 
 async function getRuleData() {
   const result = await openmrsFetch("/cdss/rule-manifest.form");
@@ -37,20 +42,23 @@ interface CdssRuleParam {
 
 interface CdssNumberInputProps extends NumberInputProps {
   parameter: CdssRuleParam;
-  key: string;
+  cellId: string;
 }
 
 const CdssNumberInput = React.forwardRef<
   HTMLInputElement,
   CdssNumberInputProps
->(({ key, parameter }, ref) => {
+>(({ cellId, parameter }, ref) => {
   const initialValue = Number(parameter.value);
   const [value, setValue] = useState(initialValue);
   const inputRef = useRef();
+  useEffect(() => {
+    eventEmitter.emit("parameterChanged", parameter, value);
+  }, [value]);
 
   return (
     <NumberInput
-      id={key + ":input"}
+      id={cellId}
       ref={inputRef}
       value={value}
       warn={value != initialValue}
@@ -66,20 +74,22 @@ const CdssNumberInput = React.forwardRef<
 
 interface CdssStringInputProps extends NumberInputProps {
   parameter: CdssRuleParam;
-  key: string;
+  cellId: string;
 }
 
 const CdssStringInput = React.forwardRef<
   HTMLInputElement,
   CdssStringInputProps
->(({ key, parameter }, ref) => {
+>(({ cellId, parameter }, ref) => {
   const initialValue = String(parameter.value);
   const [value, setValue] = useState(initialValue);
   const inputRef = useRef();
-
+  useEffect(() => {
+    eventEmitter.emit("parameterChanged", parameter, value);
+  }, [value]);
   return (
     <TextInput
-      id={key + ":input"}
+      id={cellId}
       ref={inputRef}
       value={value}
       warn={value != initialValue}
@@ -95,27 +105,27 @@ const CdssStringInput = React.forwardRef<
 
 interface CdssEditableCellProps extends TableCellProps {
   parameter: CdssRuleParam;
-  key: string;
   className?: string;
+  cellId?: string;
 }
 
 const CdssEditableCell = React.forwardRef<
   HTMLTableCellElement,
   CdssEditableCellProps
->(({ key, parameter, ...rest }, ref) => {
+>(({ parameter, cellId, ...rest }, ref) => {
   return (
-    <TableCell ref={ref} key={key} {...rest}>
+    <TableCell ref={ref} key={cellId} {...rest}>
       {parameter.type == "Integer" ? (
         <CdssNumberInput
           parameter={parameter}
-          key={key}
-          id={key}
+          cellId={cellId + ":input"}
+          id={cellId + ":input"}
         ></CdssNumberInput>
       ) : (
         <CdssStringInput
           parameter={parameter}
-          key={key}
-          id={key}
+          cellId={cellId + ":input"}
+          id={cellId + ":input"}
         ></CdssStringInput>
       )}
     </TableCell>
@@ -129,7 +139,7 @@ export const CdssModificationPage: React.FC = () => {
     getRuleData().then((r) => {
       setRuleData(r);
 
-      const cols = [];
+      const cols = {};
       for (const rule of r.rules) {
         const paramNames = Object.keys(rule.params);
         for (const paramName of paramNames) {
@@ -137,14 +147,14 @@ export const CdssModificationPage: React.FC = () => {
           param["name"] = paramName;
           param["key"] = paramName;
           param["header"] = paramName;
-          cols.push(param);
+          cols[paramName] = param;
         }
       }
-      cols.sort((a, b) => a.name.localeCompare(b.name));
-      setColumns(cols);
+      const columnList: any[] = Object.values(cols);
+      columnList.sort((a, b) => a?.name.localeCompare(b.name));
+      setColumns(columnList);
     });
   });
-  // return <DataTableSkeleton headers={[]} aria-label="sample table" />;
 
   if (ruleData == null || columns == null) {
     return <DataTableSkeleton headers={[]} aria-label="sample table" />;
@@ -187,8 +197,7 @@ export const CdssModificationPage: React.FC = () => {
         }) => {
           return (
             <TableContainer
-              title="DataTable"
-              description="With expansion"
+              title="Rule parameter table"
               {...getTableContainerProps()}
             >
               <TableHead>
@@ -219,11 +228,23 @@ export const CdssModificationPage: React.FC = () => {
                         {row.cells.map((cell) => {
                           return (
                             <CdssEditableCell
-                              key={String(cell.id)}
+                              cellId={cell.id}
                               parameter={cell.value}
                             />
                           );
                         })}
+
+                        <TableCell>
+                          {
+                            <Button
+                              onClick={(e) => {
+                                console.log("Saving " + row.id);
+                              }}
+                            >
+                              Save
+                            </Button>
+                          }
+                        </TableCell>
                       </TableExpandRow>
                       <TableExpandedRow
                         colSpan={headers.length + 1}
