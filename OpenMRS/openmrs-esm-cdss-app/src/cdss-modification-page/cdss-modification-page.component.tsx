@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Form,
   Tab,
@@ -14,11 +14,14 @@ import {
   TableExpandHeader,
   TableExpandRow,
   TableExpandedRow,
-  usePrefix
+  TextInput,
 } from "@carbon/react";
 import { openmrsFetch } from "@openmrs/esm-framework";
-import IntrinsicAttributes = React.JSX.IntrinsicAttributes;
 import { TableCellProps } from "@carbon/react/lib/components/DataTable/TableCell";
+import {
+  NumberInput,
+  NumberInputProps,
+} from "@carbon/react/lib/components/NumberInput/NumberInput";
 
 async function getRuleData() {
   const result = await openmrsFetch("/cdss/rule-manifest.form");
@@ -26,8 +29,72 @@ async function getRuleData() {
   return json;
 }
 
+interface CdssRuleParam {
+  value: any;
+  type: string;
+  default?: any;
+}
+
+interface CdssNumberInputProps extends NumberInputProps {
+  parameter: CdssRuleParam;
+  key: string;
+}
+
+const CdssNumberInput = React.forwardRef<
+  HTMLInputElement,
+  CdssNumberInputProps
+>(({ key, parameter }, ref) => {
+  const initialValue = Number(parameter.value);
+  const [value, setValue] = useState(initialValue);
+  const inputRef = useRef();
+
+  return (
+    <NumberInput
+      id={key + ":input"}
+      ref={inputRef}
+      value={value}
+      warn={value != initialValue}
+      warnText={"This value was modified"}
+      defaultValue={initialValue}
+      onChange={(e, newState) => {
+        setValue(Number(newState.value));
+        return true;
+      }}
+    ></NumberInput>
+  );
+});
+
+interface CdssStringInputProps extends NumberInputProps {
+  parameter: CdssRuleParam;
+  key: string;
+}
+
+const CdssStringInput = React.forwardRef<
+  HTMLInputElement,
+  CdssStringInputProps
+>(({ key, parameter }, ref) => {
+  const initialValue = String(parameter.value);
+  const [value, setValue] = useState(initialValue);
+  const inputRef = useRef();
+
+  return (
+    <TextInput
+      id={key + ":input"}
+      ref={inputRef}
+      value={value}
+      warn={value != initialValue}
+      warnText={"This value was modified"}
+      defaultValue={initialValue}
+      onChange={(e) => {
+        setValue(e.target.value);
+        return true;
+      }}
+    ></TextInput>
+  );
+});
+
 interface CdssEditableCellProps extends TableCellProps {
-  parameter: any;
+  parameter: CdssRuleParam;
   key: string;
   className?: string;
 }
@@ -35,10 +102,22 @@ interface CdssEditableCellProps extends TableCellProps {
 const CdssEditableCell = React.forwardRef<
   HTMLTableCellElement,
   CdssEditableCellProps
->(({ key, className, parameter, ...rest }, ref) => {
+>(({ key, parameter, ...rest }, ref) => {
   return (
     <TableCell ref={ref} key={key} {...rest}>
-      {parameter?.value}
+      {parameter.type == "Integer" ? (
+        <CdssNumberInput
+          parameter={parameter}
+          key={key}
+          id={key}
+        ></CdssNumberInput>
+      ) : (
+        <CdssStringInput
+          parameter={parameter}
+          key={key}
+          id={key}
+        ></CdssStringInput>
+      )}
     </TableCell>
   );
 });
@@ -82,7 +161,7 @@ export const CdssModificationPage: React.FC = () => {
         description: r.description,
         role: r.role,
         enabled: r.enabled,
-        ...r.params
+        ...r.params,
       };
       return obj;
     });
@@ -98,14 +177,14 @@ export const CdssModificationPage: React.FC = () => {
 
       <DataTable useZebraStyles rows={rules} headers={columns}>
         {({
-            rows,
-            headers,
-            getHeaderProps,
-            getRowProps,
-            getExpandedRowProps,
-            getTableProps,
-            getTableContainerProps
-          }) => {
+          rows,
+          headers,
+          getHeaderProps,
+          getRowProps,
+          getExpandedRowProps,
+          getTableProps,
+          getTableContainerProps,
+        }) => {
           return (
             <TableContainer
               title="DataTable"
@@ -119,7 +198,7 @@ export const CdssModificationPage: React.FC = () => {
                     <TableHeader
                       key={i}
                       {...getHeaderProps({
-                        header
+                        header,
                       })}
                     >
                       {header.name}
@@ -134,7 +213,7 @@ export const CdssModificationPage: React.FC = () => {
                     <React.Fragment key={row.id}>
                       <TableExpandRow
                         {...getRowProps({
-                          row
+                          row,
                         })}
                       >
                         {row.cells.map((cell) => {

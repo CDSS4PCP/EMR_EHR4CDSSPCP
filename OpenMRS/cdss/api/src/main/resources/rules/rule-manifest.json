@@ -5,7 +5,7 @@
       "version": "1",
       "cqlFilePath": "cql/FHIRHelpers.cql",
       "elmFilePath": "elm/FHIRHelpers.json",
-      "description": "",
+      "description": "Helper functions for working with FHIR data types",
       "role": "support",
       "enabled": true,
       "params": {
@@ -16,7 +16,7 @@
       "version": "1",
       "cqlFilePath": "cql/MMR_Common_Library.cql",
       "elmFilePath": "elm/MMR_Common_Library.json",
-      "description": "",
+      "description": "Helper functions for MMR vaccines",
       "role": "support",
       "enabled": true
     },
@@ -25,7 +25,7 @@
       "version": "1",
       "cqlFilePath": "cql/MMR_Rule1.cql",
       "elmFilePath": "elm/MMR_Rule1.json",
-      "description": "",
+      "description": "MMR Rule 1",
       "role": "rule",
       "enabled": true,
       "params": {
@@ -50,6 +50,69 @@
           "default": "month"
         }
       }
+    },
+    {
+      "id": "MMR2regularyoungerthan12_47monthsNoMMRRecommendation",
+      "version": "1",
+      "cqlFilePath": "cql/MMR_Rule2.cql",
+      "elmFilePath": "elm/MMR_Rule2.json",
+      "description": "MMR Rule 2",
+      "role": "rule",
+      "enabled": true,
+      "params": {
+        "$Age1": {
+          "type": "Integer",
+          "value": 12,
+          "default": 12
+        },
+        "$Age1_unit": {
+          "type": "String",
+          "value": "month",
+          "default": "month"
+        },
+        "$Age2": {
+          "type": "Integer",
+          "value": 47,
+          "default": 47
+        },
+        "$Age2_unit": {
+          "type": "String",
+          "value": "month",
+          "default": "month"
+        }
+      }
+    },
+    {
+      "id": "MMR3regularyoungerthan47months_18yrsNoMMRRecommendation",
+      "version": "1",
+      "cqlFilePath": "cql/MMR_Rule2.cql",
+      "elmFilePath": "elm/MMR_Rule2.json",
+      "description": "MMR Rule 3",
+      "role": "rule",
+      "enabled": true,
+      "params": {
+        "$Age1": {
+          "type": "Integer",
+          "value": 47,
+          "default": 47
+        },
+        "$Age1_unit": {
+          "type": "String",
+          "value": "month",
+          "default": "month"
+        },
+        "$Age2": {
+          "type": "Integer",
+          "value": 18,
+          "default": 18
+        },
+        "$Age2_unit": {
+          "type": "String",
+          "value": "year",
+          "default": "year"
+        }
+      }
     }
+
   ]
 }
