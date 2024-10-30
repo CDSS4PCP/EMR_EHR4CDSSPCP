@@ -61,7 +61,7 @@ public class RuleManifestDeserializer extends StdDeserializer<RuleManifest> {
         String cqlFilePath = node.get("cqlFilePath").asText();
         String elmFilePath = node.get("elmFilePath").asText();
         String description = node.get("description").asText();
-        RuleRole role = node.get("role").asText().equalsIgnoreCase("support") ? RuleRole.SUPPORT : RuleRole.RULE_ROLE;
+        RuleRole role = node.get("role").asText().equalsIgnoreCase("support") ? RuleRole.SUPPORT : RuleRole.RULE;
         Boolean enabled = node.get("enabled").asBoolean();
 
         RuleDescriptor descriptor = new RuleDescriptor(id, version, cqlFilePath, elmFilePath, role);

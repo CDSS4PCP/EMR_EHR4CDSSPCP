@@ -3,22 +3,45 @@ import {
   Form,
   Tab,
   DataTableSkeleton,
+  DataTable,
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
+  TableContainer,
+  TableExpandHeader,
+  TableExpandRow,
+  TableExpandedRow,
+  usePrefix
 } from "@carbon/react";
-import mmr from "./MMR_descriptor.json";
 import { openmrsFetch } from "@openmrs/esm-framework";
-import { use } from "i18next";
+import IntrinsicAttributes = React.JSX.IntrinsicAttributes;
+import { TableCellProps } from "@carbon/react/lib/components/DataTable/TableCell";
 
 async function getRuleData() {
   const result = await openmrsFetch("/cdss/rule-manifest.form");
   const json = await result.json();
   return json;
 }
+
+interface CdssEditableCellProps extends TableCellProps {
+  parameter: any;
+  key: string;
+  className?: string;
+}
+
+const CdssEditableCell = React.forwardRef<
+  HTMLTableCellElement,
+  CdssEditableCellProps
+>(({ key, className, parameter, ...rest }, ref) => {
+  return (
+    <TableCell ref={ref} key={key} {...rest}>
+      {parameter?.value}
+    </TableCell>
+  );
+});
 
 export const CdssModificationPage: React.FC = () => {
   const [ruleData, setRuleData] = useState(null);
@@ -33,6 +56,8 @@ export const CdssModificationPage: React.FC = () => {
         for (const paramName of paramNames) {
           const param = structuredClone(rule.params[paramName]);
           param["name"] = paramName;
+          param["key"] = paramName;
+          param["header"] = paramName;
           cols.push(param);
         }
       }
@@ -40,54 +65,102 @@ export const CdssModificationPage: React.FC = () => {
       setColumns(cols);
     });
   });
+  // return <DataTableSkeleton headers={[]} aria-label="sample table" />;
 
-  if (ruleData == null && columns != null) {
-    return <DataTableSkeleton headers={columns} aria-label="sample table" />;
-  }
-  if (ruleData == null && columns == null) {
+  if (ruleData == null || columns == null) {
     return <DataTableSkeleton headers={[]} aria-label="sample table" />;
   }
+
+  const rules = ruleData.rules
+    .filter((r) => r.role.toLowerCase() == "rule")
+    .map((r) => {
+      const obj = {
+        id: r.id,
+        version: r.version,
+        cqlFilePath: r.cqlFilePath,
+        elmFilePath: r.elmFilePath,
+        description: r.description,
+        role: r.role,
+        enabled: r.enabled,
+        ...r.params
+      };
+      return obj;
+    });
+
+  const ruleDict = {};
+  rules.forEach((r) => {
+    ruleDict[r.id] = r;
+  });
+
   return (
     <div>
       <h1>Rule Modification</h1>
 
-      <Table useZebraStyles>
-        <TableHead>
-          <TableRow>
-            <TableHeader>Name</TableHeader>
-            {columns != null &&
-              columns.map((m) => {
-                return <TableHeader>{m.name != null && m.name}</TableHeader>;
-              })}
-          </TableRow>
-        </TableHead>
+      <DataTable useZebraStyles rows={rules} headers={columns}>
+        {({
+            rows,
+            headers,
+            getHeaderProps,
+            getRowProps,
+            getExpandedRowProps,
+            getTableProps,
+            getTableContainerProps
+          }) => {
+          return (
+            <TableContainer
+              title="DataTable"
+              description="With expansion"
+              {...getTableContainerProps()}
+            >
+              <TableHead>
+                <TableRow>
+                  <TableExpandHeader aria-label="expand row" />
+                  {headers.map((header, i) => (
+                    <TableHeader
+                      key={i}
+                      {...getHeaderProps({
+                        header
+                      })}
+                    >
+                      {header.name}
+                    </TableHeader>
+                  ))}
+                </TableRow>
+              </TableHead>
 
-        <TableBody>
-          {ruleData != null &&
-            ruleData.rules != null &&
-            ruleData.rules
-              .filter((r) => {
-                if (r.role == null) return true;
-                else return r.role.toLowerCase() == "rule";
-              })
-              .map((r) => {
-                return (
-                  <TableRow>
-                    <TableCell>{r.id}</TableCell>
-                    {columns.map((column) => {
-                      return (
-                        <TableCell>
-                          {r.params != null &&
-                            r.params[column.name] != null &&
-                            r.params[column.name].value}
-                        </TableCell>
-                      );
-                    })}
-                  </TableRow>
-                );
-              })}
-        </TableBody>
-      </Table>
+              <TableBody>
+                {rows.map((row) => {
+                  return (
+                    <React.Fragment key={row.id}>
+                      <TableExpandRow
+                        {...getRowProps({
+                          row
+                        })}
+                      >
+                        {row.cells.map((cell) => {
+                          return (
+                            <CdssEditableCell
+                              key={String(cell.id)}
+                              parameter={cell.value}
+                            />
+                          );
+                        })}
+                      </TableExpandRow>
+                      <TableExpandedRow
+                        colSpan={headers.length + 1}
+                        className="demo-expanded-td"
+                      >
+                        <h6>{row.id}</h6>
+                        <div>{ruleDict[row.id].description}</div>
+                      </TableExpandedRow>
+                    </React.Fragment>
+                  );
+                })}
+              </TableBody>
+            </TableContainer>
+          );
+        }}
+      </DataTable>
     </div>
   );
 };
