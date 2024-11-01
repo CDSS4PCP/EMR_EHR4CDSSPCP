@@ -37,7 +37,12 @@
         "$Age1_unit": {
           "type": "String",
           "value": "month",
-          "default": "month"
+          "default": "month",
+          "allowedValues": [
+            "year",
+            "month",
+            "week"
+          ]
         },
         "$Age2": {
           "type": "Integer",
@@ -47,7 +52,12 @@
         "$Age2_unit": {
           "type": "String",
           "value": "month",
-          "default": "month"
+          "default": "month",
+          "allowedValues": [
+            "year",
+            "month",
+            "week"
+          ]
         }
       }
     },
@@ -68,7 +78,12 @@
         "$Age1_unit": {
           "type": "String",
           "value": "month",
-          "default": "month"
+          "default": "month",
+          "allowedValues": [
+            "year",
+            "month",
+            "week"
+          ]
         },
         "$Age2": {
           "type": "Integer",
@@ -78,7 +93,12 @@
         "$Age2_unit": {
           "type": "String",
           "value": "month",
-          "default": "month"
+          "default": "month",
+          "allowedValues": [
+            "year",
+            "month",
+            "week"
+          ]
         }
       }
     },
@@ -99,7 +119,12 @@
         "$Age1_unit": {
           "type": "String",
           "value": "month",
-          "default": "month"
+          "default": "month",
+          "allowedValues": [
+            "year",
+            "month",
+            "week"
+          ]
         },
         "$Age2": {
           "type": "Integer",
@@ -109,10 +134,14 @@
         "$Age2_unit": {
           "type": "String",
           "value": "year",
-          "default": "year"
+          "default": "year",
+          "allowedValues": [
+            "year",
+            "month",
+            "week"
+          ]
         }
       }
     }
-
   ]
 }

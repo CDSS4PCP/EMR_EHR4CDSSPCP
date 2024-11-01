@@ -67,8 +67,11 @@ public class RuleRestController extends CdssRestController {
      * @throws APIAuthenticationException if there is an issue with API authentication
      */
     @GetMapping(path = "/rule.form", produces = {"application/json"})
-    public ResponseEntity<String[]> getRules(@RequestParam Boolean allRules) throws APIAuthenticationException {
+    public ResponseEntity<String[]> getRules(@RequestParam(required = false) Boolean allRules) throws APIAuthenticationException {
         checkAuthorizationAndPrivilege();
+        if (allRules == null){
+            allRules = false;
+        }
         String[] rules;
         if (allRules) {
             rules = ruleManagerService.getRules();

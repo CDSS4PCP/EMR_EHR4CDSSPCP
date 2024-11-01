@@ -26,13 +26,24 @@ async function loadPatient(patientId) {
 }
 
 async function loadRule(ruleId) {
-  let url = `/cdss/rule/${ruleId}`;
-  if (!ruleId.endsWith(".json")) {
-    url = `/cdss/rule/${ruleId}.json`;
-  }
+  const url = `/cdss/elm-rule/${ruleId}.form`;
+  // if (!ruleId.endsWith(".json")) {
+  //   url = `/cdss/rule/${ruleId}.json`;
+  // }
 
   const result = await openmrsFetch(url, {});
   const pat = await result.json();
+  return pat;
+}
+
+async function loadCqlRule(ruleId) {
+  const url = `/cdss/cql-rule/${ruleId}.form`;
+  // if (!ruleId.endsWith(".json")) {
+  //   url = `/cdss/rule/${ruleId}.json`;
+  // }
+
+  const result = await openmrsFetch(url, {});
+  const pat = await result.text();
   return pat;
 }
 
@@ -154,7 +165,6 @@ async function getRules() {
   });
 
   return await response.json();
-  // return ["MMR_Rule5.json", "MMR_Common_Library.json", "FHIRHelpers.json"];
 }
 
 async function getSvsValueset(oid, version, apikey) {
@@ -296,6 +306,7 @@ export {
   loadImmunizations,
   loadPatient,
   loadRule,
+  loadCqlRule,
   getRecommendations,
   getRules,
 };

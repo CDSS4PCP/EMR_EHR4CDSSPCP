@@ -24,108 +24,233 @@ import {
   NumberInputProps,
 } from "@carbon/react/lib/components/NumberInput/NumberInput";
 import { EventEmitter } from "events";
+import { loadCqlRule, loadRule } from "../cdssService";
+import { Buffer } from "buffer";
+import styles from "./cdss-modification-page.module.scss";
 
+// Events used for parameter resets
 const eventEmitter = new EventEmitter();
-const pendingParameterChanges = {};
 
+async function postRuleChange(ruleId, parameterChanges) {
+  const modificationServiceUrl = "http://localhost:9090/api/inject";
+  const cql = await loadCqlRule(ruleId);
+  const changes = {};
+  for (const paramName of Object.keys(parameterChanges)) {
+    changes[paramName] = {
+      value: parameterChanges[paramName].newValue,
+      type: parameterChanges[paramName].type,
+    };
+  }
+
+  const body = {
+    params: changes,
+    rule: {
+      id: ruleId,
+      version: "1",
+      content: Buffer.from(cql, "utf-8").toString("base64"),
+    },
+  };
+  const result = await fetch(modificationServiceUrl, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+
+    body: JSON.stringify(body),
+  });
+  console.log(result);
+}
+
+/**
+ * Fetches rule manifest data from the server.
+ *
+ * @returns {Promise<any>} The JSON data containing rule information.
+ */
 async function getRuleData() {
   const result = await openmrsFetch("/cdss/rule-manifest.form");
   const json = await result.json();
   return json;
 }
 
+/**
+ * Records changes to a parameter for a specific rule.
+ *
+ * @param {string} ruleId - The ID of the rule.
+ * @param {string} paramName - The name of the parameter.
+ * @param {any} newValue - The new value of the parameter.
+ * @param {any} initialValue - The initial value of the parameter.
+ */
+function recordParameterChange(
+  ruleId,
+  paramName,
+  newValue,
+  initialValue,
+  type,
+  pendingChanges,
+  setPendingChanges
+) {
+  const change = {
+    newValue: newValue,
+    initialValue: initialValue,
+    type: type,
+  };
+
+  const pendingParameterChanges = { ...pendingChanges };
+  if (pendingParameterChanges[ruleId] == null) {
+    pendingParameterChanges[ruleId] = {};
+  }
+  pendingParameterChanges[ruleId][paramName] = change;
+
+  if (newValue == initialValue) {
+    delete pendingParameterChanges[ruleId][paramName];
+  }
+  setPendingChanges(pendingParameterChanges);
+}
+
 interface CdssRuleParam {
   value: any;
   type: string;
   default?: any;
+  allowedValues?: any[];
 }
 
 interface CdssNumberInputProps extends NumberInputProps {
   parameter: CdssRuleParam;
   cellId: string;
+  ruleId: string;
+  paramName: string;
+  setPendingChanges: React.Dispatch<React.SetStateAction<any>>;
+  pendingChanges: any;
 }
 
 const CdssNumberInput = React.forwardRef<
   HTMLInputElement,
   CdssNumberInputProps
->(({ cellId, parameter }, ref) => {
-  const initialValue = Number(parameter.value);
-  const [value, setValue] = useState(initialValue);
-  const inputRef = useRef();
-  useEffect(() => {
-    eventEmitter.emit("parameterChanged", parameter, value);
-  }, [value]);
-
-  return (
-    <NumberInput
-      id={cellId}
-      ref={inputRef}
-      value={value}
-      warn={value != initialValue}
-      warnText={"This value was modified"}
-      defaultValue={initialValue}
-      onChange={(e, newState) => {
-        setValue(Number(newState.value));
-        return true;
-      }}
-    ></NumberInput>
-  );
-});
+>(
+  (
+    { cellId, parameter, ruleId, paramName, pendingChanges, setPendingChanges },
+    ref
+  ) => {
+    const initialValue = Number(parameter.value);
+    const [value, setValue] = useState(initialValue);
+    const inputRef = useRef();
+    useEffect(() => {
+      recordParameterChange(
+        ruleId,
+        paramName,
+        value,
+        initialValue,
+        parameter.type,
+        pendingChanges,
+        setPendingChanges
+      );
+    }, [value]);
+    eventEmitter.on("parameterReset", (state) => {
+      if (state.ruleId == ruleId) setValue(initialValue);
+    });
+    return (
+      <NumberInput
+        className={styles.tableCellInput}
+        id={cellId}
+        ref={inputRef}
+        value={value}
+        warn={value != initialValue}
+        warnText={"This value was modified"}
+        defaultValue={initialValue}
+        onChange={(e, newState) => {
+          setValue(Number(newState.value));
+          return true;
+        }}
+      ></NumberInput>
+    );
+  }
+);
 
 interface CdssStringInputProps extends NumberInputProps {
   parameter: CdssRuleParam;
   cellId: string;
+  ruleId: string;
+  paramName: string;
+  setPendingChanges: React.Dispatch<React.SetStateAction<any>>;
+  pendingChanges: any;
 }
 
 const CdssStringInput = React.forwardRef<
   HTMLInputElement,
   CdssStringInputProps
->(({ cellId, parameter }, ref) => {
-  const initialValue = String(parameter.value);
-  const [value, setValue] = useState(initialValue);
-  const inputRef = useRef();
-  useEffect(() => {
-    eventEmitter.emit("parameterChanged", parameter, value);
-  }, [value]);
-  return (
-    <TextInput
-      id={cellId}
-      ref={inputRef}
-      value={value}
-      warn={value != initialValue}
-      warnText={"This value was modified"}
-      defaultValue={initialValue}
-      onChange={(e) => {
-        setValue(e.target.value);
-        return true;
-      }}
-    ></TextInput>
-  );
-});
+>(
+  (
+    { cellId, parameter, ruleId, paramName, pendingChanges, setPendingChanges },
+    ref
+  ) => {
+    const initialValue = String(parameter.value);
+    const [value, setValue] = useState(initialValue);
+    const inputRef = useRef();
+    useEffect(() => {
+      recordParameterChange(
+        ruleId,
+        paramName,
+        value,
+        initialValue,
+        parameter.type,
+        pendingChanges,
+        setPendingChanges
+      );
+    }, [value]);
+
+    eventEmitter.on("parameterReset", (state) => {
+      if (state.ruleId == ruleId) setValue(initialValue);
+    });
+    return (
+      <TextInput
+        id={cellId}
+        className={styles.tableCellInput}
+        ref={inputRef}
+        value={value}
+        warn={value != initialValue}
+        warnText={"This value was modified"}
+        defaultValue={initialValue}
+        onChange={(e) => {
+          setValue(e.target.value);
+          return true;
+        }}
+      ></TextInput>
+    );
+  }
+);
 
 interface CdssEditableCellProps extends TableCellProps {
   parameter: CdssRuleParam;
-  className?: string;
   cellId?: string;
+  ruleId: string;
+  setPendingChanges: React.Dispatch<React.SetStateAction<any>>;
+  pendingChanges: any;
 }
 
 const CdssEditableCell = React.forwardRef<
   HTMLTableCellElement,
   CdssEditableCellProps
->(({ parameter, cellId, ...rest }, ref) => {
+>(({ parameter, cellId, ruleId, pendingChanges, setPendingChanges }, ref) => {
+  const paramName = cellId.replace(ruleId + ":", "");
   return (
-    <TableCell ref={ref} key={cellId} {...rest}>
+    <TableCell ref={ref} key={cellId} className={styles.cdssEditableCell}>
       {parameter.type == "Integer" ? (
         <CdssNumberInput
           parameter={parameter}
           cellId={cellId + ":input"}
           id={cellId + ":input"}
+          ruleId={ruleId}
+          paramName={paramName}
+          pendingChanges={pendingChanges}
+          setPendingChanges={setPendingChanges}
         ></CdssNumberInput>
       ) : (
         <CdssStringInput
           parameter={parameter}
           cellId={cellId + ":input"}
           id={cellId + ":input"}
+          ruleId={ruleId}
+          paramName={paramName}
+          pendingChanges={pendingChanges}
+          setPendingChanges={setPendingChanges}
         ></CdssStringInput>
       )}
     </TableCell>
@@ -135,6 +260,9 @@ const CdssEditableCell = React.forwardRef<
 export const CdssModificationPage: React.FC = () => {
   const [ruleData, setRuleData] = useState(null);
   const [columns, setColumns] = useState(null);
+  const [pendingParameterChanges, setPendingParameterChanges] = useState({});
+
+  // Data structure to keep track of parameter changes
   useEffect(() => {
     getRuleData().then((r) => {
       setRuleData(r);
@@ -154,7 +282,7 @@ export const CdssModificationPage: React.FC = () => {
       columnList.sort((a, b) => a?.name.localeCompare(b.name));
       setColumns(columnList);
     });
-  });
+  }, []);
 
   if (ruleData == null || columns == null) {
     return <DataTableSkeleton headers={[]} aria-label="sample table" />;
@@ -183,7 +311,7 @@ export const CdssModificationPage: React.FC = () => {
 
   return (
     <div>
-      <h1>Rule Modification</h1>
+      <h1 className={styles.modHeader}>Rule Modification</h1>
 
       <DataTable useZebraStyles rows={rules} headers={columns}>
         {({
@@ -201,7 +329,7 @@ export const CdssModificationPage: React.FC = () => {
               {...getTableContainerProps()}
             >
               <TableHead>
-                <TableRow>
+                <TableRow className={styles.cdssTableRow}>
                   <TableExpandHeader aria-label="expand row" />
                   {headers.map((header, i) => (
                     <TableHeader
@@ -221,6 +349,7 @@ export const CdssModificationPage: React.FC = () => {
                   return (
                     <React.Fragment key={row.id}>
                       <TableExpandRow
+                        className={styles.cdssTableRow}
                         {...getRowProps({
                           row,
                         })}
@@ -229,27 +358,45 @@ export const CdssModificationPage: React.FC = () => {
                           return (
                             <CdssEditableCell
                               cellId={cell.id}
+                              ruleId={row.id}
                               parameter={cell.value}
+                              pendingChanges={pendingParameterChanges}
+                              setPendingChanges={setPendingParameterChanges}
                             />
                           );
                         })}
 
                         <TableCell>
-                          {
-                            <Button
-                              onClick={(e) => {
-                                console.log("Saving " + row.id);
-                              }}
-                            >
-                              Save
-                            </Button>
-                          }
+                          {pendingParameterChanges &&
+                            pendingParameterChanges[row.id] &&
+                            Object.keys(pendingParameterChanges[row.id])
+                              .length > 0 && (
+                              <div>
+                                <Button
+                                  kind={"primary"}
+                                  onClick={(e) => {
+                                    const changes =
+                                      pendingParameterChanges[row.id];
+                                    postRuleChange(row.id, changes);
+                                  }}
+                                >
+                                  Save
+                                </Button>
+                                <Button
+                                  kind={"secondary"}
+                                  onClick={(e) => {
+                                    eventEmitter.emit("parameterReset", {
+                                      ruleId: row.id,
+                                    });
+                                  }}
+                                >
+                                  Reset
+                                </Button>
+                              </div>
+                            )}
                         </TableCell>
                       </TableExpandRow>
-                      <TableExpandedRow
-                        colSpan={headers.length + 1}
-                        className="demo-expanded-td"
-                      >
+                      <TableExpandedRow colSpan={headers.length + 1}>
                         <h6>{row.id}</h6>
                         <div>{ruleDict[row.id].description}</div>
                       </TableExpandedRow>
