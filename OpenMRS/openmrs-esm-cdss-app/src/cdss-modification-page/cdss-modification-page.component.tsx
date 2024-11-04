@@ -27,11 +27,14 @@ import { EventEmitter } from "events";
 import { loadCqlRule, loadRule } from "../cdssService";
 import { Buffer } from "buffer";
 import styles from "./cdss-modification-page.module.scss";
+import Select from "@carbon/react/lib/components/Select/Select";
+import SelectItem from "@carbon/react/lib/components/SelectItem/SelectItem";
 
 // Events used for parameter resets
 const eventEmitter = new EventEmitter();
 
 async function postRuleChange(ruleId, parameterChanges) {
+  console.log(ruleId, parameterChanges);
   const modificationServiceUrl = "http://localhost:9090/api/inject";
   const cql = await loadCqlRule(ruleId);
   const changes = {};
@@ -71,12 +74,18 @@ async function getRuleData() {
 }
 
 /**
- * Records changes to a parameter for a specific rule.
+ * Records a change in a parameter value for a specific rule.
  *
- * @param {string} ruleId - The ID of the rule.
- * @param {string} paramName - The name of the parameter.
- * @param {any} newValue - The new value of the parameter.
- * @param {any} initialValue - The initial value of the parameter.
+ * @param ruleId - The identifier of the rule for which the parameter change is recorded.
+ * @param paramName - The name of the parameter that has changed.
+ * @param newValue - The new value of the parameter.
+ * @param initialValue - The initial value of the parameter before the change.
+ * @param type - The type of the parameter.
+ * @param pendingChanges - An object containing all pending changes.
+ * @param setPendingChanges - A function to update the pending changes state.
+ *
+ * Updates the pending changes with the new parameter value if it differs from the initial value.
+ * Removes the parameter change from pending changes if the new value matches the initial value.
  */
 function recordParameterChange(
   ruleId,
@@ -146,21 +155,46 @@ const CdssNumberInput = React.forwardRef<
     eventEmitter.on("parameterReset", (state) => {
       if (state.ruleId == ruleId) setValue(initialValue);
     });
-    return (
-      <NumberInput
-        className={styles.tableCellInput}
-        id={cellId}
-        ref={inputRef}
-        value={value}
-        warn={value != initialValue}
-        warnText={"This value was modified"}
-        defaultValue={initialValue}
-        onChange={(e, newState) => {
-          setValue(Number(newState.value));
-          return true;
-        }}
-      ></NumberInput>
-    );
+
+    if (parameter.allowedValues == null || parameter.allowedValues.length == 0)
+      return (
+        <NumberInput
+          className={styles.tableCellInput}
+          id={cellId}
+          ref={inputRef}
+          value={value}
+          warn={value != initialValue}
+          warnText={"This value was modified"}
+          defaultValue={initialValue}
+          onChange={(e, newState) => {
+            setValue(Number(newState.value));
+            return true;
+          }}
+        ></NumberInput>
+      );
+    else
+      return (
+        <Select
+          id={cellId}
+          className={styles.tableCellInput}
+          defaultValue={initialValue}
+          value={value}
+          noLabel={true}
+          ref={inputRef}
+          warn={value != initialValue}
+          warnText={"This value was modified"}
+          onChange={(e) => {
+            setValue(Number(e.target.value));
+            return true;
+          }}
+        >
+          {parameter.allowedValues.map((value) => (
+            <SelectItem text={value} value={value}>
+              {value}
+            </SelectItem>
+          ))}
+        </Select>
+      );
   }
 );
 
@@ -199,21 +233,47 @@ const CdssStringInput = React.forwardRef<
     eventEmitter.on("parameterReset", (state) => {
       if (state.ruleId == ruleId) setValue(initialValue);
     });
-    return (
-      <TextInput
-        id={cellId}
-        className={styles.tableCellInput}
-        ref={inputRef}
-        value={value}
-        warn={value != initialValue}
-        warnText={"This value was modified"}
-        defaultValue={initialValue}
-        onChange={(e) => {
-          setValue(e.target.value);
-          return true;
-        }}
-      ></TextInput>
-    );
+
+    if (parameter.allowedValues == null || parameter.allowedValues.length == 0)
+      return (
+        <TextInput
+          id={cellId}
+          className={styles.tableCellInput}
+          ref={inputRef}
+          value={value}
+          warn={value != initialValue}
+          warnText={"This value was modified"}
+          defaultValue={initialValue}
+          onChange={(e) => {
+            setValue(e.target.value);
+            return true;
+          }}
+        ></TextInput>
+      );
+    else {
+      return (
+        <Select
+          id={cellId}
+          className={styles.tableCellInput}
+          defaultValue={initialValue}
+          value={value}
+          noLabel={true}
+          ref={inputRef}
+          warn={value != initialValue}
+          warnText={"This value was modified"}
+          onChange={(e) => {
+            setValue(e.target.value);
+            return true;
+          }}
+        >
+          {parameter.allowedValues.map((value) => (
+            <SelectItem text={value} value={value}>
+              {value}
+            </SelectItem>
+          ))}
+        </Select>
+      );
+    }
   }
 );
 
