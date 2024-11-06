@@ -35,8 +35,8 @@ const eventEmitter = new EventEmitter();
 
 async function postRuleChange(ruleId, parameterChanges) {
   console.log(ruleId, parameterChanges);
-  const modificationServiceUrl = "http://localhost:9090/api/inject";
-  const cql = await loadCqlRule(ruleId);
+  // const modificationServiceUrl = "http://localhost:9090/api/inject";
+  // const cql = await loadCqlRule(ruleId);
   const changes = {};
   for (const paramName of Object.keys(parameterChanges)) {
     changes[paramName] = {
@@ -50,16 +50,23 @@ async function postRuleChange(ruleId, parameterChanges) {
     rule: {
       id: ruleId,
       version: "1",
-      content: Buffer.from(cql, "utf-8").toString("base64"),
     },
   };
-  const result = await fetch(modificationServiceUrl, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
 
+  // const result = await fetch(modificationServiceUrl, {
+  //   method: "POST",
+  //   headers: { "Content-Type": "application/json" },
+  //
+  //   body: JSON.stringify(body),
+  // });
+  const response = await openmrsFetch(`/cdss/modify-rule.form`, {
+    method: "POST",
     body: JSON.stringify(body),
   });
-  console.log(result);
+  const result = await response.text();
+  if (response.status == 200) {
+    console.log(result);
+  }
 }
 
 /**

@@ -35,10 +35,8 @@ public class RuleManifestDeserializer extends StdDeserializer<RuleManifest> {
         if (rootNode.isEmpty()) {
             throw new IOException("Empty object when deserializing \"RuleManifest\"");
         }
-        log.debug("Deserializing RuleManifest");
 
         if (rootNode.hasNonNull("rules")) {
-            log.debug("Deserializing RuleManifest.rules");
 
             List<RuleDescriptor> rules = new ArrayList<>();
             for (Iterator<JsonNode> it = ((ArrayNode) rootNode.get("rules")).elements(); it.hasNext(); ) {
@@ -55,7 +53,6 @@ public class RuleManifestDeserializer extends StdDeserializer<RuleManifest> {
 
     private RuleDescriptor parseRuleDescriptor(JsonNode node) {
         String id = node.get("id").asText();
-        log.debug("Deserializing RuleManifest.rules." + id);
 
         String version = node.get("version").asText();
         String cqlFilePath = node.get("cqlFilePath").asText();
@@ -90,8 +87,18 @@ public class RuleManifestDeserializer extends StdDeserializer<RuleManifest> {
         String type = node.get("type").asText();
         String value = node.get("value").asText();
         String defaultValue = node.has("default") ? node.get("default").asText() : null;
+
         ParamDescriptor paramDescriptor = new ParamDescriptor(type, defaultValue);
         paramDescriptor.setValue(value);
+        if (node.has("allowedValues")) {
+            ArrayList<Object> allowedValuesList = new ArrayList<>();
+
+            ArrayNode allowedValuesNode = (ArrayNode) node.get("allowedValues");
+            allowedValuesNode.forEach(allowedValue -> {
+                allowedValuesList.add(allowedValue.asText());
+            });
+            paramDescriptor.setAllowedValues(allowedValuesList.toArray());
+        }
         return paramDescriptor;
 
     }

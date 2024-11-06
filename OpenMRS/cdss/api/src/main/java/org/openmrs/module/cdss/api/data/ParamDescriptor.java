@@ -6,23 +6,26 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Arrays;
+
+@Getter
 @NoArgsConstructor
 public class ParamDescriptor {
 
-    @Getter
     @JsonIgnore
     String name;
 
-    @Getter
     @JsonProperty("type")
     private String type;
-    @Getter
+
     @Setter
     @JsonProperty("value")
     private Object value;
 
+    @Setter
+    @JsonProperty("allowedValues")
+    private Object[] allowedValues;
 
-    @Getter
     @JsonProperty(value = "default", required = false)
     private Object defaultValue;
 
@@ -33,5 +36,23 @@ public class ParamDescriptor {
 
     public ParamDescriptor(String type) {
         this.type = type;
+    }
+
+    public ParamDescriptor(ParamDescriptor descriptor) {
+        this.type = descriptor.type;
+        this.defaultValue = descriptor.defaultValue;
+        this.allowedValues = descriptor.allowedValues;
+        this.value = descriptor.value;
+    }
+
+    @Override
+    public String toString() {
+        return "ParamDescriptor{" +
+                "name='" + name + '\'' +
+                ", type='" + type + '\'' +
+                ", value=" + value +
+                ", allowedValues=" + Arrays.toString(allowedValues) +
+                ", defaultValue=" + defaultValue +
+                '}';
     }
 }

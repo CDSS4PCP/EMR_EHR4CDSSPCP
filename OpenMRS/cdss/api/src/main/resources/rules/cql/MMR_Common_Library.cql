@@ -75,7 +75,7 @@ valueset "HIV 1 VS_1": 'https://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.
 valueset "HIV Tests VS": 'https://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1166.11'
 valueset "HIV in Pregnancy Childbirth and Puerperium VS": 'https://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1029.272'
 valueset "HIV in Pregnancy Childbirth and Puerperium VS_1": 'https://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1029.271'
-valueset "ICD10 Codes for HIV Diagnosis VS": 'https://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1262.4'
+//valueset "ICD10 Codes for HIV Diagnosis VS": 'https://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1262.4'
 valueset "Indicators of Human Immunodeficiency Virus (HIV) VS_3": 'https://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1056.51'
 valueset "HIV Infection (Combination Tests for HIV Antigen and Antibody) VS": 'https://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1146.731'
 valueset "HIV VS_1": 'https://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1029.270'
@@ -170,7 +170,7 @@ define "HIV_AIDS_All_Valuesets":
     union "HIV Tests VS"
     union "HIV in Pregnancy Childbirth and Puerperium VS"
     union "HIV in Pregnancy Childbirth and Puerperium VS_1"
-    union "ICD10 Codes for HIV Diagnosis VS"
+//    union "ICD10 Codes for HIV Diagnosis VS"
     union "Indicators of Human Immunodeficiency Virus (HIV) VS_3"
     union "HIV Infection (Combination Tests for HIV Antigen and Antibody) VS"
     union "HIV VS_1"
@@ -250,3 +250,24 @@ define function FindValidHivAidsObservation(Obs List<Observation>):
                     or
                     ((FindValidHivAidsCodesPercent(Temp.code.coding)) is not null and FindValidHivAidsObservationMeasurementPercent(Temp))
                     )
+
+
+define function GetAge(unit String):
+    if unit = 'week' then
+        AgeInWeeks()
+    else if unit = 'month' then
+        AgeInMonths()
+    else if unit = 'year' then
+        AgeInYears()
+    else
+        null
+
+define function GetDifferenceInUnit(date1 Date, date2 Date, unit String):
+    if unit = 'week' then
+        difference in weeks between date1 and date2
+    else if unit = 'month' then
+        difference in months between date1 and date2
+    else if unit = 'year' then
+        difference in years between date1 and date2
+    else
+        null

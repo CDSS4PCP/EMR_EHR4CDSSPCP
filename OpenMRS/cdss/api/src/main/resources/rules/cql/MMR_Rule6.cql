@@ -13,6 +13,28 @@ parameter Imm List<Immunization>
 
 context Patient
 
+define "$Age1": 12
+
+define "$Age1_unit": 'month'
+
+define "$Age2": 4
+
+define "$Age2_unit": 'year'
+
+
+define "$Dose1AdminMinAge": 12
+
+define "$Dose1AdminMinAge_unit": 'month'
+
+define "$Dose1AdminMaxAge": 15
+
+define "$Dose1AdminMaxAge_unit": 'month'
+
+define "$WeeksSinceDose": 4
+
+define "$WeeksSinceDose_unit": 'week'
+
+
 
 define "VaccineName":
     'Measles, Mumps, and Rubella Virus Vaccine'
@@ -21,8 +43,9 @@ define "VaccineName":
 
 
 define "CurrentAge":
-  AgeInMonths() > 12
-    and AgeInYears() < 4
+  Common.GetAge("$Age1_unit") >= "$Age1"
+    and Common.GetAge("$Age2_unit") < "$Age2"
+
 
 
 
@@ -48,25 +71,43 @@ define function MMRVaccineDate(Immunizations List<FHIR.Immunization>):
 define "PrevDoseDate":
     MMRVaccineDate(Imm)[0].Date
 
+define "PatientBirthDate":
+    ToDate(Patient.birthDate.value)
+
+
 
 define "AgeFirstFirstDoseMonths":
     months between Patient.birthDate and PrevDoseDate // This does not take years into account
 
+
+define "DiffInMinAdminUnit":
+    Abs(Common.GetDifferenceInUnit("PrevDoseDate", "PatientBirthDate", "$Dose1AdminMinAge_unit"))
+
+define "DiffInMaxAdminUnit":
+    Abs(Common.GetDifferenceInUnit("PrevDoseDate", "PatientBirthDate", "$Dose1AdminMaxAge_unit"))
+
+
+
+
+
 define "AgeFirstMMRIn":
-    AgeFirstFirstDoseMonths < 12 or AgeFirstFirstDoseMonths > 15
+    "DiffInMinAdminUnit" < "$Dose1AdminMinAge" or  "DiffInMaxAdminUnit" > "$Dose1AdminMaxAge"
+
 
 define "WeeksFromFirstDose":
     (difference in weeks between MMRVaccineDate(Imm)[0].Date and Today() )
 
+define "TimeSinceFirstDose":
+    Common.GetDifferenceInUnit(MMRVaccineDate(Imm)[0].Date, Today(), "$WeeksSinceDose_unit")
+
+
 
 
 define "InPopulation":
-    MMR_Vaccine_OneDose and AgeFirstMMRIn and CurrentAge and WeeksFromFirstDose < 4
+    MMR_Vaccine_OneDose and AgeFirstMMRIn and CurrentAge and TimeSinceFirstDose < "$WeeksSinceDose"
 
-//parameters-Todo1
  define "Recommendation1":
      if InPopulation then
         'Schedule 2nd dose >= 4 wk of 1st dose'
      else
         null
-

@@ -93,6 +93,14 @@
         </description>
     </globalProperty>
 
+    <globalProperty>
+        <property>@MODULE_ID@.ruleModificationServiceUrl</property>
+        <defaultValue>No key set</defaultValue>
+        <description>
+            The url that houses the rule modification service for modifying rules.
+        </description>
+    </globalProperty>
+
     <!--
     <dwr>
         <allow>

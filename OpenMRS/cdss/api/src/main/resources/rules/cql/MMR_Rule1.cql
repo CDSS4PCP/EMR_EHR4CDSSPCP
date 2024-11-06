@@ -15,29 +15,34 @@ parameter Imm List<Immunization>
 context Patient
 
 
-//define "allSets":
-//    Common.MMR_All_Valuesets
+
+define "$Age1":
+    0
+
+define "$Age1_unit":
+    'month'
+
+define "$Age2":
+    12
+
+define "$Age2_unit":
+    'month'
 
 define "VaccineName":
     'Measles, Mumps, and Rubella Virus Vaccine'
 
-
+define "PatientAge":
+    AgeInMonths()
 
 define "CurrentAge":
-  AgeInMonths() >= 0
-    and AgeInMonths() < 12
+  Common.GetAge("$Age1_unit") >= "$Age1"
+    and Common.GetAge("$Age2_unit") < "$Age2"
 
 
 
 
 define "InPopulation":
    CurrentAge and  Count(Common.FindValidVaccines(Imm)) = 0
-
-//define "Recommendation":
-//    if InPopulation then
-//        {'Recommendation 1: Schedule 1st dose MMR when patient is 12-15 months','Recommendation 2: Schedule 2nd dose MMR when patient is 4-6 years'}
-//    else
-//        'No recommendation'
 
 define "Recommendation1":
     if InPopulation then
@@ -48,5 +53,4 @@ define "Recommendation2":
     if InPopulation then
         'Recommendation 2: Schedule 2nd dose MMR when patient is 4-6 years'
     else null
-
 

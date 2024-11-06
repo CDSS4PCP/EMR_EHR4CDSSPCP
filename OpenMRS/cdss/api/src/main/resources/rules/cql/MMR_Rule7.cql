@@ -12,15 +12,25 @@ parameter Imm List<Immunization>
 
 context Patient
 
+
+
+define "$Age1": 4
+define "$Age1_unit": 'year'
+define "$Age2": 18
+define "$Age2_unit": 'year'
+define "$WeeksSinceDose": 4
+define "$WeeksSinceDose_unit": 'week'
+
+
 define "VaccineName":
     'Measles, Mumps, and Rubella Virus Vaccine'
 
 
 
-
 define "CurrentAge":
-  AgeInYears() >= 4
-    and AgeInYears() <= 18
+  Common.GetAge("$Age1_unit") >= "$Age1"
+    and Common.GetAge("$Age2_unit") < "$Age2"
+
 
 
 
@@ -45,9 +55,12 @@ define "PrevDoseDate":
 define "WeeksFromFirstDose":
 	(difference in weeks between  PrevDoseDate and Today() )
 
+define "TimeSinceFirstDose":
+    Common.GetDifferenceInUnit(MMRVaccineDate(Imm)[0].Date, Today(), "$WeeksSinceDose_unit")
+
 
 define "InPopulation":
-    CurrentAge and MMR_Vaccine_OneDose and WeeksFromFirstDose >= 4
+    CurrentAge and MMR_Vaccine_OneDose and TimeSinceFirstDose < "$WeeksSinceDose"
 
 
 define "Recommendation1":
@@ -55,5 +68,4 @@ define "Recommendation1":
         'Administer 2nd dose MMR'
     else
         null
-
 

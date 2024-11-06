@@ -35,5 +35,27 @@ public class RuleManifest {
         return Collections.unmodifiableList(rules);
     }
 
+    public RuleDescriptor getRule(String id, String version) {
+        if (version == null) {
+            return getRule(id);
+        }
+        for (RuleDescriptor rule : rules) {
+
+            if (rule.getId().equals(id) && rule.getVersion().equals(version)) {
+                return rule;
+            }
+        }
+        return null;
+    }
+
+    public RuleDescriptor getRule(String id) {
+        for (RuleDescriptor rule : rules) {
+
+            if (rule.getId().equals(id)) {
+                return rule;
+            }
+        }
+        return null;
+    }
 
 }
