@@ -10,7 +10,7 @@ import java.util.Arrays;
 
 @Getter
 @NoArgsConstructor
-public class ParamDescriptor {
+public class ParamDescriptor implements Cloneable {
 
     @JsonIgnore
     String name;
@@ -54,5 +54,12 @@ public class ParamDescriptor {
                 ", allowedValues=" + Arrays.toString(allowedValues) +
                 ", defaultValue=" + defaultValue +
                 '}';
+    }
+
+    @Override
+    protected ParamDescriptor clone() throws CloneNotSupportedException {
+        ParamDescriptor clone = (ParamDescriptor) super.clone();
+        clone.allowedValues = Arrays.copyOf(allowedValues, allowedValues.length);
+        return clone;
     }
 }

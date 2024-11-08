@@ -32,11 +32,11 @@ import SelectItem from "@carbon/react/lib/components/SelectItem/SelectItem";
 
 // Events used for parameter resets
 const eventEmitter = new EventEmitter();
+eventEmitter.setMaxListeners(20); // Arbitrary number
 
 async function postRuleChange(ruleId, parameterChanges) {
   console.log(ruleId, parameterChanges);
-  // const modificationServiceUrl = "http://localhost:9090/api/inject";
-  // const cql = await loadCqlRule(ruleId);
+
   const changes = {};
   for (const paramName of Object.keys(parameterChanges)) {
     changes[paramName] = {
@@ -53,19 +53,16 @@ async function postRuleChange(ruleId, parameterChanges) {
     },
   };
 
-  // const result = await fetch(modificationServiceUrl, {
-  //   method: "POST",
-  //   headers: { "Content-Type": "application/json" },
-  //
-  //   body: JSON.stringify(body),
-  // });
   const response = await openmrsFetch(`/cdss/modify-rule.form`, {
     method: "POST",
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),
   });
   const result = await response.text();
   if (response.status == 200) {
     console.log(result);
+  } else {
+    console.error(response);
   }
 }
 
@@ -297,6 +294,14 @@ const CdssEditableCell = React.forwardRef<
   CdssEditableCellProps
 >(({ parameter, cellId, ruleId, pendingChanges, setPendingChanges }, ref) => {
   const paramName = cellId.replace(ruleId + ":", "");
+  console.log(parameter);
+  if (parameter == null) {
+    return (
+      <TableCell ref={ref} key={cellId} className={styles.cdssEditableCell}>
+        Parameter was null
+      </TableCell>
+    );
+  }
   return (
     <TableCell ref={ref} key={cellId} className={styles.cdssEditableCell}>
       {parameter.type == "Integer" ? (

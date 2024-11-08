@@ -58,4 +58,15 @@ public class RuleManifest {
         return null;
     }
 
+    public Boolean addRule(RuleDescriptor descriptor) {
+        RuleDescriptor existingDescriptor = getRule(descriptor.getId(), descriptor.getVersion());
+        if (existingDescriptor != null) {
+            return false;
+        }
+        return rules.add(descriptor);
+
+
+    }
+
+
 }

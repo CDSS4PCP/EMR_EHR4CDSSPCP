@@ -5,10 +5,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @NoArgsConstructor
-public class RuleDescriptor {
+public class RuleDescriptor implements Cloneable {
     @Getter
     @JsonProperty("id")
     private String id;
@@ -65,5 +66,16 @@ public class RuleDescriptor {
                 ", enabled=" + enabled +
                 ", params=" + params +
                 '}';
+    }
+
+    @Override
+    protected RuleDescriptor clone() throws CloneNotSupportedException {
+        RuleDescriptor clonedRuleDescriptor = new RuleDescriptor(id, version, cqlFilePath, elmFilePath, role);
+        Map<String, ParamDescriptor> newParams = new HashMap<>();
+        for (Map.Entry<String, ParamDescriptor> entry : params.entrySet()) {
+            newParams.put(entry.getKey(), entry.getValue().clone());
+        }
+        clonedRuleDescriptor.params = newParams;
+        return clonedRuleDescriptor;
     }
 }
