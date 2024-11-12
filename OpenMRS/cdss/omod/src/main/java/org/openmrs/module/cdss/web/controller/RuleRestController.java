@@ -9,14 +9,14 @@ import org.openmrs.api.AdministrationService;
 import org.openmrs.module.cdss.api.RuleManagerService;
 import org.openmrs.module.cdss.api.data.ModifyRuleRequest;
 import org.openmrs.module.cdss.api.data.ParamDescriptor;
+import org.openmrs.module.cdss.api.exception.RuleNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
+import java.io.FileNotFoundException;
 import java.util.Map;
 
 @RestController
@@ -42,13 +42,17 @@ public class RuleRestController extends CdssRestController {
      */
     @GetMapping(path = "/elm-rule/{ruleId}.form", produces = {"application/json"})
     public ResponseEntity<String> getRule(@PathVariable(value = "ruleId") String ruleId) throws APIAuthenticationException {
-        checkAuthorizationAndPrivilege();
+//        checkAuthorizationAndPrivilege();
 
         try {
             String rule = ruleManagerService.getElmRule(ruleId);
             return ResponseEntity.ok(rule);
         } catch (NullPointerException e) {
             return new ResponseEntity<>("Rule " + ruleId + " Not found", HttpStatus.NOT_FOUND);
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (RuleNotFoundException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -62,12 +66,12 @@ public class RuleRestController extends CdssRestController {
      */
     @GetMapping(path = "/cql-rule/{ruleId}.form", produces = {"application/json"})
     public ResponseEntity<String> getCqlRule(@PathVariable(value = "ruleId") String ruleId) throws APIAuthenticationException {
-        checkAuthorizationAndPrivilege();
+//        checkAuthorizationAndPrivilege();
 
         try {
             String rule = ruleManagerService.getCqlRule(ruleId);
             return ResponseEntity.ok(rule);
-        } catch (NullPointerException e) {
+        } catch (NullPointerException | RuleNotFoundException | FileNotFoundException e) {
             return new ResponseEntity<>("Rule " + ruleId + " Not found", HttpStatus.NOT_FOUND);
         }
     }
@@ -80,7 +84,7 @@ public class RuleRestController extends CdssRestController {
      */
     @GetMapping(path = "/rule.form", produces = {"application/json"})
     public ResponseEntity<String[]> getRules(@RequestParam(required = false) Boolean allRules) throws APIAuthenticationException {
-        checkAuthorizationAndPrivilege();
+//        checkAuthorizationAndPrivilege();
         if (allRules == null) {
             allRules = false;
         }
@@ -102,7 +106,7 @@ public class RuleRestController extends CdssRestController {
      */
     @GetMapping(path = "/rule-manifest.form", produces = {"application/json"})
     public ResponseEntity<String> getRuleManifest() throws APIAuthenticationException, JsonProcessingException {
-        checkAuthorizationAndPrivilege();
+//        checkAuthorizationAndPrivilege();
         String val = cdssService.getCdssObjectMapper().writeValueAsString(ruleManagerService.getRuleManifest());
 
         return ResponseEntity.ok(val);
@@ -118,7 +122,14 @@ public class RuleRestController extends CdssRestController {
         String version = body.rule.getVersion();
         Map<String, ParamDescriptor> params = body.getParams();
 
-        Boolean result = ruleManagerService.modifyRule(ruleId, version, params);
+        Boolean result = null;
+        try {
+            result = ruleManagerService.modifyRule(ruleId, version, params);
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (RuleNotFoundException e) {
+            throw new RuntimeException(e);
+        }
         return new ResponseEntity<>(result.toString(), HttpStatus.OK);
 
     }
