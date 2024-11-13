@@ -75,31 +75,23 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
         simpleModule.addDeserializer(RuleManifest.class, new RuleManifestDeserializer());
         objectMapper.registerModule(simpleModule);
 
-//        ClassLoader classloader = Thread.currentThread().getContextClassLoader();
-//
-//        if (!checkRuleManifestFileExists()) {
-//            return;
+//        if (checkRuleManifestFileExists()) {
+//            log.info("Found rule manifest file: " + RULE_MANIFEST_PATH);
+//            readManifest();
+//        } else {
+//            try {
+//                setUpDirectoryHierarchy();
+//            } catch (IOException e) {
+//                throw new RuntimeException(e);
+//            }
 //        }
-//        InputStream is = classloader.getResourceAsStream(RULE_MANIFEST_PATH);
-//
-//        String result = new BufferedReader(new InputStreamReader(is)).lines().collect(Collectors.joining("\n"));
-//
-//        try {
-//            ruleManifest = objectMapper.readValue(result, RuleManifest.class);
-//        } catch (JsonProcessingException e) {
-//            throw new RuntimeException(e);
-//        }
-
-        if (checkRuleManifestFileExists()) {
-            log.info("Found rule manifest file: " + RULE_MANIFEST_PATH);
+        try {
+            setUpDirectoryHierarchy();
             readManifest();
-        } else {
-            try {
-                setUpDirectoryHierarchy();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
+
 
     }
 
@@ -207,19 +199,6 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
                     throw new RuleNotEnabledException(ruleId);
                 }
                 String path = RULE_DIRECTORY_PATH + descriptor.getCqlFilePath();
-//                ClassLoader classloader = Thread.currentThread().getContextClassLoader();
-//                URL url = classloader.getResource(path);
-//                File f = new File(url.getPath());
-//                InputStream is = null;
-//                try {
-//                    is = new FileInputStream(f);
-//                    log.debug("Path is :   " + path);
-//                    String result = new BufferedReader(new InputStreamReader(is)).lines().collect(Collectors.joining("\n"));
-//                    return result;
-//                } catch (FileNotFoundException e) {
-//                    throw new RuntimeException(e);
-//                }
-
                 File f = new File(path);
                 if (!f.exists()) {
                     throw new RuleNotFoundException(ruleId, path);
@@ -233,6 +212,16 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
         return null;
     }
 
+
+    private boolean doesRuleExist(String ruleId) {
+        for (RuleDescriptor descriptor : ruleManifest.getRules()) {
+            if (descriptor.getId().equals(ruleId)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private boolean isRuleIdValid(String ruleId) {
 
         return new JsonFilenameFilter().accept(null, ruleId);
@@ -240,21 +229,6 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
 
 
     private boolean checkRuleManifestFileExists() {
-//        ClassLoader classloader = Thread.currentThread().getContextClassLoader();
-//
-//        URL url = classloader.getResource(RULE_MANIFEST_PATH);
-//        if (url == null) {
-//            throw new RuntimeException("Could not find rule manifest file");
-//        }
-//        File f = new File(url.getPath());
-//
-//        if (!f.exists() || !(f.canRead() && f.canWrite())) {
-//            throw new RuntimeException("Could not read rule manifest file");
-//
-//        }
-//
-//        log.info("CDSS Found Rule Manifest file: " + url);
-//        return true;
 
         File f = new File(RULE_MANIFEST_PATH);
         log.debug("RULE_MANIFEST_PATH: " + f.getAbsolutePath());
@@ -268,22 +242,6 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
     }
 
     private void writeManifest() {
-//        ClassLoader classloader = Thread.currentThread().getContextClassLoader();
-//        URL url = classloader.getResource(RULE_MANIFEST_PATH);
-//
-//        try {
-//            OutputStream outputStream = new FileOutputStream(url.getPath());
-//            objectMapper.writeValue(outputStream, ruleManifest);
-//
-//        } catch (FileNotFoundException e) {
-//            throw new RuntimeException(e);
-//        } catch (StreamWriteException e) {
-//            throw new RuntimeException(e);
-//        } catch (DatabindException e) {
-//            throw new RuntimeException(e);
-//        } catch (IOException e) {
-//            throw new RuntimeException(e);
-//        }
 
         File f = new File(RULE_MANIFEST_PATH);
         OutputStream outputStream = null;
@@ -326,52 +284,8 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
     }
 
 
-    private boolean copyFileFromResourceToFile(String path) throws IOException {
-        ClassLoader classloader = Thread.currentThread().getContextClassLoader();
-        InputStream is = classloader.getResourceAsStream(path);
-
-        String resourceContents = new BufferedReader(new InputStreamReader(is)).lines().collect(Collectors.joining("\n"));
-
-        File file = new File(path);
-//        log.debug("CDSS Copying file from " + path + " to " + file.getAbsolutePath());
-        if (!file.exists()) {
-            boolean success = file.getParentFile().mkdirs();
-            boolean success2 = file.createNewFile();
-            if (success && success2) {
-                FileWriter fw = new FileWriter(file);
-                fw.write(resourceContents);
-                fw.close();
-//                log.debug("CDSS Successfully copied " + path + " to " + file.getAbsolutePath());
-
-                return true;
-
-            } else {
-                return false;
-//                throw new IOException("CDSS Could not create new " + file.getAbsolutePath());
-            }
-        }
-//        log.debug("CDSS Could not copy " + path + " to " + file.getAbsolutePath() + " because it already exists");
-
-        return false;
-
-    }
-
-
     private void setUpDirectoryHierarchy() throws IOException {
 
-//
-//        boolean success = copyFileFromResourceToFile(RULE_MANIFEST_PATH);
-//        log.debug("Reading rule manifest file: " + RULE_MANIFEST_PATH + " after copy step");
-//        readManifest();
-//
-//
-//        for (RuleDescriptor ruleDescriptor : ruleManifest.getRules()) {
-//            log.debug("CDSS Attempting to copy " + ruleDescriptor.getId() + "-" + ruleDescriptor.getVersion());
-//            success = copyFileFromResourceToFile(RULE_DIRECTORY_PATH + ruleDescriptor.getElmFilePath());
-//
-//            success = copyFileFromResourceToFile(RULE_DIRECTORY_PATH + ruleDescriptor.getCqlFilePath());
-//
-//        }
         log.info("Did not find rule manifest file, will create one instead");
 
 
@@ -390,7 +304,6 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
         }
 
         readManifest();
-        boolean success;
         for (RuleDescriptor ruleDescriptor : ruleManifest.getRules()) {
             log.debug("CDSS Attempting to copy " + ruleDescriptor.getId() + "-" + ruleDescriptor.getVersion());
 
@@ -408,55 +321,7 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
         }
     }
 
-
-    public Boolean modifyRule(String ruleId, String version, Map<String, ParamDescriptor> changedParameters) throws JsonProcessingException, FileNotFoundException, RuleNotFoundException {
-        log.debug("CDSS Attempting to modify rule " + ruleId);
-        if (client == null) {
-            client = new OkHttpClient();
-        }
-        HashMap<String, Object> newRequestBody = new HashMap<>();
-        newRequestBody.put("params", new HashMap<>());
-
-
-        String cqlContent = getCqlRule(ruleId);
-        log.debug(cqlContent);
-        newRequestBody.put("rule", new ModifyRuleRequestRuleDescriptor(ruleId, version, encodeCql(cqlContent)));
-
-        newRequestBody.put("params", changedParameters);
-
-        String stringBody = objectMapper.writeValueAsString(newRequestBody);
-
-        log.debug("CDSS body is constructed. Is it correct?");
-        log.debug(stringBody);
-        okhttp3.RequestBody body1 = okhttp3.RequestBody.create(
-                MediaType.parse("application/json"), stringBody);
-        Request rq = new Request.Builder().post(body1).url("http://host.docker.internal:9090/api/inject").build();
-
-        try {
-            Response rs = client.newCall(rq).execute();
-
-            if (rs.code() == 200) {
-                log.debug("CDSS Successfully injected parameters " + ruleId);
-                String resultString = rs.body().string();
-                rs.body().close();
-
-                ModifyRuleRequest result = objectMapper.readValue(resultString, ModifyRuleRequest.class);
-                String cql = result.getRule().getCqlContent();
-                String elm = translate(ruleId, version, cql);
-                return createRule(ruleId, version, changedParameters, RuleRole.RULE, cql, elm);
-            }
-            log.error("Could not inject Error code" + rs.code() + " : " + rs.body().string());
-
-
-            return false;
-
-
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private Boolean createRule(String ruleId, String version, Map<String, ParamDescriptor> params, RuleRole role, String cql, String elm) throws IOException {
+    private Boolean createRule(String ruleId, String version, String description, Map<String, ParamDescriptor> params, RuleRole role, String cql, String elm) throws IOException {
         if (ruleId == null) {
             throw new RuntimeException("Rule id is null");
         }
@@ -466,10 +331,15 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
         if (elm == null) {
             throw new RuntimeException("Elm is null");
         }
-//        ClassLoader classloader = Thread.currentThread().getContextClassLoader();
 
-        String newId = "gshdf";
-        String newVersion = "1";
+        int count = 1;
+        String newId = ruleId + "_" + count;
+        while (doesRuleExist(newId)) {
+            newId = newId + "_" + count;
+            count++;
+        }
+
+        String newVersion = version;
 
         String cqlFilePath = String.format("cql/%s.cql", newId);
         String elmFilePath = String.format("elm/%s.json", newId);
@@ -477,11 +347,8 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
         RuleDescriptor descriptor = new RuleDescriptor(newId, newVersion, cqlFilePath, elmFilePath, role);
         descriptor.setEnabled(true);
         descriptor.setParams(params);
+        descriptor.setDescription(description);
 
-
-//        URL ruleDirectoryUrl = classloader.getResource(RULE_DIRECTORY_PATH);
-//        log.debug("Rule dir: " + ruleDirectoryUrl.getPath());
-//        File cqlFile = new File(ruleDirectoryUrl.getPath() + cqlFilePath);
 
         File cqlFile = new File(RULE_DIRECTORY_PATH + cqlFilePath);
         log.debug("cqlFilePath: " + cqlFile.getPath());
@@ -499,7 +366,6 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
         cqlFileWriter.write(cql);
         cqlFileWriter.close();
 
-//        File elmFile = new File(ruleDirectoryUrl.getPath() + elmFilePath);
         File elmFile = new File(RULE_DIRECTORY_PATH + elmFilePath);
         log.debug("elmFilePath: " + elmFile.getPath());
         log.debug("elmFile.exists(): " + elmFile.exists());
@@ -533,35 +399,91 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
 
     }
 
-    private String translate(String ruleId, String version, String cql) throws JsonProcessingException, FileNotFoundException, RuleNotFoundException {
-        log.debug("CDSS translate rule " + ruleId);
-        HashMap<String, Object> newRequestBody = new HashMap<>();
-        newRequestBody.put("params", new HashMap<>());
+    public Boolean modifyRule(String ruleId, String version, Map<String, ParamDescriptor> changedParameters) throws JsonProcessingException, FileNotFoundException, RuleNotFoundException {
+        log.debug("CDSS Attempting to modify rule " + ruleId);
+        RuleDescriptor originalRule = ruleManifest.getRule(ruleId);
 
-        newRequestBody.put("rule", new ModifyRuleRequestRuleDescriptor(ruleId, version, encodeCql(cql)));
-        newRequestBody.put("libraries", new HashMap<>());
-        ((HashMap<String, ModifyRuleRequestRuleDescriptor>) newRequestBody.get("libraries")).put("MMR_Common_Library", new ModifyRuleRequestRuleDescriptor("MMR_Common_Library", "1", encodeCql(getCqlRule("MMR_Common_Library"))));
-        String stringBody = objectMapper.writeValueAsString(newRequestBody);
+        if (originalRule == null) {
+            throw new RuleNotFoundException(ruleId);
+        }
+        String cqlContent = getCqlRule(ruleId);
 
-        okhttp3.RequestBody body1 = okhttp3.RequestBody.create(
-                MediaType.parse("application/json"), stringBody);
-        Request rq = new Request.Builder().post(body1).url("http://host.docker.internal:9090/api/translate").build();
-        try {
-            Response rs = client.newCall(rq).execute();
-            if (rs.code() == 200) {
-                log.debug("CDSS successfully translated rule " + ruleId);
+        ModifyRuleRequest modifyRuleRequest = new ModifyRuleRequest();
+        modifyRuleRequest.setRule(new ModifyRuleRequestRuleDescriptor(ruleId, version, encodeCql(cqlContent)));
 
-                String result = rs.body().string();
-                rs.body().close();
-                return result;
+        for (Map.Entry<String, ParamDescriptor> pair : originalRule.getParams().entrySet()) {
+            String name = pair.getKey();
+            ParamDescriptor paramDescriptor = pair.getValue();
+            if (!changedParameters.containsKey(name)) {
+                log.debug(paramDescriptor);
+                changedParameters.put(name, paramDescriptor);
             }
-            log.error("Could not translate Error code" + rs.code() + " : " + rs.body().string());
+        }
+        log.debug(changedParameters);
+
+        modifyRuleRequest.setParams(changedParameters);
+
+        log.debug(modifyRuleRequest.toString());
+        String stringBody = objectMapper.writeValueAsString(modifyRuleRequest);
+        log.debug(stringBody);
+        String resultString = callModificationService("http://host.docker.internal:9090/api/inject", stringBody);
+        log.debug("resultString: \n" + resultString);
+        ModifyRuleRequest result = objectMapper.readValue(resultString, ModifyRuleRequest.class);
+        String cql = result.getRule().getCqlContent();
+        log.debug("INJECTED CQL: " + cql);
+        log.debug("Translating");
+        String elm = translate(ruleId, version, cql);
+        try {
+            return createRule(ruleId, version, originalRule.getDescription(), changedParameters, RuleRole.RULE, cql, elm);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        log.error("Translation returning null!!!!");
-        return null;
+
+
     }
 
+
+    private String translate(String ruleId, String version, String cql) throws JsonProcessingException, FileNotFoundException, RuleNotFoundException {
+
+        HashMap<String, ModifyRuleRequestRuleDescriptor> libraries = new HashMap<>();
+        libraries.put("MMR_Common_Library", new ModifyRuleRequestRuleDescriptor("MMR_Common_Library", "1", encodeCql(getCqlRule("MMR_Common_Library"))));
+
+        ModifyRuleRequest translateRuleRequest = new ModifyRuleRequest();
+        translateRuleRequest.setRule(new ModifyRuleRequestRuleDescriptor(ruleId, version, encodeCql(cql)));
+        translateRuleRequest.setLibraries(libraries);
+
+
+        log.debug("CDSS translate rule " + ruleId);
+
+        String stringBody = objectMapper.writeValueAsString(translateRuleRequest);
+
+        String resultString = callModificationService("http://host.docker.internal:9090/api/translate", stringBody);
+        return resultString;
+    }
+
+
+    private String callModificationService(String url, String body) {
+        if (client == null) {
+            client = new OkHttpClient();
+        }
+
+        okhttp3.RequestBody body1 = okhttp3.RequestBody.create(MediaType.parse("application/json"), body);
+        Request rq = new Request.Builder().post(body1).url(url).build();
+        try {
+            Response rs = client.newCall(rq).execute();
+
+            if (rs.code() == 200) {
+                String resultString = rs.body().string();
+                rs.body().close();
+                return resultString;
+            }
+
+            return null;
+
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
 }

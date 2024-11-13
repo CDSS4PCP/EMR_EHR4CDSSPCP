@@ -15,13 +15,13 @@ import {
   TableExpandRow,
   TableExpandedRow,
   TextInput,
-  Button,
+  Button
 } from "@carbon/react";
 import { openmrsFetch } from "@openmrs/esm-framework";
 import { TableCellProps } from "@carbon/react/lib/components/DataTable/TableCell";
 import {
   NumberInput,
-  NumberInputProps,
+  NumberInputProps
 } from "@carbon/react/lib/components/NumberInput/NumberInput";
 import { EventEmitter } from "events";
 import { loadCqlRule, loadRule } from "../cdssService";
@@ -41,7 +41,7 @@ async function postRuleChange(ruleId, parameterChanges) {
   for (const paramName of Object.keys(parameterChanges)) {
     changes[paramName] = {
       value: parameterChanges[paramName].newValue,
-      type: parameterChanges[paramName].type,
+      type: parameterChanges[paramName].type
     };
   }
 
@@ -49,18 +49,22 @@ async function postRuleChange(ruleId, parameterChanges) {
     params: changes,
     rule: {
       id: ruleId,
-      version: "1",
-    },
+      version: "1"
+    }
   };
 
   const response = await openmrsFetch(`/cdss/modify-rule.form`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
+    body: JSON.stringify(body)
   });
   const result = await response.text();
   if (response.status == 200) {
     console.log(result);
+    eventEmitter.emit("modificationSucceeded", {
+      ruleId: ruleId,
+      parameterChanges: parameterChanges
+    });
   } else {
     console.error(response);
   }
@@ -103,7 +107,7 @@ function recordParameterChange(
   const change = {
     newValue: newValue,
     initialValue: initialValue,
-    type: type,
+    type: type
   };
 
   const pendingParameterChanges = { ...pendingChanges };
@@ -334,8 +338,7 @@ export const CdssModificationPage: React.FC = () => {
   const [columns, setColumns] = useState(null);
   const [pendingParameterChanges, setPendingParameterChanges] = useState({});
 
-  // Data structure to keep track of parameter changes
-  useEffect(() => {
+  function loadAndProcessData() {
     getRuleData().then((r) => {
       setRuleData(r);
 
@@ -354,6 +357,14 @@ export const CdssModificationPage: React.FC = () => {
       columnList.sort((a, b) => a?.name.localeCompare(b.name));
       setColumns(columnList);
     });
+  }
+
+  eventEmitter.on("modificationSucceeded", (args) => {
+    loadAndProcessData();
+  });
+  // Data structure to keep track of parameter changes
+  useEffect(() => {
+    loadAndProcessData();
   }, []);
 
   if (ruleData == null || columns == null) {
@@ -371,7 +382,7 @@ export const CdssModificationPage: React.FC = () => {
         description: r.description,
         role: r.role,
         enabled: r.enabled,
-        ...r.params,
+        ...r.params
       };
       return obj;
     });
@@ -387,14 +398,14 @@ export const CdssModificationPage: React.FC = () => {
 
       <DataTable useZebraStyles rows={rules} headers={columns}>
         {({
-          rows,
-          headers,
-          getHeaderProps,
-          getRowProps,
-          getExpandedRowProps,
-          getTableProps,
-          getTableContainerProps,
-        }) => {
+            rows,
+            headers,
+            getHeaderProps,
+            getRowProps,
+            getExpandedRowProps,
+            getTableProps,
+            getTableContainerProps
+          }) => {
           return (
             <TableContainer
               title="Rule parameter table"
@@ -407,7 +418,7 @@ export const CdssModificationPage: React.FC = () => {
                     <TableHeader
                       key={i}
                       {...getHeaderProps({
-                        header,
+                        header
                       })}
                     >
                       {header.name}
@@ -423,7 +434,7 @@ export const CdssModificationPage: React.FC = () => {
                       <TableExpandRow
                         className={styles.cdssTableRow}
                         {...getRowProps({
-                          row,
+                          row
                         })}
                       >
                         {row.cells.map((cell) => {
@@ -458,7 +469,7 @@ export const CdssModificationPage: React.FC = () => {
                                   kind={"secondary"}
                                   onClick={(e) => {
                                     eventEmitter.emit("parameterReset", {
-                                      ruleId: row.id,
+                                      ruleId: row.id
                                     });
                                   }}
                                 >
