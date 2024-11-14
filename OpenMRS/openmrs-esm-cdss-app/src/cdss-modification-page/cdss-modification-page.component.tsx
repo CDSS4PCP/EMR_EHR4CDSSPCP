@@ -368,7 +368,7 @@ export const CdssModificationPage: React.FC = () => {
   }, []);
 
   if (ruleData == null || columns == null) {
-    return <DataTableSkeleton headers={[]} aria-label="sample table" />;
+    return <DataTableSkeleton headers={[]} aria-label="empty table" />;
   }
 
   const rules = ruleData.rules

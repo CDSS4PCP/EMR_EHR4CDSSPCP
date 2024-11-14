@@ -6,20 +6,22 @@ import org.openmrs.api.APIAuthenticationException;
 import org.openmrs.module.cdss.CDSSConfig;
 import org.openmrs.module.cdss.api.data.ParamDescriptor;
 import org.openmrs.module.cdss.api.data.RuleManifest;
+import org.openmrs.module.cdss.api.data.RuleRole;
 import org.openmrs.module.cdss.api.exception.RuleNotFoundException;
 
 import java.io.FileNotFoundException;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public interface RuleManagerService extends CdssVaccineService {
 
     @Authorized({CDSSConfig.MODULE_PRIVILEGE})
-    String[] getRules() throws APIAuthenticationException;
+    List<String> getAllRules() throws APIAuthenticationException;
 
     @Authorized({CDSSConfig.MODULE_PRIVILEGE})
-    String[] getEnabledRules() throws APIAuthenticationException;
+    List<String> getEnabledRules() throws APIAuthenticationException;
 
+    // TODO Change methods to utilize version as well as ruleId
     @Authorized({CDSSConfig.MODULE_PRIVILEGE})
     String getElmRule(String ruleId) throws APIAuthenticationException, RuleNotFoundException, FileNotFoundException;
 
@@ -29,5 +31,15 @@ public interface RuleManagerService extends CdssVaccineService {
     @Authorized({CDSSConfig.MODULE_PRIVILEGE})
     RuleManifest getRuleManifest() throws APIAuthenticationException;
 
+    @Authorized({CDSSConfig.MODULE_PRIVILEGE})
+    List<String> getAllRules(RuleRole role) throws APIAuthenticationException;
+
+    @Authorized()
+    Boolean enableRule(String ruleId) throws APIAuthenticationException, RuleNotFoundException, FileNotFoundException;
+
+    @Authorized()
+    Boolean disableRule(String ruleId) throws APIAuthenticationException, RuleNotFoundException, FileNotFoundException;
+
+    @Authorized({CDSSConfig.MODULE_PRIVILEGE})
     Boolean modifyRule(String ruleId, String version, Map<String, ParamDescriptor> changedParameters) throws JsonProcessingException, FileNotFoundException, RuleNotFoundException;
 }

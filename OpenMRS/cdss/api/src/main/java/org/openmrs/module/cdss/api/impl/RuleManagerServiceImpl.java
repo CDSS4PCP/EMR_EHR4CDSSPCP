@@ -27,6 +27,7 @@ import java.nio.file.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -48,12 +49,11 @@ class JsonFilenameFilter implements FilenameFilter {
 
 public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleManagerService {
 
-    private final Logger log = Logger.getLogger(getClass());
-
-    // The directory in the resources folder where ELM rules are stored
+    // The directory where ELM rules are stored
     private static final String RULE_DIRECTORY_PATH = "rules/";
+    // The path to rule manifest file
     private static final String RULE_MANIFEST_PATH = "rules/rule-manifest.json";
-
+    private final Logger log = Logger.getLogger(getClass());
     @Getter
     private RuleManifest ruleManifest;
     private ObjectMapper objectMapper;
@@ -75,24 +75,12 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
         simpleModule.addDeserializer(RuleManifest.class, new RuleManifestDeserializer());
         objectMapper.registerModule(simpleModule);
 
-//        if (checkRuleManifestFileExists()) {
-//            log.info("Found rule manifest file: " + RULE_MANIFEST_PATH);
-//            readManifest();
-//        } else {
-//            try {
-//                setUpDirectoryHierarchy();
-//            } catch (IOException e) {
-//                throw new RuntimeException(e);
-//            }
-//        }
         try {
             setUpDirectoryHierarchy();
             readManifest();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
-
     }
 
     /**
@@ -105,6 +93,7 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
         writeManifest();
     }
 
+
     @Override
     public List<String> getLoadedVaccineRulesets() {
         return CDSSConfig.VACCINE_CODES;
@@ -112,135 +101,157 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
 
 
     /**
-     * Retrieves an array of strings representing the rules available for the CDSS (Clinical
-     * Decision Support System). These rules are identified by their file names.
+     * Retrieves an array of IDs for all enabled rules from the rule manifest.
      *
-     * @return An array of strings containing the names of the rule files.
-     * @throws APIAuthenticationException if there is an issue with authentication while retrieving
-     *                                    the rules.
+     * @return An array of strings containing the IDs of enabled rules.
+     * @throws APIAuthenticationException If there is an authentication issue.
      */
     @Override
-    public String[] getEnabledRules() throws APIAuthenticationException {
-        String[] rules = new String[ruleManifest.getRules().size()];
-        int i = 0;
-        for (RuleDescriptor descriptor : ruleManifest.getRules()) {
-            if (descriptor.isEnabled()) {
-                rules[i] = descriptor.getId();
-                i++;
-            }
-        }
-        return rules;
-    }
-
-    @Override
-    public String[] getRules() throws APIAuthenticationException {
-        String[] rules = new String[ruleManifest.getRules().size()];
-        int i = 0;
-        for (RuleDescriptor descriptor : ruleManifest.getRules()) {
-            rules[i] = descriptor.getId();
-            i++;
-        }
-        return rules;
+    public List<String> getEnabledRules() throws APIAuthenticationException {
+        return ruleManifest.getRules().stream().filter(e -> e.isEnabled()).map(e -> e.getId()).collect(Collectors.toList());
     }
 
 
     /**
-     * Retrieves the content of a specific rule file based on the provided rule ID. If the rule ID
-     * does not end with '.json', it appends '.json' to the ID. Uses the current thread's context
-     * class loader to load the file as an input stream.
+     * Retrieves an array of all rule IDs from the rule manifest.
      *
-     * @param ruleId the identifier of the rule file to retrieve
-     * @return the content of the rule file as a single string
-     * @throws APIAuthenticationException if there is an issue with authentication while retrieving
-     *                                    the rule
-     * @throws NullPointerException       if the provided rule ID is null
+     * @return An array of strings containing the IDs of all rules.
+     * @throws APIAuthenticationException If there is an authentication issue.
+     */
+    @Override
+    public List<String> getAllRules() throws APIAuthenticationException {
+        return ruleManifest.getRules().stream().map(e -> e.getId()).collect(Collectors.toList());
+    }
+
+
+    /**
+     * Retrieves a list of rule IDs that match the specified role from the rule manifest.
+     *
+     * @param role The role to filter rules by.
+     * @return A list of strings containing the IDs of rules with the specified role.
+     * @throws APIAuthenticationException If there is an authentication issue.
+     */
+    public List<String> getAllRules(RuleRole role) throws APIAuthenticationException {
+        return ruleManifest.getRules().stream().filter(e -> e.getRole().equals(role)).map(e -> e.getId()).collect(Collectors.toList());
+    }
+
+    @Override
+    public Boolean enableRule(String ruleId) throws APIAuthenticationException, RuleNotFoundException, FileNotFoundException {
+        Optional<RuleDescriptor> descriptorOptional = ruleManifest.getRules().stream().filter(e -> e.getId().equals(ruleId)).findFirst();
+        if (!descriptorOptional.isPresent()) {
+            throw new RuleNotFoundException(ruleId);
+        }
+
+        RuleDescriptor descriptor = descriptorOptional.get();
+        descriptor.setEnabled(true);
+        return true;
+    }
+
+    @Override
+    public Boolean disableRule(String ruleId) throws APIAuthenticationException, RuleNotFoundException, FileNotFoundException {
+        Optional<RuleDescriptor> descriptorOptional = ruleManifest.getRules().stream().filter(e -> e.getId().equals(ruleId)).findFirst();
+        if (!descriptorOptional.isPresent()) {
+            throw new RuleNotFoundException(ruleId);
+        }
+
+        RuleDescriptor descriptor = descriptorOptional.get();
+        descriptor.setEnabled(false);
+        return true;
+    }
+
+
+    /**
+     * Retrieves the ELM content of a rule specified by its ID.
+     *
+     * @param ruleId The identifier of the rule to retrieve.
+     * @return The ELM content of the rule as a string.
+     * @throws RuleNotEnabledException    If the rule is not enabled.
+     * @throws APIAuthenticationException If there is an authentication issue.
+     * @throws RuleNotFoundException      If the rule or its file is not found.
+     * @throws FileNotFoundException      If the ELM file does not exist.
      */
     @Override
     public String getElmRule(String ruleId) throws RuleNotEnabledException, APIAuthenticationException, RuleNotFoundException, FileNotFoundException {
-        for (RuleDescriptor descriptor : ruleManifest.getRules()) {
-            if (descriptor.getId().equals(ruleId)) {
-                String path = RULE_DIRECTORY_PATH + descriptor.getElmFilePath();
-                if (!descriptor.isEnabled()) {
-                    throw new RuleNotEnabledException(ruleId);
-                }
-//                ClassLoader classloader = Thread.currentThread().getContextClassLoader();
-//                InputStream is = classloader.getResourceAsStream(path);
-//                String result = new BufferedReader(new InputStreamReader(is)).lines().collect(Collectors.joining("\n"));
-//                return result;
 
-                File f = new File(path);
-                if (!f.exists()) {
-                    throw new RuleNotFoundException(ruleId, path);
-                }
-                String result = new BufferedReader(new FileReader(f)).lines().collect(Collectors.joining("\n"));
-                return result;
-            }
+
+        Optional<RuleDescriptor> descriptorOptional = ruleManifest.getRules().stream().filter(e -> e.getId().equals(ruleId)).findFirst();
+        if (!descriptorOptional.isPresent()) {
+            throw new RuleNotFoundException(ruleId);
         }
-        return null;
+
+        RuleDescriptor descriptor = descriptorOptional.get();
+        String path = RULE_DIRECTORY_PATH + descriptor.getElmFilePath();
+        if (!descriptor.isEnabled()) {
+            throw new RuleNotEnabledException(ruleId);
+        }
+        File f = new File(path);
+        if (!f.exists()) {
+            throw new RuleNotFoundException(ruleId, path);
+        }
+        String result = new BufferedReader(new FileReader(f)).lines().collect(Collectors.joining("\n"));
+        return result;
+
+
     }
 
 
     /**
-     * Retrieves the content of a specific rule file based on the provided rule ID. If the rule ID
-     * does not end with '.json', it appends '.json' to the ID. Uses the current thread's context
-     * class loader to load the file as an input stream.
+     * Retrieves the CQL content of a rule specified by its ID.
      *
-     * @param ruleId the identifier of the rule file to retrieve
-     * @return the content of the rule file as a single string
-     * @throws APIAuthenticationException if there is an issue with authentication while retrieving
-     *                                    the rule
-     * @throws NullPointerException       if the provided rule ID is null
+     * @param ruleId The identifier of the rule to retrieve.
+     * @return The CQL content of the rule as a string.
+     * @throws RuleNotEnabledException    If the rule is not enabled.
+     * @throws APIAuthenticationException If there is an authentication issue.
+     * @throws NullPointerException       If the rule ID is null.
+     * @throws RuleNotFoundException      If the rule or its file is not found.
+     * @throws FileNotFoundException      If the CQL file does not exist.
      */
     @Override
     public String getCqlRule(String ruleId) throws RuleNotEnabledException, APIAuthenticationException, NullPointerException, RuleNotFoundException, FileNotFoundException {
-        for (RuleDescriptor descriptor : ruleManifest.getRules()) {
-            if (descriptor.getId().equals(ruleId)) {
-                if (!descriptor.isEnabled()) {
-                    throw new RuleNotEnabledException(ruleId);
-                }
-                String path = RULE_DIRECTORY_PATH + descriptor.getCqlFilePath();
-                File f = new File(path);
-                if (!f.exists()) {
-                    throw new RuleNotFoundException(ruleId, path);
-                }
-                String result = new BufferedReader(new FileReader(f)).lines().collect(Collectors.joining("\n"));
-                return result;
-
-
-            }
+        Optional<RuleDescriptor> descriptorOptional = ruleManifest.getRules().stream().filter(e -> e.getId().equals(ruleId)).findFirst();
+        if (!descriptorOptional.isPresent()) {
+            throw new RuleNotFoundException(ruleId);
         }
-        return null;
+
+        RuleDescriptor descriptor = descriptorOptional.get();
+        String path = RULE_DIRECTORY_PATH + descriptor.getCqlFilePath();
+        if (!descriptor.isEnabled()) {
+            throw new RuleNotEnabledException(ruleId);
+        }
+        File f = new File(path);
+        if (!f.exists()) {
+            throw new RuleNotFoundException(ruleId, path);
+        }
+        String result = new BufferedReader(new FileReader(f)).lines().collect(Collectors.joining("\n"));
+        return result;
+
     }
 
 
+    /**
+     * Checks if a rule with the specified ID exists in the rule manifest.
+     *
+     * @param ruleId The identifier of the rule to check for existence.
+     * @return true if the rule exists, false otherwise.
+     */
     private boolean doesRuleExist(String ruleId) {
-        for (RuleDescriptor descriptor : ruleManifest.getRules()) {
-            if (descriptor.getId().equals(ruleId)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private boolean isRuleIdValid(String ruleId) {
-
-        return new JsonFilenameFilter().accept(null, ruleId);
+        return ruleManifest.getRules().stream().anyMatch(e -> e.getId().equals(ruleId));
+//        for (RuleDescriptor descriptor : ruleManifest.getRules()) {
+//            if (descriptor.getId().equals(ruleId)) {
+//                return true;
+//            }
+//        }
+//        return false;
     }
 
 
-    private boolean checkRuleManifestFileExists() {
-
-        File f = new File(RULE_MANIFEST_PATH);
-        log.debug("RULE_MANIFEST_PATH: " + f.getAbsolutePath());
-        if (f.exists()) {
-            log.info("CDSS Found Rule Manifest file: " + RULE_MANIFEST_PATH);
-        } else {
-            log.info("CDSS Did not find Rule Manifest file: " + RULE_MANIFEST_PATH);
-        }
-
-        return f.exists();
-    }
-
+    /**
+     * Writes the current rule manifest to a file specified by RULE_MANIFEST_PATH.
+     * Logs the process of writing the file and handles exceptions by throwing a RuntimeException.
+     *
+     * @throws RuntimeException If a FileNotFoundException, StreamWriteException,
+     *                          DatabindException, or IOException occurs during the write operation.
+     */
     private void writeManifest() {
 
         File f = new File(RULE_MANIFEST_PATH);
@@ -250,7 +261,7 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
 
         try {
             outputStream = new FileOutputStream(f);
-            objectMapper.writeValue(outputStream, ruleManifest);
+            objectMapper.writerWithDefaultPrettyPrinter().writeValue(outputStream, ruleManifest);
 
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
@@ -264,6 +275,12 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
         log.debug("CDSS Successfully wrote manifest file: " + f.getAbsolutePath());
     }
 
+
+    /**
+     * Reads the rule manifest file from the specified path and deserializes its content
+     * into a RuleManifest object. Logs the process of reading the file and handles
+     * exceptions by throwing a RuntimeException.
+     */
     private void readManifest() {
         File f = new File(RULE_MANIFEST_PATH);
 
@@ -284,22 +301,25 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
     }
 
 
+    /**
+     * Sets up the directory hierarchy for rule files by creating necessary directories
+     * and copying the rule manifest and associated ELM and CQL files from resources.
+     * If the manifest file already exists, it skips copying.
+     *
+     * @throws IOException If an I/O error occurs during directory creation or file copying.
+     */
     private void setUpDirectoryHierarchy() throws IOException {
-
-        log.info("Did not find rule manifest file, will create one instead");
-
 
         ClassLoader classloader = Thread.currentThread().getContextClassLoader();
         URL ruleManifestUrl = classloader.getResource(RULE_MANIFEST_PATH);
         File ruleManifestFile = new File(RULE_MANIFEST_PATH);
-        log.debug("DEBUG:::::" + Paths.get(ruleManifestUrl.getPath()) + "     " + Paths.get(ruleManifestFile.getAbsolutePath()));
 
         Files.createDirectories(Paths.get(ruleManifestFile.getParent()));
         try {
             Path result = Files.copy(Paths.get(ruleManifestUrl.getPath()), Paths.get(ruleManifestFile.getAbsolutePath()), StandardCopyOption.REPLACE_EXISTING);
-            log.debug("RESULT:::" + result.toString());
 
         } catch (FileAlreadyExistsException e) {
+            // Manifest file already exists, nothing to do more
             return;
         }
 
@@ -321,6 +341,22 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
         }
     }
 
+
+    /**
+     * Creates a new rule with the specified parameters, saving its CQL and ELM content to files.
+     * If a rule with the same ID already exists, a new unique ID is generated.
+     *
+     * @param ruleId      The identifier for the new rule.
+     * @param version     The version of the rule.
+     * @param description A description of the rule.
+     * @param params      A map of parameters associated with the rule.
+     * @param role        The role of the rule, either SUPPORT or RULE.
+     * @param cql         The CQL content of the rule.
+     * @param elm         The ELM content of the rule.
+     * @return True if the rule is successfully created and added to the manifest, false otherwise.
+     * @throws IOException      If an I/O error occurs during file operations.
+     * @throws RuntimeException If any of the required parameters (ruleId, cql, elm) are null.
+     */
     private Boolean createRule(String ruleId, String version, String description, Map<String, ParamDescriptor> params, RuleRole role, String cql, String elm) throws IOException {
         if (ruleId == null) {
             throw new RuntimeException("Rule id is null");
@@ -332,6 +368,7 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
             throw new RuntimeException("Elm is null");
         }
 
+        // TODO Change to timestamp
         int count = 1;
         String newId = ruleId + "_" + count;
         while (doesRuleExist(newId)) {
@@ -399,6 +436,18 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
 
     }
 
+
+    /**
+     * Modifies an existing rule by updating its parameters and translating its CQL content to ELM.
+     *
+     * @param ruleId            The identifier of the rule to be modified.
+     * @param version           The version of the rule.
+     * @param changedParameters A map of parameters to be updated in the rule.
+     * @return True if the rule is successfully modified and saved, false otherwise.
+     * @throws JsonProcessingException If there is an error processing JSON content.
+     * @throws FileNotFoundException   If the CQL rule file is not found.
+     * @throws RuleNotFoundException   If the specified rule is not found.
+     */
     public Boolean modifyRule(String ruleId, String version, Map<String, ParamDescriptor> changedParameters) throws JsonProcessingException, FileNotFoundException, RuleNotFoundException {
         log.debug("CDSS Attempting to modify rule " + ruleId);
         RuleDescriptor originalRule = ruleManifest.getRule(ruleId);
@@ -411,6 +460,7 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
         ModifyRuleRequest modifyRuleRequest = new ModifyRuleRequest();
         modifyRuleRequest.setRule(new ModifyRuleRequestRuleDescriptor(ruleId, version, encodeCql(cqlContent)));
 
+        // Copy params from original rule
         for (Map.Entry<String, ParamDescriptor> pair : originalRule.getParams().entrySet()) {
             String name = pair.getKey();
             ParamDescriptor paramDescriptor = pair.getValue();
@@ -419,20 +469,25 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
                 changedParameters.put(name, paramDescriptor);
             }
         }
-        log.debug(changedParameters);
 
         modifyRuleRequest.setParams(changedParameters);
 
-        log.debug(modifyRuleRequest.toString());
+
         String stringBody = objectMapper.writeValueAsString(modifyRuleRequest);
-        log.debug(stringBody);
+
+        log.debug("CXreated body for injection\n " + stringBody);
         String resultString = callModificationService("http://host.docker.internal:9090/api/inject", stringBody);
-        log.debug("resultString: \n" + resultString);
+        log.debug("Got result from injection: " + resultString);
+
         ModifyRuleRequest result = objectMapper.readValue(resultString, ModifyRuleRequest.class);
         String cql = result.getRule().getCqlContent();
-        log.debug("INJECTED CQL: " + cql);
+        log.debug("new cql: " + cql);
+
+
         log.debug("Translating");
         String elm = translate(ruleId, version, cql);
+        log.debug("Got result from translation: " + elm);
+
         try {
             return createRule(ruleId, version, originalRule.getDescription(), changedParameters, RuleRole.RULE, cql, elm);
         } catch (IOException e) {
@@ -443,17 +498,26 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
     }
 
 
+    /**
+     * Translates a given CQL rule into its corresponding ELM representation by calling an external service.
+     *
+     * @param ruleId  The identifier of the rule to be translated.
+     * @param version The version of the rule.
+     * @param cql     The CQL content of the rule.
+     * @return The translated ELM content as a string.
+     * @throws JsonProcessingException If there is an error processing JSON content.
+     * @throws FileNotFoundException   If the CQL rule file is not found.
+     * @throws RuleNotFoundException   If the specified rule is not found.
+     */
     private String translate(String ruleId, String version, String cql) throws JsonProcessingException, FileNotFoundException, RuleNotFoundException {
-
         HashMap<String, ModifyRuleRequestRuleDescriptor> libraries = new HashMap<>();
+        // TODO how to manage dependency libraries?
         libraries.put("MMR_Common_Library", new ModifyRuleRequestRuleDescriptor("MMR_Common_Library", "1", encodeCql(getCqlRule("MMR_Common_Library"))));
 
         ModifyRuleRequest translateRuleRequest = new ModifyRuleRequest();
         translateRuleRequest.setRule(new ModifyRuleRequestRuleDescriptor(ruleId, version, encodeCql(cql)));
         translateRuleRequest.setLibraries(libraries);
 
-
-        log.debug("CDSS translate rule " + ruleId);
 
         String stringBody = objectMapper.writeValueAsString(translateRuleRequest);
 
@@ -462,6 +526,14 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
     }
 
 
+    /**
+     * Calls an external modification service using a POST request with the specified URL and JSON body.
+     *
+     * @param url  The URL of the modification service to be called.
+     * @param body The JSON body to be sent in the POST request.
+     * @return The response body as a string if the request is successful (HTTP status code 200).
+     * @throws RuntimeException If the service returns a non-200 status code or if an IOException occurs.
+     */
     private String callModificationService(String url, String body) {
         if (client == null) {
             client = new OkHttpClient();
@@ -478,7 +550,8 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
                 return resultString;
             }
 
-            return null;
+            log.error("RuleModification Service returned " + rs.code() + " " + rs.body().string());
+            throw new RuntimeException("RuleModification Service returned " + rs.code() + " " + rs.body().string());
 
 
         } catch (IOException e) {

@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.FileNotFoundException;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -83,14 +84,15 @@ public class RuleRestController extends CdssRestController {
      * @throws APIAuthenticationException if there is an issue with API authentication
      */
     @GetMapping(path = "/rule.form", produces = {"application/json"})
-    public ResponseEntity<String[]> getRules(@RequestParam(required = false) Boolean allRules) throws APIAuthenticationException {
+    public ResponseEntity<List<String>> getRules(@RequestParam(required = false) Boolean allRules) throws APIAuthenticationException {
 //        checkAuthorizationAndPrivilege();
         if (allRules == null) {
             allRules = false;
         }
-        String[] rules;
+//        String[] rules;
+        List<String> rules;
         if (allRules) {
-            rules = ruleManagerService.getRules();
+            rules = ruleManagerService.getAllRules();
         } else {
             rules = ruleManagerService.getEnabledRules();
         }
