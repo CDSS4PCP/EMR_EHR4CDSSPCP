@@ -314,6 +314,9 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
         URL ruleManifestUrl = classloader.getResource(RULE_MANIFEST_PATH);
         File ruleManifestFile = new File(RULE_MANIFEST_PATH);
 
+        if (ruleManifestFile.exists()) {
+            return;
+        }
         Files.createDirectories(Paths.get(ruleManifestFile.getParent()));
         try {
             Path result = Files.copy(Paths.get(ruleManifestUrl.getPath()), Paths.get(ruleManifestFile.getAbsolutePath()), StandardCopyOption.REPLACE_EXISTING);

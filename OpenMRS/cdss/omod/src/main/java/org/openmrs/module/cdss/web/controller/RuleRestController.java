@@ -2,7 +2,6 @@ package org.openmrs.module.cdss.web.controller;
 
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import okhttp3.OkHttpClient;
 import org.apache.log4j.Logger;
 import org.openmrs.api.APIAuthenticationException;
 import org.openmrs.api.AdministrationService;
@@ -23,24 +22,13 @@ import java.util.Map;
 @RestController
 @RequestMapping("/cdss")
 public class RuleRestController extends CdssRestController {
-    Logger log = Logger.getLogger(RuleRestController.class);
-
     @Autowired
     @Qualifier("adminService")
     protected AdministrationService administrationService;
     @Autowired
     protected RuleManagerService ruleManagerService;
+    Logger log = Logger.getLogger(RuleRestController.class);
 
-    private OkHttpClient client;
-
-    /**
-     * Retrieves a specific rule based on the provided ruleId.
-     *
-     * @param ruleId the unique identifier of the rule to retrieve
-     * @return ResponseEntity<String> containing the rule in JSON format if found
-     * HttpStatus.NOT_FOUND if the rule is not found
-     * @throws APIAuthenticationException if there is an issue with API authentication
-     */
     @GetMapping(path = "/elm-rule/{ruleId}.form", produces = {"application/json"})
     public ResponseEntity<String> getRule(@PathVariable(value = "ruleId") String ruleId) throws APIAuthenticationException {
 //        checkAuthorizationAndPrivilege();
@@ -57,14 +45,7 @@ public class RuleRestController extends CdssRestController {
         }
     }
 
-    /**
-     * Retrieves a specific rule based on the provided ruleId.
-     *
-     * @param ruleId the unique identifier of the rule to retrieve
-     * @return ResponseEntity<String> containing the rule in JSON format if found
-     * HttpStatus.NOT_FOUND if the rule is not found
-     * @throws APIAuthenticationException if there is an issue with API authentication
-     */
+
     @GetMapping(path = "/cql-rule/{ruleId}.form", produces = {"application/json"})
     public ResponseEntity<String> getCqlRule(@PathVariable(value = "ruleId") String ruleId) throws APIAuthenticationException {
 //        checkAuthorizationAndPrivilege();
@@ -77,12 +58,7 @@ public class RuleRestController extends CdssRestController {
         }
     }
 
-    /**
-     * Retrieves all rules.
-     *
-     * @return ResponseEntity<String [ ]> containing an array of rules in JSON format
-     * @throws APIAuthenticationException if there is an issue with API authentication
-     */
+
     @GetMapping(path = "/rule.form", produces = {"application/json"})
     public ResponseEntity<List<String>> getRules(@RequestParam(required = false) Boolean allRules) throws APIAuthenticationException {
 //        checkAuthorizationAndPrivilege();
@@ -99,6 +75,37 @@ public class RuleRestController extends CdssRestController {
         return ResponseEntity.ok(rules);
 
     }
+
+
+    @PostMapping(path = "/enable-rule/{ruleId}.form", produces = {"application/json"})
+    public ResponseEntity<String> enableRule(@PathVariable(value = "ruleId") String ruleId) throws APIAuthenticationException {
+//        checkAuthorizationAndPrivilege();
+
+        try {
+            ruleManagerService.enableRule(ruleId);
+        } catch (RuleNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        return ResponseEntity.ok("true");
+    }
+
+    @PostMapping(path = "/disable-rule/{ruleId}.form", produces = {"application/json"})
+    public ResponseEntity<String> disableRule(@PathVariable(value = "ruleId") String ruleId) throws APIAuthenticationException {
+//        checkAuthorizationAndPrivilege();
+
+        try {
+            ruleManagerService.disableRule(ruleId);
+        } catch (RuleNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        return ResponseEntity.ok("true");
+    }
+
+    
 
     /**
      * Retrieves all rules.

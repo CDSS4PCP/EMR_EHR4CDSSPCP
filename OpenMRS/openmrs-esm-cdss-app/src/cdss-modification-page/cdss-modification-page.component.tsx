@@ -15,13 +15,19 @@ import {
   TableExpandRow,
   TableExpandedRow,
   TextInput,
-  Button
+  Button,
+  TableToolbar,
+  TableToolbarContent,
+  TableToolbarSearch,
+  TableToolbarMenu,
+  TableToolbarAction,
+  Checkbox,
 } from "@carbon/react";
 import { openmrsFetch } from "@openmrs/esm-framework";
 import { TableCellProps } from "@carbon/react/lib/components/DataTable/TableCell";
 import {
   NumberInput,
-  NumberInputProps
+  NumberInputProps,
 } from "@carbon/react/lib/components/NumberInput/NumberInput";
 import { EventEmitter } from "events";
 import { loadCqlRule, loadRule } from "../cdssService";
@@ -35,13 +41,11 @@ const eventEmitter = new EventEmitter();
 eventEmitter.setMaxListeners(20); // Arbitrary number
 
 async function postRuleChange(ruleId, parameterChanges) {
-  console.log(ruleId, parameterChanges);
-
   const changes = {};
   for (const paramName of Object.keys(parameterChanges)) {
     changes[paramName] = {
       value: parameterChanges[paramName].newValue,
-      type: parameterChanges[paramName].type
+      type: parameterChanges[paramName].type,
     };
   }
 
@@ -49,21 +53,20 @@ async function postRuleChange(ruleId, parameterChanges) {
     params: changes,
     rule: {
       id: ruleId,
-      version: "1"
-    }
+      version: "1",
+    },
   };
 
   const response = await openmrsFetch(`/cdss/modify-rule.form`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body)
+    body: JSON.stringify(body),
   });
   const result = await response.text();
   if (response.status == 200) {
-    console.log(result);
     eventEmitter.emit("modificationSucceeded", {
       ruleId: ruleId,
-      parameterChanges: parameterChanges
+      parameterChanges: parameterChanges,
     });
   } else {
     console.error(response);
@@ -107,7 +110,7 @@ function recordParameterChange(
   const change = {
     newValue: newValue,
     initialValue: initialValue,
-    type: type
+    type: type,
   };
 
   const pendingParameterChanges = { ...pendingChanges };
@@ -136,6 +139,7 @@ interface CdssNumberInputProps extends NumberInputProps {
   paramName: string;
   setPendingChanges: React.Dispatch<React.SetStateAction<any>>;
   pendingChanges: any;
+  disabled: boolean;
 }
 
 const CdssNumberInput = React.forwardRef<
@@ -143,7 +147,15 @@ const CdssNumberInput = React.forwardRef<
   CdssNumberInputProps
 >(
   (
-    { cellId, parameter, ruleId, paramName, pendingChanges, setPendingChanges },
+    {
+      cellId,
+      parameter,
+      ruleId,
+      paramName,
+      pendingChanges,
+      setPendingChanges,
+      disabled,
+    },
     ref
   ) => {
     const initialValue = Number(parameter.value);
@@ -178,6 +190,7 @@ const CdssNumberInput = React.forwardRef<
             setValue(Number(newState.value));
             return true;
           }}
+          disabled={disabled}
         ></NumberInput>
       );
     else
@@ -195,6 +208,7 @@ const CdssNumberInput = React.forwardRef<
             setValue(Number(e.target.value));
             return true;
           }}
+          disabled={disabled}
         >
           {parameter.allowedValues.map((value) => (
             <SelectItem text={value} value={value}>
@@ -213,6 +227,7 @@ interface CdssStringInputProps extends NumberInputProps {
   paramName: string;
   setPendingChanges: React.Dispatch<React.SetStateAction<any>>;
   pendingChanges: any;
+  disabled: boolean;
 }
 
 const CdssStringInput = React.forwardRef<
@@ -220,7 +235,15 @@ const CdssStringInput = React.forwardRef<
   CdssStringInputProps
 >(
   (
-    { cellId, parameter, ruleId, paramName, pendingChanges, setPendingChanges },
+    {
+      cellId,
+      parameter,
+      ruleId,
+      paramName,
+      pendingChanges,
+      setPendingChanges,
+      disabled,
+    },
     ref
   ) => {
     const initialValue = String(parameter.value);
@@ -256,6 +279,7 @@ const CdssStringInput = React.forwardRef<
             setValue(e.target.value);
             return true;
           }}
+          disabled={disabled}
         ></TextInput>
       );
     else {
@@ -273,6 +297,7 @@ const CdssStringInput = React.forwardRef<
             setValue(e.target.value);
             return true;
           }}
+          disabled={disabled}
         >
           {parameter.allowedValues.map((value) => (
             <SelectItem text={value} value={value}>
@@ -291,47 +316,54 @@ interface CdssEditableCellProps extends TableCellProps {
   ruleId: string;
   setPendingChanges: React.Dispatch<React.SetStateAction<any>>;
   pendingChanges: any;
+  disabled?: boolean;
 }
 
 const CdssEditableCell = React.forwardRef<
   HTMLTableCellElement,
   CdssEditableCellProps
->(({ parameter, cellId, ruleId, pendingChanges, setPendingChanges }, ref) => {
-  const paramName = cellId.replace(ruleId + ":", "");
-  console.log(parameter);
-  if (parameter == null) {
+>(
+  (
+    { parameter, cellId, ruleId, pendingChanges, setPendingChanges, disabled },
+    ref
+  ) => {
+    const paramName = cellId.replace(ruleId + ":", "");
+    if (parameter == null) {
+      return (
+        <TableCell ref={ref} key={cellId} className={styles.cdssEditableCell}>
+          Parameter was null
+        </TableCell>
+      );
+    }
     return (
       <TableCell ref={ref} key={cellId} className={styles.cdssEditableCell}>
-        Parameter was null
+        {parameter.type == "Integer" ? (
+          <CdssNumberInput
+            parameter={parameter}
+            cellId={cellId + ":input"}
+            id={cellId + ":input"}
+            ruleId={ruleId}
+            paramName={paramName}
+            pendingChanges={pendingChanges}
+            setPendingChanges={setPendingChanges}
+            disabled={disabled}
+          ></CdssNumberInput>
+        ) : (
+          <CdssStringInput
+            parameter={parameter}
+            cellId={cellId + ":input"}
+            id={cellId + ":input"}
+            ruleId={ruleId}
+            paramName={paramName}
+            pendingChanges={pendingChanges}
+            setPendingChanges={setPendingChanges}
+            disabled={disabled}
+          ></CdssStringInput>
+        )}
       </TableCell>
     );
   }
-  return (
-    <TableCell ref={ref} key={cellId} className={styles.cdssEditableCell}>
-      {parameter.type == "Integer" ? (
-        <CdssNumberInput
-          parameter={parameter}
-          cellId={cellId + ":input"}
-          id={cellId + ":input"}
-          ruleId={ruleId}
-          paramName={paramName}
-          pendingChanges={pendingChanges}
-          setPendingChanges={setPendingChanges}
-        ></CdssNumberInput>
-      ) : (
-        <CdssStringInput
-          parameter={parameter}
-          cellId={cellId + ":input"}
-          id={cellId + ":input"}
-          ruleId={ruleId}
-          paramName={paramName}
-          pendingChanges={pendingChanges}
-          setPendingChanges={setPendingChanges}
-        ></CdssStringInput>
-      )}
-    </TableCell>
-  );
-});
+);
 
 export const CdssModificationPage: React.FC = () => {
   const [ruleData, setRuleData] = useState(null);
@@ -355,6 +387,11 @@ export const CdssModificationPage: React.FC = () => {
       }
       const columnList: any[] = Object.values(cols);
       columnList.sort((a, b) => a?.name.localeCompare(b.name));
+      columnList.unshift({
+        name: "Enabled",
+        key: "enabled",
+        header: "enabled",
+      });
       setColumns(columnList);
     });
   }
@@ -382,7 +419,7 @@ export const CdssModificationPage: React.FC = () => {
         description: r.description,
         role: r.role,
         enabled: r.enabled,
-        ...r.params
+        ...r.params,
       };
       return obj;
     });
@@ -398,19 +435,42 @@ export const CdssModificationPage: React.FC = () => {
 
       <DataTable useZebraStyles rows={rules} headers={columns}>
         {({
-            rows,
-            headers,
-            getHeaderProps,
-            getRowProps,
-            getExpandedRowProps,
-            getTableProps,
-            getTableContainerProps
-          }) => {
+          rows,
+          headers,
+          getHeaderProps,
+          getRowProps,
+          getExpandedRowProps,
+          getTableProps,
+          getToolbarProps,
+          getTableContainerProps,
+        }) => {
           return (
             <TableContainer
               title="Rule parameter table"
               {...getTableContainerProps()}
             >
+              <TableToolbar
+                {...getToolbarProps()}
+                aria-label="data table toolbar"
+              >
+                <TableToolbarContent>
+                  <TableToolbarMenu>
+                    <TableToolbarAction onClick={console.log("Action 1 Click")}>
+                      Action 1
+                    </TableToolbarAction>
+                    <TableToolbarAction onClick={console.log("Action 2 Click")}>
+                      Action 2
+                    </TableToolbarAction>
+                    <TableToolbarAction onClick={console.log("Action 3 Click")}>
+                      Action 3
+                    </TableToolbarAction>
+                  </TableToolbarMenu>
+                  <Button onClick={console.log("Button click")}>
+                    Primary Button
+                  </Button>
+                </TableToolbarContent>
+              </TableToolbar>
+
               <TableHead>
                 <TableRow className={styles.cdssTableRow}>
                   <TableExpandHeader aria-label="expand row" />
@@ -418,7 +478,7 @@ export const CdssModificationPage: React.FC = () => {
                     <TableHeader
                       key={i}
                       {...getHeaderProps({
-                        header
+                        header,
                       })}
                     >
                       {header.name}
@@ -432,12 +492,26 @@ export const CdssModificationPage: React.FC = () => {
                   return (
                     <React.Fragment key={row.id}>
                       <TableExpandRow
-                        className={styles.cdssTableRow}
+                        className={
+                          ruleDict[row.id]?.enabled
+                            ? styles.cdssEnabledTableRow
+                            : styles.cdssDisabledTableRow
+                        }
                         {...getRowProps({
-                          row
+                          row,
                         })}
                       >
                         {row.cells.map((cell) => {
+                          if (cell.info.header == "enabled") {
+                            return (
+                              <TableCell>
+                                <Checkbox
+                                  defaultChecked={ruleDict[row.id]?.enabled}
+                                  id={row.id + "enabled-checkbox"}
+                                ></Checkbox>
+                              </TableCell>
+                            );
+                          }
                           return (
                             <CdssEditableCell
                               cellId={cell.id}
@@ -445,6 +519,7 @@ export const CdssModificationPage: React.FC = () => {
                               parameter={cell.value}
                               pendingChanges={pendingParameterChanges}
                               setPendingChanges={setPendingParameterChanges}
+                              // disabled={!ruleDict[row.id]?.enabled}
                             />
                           );
                         })}
@@ -469,7 +544,7 @@ export const CdssModificationPage: React.FC = () => {
                                   kind={"secondary"}
                                   onClick={(e) => {
                                     eventEmitter.emit("parameterReset", {
-                                      ruleId: row.id
+                                      ruleId: row.id,
                                     });
                                   }}
                                 >
