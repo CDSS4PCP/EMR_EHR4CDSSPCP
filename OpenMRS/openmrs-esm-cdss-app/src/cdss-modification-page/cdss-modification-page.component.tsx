@@ -166,6 +166,7 @@ export const CdssModificationPage: React.FC = () => {
         columns={columns}
         pendingParameterChanges={pendingParameterChanges}
         setPendingParameterChanges={setPendingParameterChanges}
+        eventEmitter={eventEmitter}
       />
     </div>
   );

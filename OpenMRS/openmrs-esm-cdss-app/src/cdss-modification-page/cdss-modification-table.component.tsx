@@ -17,12 +17,16 @@ import {
 } from "@carbon/react";
 import styles from "./cdss-modification-page.module.scss";
 import CdssEditableCell from "./cdss-editable-cell.component";
+import { EventEmitter } from "events";
+import { Rule } from "eslint";
+import CdssRuleEnableCell from "./cdss-rule-enable-cell.component";
 
 interface CdssModificationTableProps {
   rules?: Array<any>;
   columns?: Array<any>;
-  pendingParameterChanges: Object;
+  pendingParameterChanges: object;
   setPendingParameterChanges: React.Dispatch<React.SetStateAction<any>>;
+  eventEmitter: EventEmitter;
 }
 
 const CdssModificationTable = React.forwardRef<
@@ -30,7 +34,13 @@ const CdssModificationTable = React.forwardRef<
   CdssModificationTableProps
 >(
   (
-    { rules, columns, pendingParameterChanges, setPendingParameterChanges },
+    {
+      rules,
+      columns,
+      pendingParameterChanges,
+      setPendingParameterChanges,
+      eventEmitter,
+    },
     ref
   ) => {
     const [selectedRows, setSelectedRows] = useState([]);
@@ -90,10 +100,11 @@ const CdssModificationTable = React.forwardRef<
                   )}
               </TableToolbarContent>
             </TableToolbar>
-            <Table {...getTableProps()} aria-label="sample table">
+            <Table {...getTableProps()}>
               <TableHead>
                 <TableRow>
                   <TableSelectAll {...getSelectionProps()} />
+                  <TableHeader key={"enableHeader"}>Enabled</TableHeader>
                   {headers.map((header, i) => (
                     <TableHeader
                       key={i}
@@ -135,6 +146,11 @@ const CdssModificationTable = React.forwardRef<
                         },
                       })}
                     />
+
+                    <CdssRuleEnableCell
+                      ruleId={row.id}
+                      initialEnabled={ruleDict[row.id]?.enabled}
+                    ></CdssRuleEnableCell>
                     {row.cells.map((cell) => (
                       <CdssEditableCell
                         cellId={cell.id}
@@ -165,9 +181,9 @@ const CdssModificationTable = React.forwardRef<
                             <Button
                               kind={"secondary"}
                               onClick={(e) => {
-                                // eventEmitter.emit("parameterReset", {
-                                //   ruleId: row.id
-                                // });
+                                eventEmitter.emit("parameterReset", {
+                                  ruleId: row.id,
+                                });
                               }}
                             >
                               Reset

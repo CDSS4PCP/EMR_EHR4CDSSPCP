@@ -1,4 +1,7 @@
-import { NumberInput, NumberInputProps } from "@carbon/react/lib/components/NumberInput/NumberInput";
+import {
+  NumberInput,
+  NumberInputProps,
+} from "@carbon/react/lib/components/NumberInput/NumberInput";
 import React, { useEffect, useRef, useState } from "react";
 import styles from "./cdss-modification-page.module.scss";
 import Select from "@carbon/react/lib/components/Select/Select";
@@ -28,7 +31,7 @@ const CdssNumberInput = React.forwardRef<
       paramName,
       pendingChanges,
       setPendingChanges,
-      disabled
+      disabled,
     },
     ref
   ) => {
@@ -116,7 +119,7 @@ const CdssStringInput = React.forwardRef<
       paramName,
       pendingChanges,
       setPendingChanges,
-      disabled
+      disabled,
     },
     ref
   ) => {
