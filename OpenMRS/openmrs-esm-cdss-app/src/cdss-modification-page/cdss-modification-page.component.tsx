@@ -1,51 +1,46 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
-  Form,
-  Tab,
   DataTableSkeleton,
   DataTable,
-  Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
   TableContainer,
-  TableExpandHeader,
-  TableExpandRow,
-  TableExpandedRow,
   TextInput,
   Button,
   TableToolbar,
   TableToolbarContent,
-  TableToolbarSearch,
   TableToolbarMenu,
   TableToolbarAction,
-  Checkbox,
+  TableSelectAll,
+  TableSelectRow,
+  SelectItem,
+  Table
 } from "@carbon/react";
 import { openmrsFetch } from "@openmrs/esm-framework";
 import { TableCellProps } from "@carbon/react/lib/components/DataTable/TableCell";
 import {
   NumberInput,
-  NumberInputProps,
+  NumberInputProps
 } from "@carbon/react/lib/components/NumberInput/NumberInput";
 import { EventEmitter } from "events";
-import { loadCqlRule, loadRule } from "../cdssService";
-import { Buffer } from "buffer";
 import styles from "./cdss-modification-page.module.scss";
 import Select from "@carbon/react/lib/components/Select/Select";
-import SelectItem from "@carbon/react/lib/components/SelectItem/SelectItem";
+// import SelectItem from "@carbon/react/lib/components/SelectItem/SelectItem";
 
 // Events used for parameter resets
 const eventEmitter = new EventEmitter();
 eventEmitter.setMaxListeners(20); // Arbitrary number
+
 
 async function postRuleChange(ruleId, parameterChanges) {
   const changes = {};
   for (const paramName of Object.keys(parameterChanges)) {
     changes[paramName] = {
       value: parameterChanges[paramName].newValue,
-      type: parameterChanges[paramName].type,
+      type: parameterChanges[paramName].type
     };
   }
 
@@ -53,20 +48,20 @@ async function postRuleChange(ruleId, parameterChanges) {
     params: changes,
     rule: {
       id: ruleId,
-      version: "1",
-    },
+      version: "1"
+    }
   };
 
   const response = await openmrsFetch(`/cdss/modify-rule.form`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
+    body: JSON.stringify(body)
   });
   const result = await response.text();
   if (response.status == 200) {
     eventEmitter.emit("modificationSucceeded", {
       ruleId: ruleId,
-      parameterChanges: parameterChanges,
+      parameterChanges: parameterChanges
     });
   } else {
     console.error(response);
@@ -110,7 +105,7 @@ function recordParameterChange(
   const change = {
     newValue: newValue,
     initialValue: initialValue,
-    type: type,
+    type: type
   };
 
   const pendingParameterChanges = { ...pendingChanges };
@@ -154,7 +149,7 @@ const CdssNumberInput = React.forwardRef<
       paramName,
       pendingChanges,
       setPendingChanges,
-      disabled,
+      disabled
     },
     ref
   ) => {
@@ -242,7 +237,7 @@ const CdssStringInput = React.forwardRef<
       paramName,
       pendingChanges,
       setPendingChanges,
-      disabled,
+      disabled
     },
     ref
   ) => {
@@ -369,6 +364,7 @@ export const CdssModificationPage: React.FC = () => {
   const [ruleData, setRuleData] = useState(null);
   const [columns, setColumns] = useState(null);
   const [pendingParameterChanges, setPendingParameterChanges] = useState({});
+  const [selectedRows, setSelectedRows] = useState([]);
 
   function loadAndProcessData() {
     getRuleData().then((r) => {
@@ -387,11 +383,12 @@ export const CdssModificationPage: React.FC = () => {
       }
       const columnList: any[] = Object.values(cols);
       columnList.sort((a, b) => a?.name.localeCompare(b.name));
-      columnList.unshift({
-        name: "Enabled",
-        key: "enabled",
-        header: "enabled",
-      });
+      // columnList.unshift({
+      //   name: "Enabled",
+      //   key: "enabled",
+      //   header: "enabled"
+      // });
+
       setColumns(columnList);
     });
   }
@@ -419,7 +416,7 @@ export const CdssModificationPage: React.FC = () => {
         description: r.description,
         role: r.role,
         enabled: r.enabled,
-        ...r.params,
+        ...r.params
       };
       return obj;
     });
@@ -433,138 +430,135 @@ export const CdssModificationPage: React.FC = () => {
     <div>
       <h1 className={styles.modHeader}>Rule Modification</h1>
 
-      <DataTable useZebraStyles rows={rules} headers={columns}>
-        {({
-          rows,
-          headers,
-          getHeaderProps,
-          getRowProps,
-          getExpandedRowProps,
-          getTableProps,
-          getToolbarProps,
-          getTableContainerProps,
-        }) => {
-          return (
-            <TableContainer
-              title="Rule parameter table"
-              {...getTableContainerProps()}
-            >
-              <TableToolbar
-                {...getToolbarProps()}
-                aria-label="data table toolbar"
-              >
-                <TableToolbarContent>
-                  <TableToolbarMenu>
-                    <TableToolbarAction onClick={console.log("Action 1 Click")}>
-                      Action 1
-                    </TableToolbarAction>
-                    <TableToolbarAction onClick={console.log("Action 2 Click")}>
-                      Action 2
-                    </TableToolbarAction>
-                    <TableToolbarAction onClick={console.log("Action 3 Click")}>
-                      Action 3
-                    </TableToolbarAction>
-                  </TableToolbarMenu>
-                  <Button onClick={console.log("Button click")}>
-                    Primary Button
-                  </Button>
-                </TableToolbarContent>
-              </TableToolbar>
 
+      <DataTable rows={rules} headers={columns}>
+        {({
+            rows,
+            headers,
+            getHeaderProps,
+            getRowProps,
+            getSelectionProps,
+            getTableProps,
+            getTableContainerProps,
+            getToolbarProps
+          }) => (
+          <TableContainer
+            title="DataTable"
+            description="With selection"
+            {...getTableContainerProps()}
+          >
+            <TableToolbar
+              {...getToolbarProps()}
+              aria-label="data table toolbar"
+            >
+              <TableToolbarContent>
+
+                {selectedRows.length > 0 && selectedRows.every((rowId) => ruleDict[rowId]?.enabled == true) &&
+                  <Button kind={"danger"} onClick={() => console.log("Disable Button click")}>
+                    Disable
+                  </Button>}
+                {selectedRows.length > 0 && selectedRows.every((rowId) => ruleDict[rowId]?.enabled == false) &&
+                  <Button kind={"primary"} onClick={() => console.log("Enable Button click")}>
+                    Enable
+                  </Button>}
+
+              </TableToolbarContent>
+            </TableToolbar>
+            <Table {...getTableProps()} aria-label="sample table">
               <TableHead>
-                <TableRow className={styles.cdssTableRow}>
-                  <TableExpandHeader aria-label="expand row" />
+                <TableRow>
+                  <TableSelectAll {...getSelectionProps()} />
                   {headers.map((header, i) => (
                     <TableHeader
                       key={i}
                       {...getHeaderProps({
-                        header,
+                        header
                       })}
                     >
                       {header.name}
                     </TableHeader>
                   ))}
+                  <TableHeader
+                    key={"actionHeader"}>
+                    Action
+                  </TableHeader>
                 </TableRow>
               </TableHead>
-
               <TableBody>
-                {rows.map((row) => {
-                  return (
-                    <React.Fragment key={row.id}>
-                      <TableExpandRow
-                        className={
-                          ruleDict[row.id]?.enabled
-                            ? styles.cdssEnabledTableRow
-                            : styles.cdssDisabledTableRow
-                        }
-                        {...getRowProps({
-                          row,
-                        })}
-                      >
-                        {row.cells.map((cell) => {
-                          if (cell.info.header == "enabled") {
-                            return (
-                              <TableCell>
-                                <Checkbox
-                                  defaultChecked={ruleDict[row.id]?.enabled}
-                                  id={row.id + "enabled-checkbox"}
-                                ></Checkbox>
-                              </TableCell>
-                            );
-                          }
-                          return (
-                            <CdssEditableCell
-                              cellId={cell.id}
-                              ruleId={row.id}
-                              parameter={cell.value}
-                              pendingChanges={pendingParameterChanges}
-                              setPendingChanges={setPendingParameterChanges}
-                              // disabled={!ruleDict[row.id]?.enabled}
-                            />
-                          );
-                        })}
+                {rows.map((row) => (
+                  <TableRow
+                    key={row.id}
+                    className={
+                      ruleDict[row.id]?.enabled
+                        ? styles.cdssEnabledTableRow
+                        : styles.cdssDisabledTableRow
+                    }
 
-                        <TableCell>
-                          {pendingParameterChanges &&
-                            pendingParameterChanges[row.id] &&
-                            Object.keys(pendingParameterChanges[row.id])
-                              .length > 0 && (
-                              <div>
-                                <Button
-                                  kind={"primary"}
-                                  onClick={(e) => {
-                                    const changes =
-                                      pendingParameterChanges[row.id];
-                                    postRuleChange(row.id, changes);
-                                  }}
-                                >
-                                  Save
-                                </Button>
-                                <Button
-                                  kind={"secondary"}
-                                  onClick={(e) => {
-                                    eventEmitter.emit("parameterReset", {
-                                      ruleId: row.id,
-                                    });
-                                  }}
-                                >
-                                  Reset
-                                </Button>
-                              </div>
-                            )}
-                        </TableCell>
-                      </TableExpandRow>
-                      <TableExpandedRow colSpan={headers.length + 1}>
-                        <h6>{row.id}</h6>
-                        <div>{ruleDict[row.id].description}</div>
-                      </TableExpandedRow>
-                    </React.Fragment>
-                  );
-                })}
+                    {...getRowProps({
+                      row
+                    })}
+                  >
+                    <TableSelectRow
+                      {...getSelectionProps({
+                        row,
+                        onChange: () => {
+                          const isSelected = selectedRows.includes(row.id);
+                          setSelectedRows((prevSelectedRows) =>
+                            isSelected
+                              ? prevSelectedRows.filter((id) => id !== row.id)
+                              : [...prevSelectedRows, row.id]
+                          );
+
+                          console.log(selectedRows);
+                        }
+                      })}
+                    />
+                    {row.cells.map((cell) => (
+                      <CdssEditableCell
+                        cellId={cell.id}
+                        ruleId={row.id}
+                        parameter={cell.value}
+                        pendingChanges={pendingParameterChanges}
+                        setPendingChanges={setPendingParameterChanges}
+                        disabled={!ruleDict[row.id]?.enabled}
+                      />
+                    ))}
+
+                    <TableCell>
+                      {pendingParameterChanges &&
+                        pendingParameterChanges[row.id] &&
+                        Object.keys(pendingParameterChanges[row.id])
+                          .length > 0 && (
+                          <div>
+                            <Button
+                              kind={"primary"}
+                              onClick={(e) => {
+                                const changes =
+                                  pendingParameterChanges[row.id];
+                                postRuleChange(row.id, changes);
+                              }}
+                            >
+                              Save
+                            </Button>
+                            <Button
+                              kind={"secondary"}
+                              onClick={(e) => {
+                                eventEmitter.emit("parameterReset", {
+                                  ruleId: row.id
+                                });
+                              }}
+                            >
+                              Reset
+                            </Button>
+                          </div>
+                        )}
+                    </TableCell>
+                  </TableRow>
+                ))}
               </TableBody>
-            </TableContainer>
-          );
-        }}
+            </Table>
+          </TableContainer>
+        )}
       </DataTable>
     </div>
   );
