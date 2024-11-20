@@ -1,0 +1,189 @@
+import React, { useState } from "react";
+import {
+  Button,
+  DataTable,
+  DataTableSkeleton,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableHeader,
+  TableRow,
+  TableSelectAll,
+  TableSelectRow,
+  TableToolbar,
+  TableToolbarContent,
+} from "@carbon/react";
+import styles from "./cdss-modification-page.module.scss";
+import CdssEditableCell from "./cdss-editable-cell.component";
+
+interface CdssModificationTableProps {
+  rules?: Array<any>;
+  columns?: Array<any>;
+  pendingParameterChanges: Object;
+  setPendingParameterChanges: React.Dispatch<React.SetStateAction<any>>;
+}
+
+const CdssModificationTable = React.forwardRef<
+  HTMLInputElement,
+  CdssModificationTableProps
+>(
+  (
+    { rules, columns, pendingParameterChanges, setPendingParameterChanges },
+    ref
+  ) => {
+    const [selectedRows, setSelectedRows] = useState([]);
+
+    if (rules == null || columns == null) {
+      // No data given, return empty table
+      return <DataTableSkeleton headers={[]} aria-label="no data" />;
+    }
+    const ruleDict = {};
+
+    rules.forEach((r) => {
+      ruleDict[r.id] = r;
+    });
+
+    return (
+      <DataTable rows={rules} headers={columns}>
+        {({
+          rows,
+          headers,
+          getHeaderProps,
+          getRowProps,
+          getSelectionProps,
+          getTableProps,
+          getTableContainerProps,
+          getToolbarProps,
+        }) => (
+          <TableContainer
+            title="Modifcation Table"
+            {...getTableContainerProps()}
+          >
+            <TableToolbar
+              {...getToolbarProps()}
+              aria-label="data table toolbar"
+            >
+              <TableToolbarContent>
+                {selectedRows.length > 0 &&
+                  selectedRows.every(
+                    (rowId) => ruleDict[rowId]?.enabled == true
+                  ) && (
+                    <Button
+                      kind={"danger"}
+                      onClick={() => console.log("Disable Button click")}
+                    >
+                      Disable
+                    </Button>
+                  )}
+                {selectedRows.length > 0 &&
+                  selectedRows.every(
+                    (rowId) => ruleDict[rowId]?.enabled == false
+                  ) && (
+                    <Button
+                      kind={"primary"}
+                      onClick={() => console.log("Enable Button click")}
+                    >
+                      Enable
+                    </Button>
+                  )}
+              </TableToolbarContent>
+            </TableToolbar>
+            <Table {...getTableProps()} aria-label="sample table">
+              <TableHead>
+                <TableRow>
+                  <TableSelectAll {...getSelectionProps()} />
+                  {headers.map((header, i) => (
+                    <TableHeader
+                      key={i}
+                      {...getHeaderProps({
+                        header,
+                      })}
+                    >
+                      {header.name}
+                    </TableHeader>
+                  ))}
+                  <TableHeader key={"actionHeader"}>Action</TableHeader>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {rows.map((row) => (
+                  <TableRow
+                    key={row.id}
+                    className={
+                      ruleDict[row.id]?.enabled
+                        ? styles.cdssEnabledTableRow
+                        : styles.cdssDisabledTableRow
+                    }
+                    {...getRowProps({
+                      row,
+                    })}
+                  >
+                    <TableSelectRow
+                      {...getSelectionProps({
+                        row,
+                        onChange: () => {
+                          const isSelected = selectedRows.includes(row.id);
+                          setSelectedRows((prevSelectedRows) =>
+                            isSelected
+                              ? prevSelectedRows.filter((id) => id !== row.id)
+                              : [...prevSelectedRows, row.id]
+                          );
+
+                          console.log(selectedRows);
+                        },
+                      })}
+                    />
+                    {row.cells.map((cell) => (
+                      <CdssEditableCell
+                        cellId={cell.id}
+                        ruleId={row.id}
+                        parameter={cell.value}
+                        pendingChanges={pendingParameterChanges}
+                        setPendingChanges={setPendingParameterChanges}
+                        disabled={!ruleDict[row.id]?.enabled}
+                      />
+                    ))}
+
+                    <TableCell>
+                      {pendingParameterChanges &&
+                        pendingParameterChanges[row.id] &&
+                        Object.keys(pendingParameterChanges[row.id]).length >
+                          0 && (
+                          <div>
+                            <Button
+                              kind={"primary"}
+                              onClick={(e) => {
+                                // const changes =
+                                //   pendingParameterChanges[row.id];
+                                // postRuleChange(row.id, changes);
+                              }}
+                            >
+                              Save
+                            </Button>
+                            <Button
+                              kind={"secondary"}
+                              onClick={(e) => {
+                                // eventEmitter.emit("parameterReset", {
+                                //   ruleId: row.id
+                                // });
+                              }}
+                            >
+                              Reset
+                            </Button>
+                          </div>
+                        )}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        )}
+      </DataTable>
+    );
+  }
+);
+
+export default CdssModificationTable;
