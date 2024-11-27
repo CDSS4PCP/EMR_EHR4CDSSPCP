@@ -18,8 +18,57 @@ import {
 import styles from "./cdss-modification-page.module.scss";
 import CdssEditableCell from "./cdss-editable-cell.component";
 import { EventEmitter } from "events";
-import { Rule } from "eslint";
 import CdssRuleEnableCell from "./cdss-rule-enable-cell.component";
+import { openmrsFetch } from "@openmrs/esm-framework";
+
+async function postRuleChange(ruleId, parameterChanges, eventEmitter) {
+  const changes = {};
+  for (const paramName of Object.keys(parameterChanges.params)) {
+    changes[paramName] = {
+      value: parameterChanges.params[paramName].newValue,
+      type: parameterChanges.params[paramName].type,
+    };
+  }
+
+  const body = {
+    params: changes,
+    rule: {
+      id: ruleId,
+      version: "1",
+    },
+  };
+
+  const response = await openmrsFetch(`/cdss/modify-rule.form`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+  const result = await response.text();
+  if (response.status == 200) {
+    eventEmitter.emit("modificationSucceeded", {
+      ruleId: ruleId,
+      parameterChanges: parameterChanges,
+    });
+  } else {
+    console.error(response);
+  }
+
+  if (parameterChanges.enabled != null) {
+    if (parameterChanges.enabled == true) {
+      const response = await openmrsFetch(`/cdss/enable-rule/${ruleId}.form`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+      });
+      console.log("Enabled rule ", response.status);
+    } else {
+      const response = await openmrsFetch(`/cdss/disable-rule/${ruleId}.form`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+      });
+      console.log("Disabled rule ", response.status);
+    }
+  }
+}
 
 interface CdssModificationTableProps {
   rules?: Array<any>;
@@ -141,8 +190,6 @@ const CdssModificationTable = React.forwardRef<
                               ? prevSelectedRows.filter((id) => id !== row.id)
                               : [...prevSelectedRows, row.id]
                           );
-
-                          console.log(selectedRows);
                         },
                       })}
                     />
@@ -150,7 +197,11 @@ const CdssModificationTable = React.forwardRef<
                     <CdssRuleEnableCell
                       ruleId={row.id}
                       initialEnabled={ruleDict[row.id]?.enabled}
+                      pendingParameterChanges={pendingParameterChanges}
+                      setPendingParameterChanges={setPendingParameterChanges}
+                      eventEmitter={eventEmitter}
                     ></CdssRuleEnableCell>
+
                     {row.cells.map((cell) => (
                       <CdssEditableCell
                         cellId={cell.id}
@@ -159,21 +210,23 @@ const CdssModificationTable = React.forwardRef<
                         pendingChanges={pendingParameterChanges}
                         setPendingChanges={setPendingParameterChanges}
                         disabled={!ruleDict[row.id]?.enabled}
+                        eventEmitter={eventEmitter}
                       />
                     ))}
 
                     <TableCell>
                       {pendingParameterChanges &&
                         pendingParameterChanges[row.id] &&
-                        Object.keys(pendingParameterChanges[row.id]).length >
-                          0 && (
+                        ((pendingParameterChanges[row.id].params &&
+                          Object.keys(pendingParameterChanges[row.id].params)
+                            .length > 0) ||
+                          pendingParameterChanges[row.id].enabled != null) && (
                           <div>
                             <Button
                               kind={"primary"}
                               onClick={(e) => {
-                                // const changes =
-                                //   pendingParameterChanges[row.id];
-                                // postRuleChange(row.id, changes);
+                                const changes = pendingParameterChanges[row.id];
+                                postRuleChange(row.id, changes, eventEmitter);
                               }}
                             >
                               Save

@@ -8,6 +8,61 @@ import Select from "@carbon/react/lib/components/Select/Select";
 import { SelectItem, TableCell, TextInput } from "@carbon/react";
 import { TableCellProps } from "@carbon/react/lib/components/DataTable/TableCell";
 import CdssRuleParam from "./cdssRuleParam";
+import { EventEmitter } from "events";
+
+/**
+ * Records a change in a parameter value for a specific rule.
+ *
+ * @param ruleId - The identifier of the rule for which the parameter change is recorded.
+ * @param paramName - The name of the parameter that has changed.
+ * @param newValue - The new value of the parameter.
+ * @param initialValue - The initial value of the parameter before the change.
+ * @param type - The type of the parameter.
+ * @param pendingChanges - An object containing all pending changes.
+ * @param setPendingChanges - A function to update the pending changes state.
+ *
+ * Updates the pending changes with the new parameter value if it differs from the initial value.
+ * Removes the parameter change from pending changes if the new value matches the initial value.
+ */
+function recordParameterChange(
+  ruleId,
+  paramName,
+  newValue,
+  initialValue,
+  type,
+  pendingChanges,
+  setPendingChanges
+) {
+  const change = {
+    newValue: newValue,
+    initialValue: initialValue,
+    type: type,
+  };
+
+  const pendingParameterChanges = { ...pendingChanges };
+
+  // If the new value is the same as original, no need to make change, so delete the parameter from changes
+  if (newValue == initialValue) {
+    if (
+      pendingParameterChanges[ruleId] &&
+      pendingParameterChanges[ruleId].params &&
+      pendingParameterChanges[ruleId].params[paramName]
+    ) {
+      delete pendingParameterChanges[ruleId].params[paramName];
+    }
+  } else {
+    // Add new change to changes
+    if (pendingParameterChanges[ruleId] == null) {
+      pendingParameterChanges[ruleId] = { params: {} };
+    }
+    if (pendingParameterChanges[ruleId].params == null) {
+      pendingParameterChanges[ruleId].params = {};
+    }
+    pendingParameterChanges[ruleId]["params"][paramName] = change;
+  }
+
+  setPendingChanges(pendingParameterChanges);
+}
 
 interface CdssNumberInputProps extends NumberInputProps {
   parameter: CdssRuleParam;
@@ -17,6 +72,7 @@ interface CdssNumberInputProps extends NumberInputProps {
   setPendingChanges: React.Dispatch<React.SetStateAction<any>>;
   pendingChanges: any;
   disabled: boolean;
+  eventEmitter: EventEmitter;
 }
 
 const CdssNumberInput = React.forwardRef<
@@ -32,26 +88,29 @@ const CdssNumberInput = React.forwardRef<
       pendingChanges,
       setPendingChanges,
       disabled,
+      eventEmitter,
     },
     ref
   ) => {
     const initialValue = Number(parameter.value);
     const [value, setValue] = useState(initialValue);
     const inputRef = useRef();
-    // useEffect(() => {
-    //   recordParameterChange(
-    //     ruleId,
-    //     paramName,
-    //     value,
-    //     initialValue,
-    //     parameter.type,
-    //     pendingChanges,
-    //     setPendingChanges
-    //   );
-    // }, [value]);
-    // eventEmitter.on("parameterReset", (state) => {
-    //   if (state.ruleId == ruleId) setValue(initialValue);
-    // });
+    useEffect(() => {
+      // if (value != initialValue)
+      recordParameterChange(
+        ruleId,
+        paramName,
+        value,
+        initialValue,
+        parameter.type,
+        pendingChanges,
+        setPendingChanges
+      );
+    }, [value]);
+
+    eventEmitter.on("parameterReset", (state) => {
+      if (state.ruleId == ruleId) setValue(initialValue);
+    });
 
     if (parameter.allowedValues == null || parameter.allowedValues.length == 0)
       return (
@@ -105,6 +164,7 @@ interface CdssStringInputProps extends NumberInputProps {
   setPendingChanges: React.Dispatch<React.SetStateAction<any>>;
   pendingChanges: any;
   disabled: boolean;
+  eventEmitter: EventEmitter;
 }
 
 const CdssStringInput = React.forwardRef<
@@ -120,27 +180,29 @@ const CdssStringInput = React.forwardRef<
       pendingChanges,
       setPendingChanges,
       disabled,
+      eventEmitter,
     },
     ref
   ) => {
     const initialValue = String(parameter.value);
     const [value, setValue] = useState(initialValue);
     const inputRef = useRef();
-    // useEffect(() => {
-    //   recordParameterChange(
-    //     ruleId,
-    //     paramName,
-    //     value,
-    //     initialValue,
-    //     parameter.type,
-    //     pendingChanges,
-    //     setPendingChanges
-    //   );
-    // }, [value]);
-    //
-    // eventEmitter.on("parameterReset", (state) => {
-    //   if (state.ruleId == ruleId) setValue(initialValue);
-    // });
+    useEffect(() => {
+      // if (value != initialValue)
+      recordParameterChange(
+        ruleId,
+        paramName,
+        value,
+        initialValue,
+        parameter.type,
+        pendingChanges,
+        setPendingChanges
+      );
+    }, [value]);
+
+    eventEmitter.on("parameterReset", (state) => {
+      if (state.ruleId == ruleId) setValue(initialValue);
+    });
 
     if (parameter.allowedValues == null || parameter.allowedValues.length == 0)
       return (
@@ -194,6 +256,7 @@ interface CdssEditableCellProps extends TableCellProps {
   setPendingChanges: React.Dispatch<React.SetStateAction<any>>;
   pendingChanges: any;
   disabled?: boolean;
+  eventEmitter: EventEmitter;
 }
 
 const CdssEditableCell = React.forwardRef<
@@ -201,7 +264,15 @@ const CdssEditableCell = React.forwardRef<
   CdssEditableCellProps
 >(
   (
-    { parameter, cellId, ruleId, pendingChanges, setPendingChanges, disabled },
+    {
+      parameter,
+      cellId,
+      ruleId,
+      pendingChanges,
+      setPendingChanges,
+      disabled,
+      eventEmitter,
+    },
     ref
   ) => {
     const paramName = cellId.replace(ruleId + ":", "");
@@ -224,6 +295,7 @@ const CdssEditableCell = React.forwardRef<
             pendingChanges={pendingChanges}
             setPendingChanges={setPendingChanges}
             disabled={disabled}
+            eventEmitter={eventEmitter}
           ></CdssNumberInput>
         ) : (
           <CdssStringInput
@@ -235,6 +307,7 @@ const CdssEditableCell = React.forwardRef<
             pendingChanges={pendingChanges}
             setPendingChanges={setPendingChanges}
             disabled={disabled}
+            eventEmitter={eventEmitter}
           ></CdssStringInput>
         )}
       </TableCell>

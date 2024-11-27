@@ -9,40 +9,7 @@ import CdssModificationTable from "./cdss-modification-table.component";
 
 // Events used for parameter resets
 const eventEmitter = new EventEmitter();
-eventEmitter.setMaxListeners(20); // Arbitrary number
-
-async function postRuleChange(ruleId, parameterChanges) {
-  const changes = {};
-  for (const paramName of Object.keys(parameterChanges)) {
-    changes[paramName] = {
-      value: parameterChanges[paramName].newValue,
-      type: parameterChanges[paramName].type,
-    };
-  }
-
-  const body = {
-    params: changes,
-    rule: {
-      id: ruleId,
-      version: "1",
-    },
-  };
-
-  const response = await openmrsFetch(`/cdss/modify-rule.form`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
-  });
-  const result = await response.text();
-  if (response.status == 200) {
-    eventEmitter.emit("modificationSucceeded", {
-      ruleId: ruleId,
-      parameterChanges: parameterChanges,
-    });
-  } else {
-    console.error(response);
-  }
-}
+eventEmitter.setMaxListeners(200); // Arbitrary number
 
 /**
  * Fetches rule manifest data from the server.
@@ -55,52 +22,19 @@ async function getRuleData() {
   return json;
 }
 
-/**
- * Records a change in a parameter value for a specific rule.
- *
- * @param ruleId - The identifier of the rule for which the parameter change is recorded.
- * @param paramName - The name of the parameter that has changed.
- * @param newValue - The new value of the parameter.
- * @param initialValue - The initial value of the parameter before the change.
- * @param type - The type of the parameter.
- * @param pendingChanges - An object containing all pending changes.
- * @param setPendingChanges - A function to update the pending changes state.
- *
- * Updates the pending changes with the new parameter value if it differs from the initial value.
- * Removes the parameter change from pending changes if the new value matches the initial value.
- */
-function recordParameterChange(
-  ruleId,
-  paramName,
-  newValue,
-  initialValue,
-  type,
-  pendingChanges,
-  setPendingChanges
-) {
-  const change = {
-    newValue: newValue,
-    initialValue: initialValue,
-    type: type,
-  };
-
-  const pendingParameterChanges = { ...pendingChanges };
-  if (pendingParameterChanges[ruleId] == null) {
-    pendingParameterChanges[ruleId] = {};
-  }
-  pendingParameterChanges[ruleId][paramName] = change;
-
-  if (newValue == initialValue) {
-    delete pendingParameterChanges[ruleId][paramName];
-  }
-  setPendingChanges(pendingParameterChanges);
-}
-
 export const CdssModificationPage: React.FC = () => {
   const [ruleData, setRuleData] = useState(null);
   const [columns, setColumns] = useState(null);
   const [pendingParameterChanges, setPendingParameterChanges] = useState({});
-  const [selectedRows, setSelectedRows] = useState([]);
+
+  const setPendingParameterChanges2 = (newValue) => {
+    // if (newValue != null && Object.keys(newValue).length > 0) {
+    //   throw new Error("Find stacktrace here!");
+    // }
+    // console.log("Calling setPendingParameterChanges=", newValue);
+
+    setPendingParameterChanges(newValue);
+  };
 
   function loadAndProcessData() {
     getRuleData().then((r) => {
@@ -119,14 +53,10 @@ export const CdssModificationPage: React.FC = () => {
       }
       const columnList: any[] = Object.values(cols);
       columnList.sort((a, b) => a?.name.localeCompare(b.name));
-      // columnList.unshift({
-      //   name: "Enabled",
-      //   key: "enabled",
-      //   header: "enabled"
-      // });
-
       setColumns(columnList);
     });
+
+    setPendingParameterChanges2({});
   }
 
   eventEmitter.on("modificationSucceeded", (args) => {
@@ -165,7 +95,7 @@ export const CdssModificationPage: React.FC = () => {
         rules={rules}
         columns={columns}
         pendingParameterChanges={pendingParameterChanges}
-        setPendingParameterChanges={setPendingParameterChanges}
+        setPendingParameterChanges={setPendingParameterChanges2}
         eventEmitter={eventEmitter}
       />
     </div>
