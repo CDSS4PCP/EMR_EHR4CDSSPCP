@@ -14,20 +14,15 @@ context Patient
 
 
 
-define "$Age1":
-    0
+define "$Age1": 0
 
-define "$Age1_unit":
-    'month'
+define "$Age1_unit": 'month'
 
-define "$Age2":
-    12
+define "$Age2": 12
 
-define "$Age2_unit":
-    'month'
+define "$Age2_unit": 'month'
 
-define "VaccineName":
-    'Measles, Mumps, and Rubella Virus Vaccine'
+define "VaccineName": 'Measles, Mumps, and Rubella Virus Vaccine'
 
 define "PatientAge":
     AgeInMonths()
