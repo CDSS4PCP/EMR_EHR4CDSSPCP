@@ -23,12 +23,13 @@ import { openmrsFetch } from "@openmrs/esm-framework";
 
 async function postRuleChange(ruleId, parameterChanges, eventEmitter) {
   const changes = {};
-  for (const paramName of Object.keys(parameterChanges.params)) {
-    changes[paramName] = {
-      value: parameterChanges.params[paramName].newValue,
-      type: parameterChanges.params[paramName].type,
-    };
-  }
+  if (parameterChanges.params != null)
+    for (const paramName of Object.keys(parameterChanges.params)) {
+      changes[paramName] = {
+        value: parameterChanges.params[paramName].newValue,
+        type: parameterChanges.params[paramName].type,
+      };
+    }
 
   const body = {
     params: changes,
@@ -38,19 +39,21 @@ async function postRuleChange(ruleId, parameterChanges, eventEmitter) {
     },
   };
 
-  const response = await openmrsFetch(`/cdss/modify-rule.form`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
-  });
-  const result = await response.text();
-  if (response.status == 200) {
-    eventEmitter.emit("modificationSucceeded", {
-      ruleId: ruleId,
-      parameterChanges: parameterChanges,
+  if (Object.keys(changes).length > 0) {
+    const response = await openmrsFetch(`/cdss/modify-rule.form`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
     });
-  } else {
-    console.error(response);
+    const result = await response.text();
+    if (response.status == 200) {
+      eventEmitter.emit("modificationSucceeded", {
+        ruleId: ruleId,
+        parameterChanges: parameterChanges,
+      });
+    } else {
+      console.error(response);
+    }
   }
 
   if (parameterChanges.enabled != null) {

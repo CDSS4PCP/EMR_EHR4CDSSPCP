@@ -21,6 +21,7 @@ function convertDateToTimestamp(date: Date) {
 
 async function loadPatient(patientId) {
   const result = await openmrsFetch(`/ws/fhir2/R4/Patient/${patientId}`, {});
+  // console.debug("Loaded patient", patientId);
   const pat = await result.json();
   return pat;
 }
@@ -32,6 +33,8 @@ async function loadRule(ruleId) {
   // }
 
   const result = await openmrsFetch(url, {});
+  // console.debug("Loaded rule", ruleId);
+
   const pat = await result.json();
   return pat;
 }
@@ -70,6 +73,8 @@ async function loadImmunizations(patientId) {
     `/ws/fhir2/R4/Immunization?patient=${patientId}`,
     {}
   );
+  // console.debug("Loaded immunization for patient", patientId);
+
   const imm = await result.json();
   if (imm == undefined) {
     return [];
@@ -152,7 +157,7 @@ async function getUsages() {
 
 async function getRecommendations(patientUuid, ruleId) {
   const result = await global.cdss.executeRuleWithPatient(patientUuid, ruleId);
-  // console.log(result);
+  console.log(result);
   return result;
 }
 
@@ -181,6 +186,7 @@ async function getSvsValueset(oid, version, apikey) {
     method: "GET",
     headers: { "Content-Type": "application/json" },
   });
+  // console.debug("Loaded Svs valueset with oid", oid);
 
   return await response.json();
 }
@@ -199,6 +205,7 @@ async function getFhirValueset(oid, version, offset = 0) {
     method: "GET",
     headers: { "Content-Type": "application/json" },
   });
+  // console.debug("Loaded fhir valueset with oid", oid);
 
   return await response.json();
 }
