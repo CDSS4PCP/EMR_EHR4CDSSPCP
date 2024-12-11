@@ -228,37 +228,37 @@ async function getFhirResource(patientId, resourceType) {
     let response = null;
     let res = null;
     switch (resourceType) {
-    case ContainerTypes.LIST(FhirTypes.IMMUNIZATION):
-        if (typeof global.cdss.endpoints.immunizationByPatientId.address == 'string')
-            response = await fetch(global.cdss.endpoints.immunizationByPatientId.address.replace('{{patientId}}', patientId), endpoints.immunizationByPatientId);
-        else if (typeof global.cdss.endpoints.immunizationByPatientId.address == 'function')
-            res = await global.cdss.endpoints.immunizationByPatientId.address(patientId);
-        break;
+        case ContainerTypes.LIST(FhirTypes.IMMUNIZATION):
+            if (typeof global.cdss.endpoints.immunizationByPatientId.address == 'string')
+                response = await fetch(global.cdss.endpoints.immunizationByPatientId.address.replace('{{patientId}}', patientId), endpoints.immunizationByPatientId);
+            else if (typeof global.cdss.endpoints.immunizationByPatientId.address == 'function')
+                res = await global.cdss.endpoints.immunizationByPatientId.address(patientId);
+            break;
 
-    case ContainerTypes.LIST(FhirTypes.OBSERVATION):
-        if (typeof global.cdss.endpoints.observationByPatientId.address == 'string')
-            response = await fetch(global.cdss.endpoints.observationByPatientId.address.replace('{{patientId}}', patientId), endpoints.observationByPatientId);
-        else if (typeof global.cdss.endpoints.observationByPatientId.address == 'function')
-            res = await global.cdss.endpoints.observationByPatientId.address(patientId);
-        break;
-    case ContainerTypes.LIST(FhirTypes.MEDICATION_REQUEST):
-        if (typeof global.cdss.endpoints.medicationRequestByPatientId.address == 'string')
-            response = await fetch(global.cdss.endpoints.medicationRequestByPatientId.address.replace('{{patientId}}', patientId), endpoints.medicationRequestByPatientId);
-        else if (typeof global.cdss.endpoints.medicationRequestByPatientId.address == 'function')
-            res = await global.cdss.endpoints.medicationRequestByPatientId.address(patientId);
-        break;
-    case ContainerTypes.LIST(FhirTypes.MEDICATION_STATEMENT):
-        if (typeof global.cdss.endpoints.medicationStatementByPatientId.address == 'string')
-            response = await fetch(global.cdss.endpoints.medicationStatementByPatientId.address.replace('{{patientId}}', patientId), endpoints.medicationStatementByPatientId);
-        else if (typeof global.cdss.endpoints.medicationStatementByPatientId.address == 'function')
-            res = await global.cdss.endpoints.medicationStatementByPatientId.address(patientId);
-        break;
-    case ContainerTypes.LIST(FhirTypes.CONDITION):
-        if (typeof global.cdss.endpoints.conditionByPatientId.address == 'string')
-            response = await fetch(global.cdss.endpoints.conditionByPatientId.address.replace('{{patientId}}', patientId), endpoints.medicationRequestByPatientId);
-        else if (typeof global.cdss.endpoints.conditionByPatientId.address == 'function')
-            res = await global.cdss.endpoints.conditionByPatientId.address(patientId);
-        break;
+        case ContainerTypes.LIST(FhirTypes.OBSERVATION):
+            if (typeof global.cdss.endpoints.observationByPatientId.address == 'string')
+                response = await fetch(global.cdss.endpoints.observationByPatientId.address.replace('{{patientId}}', patientId), endpoints.observationByPatientId);
+            else if (typeof global.cdss.endpoints.observationByPatientId.address == 'function')
+                res = await global.cdss.endpoints.observationByPatientId.address(patientId);
+            break;
+        case ContainerTypes.LIST(FhirTypes.MEDICATION_REQUEST):
+            if (typeof global.cdss.endpoints.medicationRequestByPatientId.address == 'string')
+                response = await fetch(global.cdss.endpoints.medicationRequestByPatientId.address.replace('{{patientId}}', patientId), endpoints.medicationRequestByPatientId);
+            else if (typeof global.cdss.endpoints.medicationRequestByPatientId.address == 'function')
+                res = await global.cdss.endpoints.medicationRequestByPatientId.address(patientId);
+            break;
+        case ContainerTypes.LIST(FhirTypes.MEDICATION_STATEMENT):
+            if (typeof global.cdss.endpoints.medicationStatementByPatientId.address == 'string')
+                response = await fetch(global.cdss.endpoints.medicationStatementByPatientId.address.replace('{{patientId}}', patientId), endpoints.medicationStatementByPatientId);
+            else if (typeof global.cdss.endpoints.medicationStatementByPatientId.address == 'function')
+                res = await global.cdss.endpoints.medicationStatementByPatientId.address(patientId);
+            break;
+        case ContainerTypes.LIST(FhirTypes.CONDITION):
+            if (typeof global.cdss.endpoints.conditionByPatientId.address == 'string')
+                response = await fetch(global.cdss.endpoints.conditionByPatientId.address.replace('{{patientId}}', patientId), endpoints.medicationRequestByPatientId);
+            else if (typeof global.cdss.endpoints.conditionByPatientId.address == 'function')
+                res = await global.cdss.endpoints.conditionByPatientId.address(patientId);
+            break;
 
     }
 
@@ -339,6 +339,14 @@ async function executeRuleWithPatient(patientId, ruleId, shouldRecordUsage = tru
         }
 
     const codeService = new vsac.CodeService(false, true, global.cdss.endpoints.vsacSvs.address, global.cdss.endpoints.vsacFhir.address);
+
+    console.log("Executing CQL with ...")
+    console.log("Patient", patient)
+    console.log("rule", rule)
+    console.log("libraries", libraries)
+    console.log("parameters", JSON.stringify(parameters, null, 2))
+    console.log("codeService", codeService)
+
     let results = await executeCql(patient, rule, libraries, parameters, codeService, global.cdss.endpoints.metadata.vsacApiKey);
     if (shouldRecordUsage)
         await recordRoutineUsage(rule.library.identifier.id, patient.id, results[patient.id].VaccineName, results[patient.id].Recommendations);
@@ -357,9 +365,9 @@ async function executeRuleWithPatient(patientId, ruleId, shouldRecordUsage = tru
  * @param {boolean} shouldRecordUsage - Flag to determine if the rule usage should be recorded. Default is true.
  * @returns {Object} The result of the CQL execution on the patient, including patient-specific results.
  */
-async function executeRuleWithPatientLibsParams(patient, rule, libraries, parameters, shouldRecordUsage = true) {
+async function executeRuleWithPatientLibsParams(patient, rule, libraries, parameters, shouldRecordUsage = true, shouldUseDefaultVsacAddress= true) {
 
-    const codeService = new vsac.CodeService(true, true, global.cdss.endpoints.vsacSvs.address, global.cdss.endpoints.vsacFhir.address);
+    const codeService = new vsac.CodeService(shouldUseDefaultVsacAddress, true, global.cdss.endpoints.vsacSvs.address, global.cdss.endpoints.vsacFhir.address);
     let results = await executeCql(patient, rule, libraries, parameters, codeService, global.cdss.endpoints.metadata.vsacApiKey);
     if (shouldRecordUsage)
         await recordRoutineUsage(rule.library.identifier.id, patient.id, results[patient.id].VaccineName, results[patient.id].Recommendations);

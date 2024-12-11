@@ -155,7 +155,7 @@ const CdssModificationTable = React.forwardRef<
             <Table {...getTableProps()}>
               <TableHead>
                 <TableRow>
-                  <TableSelectAll {...getSelectionProps()} />
+                  {/*<TableSelectAll {...getSelectionProps()} />*/}
                   <TableHeader key={"enableHeader"}>Enabled</TableHeader>
                   {headers.map((header, i) => (
                     <TableHeader
@@ -183,19 +183,19 @@ const CdssModificationTable = React.forwardRef<
                       row,
                     })}
                   >
-                    <TableSelectRow
-                      {...getSelectionProps({
-                        row,
-                        onChange: () => {
-                          const isSelected = selectedRows.includes(row.id);
-                          setSelectedRows((prevSelectedRows) =>
-                            isSelected
-                              ? prevSelectedRows.filter((id) => id !== row.id)
-                              : [...prevSelectedRows, row.id]
-                          );
-                        },
-                      })}
-                    />
+                    {/*<TableSelectRow*/}
+                    {/*  {...getSelectionProps({*/}
+                    {/*    row,*/}
+                    {/*    onChange: () => {*/}
+                    {/*      const isSelected = selectedRows.includes(row.id);*/}
+                    {/*      setSelectedRows((prevSelectedRows) =>*/}
+                    {/*        isSelected*/}
+                    {/*          ? prevSelectedRows.filter((id) => id !== row.id)*/}
+                    {/*          : [...prevSelectedRows, row.id]*/}
+                    {/*      );*/}
+                    {/*    },*/}
+                    {/*  })}*/}
+                    {/*/>*/}
 
                     <CdssRuleEnableCell
                       ruleId={row.id}

@@ -111,6 +111,11 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
         return ruleManifest.getRules().stream().filter(e -> e.isEnabled()).map(e -> e.getId()).collect(Collectors.toList());
     }
 
+    @Override
+    public List<String> getEnabledRules(RuleRole role) throws APIAuthenticationException {
+        return ruleManifest.getRules().stream().filter(e -> e.isEnabled()).filter(e -> e.getRole() == role).map(e -> e.getId()).collect(Collectors.toList());
+    }
+
 
     /**
      * Retrieves an array of all rule IDs from the rule manifest.

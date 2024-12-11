@@ -124,24 +124,24 @@ async function loadConditions(patientId) {
 // };
 
 const recordRuleUsage = (usage: CdssUsage) => {
-  const ac: AbortController = new AbortController();
-
-  const payload = {
-    vaccine: usage.vaccine,
-    patientId: usage.patientId,
-    timestamp: convertDateToTimestamp(usage.timestamp),
-    rule: usage.ruleId,
-    recommendations: usage.recommendations,
-    status: usage.status,
-  };
-
-  // console.log("Sending: ", payload);
-  openmrsFetch(`/cdss/record-usage.form`, {
-    signal: ac.signal,
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: payload,
-  }).catch((error) => console.log(error));
+  // const ac: AbortController = new AbortController();
+  //
+  // const payload = {
+  //   vaccine: usage.vaccine,
+  //   patientId: usage.patientId,
+  //   timestamp: convertDateToTimestamp(usage.timestamp),
+  //   rule: usage.ruleId,
+  //   recommendations: usage.recommendations,
+  //   status: usage.status,
+  // };
+  //
+  // // console.log("Sending: ", payload);
+  // openmrsFetch(`/cdss/record-usage.form`, {
+  //   signal: ac.signal,
+  //   method: "POST",
+  //   headers: { "Content-Type": "application/json" },
+  //   body: payload,
+  // }).catch((error) => console.log(error));
 };
 
 async function getUsages() {
@@ -163,13 +163,20 @@ async function getRecommendations(patientUuid, ruleId) {
 
 async function getRules() {
   const ac: AbortController = new AbortController();
-  const response = await openmrsFetch(`/cdss/rule.form`, {
-    signal: ac.signal,
-    method: "GET",
-    headers: { "Content-Type": "application/json" },
-  });
+  const response = await openmrsFetch(
+    `/cdss/rule.form?allRules=false&role=rule`,
+    {
+      signal: ac.signal,
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+    }
+  );
 
   return await response.json();
+}
+
+async function debug() {
+  console.log(global.cdss);
 }
 
 async function getSvsValueset(oid, version, apikey) {
@@ -311,9 +318,11 @@ export {
   recordRuleUsage,
   getUsages,
   loadImmunizations,
+  loadConditions,
   loadPatient,
   loadRule,
   loadCqlRule,
   getRecommendations,
   getRules,
+  debug,
 };

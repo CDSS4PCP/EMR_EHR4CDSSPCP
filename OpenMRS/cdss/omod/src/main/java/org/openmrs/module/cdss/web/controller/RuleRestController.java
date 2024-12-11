@@ -8,6 +8,7 @@ import org.openmrs.api.AdministrationService;
 import org.openmrs.module.cdss.api.RuleManagerService;
 import org.openmrs.module.cdss.api.data.ModifyRuleRequest;
 import org.openmrs.module.cdss.api.data.ParamDescriptor;
+import org.openmrs.module.cdss.api.data.RuleRole;
 import org.openmrs.module.cdss.api.exception.RuleNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -60,18 +61,28 @@ public class RuleRestController extends CdssRestController {
 
 
     @GetMapping(path = "/rule.form", produces = {"application/json"})
-    public ResponseEntity<List<String>> getRules(@RequestParam(required = false) Boolean allRules) throws APIAuthenticationException {
+    public ResponseEntity<List<String>> getRules(@RequestParam(required = false) Boolean allRules, @RequestParam(required = false) String role) throws APIAuthenticationException {
 //        checkAuthorizationAndPrivilege();
         if (allRules == null) {
             allRules = false;
         }
-//        String[] rules;
+
         List<String> rules;
-        if (allRules) {
-            rules = ruleManagerService.getAllRules();
+
+        if (role != null) {
+            if (allRules)
+                rules = ruleManagerService.getAllRules(RuleRole.valueOf(role.toUpperCase()));
+            else
+                rules = ruleManagerService.getEnabledRules(RuleRole.valueOf(role.toUpperCase()));
         } else {
-            rules = ruleManagerService.getEnabledRules();
+            if (allRules)
+                rules = ruleManagerService.getAllRules();
+            else
+                rules = ruleManagerService.getEnabledRules();
+
         }
+
+
         return ResponseEntity.ok(rules);
 
     }
@@ -105,7 +116,6 @@ public class RuleRestController extends CdssRestController {
         return ResponseEntity.ok("true");
     }
 
-    
 
     /**
      * Retrieves all rules.

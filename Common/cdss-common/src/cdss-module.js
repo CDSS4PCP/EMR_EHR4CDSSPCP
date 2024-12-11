@@ -1,4 +1,3 @@
-
 const cql = require('cql-execution');
 const cqlfhir = require('cql-exec-fhir');
 
@@ -141,11 +140,11 @@ function getCurrentTimestamp() {
  */
 async function executeCql(patient, rule, libraries = null, parameters = null, codeService = null, vsacApiKey = null) {
     if (patient === null || patient === undefined) {
-    // console.error("Error Executing CDSS: Patient is undefined\nPatient FHIR resource is required to execute a CQL rule.");
+        // console.error("Error Executing CDSS: Patient is undefined\nPatient FHIR resource is required to execute a CQL rule.");
         throw new Error('Patient is undefined');
     }
     if (rule === null || rule === undefined) {
-    // console.error("Error Executing CDSS: Rule is undefined\nRule object is required to execute a CQL rule.");
+        // console.error("Error Executing CDSS: Rule is undefined\nRule object is required to execute a CQL rule.");
         throw new Error('Rule is undefined');
     }
 
@@ -223,7 +222,6 @@ async function executeCql(patient, rule, libraries = null, parameters = null, co
             if (expectedParameter.type.startsWith(ContainerTypes.LIST(null))) {
 
                 paramObject[expectedParameter.name] = [];
-
 
                 if (res.entry != null) {
                     for (const entry of res.entry) {
@@ -354,7 +352,6 @@ async function executeRuleWithPatient(patientId, ruleId) {
 
         }
     }
-
     return await executeCql(patient, rule, libraries, parameters);
 }
 
