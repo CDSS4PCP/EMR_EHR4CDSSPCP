@@ -8,6 +8,7 @@ import org.openmrs.module.cdss.api.data.RuleRole;
 import org.openmrs.module.cdss.api.exception.RuleNotFoundException;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -44,5 +45,5 @@ public interface RuleManagerService extends CdssVaccineService {
     Boolean disableRule(String ruleId) throws APIAuthenticationException, RuleNotFoundException, FileNotFoundException;
 
     //    @Authorized({CDSSConfig.MODULE_PRIVILEGE})
-    Boolean modifyRule(String ruleId, String version, Map<String, ParamDescriptor> changedParameters) throws JsonProcessingException, FileNotFoundException, RuleNotFoundException;
+    Boolean modifyRule(String ruleId, String version, Map<String, ParamDescriptor> changedParameters) throws IOException;
 }

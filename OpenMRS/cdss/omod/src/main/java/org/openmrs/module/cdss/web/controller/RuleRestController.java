@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -148,6 +149,8 @@ public class RuleRestController extends CdssRestController {
             throw new RuntimeException(e);
         } catch (RuleNotFoundException e) {
             throw new RuntimeException(e);
+        } catch (IOException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity<>(result.toString(), HttpStatus.OK);
 

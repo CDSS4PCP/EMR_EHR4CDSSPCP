@@ -13,6 +13,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 import org.apache.log4j.Logger;
 import org.openmrs.api.APIAuthenticationException;
+import org.openmrs.api.AdministrationService;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.cdss.CDSSConfig;
 import org.openmrs.module.cdss.api.RuleManagerService;
@@ -20,8 +21,11 @@ import org.openmrs.module.cdss.api.data.*;
 import org.openmrs.module.cdss.api.exception.RuleNotEnabledException;
 import org.openmrs.module.cdss.api.exception.RuleNotFoundException;
 import org.openmrs.module.cdss.api.serialization.RuleManifestDeserializer;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.io.*;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.*;
 import java.util.HashMap;
@@ -54,11 +58,12 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
     // The path to rule manifest file
     private static final String RULE_MANIFEST_PATH = "rules/rule-manifest.json";
     private final Logger log = Logger.getLogger(getClass());
+    @Autowired
+    @Qualifier("adminService")
+    protected AdministrationService administrationService;
     @Getter
     private RuleManifest ruleManifest;
     private ObjectMapper objectMapper;
-
-
     private OkHttpClient client;
 
     /**
@@ -456,8 +461,12 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
      * @throws FileNotFoundException   If the CQL rule file is not found.
      * @throws RuleNotFoundException   If the specified rule is not found.
      */
-    public Boolean modifyRule(String ruleId, String version, Map<String, ParamDescriptor> changedParameters) throws JsonProcessingException, FileNotFoundException, RuleNotFoundException {
+    public Boolean modifyRule(String ruleId, String version, Map<String, ParamDescriptor> changedParameters) throws IOException {
+
         log.debug("CDSS Attempting to modify rule " + ruleId);
+        String modificationServiceUrl = getRuleModificationServiceUrl();
+
+
         RuleDescriptor originalRule = ruleManifest.getRule(ruleId);
 
         if (originalRule == null) {
@@ -483,8 +492,8 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
 
         String stringBody = objectMapper.writeValueAsString(modifyRuleRequest);
 
-        log.debug("CXreated body for injection\n " + stringBody);
-        String resultString = callModificationService("http://host.docker.internal:9090/api/inject", stringBody);
+        log.debug("Created body for injection\n " + stringBody);
+        String resultString = callModificationService(modificationServiceUrl + "api/inject", stringBody);
         log.debug("Got result from injection: " + resultString);
 
         ModifyRuleRequest result = objectMapper.readValue(resultString, ModifyRuleRequest.class);
@@ -496,11 +505,8 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
         String elm = translate(ruleId, version, cql);
         log.debug("Got result from translation: " + elm);
 
-        try {
-            return createRule(ruleId, version, originalRule.getDescription(), changedParameters, RuleRole.RULE, cql, elm);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+
+        return createRule(ruleId, version, originalRule.getDescription(), changedParameters, RuleRole.RULE, cql, elm);
 
 
     }
@@ -517,7 +523,8 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
      * @throws FileNotFoundException   If the CQL rule file is not found.
      * @throws RuleNotFoundException   If the specified rule is not found.
      */
-    private String translate(String ruleId, String version, String cql) throws JsonProcessingException, FileNotFoundException, RuleNotFoundException {
+    private String translate(String ruleId, String version, String cql) throws IOException {
+        String modificationServiceUrl = getRuleModificationServiceUrl();
         HashMap<String, ModifyRuleRequestRuleDescriptor> libraries = new HashMap<>();
         // TODO how to manage dependency libraries?
         libraries.put("MMR_Common_Library", new ModifyRuleRequestRuleDescriptor("MMR_Common_Library", "1", encodeCql(getCqlRule("MMR_Common_Library"))));
@@ -529,7 +536,7 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
 
         String stringBody = objectMapper.writeValueAsString(translateRuleRequest);
 
-        String resultString = callModificationService("http://host.docker.internal:9090/api/translate", stringBody);
+        String resultString = callModificationService(modificationServiceUrl + "api/translate", stringBody);
         return resultString;
     }
 
@@ -542,29 +549,42 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
      * @return The response body as a string if the request is successful (HTTP status code 200).
      * @throws RuntimeException If the service returns a non-200 status code or if an IOException occurs.
      */
-    private String callModificationService(String url, String body) {
+    private String callModificationService(String url, String body) throws IOException {
         if (client == null) {
             client = new OkHttpClient();
         }
 
         okhttp3.RequestBody body1 = okhttp3.RequestBody.create(MediaType.parse("application/json"), body);
         Request rq = new Request.Builder().post(body1).url(url).build();
-        try {
-            Response rs = client.newCall(rq).execute();
 
-            if (rs.code() == 200) {
-                String resultString = rs.body().string();
-                rs.body().close();
-                return resultString;
-            }
+        Response rs = client.newCall(rq).execute();
 
-            log.error("RuleModification Service returned " + rs.code() + " " + rs.body().string());
-            throw new RuntimeException("RuleModification Service returned " + rs.code() + " " + rs.body().string());
-
-
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        if (rs.code() == 200) {
+            String resultString = rs.body().string();
+            rs.body().close();
+            return resultString;
         }
+
+        log.error("RuleModification Service returned " + rs.code() + " " + rs.body().string());
+        throw new RuntimeException("RuleModification Service returned " + rs.code() + " " + rs.body().string());
+
+
+    }
+
+    private String getRuleModificationServiceUrl() throws IOException {
+        String modificationServiceUrl = administrationService.getGlobalProperty("cdss.ruleModificationServiceUrl");
+        if (modificationServiceUrl == null || modificationServiceUrl.isEmpty()) {
+            throw new IOException("Rule modification service url is null! Check the 'ruleModificationServiceUrl' global property");
+        }
+        try {
+            URL url = new URL(modificationServiceUrl);
+        } catch (MalformedURLException e) {
+            throw new IOException("URL for the rule modification service is invalid! Check the 'ruleModificationServiceUrl' global property");
+        }
+        if (!modificationServiceUrl.endsWith("/")) {
+            modificationServiceUrl = modificationServiceUrl + "/";
+        }
+        return modificationServiceUrl;
     }
 
 }
