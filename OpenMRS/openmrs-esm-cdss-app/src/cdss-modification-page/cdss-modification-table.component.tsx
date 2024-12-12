@@ -40,35 +40,81 @@ async function postRuleChange(ruleId, parameterChanges, eventEmitter) {
   };
 
   if (Object.keys(changes).length > 0) {
-    const response = await openmrsFetch(`/cdss/modify-rule.form`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    });
-    const result = await response.text();
-    if (response.status == 200) {
-      eventEmitter.emit("modificationSucceeded", {
+    try {
+      const response = await openmrsFetch(`/cdss/modify-rule.form`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      if (response.status == 200) {
+        eventEmitter.emit("modificationSucceeded", {
+          ruleId: ruleId,
+          parameterChanges: parameterChanges,
+        });
+      } else {
+        eventEmitter.emit("modificationFailed", {
+          ruleId: ruleId,
+          parameterChanges: parameterChanges,
+          message: await response.text(),
+        });
+      }
+    } catch (e) {
+      eventEmitter.emit("modificationFailed", {
         ruleId: ruleId,
         parameterChanges: parameterChanges,
+        message: e.message,
       });
-    } else {
-      console.error(response);
     }
   }
 
   if (parameterChanges.enabled != null) {
     if (parameterChanges.enabled == true) {
-      const response = await openmrsFetch(`/cdss/enable-rule/${ruleId}.form`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-      });
-      console.log("Enabled rule ", response.status);
+      try {
+        const response = await openmrsFetch(
+          `/cdss/enable-rule/${ruleId}.form`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+          }
+        );
+
+        if (response.status == 200) {
+          eventEmitter.emit("ruleEnableSucceeded", { ruleId: ruleId });
+        } else {
+          eventEmitter.emit("ruleEnableFailed", {
+            ruleId: ruleId,
+            message: await response.text(),
+          });
+        }
+      } catch (e) {
+        eventEmitter.emit("ruleEnableFailed", {
+          ruleId: ruleId,
+          message: e.message,
+        });
+      }
     } else {
-      const response = await openmrsFetch(`/cdss/disable-rule/${ruleId}.form`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-      });
-      console.log("Disabled rule ", response.status);
+      try {
+        const response = await openmrsFetch(
+          `/cdss/disable-rule/${ruleId}.form`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+          }
+        );
+        if (response.status == 200) {
+          eventEmitter.emit("ruleDisableSucceeded", { ruleId: ruleId });
+        } else {
+          eventEmitter.emit("ruleDisableFailed", {
+            ruleId: ruleId,
+            message: await response.text(),
+          });
+        }
+      } catch (e) {
+        eventEmitter.emit("ruleDisableFailed", {
+          ruleId: ruleId,
+          message: e.message,
+        });
+      }
     }
   }
 }

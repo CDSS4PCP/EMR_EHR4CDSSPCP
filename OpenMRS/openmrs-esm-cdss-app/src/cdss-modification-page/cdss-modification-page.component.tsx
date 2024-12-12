@@ -1,15 +1,22 @@
 import React, { useEffect, useState } from "react";
-import { DataTableSkeleton, TextInput, SelectItem } from "@carbon/react";
+import {
+  DataTableSkeleton,
+  TextInput,
+  SelectItem,
+  Button,
+} from "@carbon/react";
 import { openmrsFetch } from "@openmrs/esm-framework";
+import Modal from "@carbon/react/es/components/Modal/Modal";
 
 import { EventEmitter } from "events";
 import styles from "./cdss-modification-page.module.scss";
 import Select from "@carbon/react/lib/components/Select/Select";
 import CdssModificationTable from "./cdss-modification-table.component";
+import { recordRuleUsage } from "../cdssService";
 
 // Events used for parameter resets
 const eventEmitter = new EventEmitter();
-eventEmitter.setMaxListeners(200); // Arbitrary number
+eventEmitter.setMaxListeners(1000); // Arbitrary number
 
 /**
  * Fetches rule manifest data from the server.
@@ -25,14 +32,11 @@ async function getRuleData() {
 export const CdssModificationPage: React.FC = () => {
   const [ruleData, setRuleData] = useState(null);
   const [columns, setColumns] = useState(null);
+  const [showErrorMessage, setShowErrorMessage] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(null);
   const [pendingParameterChanges, setPendingParameterChanges] = useState({});
 
   const setPendingParameterChanges2 = (newValue) => {
-    // if (newValue != null && Object.keys(newValue).length > 0) {
-    //   throw new Error("Find stacktrace here!");
-    // }
-    // console.log("Calling setPendingParameterChanges=", newValue);
-
     setPendingParameterChanges(newValue);
   };
 
@@ -62,14 +66,33 @@ export const CdssModificationPage: React.FC = () => {
   eventEmitter.on("modificationSucceeded", (args) => {
     loadAndProcessData();
   });
+
+  eventEmitter.on("modificationFailed", (args) => {
+    setShowErrorMessage(true);
+    setErrorMessage(args.message);
+  });
+
+  eventEmitter.on("ruleEnableSucceeded", (args) => {
+    loadAndProcessData();
+  });
+
+  eventEmitter.on("ruleDisableSucceeded", (args) => {
+    loadAndProcessData();
+  });
+  eventEmitter.on("ruleEnableFailed", (args) => {
+    setShowErrorMessage(true);
+    setErrorMessage(args.message);
+  });
+
+  eventEmitter.on("ruleDisableFailed", (args) => {
+    setShowErrorMessage(true);
+    setErrorMessage(args.message);
+  });
+
   // Data structure to keep track of parameter changes
   useEffect(() => {
     loadAndProcessData();
   }, []);
-
-  // if (ruleData == null || columns == null) {
-  //   return <DataTableSkeleton headers={[]} aria-label="empty table" />;
-  // }
 
   const rules = ruleData?.rules
     .filter((r) => r.role.toLowerCase() == "rule")
@@ -89,6 +112,20 @@ export const CdssModificationPage: React.FC = () => {
 
   return (
     <div>
+      <Modal
+        modalHeading="Take action"
+        open={showErrorMessage}
+        primaryButtonText="Ok"
+        passiveModal
+        onRequestClose={() => setShowErrorMessage(false)}
+        onRequestSubmit={() => {
+          setShowErrorMessage(false);
+        }}
+      >
+        <p>Could not fulfill request because of an error</p>
+        <code>{errorMessage}</code>
+      </Modal>
+
       <h1 className={styles.modHeader}>Rule Modification</h1>
 
       <CdssModificationTable

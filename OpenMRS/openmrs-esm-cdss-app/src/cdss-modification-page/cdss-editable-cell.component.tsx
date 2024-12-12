@@ -278,9 +278,11 @@ const CdssEditableCell = React.forwardRef<
     const paramName = cellId.replace(ruleId + ":", "");
     if (parameter == null) {
       return (
-        <TableCell ref={ref} key={cellId} className={styles.cdssEditableCell}>
-          Parameter was null
-        </TableCell>
+        <TableCell
+          ref={ref}
+          key={cellId}
+          className={styles.cdssEditableCell}
+        ></TableCell>
       );
     }
     return (
