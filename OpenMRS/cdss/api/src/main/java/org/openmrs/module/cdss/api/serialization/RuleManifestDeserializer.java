@@ -1,12 +1,11 @@
 package org.openmrs.module.cdss.api.serialization;
 
-import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.node.JsonNodeType;
 import org.apache.log4j.Logger;
 import org.openmrs.module.cdss.api.data.ParamDescriptor;
 import org.openmrs.module.cdss.api.data.RuleDescriptor;
@@ -29,7 +28,7 @@ public class RuleManifestDeserializer extends StdDeserializer<RuleManifest> {
 
 
     @Override
-    public RuleManifest deserialize(JsonParser jsonParser, DeserializationContext ctxt) throws IOException, JacksonException {
+    public RuleManifest deserialize(JsonParser jsonParser, DeserializationContext ctxt) throws IOException {
         JsonNode rootNode = jsonParser.getCodec().readTree(jsonParser);
 
         if (rootNode.isEmpty()) {
@@ -39,7 +38,7 @@ public class RuleManifestDeserializer extends StdDeserializer<RuleManifest> {
         if (rootNode.hasNonNull("rules")) {
 
             List<RuleDescriptor> rules = new ArrayList<>();
-            for (Iterator<JsonNode> it = ((ArrayNode) rootNode.get("rules")).elements(); it.hasNext(); ) {
+            for (Iterator<JsonNode> it = rootNode.get("rules").elements(); it.hasNext(); ) {
 
                 JsonNode node = it.next();
                 RuleDescriptor descriptor = parseRuleDescriptor(node);
@@ -68,7 +67,7 @@ public class RuleManifestDeserializer extends StdDeserializer<RuleManifest> {
         Map<String, ParamDescriptor> paramDescriptors = new HashMap<>();
 
         if (node.has("params"))
-            for (Iterator<Map.Entry<String, JsonNode>> it = ((ObjectNode) node.get("params")).fields(); it.hasNext(); ) {
+            for (Iterator<Map.Entry<String, JsonNode>> it = node.get("params").fields(); it.hasNext(); ) {
 
                 Map.Entry<String, JsonNode> entry = it.next();
                 JsonNode paramNode = entry.getValue();
@@ -91,13 +90,20 @@ public class RuleManifestDeserializer extends StdDeserializer<RuleManifest> {
         ParamDescriptor paramDescriptor = new ParamDescriptor(type, defaultValue);
         paramDescriptor.setValue(value);
         if (node.has("allowedValues")) {
-            ArrayList<Object> allowedValuesList = new ArrayList<>();
+            JsonNodeType t = node.getNodeType();
 
-            ArrayNode allowedValuesNode = (ArrayNode) node.get("allowedValues");
-            allowedValuesNode.forEach(allowedValue -> {
-                allowedValuesList.add(allowedValue.asText());
-            });
-            paramDescriptor.setAllowedValues(allowedValuesList.toArray());
+            if (t.equals(JsonNodeType.ARRAY)) {
+                ArrayList<Object> allowedValuesList = new ArrayList<>();
+
+                if (node.has("allowedValues")) {
+                    ArrayNode allowedValuesNode = (ArrayNode) node.get("allowedValues");
+
+                    allowedValuesNode.forEach(allowedValue -> {
+                        allowedValuesList.add(allowedValue.asText());
+                    });
+                    paramDescriptor.setAllowedValues(allowedValuesList.toArray());
+                }
+            }
         }
         return paramDescriptor;
 

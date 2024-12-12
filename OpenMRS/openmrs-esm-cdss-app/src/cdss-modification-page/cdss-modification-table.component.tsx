@@ -13,13 +13,17 @@ import {
   TableSelectAll,
   TableSelectRow,
   TableToolbar,
+  TableToolbarAction,
   TableToolbarContent,
+  Toggle,
 } from "@carbon/react";
 import styles from "./cdss-modification-page.module.scss";
 import CdssEditableCell from "./cdss-editable-cell.component";
 import { EventEmitter } from "events";
 import CdssRuleEnableCell from "./cdss-rule-enable-cell.component";
 import { openmrsFetch } from "@openmrs/esm-framework";
+import FormGroup from "@carbon/react/lib/components/FormGroup/FormGroup";
+import { Label } from "@carbon/react/lib/components/Text";
 
 async function postRuleChange(ruleId, parameterChanges, eventEmitter) {
   const changes = {};
@@ -142,6 +146,7 @@ const CdssModificationTable = React.forwardRef<
     ref
   ) => {
     const [selectedRows, setSelectedRows] = useState([]);
+    const [showDescription, setShowDescription] = React.useState(true);
 
     if (rules == null || columns == null) {
       // No data given, return empty table
@@ -174,34 +179,36 @@ const CdssModificationTable = React.forwardRef<
               aria-label="data table toolbar"
             >
               <TableToolbarContent>
-                {selectedRows.length > 0 &&
-                  selectedRows.every(
-                    (rowId) => ruleDict[rowId]?.enabled == true
-                  ) && (
-                    <Button
-                      kind={"danger"}
-                      onClick={() => console.log("Disable Button click")}
-                    >
-                      Disable
-                    </Button>
-                  )}
-                {selectedRows.length > 0 &&
-                  selectedRows.every(
-                    (rowId) => ruleDict[rowId]?.enabled == false
-                  ) && (
-                    <Button
-                      kind={"primary"}
-                      onClick={() => console.log("Enable Button click")}
-                    >
-                      Enable
-                    </Button>
-                  )}
+                <div>
+                  <div
+                    style={{
+                      marginBlockEnd: "0.5rem",
+                    }}
+                  >
+                    Descriptions
+                  </div>
+                  <Toggle
+                    size={"sm"}
+                    onToggle={(e) => {
+                      setShowDescription(e);
+                      return true;
+                    }}
+                    defaultToggled={showDescription}
+                  />
+                </div>
               </TableToolbarContent>
             </TableToolbar>
-            <Table {...getTableProps()}>
+
+            <Table {...getTableProps()} style={{ marginTop: "1rem" }}>
               <TableHead>
                 <TableRow>
                   {/*<TableSelectAll {...getSelectionProps()} />*/}
+                  {showDescription && (
+                    <TableHeader key={"ruleDescriptionHeader"}>
+                      Description
+                    </TableHeader>
+                  )}
+
                   <TableHeader key={"enableHeader"}>Enabled</TableHeader>
                   {headers.map((header, i) => (
                     <TableHeader
@@ -242,6 +249,9 @@ const CdssModificationTable = React.forwardRef<
                     {/*    },*/}
                     {/*  })}*/}
                     {/*/>*/}
+                    {showDescription && (
+                      <TableCell>{ruleDict[row.id]?.description}</TableCell>
+                    )}
 
                     <CdssRuleEnableCell
                       ruleId={row.id}
