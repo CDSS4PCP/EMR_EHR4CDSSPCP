@@ -156,8 +156,14 @@ async function getUsages() {
 }
 
 async function getRecommendations(patientUuid, ruleId) {
+  const startTime = performance.now();
   const result = await global.cdss.executeRuleWithPatient(patientUuid, ruleId);
-  console.log(result);
+  const endTime = performance.now();
+
+  console.log(
+    `The recommendations for ${ruleId} to ${endTime - startTime} ms`,
+    result
+  );
   return result;
 }
 
