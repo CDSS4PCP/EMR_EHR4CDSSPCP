@@ -1,10 +1,11 @@
 package org.openmrs.module.cdss;
 
 import org.junit.Test;
-import org.openmrs.api.context.Context;
 import org.openmrs.module.cdss.api.RuleManagerService;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.List;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
@@ -27,8 +28,9 @@ public class RuleManagerServiceTest extends BaseModuleContextSensitiveTest {
     public void checkAllRulesByVaccine() {
 
 
-        String[] rules = ruleManagerService.getRules();
-        assertThat(rules.length > 0, is(true));
+        List<String> rules = ruleManagerService.getAllRules();
+        assertThat(rules.size() > 0, is(true));
+
 
 
     }

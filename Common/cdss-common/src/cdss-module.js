@@ -1,4 +1,3 @@
-
 const cql = require('cql-execution');
 const cqlfhir = require('cql-exec-fhir');
 
@@ -24,6 +23,7 @@ const FhirTypes = Object.freeze({
     PATIENT: '{http://hl7.org/fhir}Patient',
     IMMUNIZATION: '{http://hl7.org/fhir}Immunization',
     MEDICATION_REQUEST: '{http://hl7.org/fhir}MedicationRequest',
+    MEDICATION_STATEMENT: '{http://hl7.org/fhir}MedicationStatement',
     MEDICATION: '{http://hl7.org/fhir}Medication',
     OBSERVATION: '{http://hl7.org/fhir}Observation',
     CONDITION: '{http://hl7.org/fhir}Condition',
@@ -140,11 +140,11 @@ function getCurrentTimestamp() {
  */
 async function executeCql(patient, rule, libraries = null, parameters = null, codeService = null, vsacApiKey = null) {
     if (patient === null || patient === undefined) {
-    // console.error("Error Executing CDSS: Patient is undefined\nPatient FHIR resource is required to execute a CQL rule.");
+        // console.error("Error Executing CDSS: Patient is undefined\nPatient FHIR resource is required to execute a CQL rule.");
         throw new Error('Patient is undefined');
     }
     if (rule === null || rule === undefined) {
-    // console.error("Error Executing CDSS: Rule is undefined\nRule object is required to execute a CQL rule.");
+        // console.error("Error Executing CDSS: Rule is undefined\nRule object is required to execute a CQL rule.");
         throw new Error('Rule is undefined');
     }
 
@@ -223,7 +223,6 @@ async function executeCql(patient, rule, libraries = null, parameters = null, co
 
                 paramObject[expectedParameter.name] = [];
 
-
                 if (res.entry != null) {
                     for (const entry of res.entry) {
 
@@ -258,7 +257,7 @@ async function executeCql(patient, rule, libraries = null, parameters = null, co
         version: rule.library.identifier.version,
     };
 
-    let recommendations = []; 
+    let recommendations = [];
 
     patientIds.forEach(patientId => patientResults[patientId].Recommendations = extractRecommendations(patientResults[patientId]));
 
@@ -353,7 +352,6 @@ async function executeRuleWithPatient(patientId, ruleId) {
 
         }
     }
-
     return await executeCql(patient, rule, libraries, parameters);
 }
 

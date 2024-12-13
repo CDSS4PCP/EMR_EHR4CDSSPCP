@@ -9,50 +9,36 @@ include "FHIRHelpers" version '4.0.1' called FHIRHelpers
 include "MMR_Common_Library" version '1' called Common
 
 //MMR valuesets and codesystems
-//
-//codesystem "Other": 'http://hl7.org/fhir/sid/cvx'
-//
-//valueset "Measles, Mumps and Rubella (MMR) Vaccine Administered VS": 'https://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.110.11.1086'
-//valueset "Measles, Mumps and Rubella (MMR) Vaccine VS": 'https://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.196.11.1235'
-//valueset "Measles, Mumps and Rubella (MMR) Vaccine VS_1": 'https://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.196.12.1224'
-//valueset "Measles, Mumps and Rubella (MMR) Vaccine Administered VS_1": 'https://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.110.12.1031'
-//valueset "Measles, Mumps and Rubella (MMR) Vaccine Administered VS_2": 'https://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.110.11.1085'
-//
-//code "measles, mumps, rubella, and varicella virus vaccine code": '94' from "Other" display 'measles, mumps, rubella, and varicella virus vaccine'
-//code "measles, mumps and rubella virus vaccine code": '3' from "Other" display 'measles, mumps and rubella virus vaccine'
-
-//immunization can be a list, not always only one value
-
 parameter Imm List<Immunization>
 
 context Patient
 
 
 
+define "$Age1": 12
+
+define "$Age1_unit": 'month'
+
+define "$Age2": 4
+
+define "$Age2_unit": 'year'
+
+define "$Dose1AdminMinAge": 12
+
+define "$Dose1AdminMinAge_unit": 'month'
+
+define "$Dose1AdminMaxAge": 15
+
+define "$Dose1AdminMaxAge_unit": 'month'
+
+
 define "VaccineName":
     'Measles, Mumps, and Rubella Virus Vaccine'
 
-//define generic MMR valuesets groups and codes union
-//
-//define "MMR_Vaccine_valuesets":
-//       "Measles, Mumps and Rubella (MMR) Vaccine VS"
-//    union  "Measles, Mumps and Rubella (MMR) Vaccine VS_1"
-//
-//define "MMR_Vaccine_Admin_valuesets":
-//    "Measles, Mumps and Rubella (MMR) Vaccine Administered VS"
-//        union  "Measles, Mumps and Rubella (MMR) Vaccine Administered VS_1"
-//    union  "Measles, Mumps and Rubella (MMR) Vaccine Administered VS_2"
-//
-//define "MMR_Vaccine_CVXCodes":
-//   "measles, mumps, rubella, and varicella virus vaccine code"
-//    union "measles, mumps and rubella virus vaccine code"
-//
-//define "MMR_Vaccine_union":
-//    "MMR_Vaccine_valuesets" union "MMR_Vaccine_Admin_valuesets" union "MMR_Vaccine_CVXCodes" union "MMR_Vaccine_CVXCodes"
-//
-
 define "CurrentAge":
-    AgeInMonths() > 12 and AgeInYears() < 4
+  Common.GetAge("$Age1_unit") >= "$Age1"
+    and Common.GetAge("$Age2_unit") < "$Age2"
+
 
 
 
@@ -60,33 +46,14 @@ define function FindValidCodes(codes List<FHIR.Coding>):
     codes c where Common.ToCode(c) in Common.MMR_All_Valuesets
 
 define function FindValidVaccines(Immunizations List<Immunization>):
-    Immunizations Temp where  (FindValidCodes(Temp.vaccineCode.coding)) is not null
+    Immunizations Temp where (FindValidCodes(Temp.vaccineCode.coding)) is not null
 
 //check to see if any existing immunization record is in MMR_Vaccine_union
 //will all the vacines in the list be gone through one by one? if not, how to make them be checked one by one?
-
-//this one dose can be from (MMR valueses OR CVS codes,) or MMR admin, however only one from either set
-
-
-//define function CheckMMRdose(Immunizations List<FHIR.Immunization>):
-//    Immunizations Temp where  (ToCode(Temp.vaccineCode.coding)) in ("MMR_Vaccine_CVXCodes" union "MMR_Vaccine_valuesets")
-//	return Temp
-
-//define function CheckMMRAdmin(Immunizations List<FHIR.Immunization>):
-//    Immunizations TempAdm where (ToCode(TempAdm.vaccineCode.coding[0])) in "MMR_Vaccine_Admin_valuesets"
-//	return TempAdm
-
-
 define "MMR_Vaccine_OneDose":
-    Count (FindValidVaccines (Imm))= 1
+    Count(FindValidVaccines(Imm))= 1
 
-define "MMR_Dose_Count":
-    Count (FindValidVaccines (Imm))
-define "MMR_Doses":
-    FindValidVaccines (Imm)
 
-define "Imms":
-    Imm
 
 define function MMRVaccineDate(Immunizations List<FHIR.Immunization>):
     (Immunizations TemDate where  FindValidCodes(TemDate.vaccineCode.coding) is not null
@@ -103,16 +70,19 @@ define "PatientBirthDate":
 define "VaccineDate":
     ToDate(MMRVaccineDate(Imm)[0].Date)
 
-define "DiffInMonths":
-    Abs(difference in months between "VaccineDate" and "PatientBirthDate")
+define "DiffInMinAdminUnit":
+    Abs(Common.GetDifferenceInUnit("VaccineDate", "PatientBirthDate", "$Dose1AdminMinAge_unit"))
+
+define "DiffInMaxAdminUnit":
+    Abs(Common.GetDifferenceInUnit("VaccineDate", "PatientBirthDate", "$Dose1AdminMaxAge_unit"))
 
 
 define "InDemographic":
     CurrentAge
 
-
 define "InPopulation":
-    InDemographic and MMR_Vaccine_OneDose
+    InDemographic and MMR_Vaccine_OneDose and "DiffInMinAdminUnit" >= "$Dose1AdminMinAge" and  "DiffInMaxAdminUnit" <= "$Dose1AdminMaxAge"
+
 
 define "Recommendation":
     if InPopulation then

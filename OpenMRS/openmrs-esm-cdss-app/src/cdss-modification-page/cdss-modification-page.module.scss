@@ -1,0 +1,30 @@
+@use '@carbon/colors';
+@use '@carbon/styles/scss/spacing';
+@use '@carbon/styles/scss/type';
+@import '@openmrs/esm-styleguide/src/vars';
+
+
+.modHeader {
+  font-size: 1.25rem;
+  color: #161616;
+}
+
+.tableCellInput{
+  vertical-align: top;
+  display: inline-block;
+}
+
+.cdssEditableCell{
+
+  margin: .1rem .2rem;
+
+  padding: 0.1rem .2rem;
+}
+
+.cdssEnabledTableRow{
+
+}
+
+.cdssDisabledTableRow {
+  background-color: #acacac;
+}
