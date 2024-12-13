@@ -279,7 +279,7 @@ const CdssBooleanInput = React.forwardRef<
     },
     ref
   ) => {
-    const initialValue = parameter.value.toLowerCase() == "true";
+    const initialValue = (parameter.value + "").toLowerCase() == "true";
     const [value, setValue] = useState(initialValue);
     const inputRef = useRef();
     useEffect(() => {
