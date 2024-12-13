@@ -9,6 +9,8 @@ import { SelectItem, TableCell, TextInput } from "@carbon/react";
 import { TableCellProps } from "@carbon/react/lib/components/DataTable/TableCell";
 import CdssRuleParam from "./cdssRuleParam";
 import { EventEmitter } from "events";
+import { types } from "sass";
+import Boolean = types.Boolean;
 
 /**
  * Records a change in a parameter value for a specific rule.
@@ -249,6 +251,81 @@ const CdssStringInput = React.forwardRef<
   }
 );
 
+interface CdssBooleanInputProps extends NumberInputProps {
+  parameter: CdssRuleParam;
+  cellId: string;
+  ruleId: string;
+  paramName: string;
+  setPendingChanges: React.Dispatch<React.SetStateAction<any>>;
+  pendingChanges: any;
+  disabled: boolean;
+  eventEmitter: EventEmitter;
+}
+
+const CdssBooleanInput = React.forwardRef<
+  HTMLInputElement,
+  CdssStringInputProps
+>(
+  (
+    {
+      cellId,
+      parameter,
+      ruleId,
+      paramName,
+      pendingChanges,
+      setPendingChanges,
+      disabled,
+      eventEmitter,
+    },
+    ref
+  ) => {
+    const initialValue = parameter.value.toLowerCase() == "true";
+    const [value, setValue] = useState(initialValue);
+    const inputRef = useRef();
+    useEffect(() => {
+      // if (value != initialValue)
+      recordParameterChange(
+        ruleId,
+        paramName,
+        value,
+        initialValue,
+        parameter.type,
+        pendingChanges,
+        setPendingChanges
+      );
+    }, [value]);
+
+    eventEmitter.on("parameterReset", (state) => {
+      if (state.ruleId == ruleId) setValue(initialValue);
+    });
+
+    return (
+      <Select
+        id={cellId}
+        className={styles.tableCellInput}
+        defaultValue={initialValue}
+        value={value + ""}
+        noLabel={true}
+        ref={inputRef}
+        warn={value != initialValue}
+        warnText={"This value was modified"}
+        onChange={(e) => {
+          setValue(e.target.value.toLowerCase() == "true");
+          return true;
+        }}
+        disabled={disabled}
+      >
+        <SelectItem text={"True"} value={"true"}>
+          {"true"}
+        </SelectItem>
+        <SelectItem text={"False"} value={"false"}>
+          {"false"}
+        </SelectItem>
+      </Select>
+    );
+  }
+);
+
 interface CdssEditableCellProps extends TableCellProps {
   parameter: CdssRuleParam;
   cellId?: string;
@@ -276,6 +353,7 @@ const CdssEditableCell = React.forwardRef<
     ref
   ) => {
     const paramName = cellId.replace(ruleId + ":", "");
+
     if (parameter == null) {
       return (
         <TableCell
@@ -285,33 +363,55 @@ const CdssEditableCell = React.forwardRef<
         ></TableCell>
       );
     }
+
+    let input = <></>;
+    if (parameter.type == "Integer") {
+      input = (
+        <CdssNumberInput
+          parameter={parameter}
+          cellId={cellId + ":input"}
+          id={cellId + ":input"}
+          ruleId={ruleId}
+          paramName={paramName}
+          pendingChanges={pendingChanges}
+          setPendingChanges={setPendingChanges}
+          disabled={disabled}
+          eventEmitter={eventEmitter}
+        ></CdssNumberInput>
+      );
+    } else if (parameter.type == "String") {
+      input = (
+        <CdssStringInput
+          parameter={parameter}
+          cellId={cellId + ":input"}
+          id={cellId + ":input"}
+          ruleId={ruleId}
+          paramName={paramName}
+          pendingChanges={pendingChanges}
+          setPendingChanges={setPendingChanges}
+          disabled={disabled}
+          eventEmitter={eventEmitter}
+        ></CdssStringInput>
+      );
+    } else if (parameter.type == "Boolean") {
+      input = (
+        <CdssBooleanInput
+          parameter={parameter}
+          cellId={cellId + ":input"}
+          id={cellId + ":input"}
+          ruleId={ruleId}
+          paramName={paramName}
+          pendingChanges={pendingChanges}
+          setPendingChanges={setPendingChanges}
+          disabled={disabled}
+          eventEmitter={eventEmitter}
+        ></CdssBooleanInput>
+      );
+    }
+
     return (
       <TableCell ref={ref} key={cellId} className={styles.cdssEditableCell}>
-        {parameter.type == "Integer" ? (
-          <CdssNumberInput
-            parameter={parameter}
-            cellId={cellId + ":input"}
-            id={cellId + ":input"}
-            ruleId={ruleId}
-            paramName={paramName}
-            pendingChanges={pendingChanges}
-            setPendingChanges={setPendingChanges}
-            disabled={disabled}
-            eventEmitter={eventEmitter}
-          ></CdssNumberInput>
-        ) : (
-          <CdssStringInput
-            parameter={parameter}
-            cellId={cellId + ":input"}
-            id={cellId + ":input"}
-            ruleId={ruleId}
-            paramName={paramName}
-            pendingChanges={pendingChanges}
-            setPendingChanges={setPendingChanges}
-            disabled={disabled}
-            eventEmitter={eventEmitter}
-          ></CdssStringInput>
-        )}
+        {input}
       </TableCell>
     );
   }
