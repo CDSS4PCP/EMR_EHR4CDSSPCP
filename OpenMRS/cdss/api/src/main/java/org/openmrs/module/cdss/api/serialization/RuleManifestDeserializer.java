@@ -52,6 +52,7 @@ public class RuleManifestDeserializer extends StdDeserializer<RuleManifest> {
 
     private RuleDescriptor parseRuleDescriptor(JsonNode node) {
         String id = node.get("id").asText();
+        String libraryName = node.get("libraryName").asText();
 
         String version = node.get("version").asText();
         String cqlFilePath = node.get("cqlFilePath").asText();
@@ -59,10 +60,12 @@ public class RuleManifestDeserializer extends StdDeserializer<RuleManifest> {
         String description = node.get("description").asText();
         RuleRole role = node.get("role").asText().equalsIgnoreCase("support") ? RuleRole.SUPPORT : RuleRole.RULE;
         Boolean enabled = node.get("enabled").asBoolean();
+        String derivedFrom = node.get("derivedFrom").asText();
 
-        RuleDescriptor descriptor = new RuleDescriptor(id, version, cqlFilePath, elmFilePath, role);
+        RuleDescriptor descriptor = new RuleDescriptor(id, libraryName, version, cqlFilePath, elmFilePath, role);
         descriptor.setDescription(description);
         descriptor.setEnabled(enabled);
+        descriptor.setDerivedFrom(derivedFrom);
 
         Map<String, ParamDescriptor> paramDescriptors = new HashMap<>();
 

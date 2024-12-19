@@ -39,11 +39,14 @@ public class RuleManifestSerializer extends StdSerializer<RuleManifest> {
 
         jsonGenerator.writeStartObject();
         jsonGenerator.writeStringField("id", ruleDescriptor.getId());
+        jsonGenerator.writeStringField("libraryName", ruleDescriptor.getLibraryName());
         jsonGenerator.writeStringField("version", ruleDescriptor.getVersion());
         jsonGenerator.writeStringField("cqlFilePath", ruleDescriptor.getCqlFilePath());
         jsonGenerator.writeStringField("elmFilePath", ruleDescriptor.getElmFilePath());
         jsonGenerator.writeStringField("description", ruleDescriptor.getDescription());
         jsonGenerator.writeStringField("role", ruleDescriptor.getRole().toString());
+        if (ruleDescriptor.getDerivedFrom() != null)
+            jsonGenerator.writeStringField("derivedFrom", ruleDescriptor.getDerivedFrom());
         jsonGenerator.writeBooleanField("enabled", ruleDescriptor.isEnabled());
         if (ruleDescriptor.getParams() != null) {
             jsonGenerator.writeFieldName("params");

@@ -15,6 +15,10 @@ public class RuleDescriptor implements Cloneable {
     private String id;
 
     @Getter
+    @JsonProperty("libraryName")
+    private String libraryName;
+
+    @Getter
     @JsonProperty("version")
     private String version;
 
@@ -31,6 +35,13 @@ public class RuleDescriptor implements Cloneable {
     @JsonProperty("description")
     private String description;
 
+
+    @Getter
+    @Setter
+    @JsonProperty("derivedFrom")
+    private String derivedFrom;
+
+
     @Getter
     @JsonProperty("role")
     private RuleRole role;
@@ -46,8 +57,9 @@ public class RuleDescriptor implements Cloneable {
     private Map<String, ParamDescriptor> params;
 
 
-    public RuleDescriptor(String id, String version, String cqlFilePath, String elmFilePath, RuleRole role) {
+    public RuleDescriptor(String id, String libraryName, String version, String cqlFilePath, String elmFilePath, RuleRole role) {
         this.id = id;
+        this.libraryName = libraryName;
         this.version = version;
         this.cqlFilePath = cqlFilePath;
         this.elmFilePath = elmFilePath;
@@ -70,7 +82,7 @@ public class RuleDescriptor implements Cloneable {
 
     @Override
     protected RuleDescriptor clone() throws CloneNotSupportedException {
-        RuleDescriptor clonedRuleDescriptor = new RuleDescriptor(id, version, cqlFilePath, elmFilePath, role);
+        RuleDescriptor clonedRuleDescriptor = new RuleDescriptor(id, libraryName, version, cqlFilePath, elmFilePath, role);
         Map<String, ParamDescriptor> newParams = new HashMap<>();
         for (Map.Entry<String, ParamDescriptor> entry : params.entrySet()) {
             newParams.put(entry.getKey(), entry.getValue().clone());

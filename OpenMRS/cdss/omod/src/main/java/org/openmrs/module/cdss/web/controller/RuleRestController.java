@@ -8,6 +8,7 @@ import org.openmrs.api.AdministrationService;
 import org.openmrs.module.cdss.api.RuleManagerService;
 import org.openmrs.module.cdss.api.data.ModifyRuleRequest;
 import org.openmrs.module.cdss.api.data.ParamDescriptor;
+import org.openmrs.module.cdss.api.data.RuleIdentifierType;
 import org.openmrs.module.cdss.api.data.RuleRole;
 import org.openmrs.module.cdss.api.exception.RuleNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,11 +33,15 @@ public class RuleRestController extends CdssRestController {
     Logger log = Logger.getLogger(RuleRestController.class);
 
     @GetMapping(path = "/elm-rule/{ruleId}.form", produces = {"application/json"})
-    public ResponseEntity<String> getRule(@PathVariable(value = "ruleId") String ruleId) throws APIAuthenticationException {
+    public ResponseEntity<String> getRule(@PathVariable(value = "ruleId") String ruleId, @RequestParam(required = false) String identifierType) throws APIAuthenticationException {
 //        checkAuthorizationAndPrivilege();
+        if (identifierType != null && identifierType.trim().isEmpty()) {
+            identifierType = null;
+        }
+        RuleIdentifierType identifierType1 = identifierType == null ? RuleIdentifierType.RULE_ID : RuleIdentifierType.valueOf(identifierType.toUpperCase());
 
         try {
-            String rule = ruleManagerService.getElmRule(ruleId);
+            String rule = ruleManagerService.getElmRule(ruleId, identifierType1);
             return ResponseEntity.ok(rule);
         } catch (NullPointerException e) {
             return new ResponseEntity<>("Rule " + ruleId + " Not found", HttpStatus.NOT_FOUND);
@@ -49,11 +54,17 @@ public class RuleRestController extends CdssRestController {
 
 
     @GetMapping(path = "/cql-rule/{ruleId}.form", produces = {"application/json"})
-    public ResponseEntity<String> getCqlRule(@PathVariable(value = "ruleId") String ruleId) throws APIAuthenticationException {
+    public ResponseEntity<String> getCqlRule(@PathVariable(value = "ruleId") String ruleId, @RequestParam(required = false) String identifierType) throws APIAuthenticationException {
 //        checkAuthorizationAndPrivilege();
 
+
+        if (identifierType != null && identifierType.trim().isEmpty()) {
+            identifierType = null;
+        }
+        RuleIdentifierType identifierType1 = identifierType == null ? RuleIdentifierType.RULE_ID : RuleIdentifierType.valueOf(identifierType.toUpperCase());
+
         try {
-            String rule = ruleManagerService.getCqlRule(ruleId);
+            String rule = ruleManagerService.getCqlRule(ruleId, identifierType1);
             return ResponseEntity.ok(rule);
         } catch (NullPointerException | RuleNotFoundException | FileNotFoundException e) {
             return new ResponseEntity<>("Rule " + ruleId + " Not found", HttpStatus.NOT_FOUND);
@@ -62,26 +73,28 @@ public class RuleRestController extends CdssRestController {
 
 
     @GetMapping(path = "/rule.form", produces = {"application/json"})
-    public ResponseEntity<List<String>> getRules(@RequestParam(required = false) Boolean allRules, @RequestParam(required = false) String role) throws APIAuthenticationException {
+    public ResponseEntity<List<String>> getRules(@RequestParam(required = false) Boolean allRules, @RequestParam(required = false) String role, @RequestParam(required = false) String identifierType) throws APIAuthenticationException {
 //        checkAuthorizationAndPrivilege();
         if (allRules == null) {
             allRules = false;
         }
 
+        if (role != null && role.trim().isEmpty()) {
+            role = null;
+        }
+
+
+        if (identifierType != null && identifierType.trim().isEmpty()) {
+            identifierType = null;
+        }
+
+
+        RuleRole ruleRole = role == null ? null : RuleRole.valueOf(role.toUpperCase());
+        RuleIdentifierType identifierType1 = identifierType == null ? null : RuleIdentifierType.valueOf(identifierType.toUpperCase());
         List<String> rules;
 
-        if (role != null) {
-            if (allRules)
-                rules = ruleManagerService.getAllRules(RuleRole.valueOf(role.toUpperCase()));
-            else
-                rules = ruleManagerService.getEnabledRules(RuleRole.valueOf(role.toUpperCase()));
-        } else {
-            if (allRules)
-                rules = ruleManagerService.getAllRules();
-            else
-                rules = ruleManagerService.getEnabledRules();
-
-        }
+        if (allRules) rules = ruleManagerService.getAllRules(ruleRole, identifierType1);
+        else rules = ruleManagerService.getEnabledRules(ruleRole, identifierType1);
 
 
         return ResponseEntity.ok(rules);
@@ -90,11 +103,17 @@ public class RuleRestController extends CdssRestController {
 
 
     @PostMapping(path = "/enable-rule/{ruleId}.form", produces = {"application/json"})
-    public ResponseEntity<String> enableRule(@PathVariable(value = "ruleId") String ruleId) throws APIAuthenticationException {
+    public ResponseEntity<String> enableRule(@PathVariable(value = "ruleId") String ruleId, @RequestParam(required = false) String identifierType) throws APIAuthenticationException {
 //        checkAuthorizationAndPrivilege();
 
+        if (identifierType != null && identifierType.trim().isEmpty()) {
+            identifierType = null;
+        }
+
+
+        RuleIdentifierType identifierType1 = identifierType == null ? RuleIdentifierType.RULE_ID : RuleIdentifierType.valueOf(identifierType.toUpperCase());
         try {
-            ruleManagerService.enableRule(ruleId);
+            ruleManagerService.enableRule(ruleId, identifierType1);
         } catch (RuleNotFoundException e) {
             throw new RuntimeException(e);
         } catch (FileNotFoundException e) {
@@ -104,11 +123,12 @@ public class RuleRestController extends CdssRestController {
     }
 
     @PostMapping(path = "/disable-rule/{ruleId}.form", produces = {"application/json"})
-    public ResponseEntity<String> disableRule(@PathVariable(value = "ruleId") String ruleId) throws APIAuthenticationException {
+    public ResponseEntity<String> disableRule(@PathVariable(value = "ruleId") String ruleId, @RequestParam(required = false) String identifierType) throws APIAuthenticationException {
 //        checkAuthorizationAndPrivilege();
+        RuleIdentifierType identifierType1 = identifierType == null ? RuleIdentifierType.RULE_ID : RuleIdentifierType.valueOf(identifierType.toUpperCase());
 
         try {
-            ruleManagerService.disableRule(ruleId);
+            ruleManagerService.disableRule(ruleId,identifierType1);
         } catch (RuleNotFoundException e) {
             throw new RuntimeException(e);
         } catch (FileNotFoundException e) {
@@ -144,7 +164,7 @@ public class RuleRestController extends CdssRestController {
 
         Boolean result = null;
         try {
-            result = ruleManagerService.modifyRule(ruleId, version, params);
+            result = ruleManagerService.modifyRule(ruleId, params);
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         } catch (RuleNotFoundException e) {
