@@ -10,6 +10,10 @@ import org.openmrs.module.cdss.api.data.ModifyRuleRequest;
 import org.openmrs.module.cdss.api.data.ParamDescriptor;
 import org.openmrs.module.cdss.api.data.RuleIdentifierType;
 import org.openmrs.module.cdss.api.data.RuleRole;
+import org.openmrs.module.cdss.api.data.criteria.RuleCriteria;
+import org.openmrs.module.cdss.api.data.criteria.projection.IdProjection;
+import org.openmrs.module.cdss.api.data.criteria.projection.LibraryNameVersionProjection;
+import org.openmrs.module.cdss.api.data.criteria.projection.RuleProjection;
 import org.openmrs.module.cdss.api.exception.RuleNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -19,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -73,31 +78,56 @@ public class RuleRestController extends CdssRestController {
 
 
     @GetMapping(path = "/rule.form", produces = {"application/json"})
-    public ResponseEntity<List<String>> getRules(@RequestParam(required = false) Boolean allRules, @RequestParam(required = false) String role, @RequestParam(required = false) String identifierType) throws APIAuthenticationException {
+    public ResponseEntity<List<String>> getRules(@RequestParam(required = false) Boolean allRules, @RequestParam(required = false) String role, @RequestParam(required = false) Boolean showNames) throws APIAuthenticationException {
 //        checkAuthorizationAndPrivilege();
-        if (allRules == null) {
-            allRules = false;
+
+
+        if (showNames == null) {
+            showNames = false;
         }
 
-        if (role != null && role.trim().isEmpty()) {
-            role = null;
+        RuleCriteria criteria = new RuleCriteria();
+        if (allRules != null) {
+            if (!allRules) {
+                criteria.setEnabled(true);
+            }
         }
-
-
-        if (identifierType != null && identifierType.trim().isEmpty()) {
-            identifierType = null;
+        if (role != null) {
+            criteria.setRole(RuleRole.valueOf(role.toUpperCase()));
         }
+        RuleProjection<String> project = new IdProjection();
+
+        if (showNames != null && showNames) {
+            project = new LibraryNameVersionProjection();
+        }
+        ArrayList<String> s = new ArrayList<>(project.apply(ruleManagerService.getAllRules(criteria)));
+        return new ResponseEntity<>(s, HttpStatus.OK);
 
 
-        RuleRole ruleRole = role == null ? null : RuleRole.valueOf(role.toUpperCase());
-        RuleIdentifierType identifierType1 = identifierType == null ? null : RuleIdentifierType.valueOf(identifierType.toUpperCase());
-        List<String> rules;
-
-        if (allRules) rules = ruleManagerService.getAllRules(ruleRole, identifierType1);
-        else rules = ruleManagerService.getEnabledRules(ruleRole, identifierType1);
-
-
-        return ResponseEntity.ok(rules);
+//        checkAuthorizationAndPrivilege();
+//        if (allRules == null) {
+//            allRules = false;
+//        }
+//
+//        if (role != null && role.trim().isEmpty()) {
+//            role = null;
+//        }
+//
+//
+//        if (identifierType != null && identifierType.trim().isEmpty()) {
+//            identifierType = null;
+//        }
+//
+//
+//        RuleRole ruleRole = role == null ? null : RuleRole.valueOf(role.toUpperCase());
+//        RuleIdentifierType identifierType1 = identifierType == null ? null : RuleIdentifierType.valueOf(identifierType.toUpperCase());
+//        List<String> rules;
+//
+//        if (allRules) rules = ruleManagerService.getAllRules(ruleRole, identifierType1);
+//        else rules = ruleManagerService.getEnabledRules(ruleRole, identifierType1);
+//
+//
+//        return ResponseEntity.ok(rules);
 
     }
 
@@ -128,7 +158,7 @@ public class RuleRestController extends CdssRestController {
         RuleIdentifierType identifierType1 = identifierType == null ? RuleIdentifierType.RULE_ID : RuleIdentifierType.valueOf(identifierType.toUpperCase());
 
         try {
-            ruleManagerService.disableRule(ruleId,identifierType1);
+            ruleManagerService.disableRule(ruleId, identifierType1);
         } catch (RuleNotFoundException e) {
             throw new RuntimeException(e);
         } catch (FileNotFoundException e) {

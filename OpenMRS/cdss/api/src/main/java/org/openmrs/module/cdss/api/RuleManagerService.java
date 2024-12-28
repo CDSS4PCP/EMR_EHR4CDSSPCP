@@ -1,12 +1,9 @@
 package org.openmrs.module.cdss.api;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.openmrs.api.APIAuthenticationException;
-import org.openmrs.module.cdss.api.data.ParamDescriptor;
-import org.openmrs.module.cdss.api.data.RuleIdentifierType;
-import org.openmrs.module.cdss.api.data.RuleManifest;
-import org.openmrs.module.cdss.api.data.RuleRole;
+import org.openmrs.module.cdss.api.data.*;
 import org.openmrs.module.cdss.api.exception.RuleNotFoundException;
+import org.openmrs.module.cdss.api.data.criteria.RuleCriteria;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -18,11 +15,13 @@ public interface RuleManagerService extends CdssVaccineService {
     //    @Authorized({CDSSConfig.MODULE_PRIVILEGE})
     List<String> getAllRules() throws APIAuthenticationException;
 
+    List<RuleDescriptor> getAllRules(RuleCriteria ruleCriteria) throws APIAuthenticationException;
+
     //    @Authorized({CDSSConfig.MODULE_PRIVILEGE})
 //    List<String> getAllRules(RuleRole role) throws APIAuthenticationException;
 
     //    @Authorized({CDSSConfig.MODULE_PRIVILEGE})
-    List<String> getAllRules(RuleRole role, RuleIdentifierType identifierType) throws APIAuthenticationException;
+//    List<String> getAllRules(RuleRole role, RuleIdentifierType identifierType) throws APIAuthenticationException;
 
 
     //    @Authorized({CDSSConfig.MODULE_PRIVILEGE})
@@ -52,5 +51,5 @@ public interface RuleManagerService extends CdssVaccineService {
     Boolean disableRule(String ruleId, RuleIdentifierType identifierType) throws APIAuthenticationException, RuleNotFoundException, FileNotFoundException;
 
     //    @Authorized({CDSSConfig.MODULE_PRIVILEGE})
-    Boolean modifyRule(String ruleId,  Map<String, ParamDescriptor> changedParameters) throws IOException;
+    Boolean modifyRule(String ruleId, Map<String, ParamDescriptor> changedParameters) throws IOException;
 }
