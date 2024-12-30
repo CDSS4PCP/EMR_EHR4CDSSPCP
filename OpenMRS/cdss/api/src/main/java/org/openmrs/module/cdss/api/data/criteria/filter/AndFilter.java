@@ -5,6 +5,7 @@ import org.openmrs.module.cdss.api.data.RuleDescriptor;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 public class AndFilter extends RuleFilter {
     private Collection<RuleFilter> filters = new ArrayList<RuleFilter>();
@@ -19,7 +20,7 @@ public class AndFilter extends RuleFilter {
 
 
     @Override
-    public Collection<RuleDescriptor> apply(Collection<RuleDescriptor> rules) {
+    public List<RuleDescriptor> apply(List<RuleDescriptor> rules) {
         for (RuleFilter filter : filters) {
             rules = filter.apply(rules);
         }

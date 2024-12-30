@@ -17,7 +17,7 @@ public class DeepDerivedFromFilter extends RuleFilter {
         this.searchList = searchList;
     }
 
-    private Collection<RuleDescriptor> deepSearch(Collection<RuleDescriptor> rules) {
+    private List<RuleDescriptor> deepSearch(List<RuleDescriptor> rules) {
         List<RuleDescriptor> outList = new ArrayList<RuleDescriptor>();
         for (RuleDescriptor rule : rules) {
             Collection<RuleDescriptor> collected = deepSearch(rule);
@@ -49,7 +49,7 @@ public class DeepDerivedFromFilter extends RuleFilter {
     }
 
     @Override
-    public Collection<RuleDescriptor> apply(Collection<RuleDescriptor> rules) {
+    public List<RuleDescriptor> apply(List<RuleDescriptor> rules) {
         return deepSearch(rules);
     }
 }

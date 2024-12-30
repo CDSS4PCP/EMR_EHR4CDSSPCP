@@ -18,10 +18,9 @@ import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.cdss.CDSSConfig;
 import org.openmrs.module.cdss.api.RuleManagerService;
 import org.openmrs.module.cdss.api.data.*;
+import org.openmrs.module.cdss.api.data.criteria.RuleCriteria;
 import org.openmrs.module.cdss.api.exception.RuleNotEnabledException;
 import org.openmrs.module.cdss.api.exception.RuleNotFoundException;
-import org.openmrs.module.cdss.api.data.criteria.filter.AndFilter;
-import org.openmrs.module.cdss.api.data.criteria.RuleCriteria;
 import org.openmrs.module.cdss.api.serialization.RuleManifestDeserializer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -30,7 +29,10 @@ import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.*;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static org.openmrs.module.cdss.CDSSUtil.encodeCql;
@@ -139,9 +141,8 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
     @Override
     public List<RuleDescriptor> getAllRules(RuleCriteria ruleCriteria) throws APIAuthenticationException {
         List<RuleDescriptor> rules = ruleManifest.getRules();
-        AndFilter andFilter = new AndFilter(ruleCriteria.getFilters());
 
-        return new ArrayList<>(andFilter.apply(rules));
+        return ruleCriteria.applyFilters(rules);
 
     }
 

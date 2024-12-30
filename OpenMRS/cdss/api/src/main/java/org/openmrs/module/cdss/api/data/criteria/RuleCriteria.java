@@ -1,20 +1,20 @@
 package org.openmrs.module.cdss.api.data.criteria;
 
+import org.openmrs.module.cdss.api.data.RuleDescriptor;
 import org.openmrs.module.cdss.api.data.RuleRole;
 import org.openmrs.module.cdss.api.data.criteria.filter.*;
+import org.openmrs.module.cdss.api.data.criteria.projection.RuleProjection;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 
 
 public class RuleCriteria {
-    public String libraryName;
-    String libraryVersion;
-    String id;
-    RuleRole role;
-    Boolean enabled;
-
-
+    protected String libraryName;
+    protected String libraryVersion;
+    protected String id;
+    protected RuleRole role;
+    protected Boolean enabled;
 
 
     public RuleCriteria() {
@@ -75,25 +75,50 @@ public class RuleCriteria {
 
     }
 
-    public Collection<RuleFilter> getFilters(){
+    private List<RuleFilter> getFilters() {
         ArrayList<RuleFilter> filters = new ArrayList<RuleFilter>();
 
-        if (id != null){
+        if (id != null) {
             filters.add(new IdFilter(id));
         }
-        if (libraryName != null){
+        if (libraryName != null) {
             filters.add(new LibraryNameFilter(libraryName));
         }
-        if (libraryVersion != null){
+        if (libraryVersion != null) {
             filters.add(new LibraryVersionFilter(libraryVersion));
         }
-        if (role != null){
+        if (role != null) {
             filters.add(new RuleRoleFilter(role));
         }
-        if (enabled != null){
+        if (enabled != null) {
             filters.add(new EnabledFilter(enabled));
         }
         return filters;
+    }
+
+
+    public List<RuleDescriptor> applyFilters(List<RuleDescriptor> rules) {
+        if (rules == null) {
+            return new ArrayList<>();
+        }
+        List<RuleFilter> filterList = getFilters();
+
+        List<RuleDescriptor> filtered = new ArrayList<>(rules);
+        for (RuleFilter filter : filterList) {
+            filtered = filter.apply(filtered);
+        }
+        return filtered;
+    }
+
+    public <P> List<P> applyProjection(List<RuleDescriptor> rules, RuleProjection<P> projection) {
+
+        if (rules == null) {
+            return null;
+        }
+        if (projection == null) {
+            return null;
+        }
+        return projection.apply(rules);
     }
 
 

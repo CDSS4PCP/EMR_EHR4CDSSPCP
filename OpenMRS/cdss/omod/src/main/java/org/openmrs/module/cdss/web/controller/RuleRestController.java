@@ -6,12 +6,10 @@ import org.apache.log4j.Logger;
 import org.openmrs.api.APIAuthenticationException;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.module.cdss.api.RuleManagerService;
-import org.openmrs.module.cdss.api.data.ModifyRuleRequest;
-import org.openmrs.module.cdss.api.data.ParamDescriptor;
-import org.openmrs.module.cdss.api.data.RuleIdentifierType;
-import org.openmrs.module.cdss.api.data.RuleRole;
+import org.openmrs.module.cdss.api.data.*;
 import org.openmrs.module.cdss.api.data.criteria.RuleCriteria;
 import org.openmrs.module.cdss.api.data.criteria.projection.IdProjection;
+import org.openmrs.module.cdss.api.data.criteria.projection.LibraryNameProjection;
 import org.openmrs.module.cdss.api.data.criteria.projection.LibraryNameVersionProjection;
 import org.openmrs.module.cdss.api.data.criteria.projection.RuleProjection;
 import org.openmrs.module.cdss.api.exception.RuleNotFoundException;
@@ -78,12 +76,15 @@ public class RuleRestController extends CdssRestController {
 
 
     @GetMapping(path = "/rule.form", produces = {"application/json"})
-    public ResponseEntity<List<String>> getRules(@RequestParam(required = false) Boolean allRules, @RequestParam(required = false) String role, @RequestParam(required = false) Boolean showNames) throws APIAuthenticationException {
+    public ResponseEntity<List<String>> getRules(@RequestParam(required = false) Boolean allRules, @RequestParam(required = false) String role, @RequestParam(required = false) Boolean showNames, @RequestParam(required = false) Boolean showVersions) throws APIAuthenticationException {
 //        checkAuthorizationAndPrivilege();
 
 
         if (showNames == null) {
             showNames = false;
+        }
+        if (showVersions == null){
+            showVersions = false;
         }
 
         RuleCriteria criteria = new RuleCriteria();
@@ -95,13 +96,19 @@ public class RuleRestController extends CdssRestController {
         if (role != null) {
             criteria.setRole(RuleRole.valueOf(role.toUpperCase()));
         }
-        RuleProjection<String> project = new IdProjection();
+        RuleProjection<String> projection = new IdProjection();
 
         if (showNames != null && showNames) {
-            project = new LibraryNameVersionProjection();
+            projection = new LibraryNameProjection();
         }
-        ArrayList<String> s = new ArrayList<>(project.apply(ruleManagerService.getAllRules(criteria)));
+        if (showVersions != null && showVersions) {
+            projection = new LibraryNameVersionProjection();
+        }
+        List<RuleDescriptor> rules = ruleManagerService.getAllRules(criteria);
+        List<String> s =  criteria.applyProjection(rules, projection);
+
         return new ResponseEntity<>(s, HttpStatus.OK);
+
 
 
 //        checkAuthorizationAndPrivilege();

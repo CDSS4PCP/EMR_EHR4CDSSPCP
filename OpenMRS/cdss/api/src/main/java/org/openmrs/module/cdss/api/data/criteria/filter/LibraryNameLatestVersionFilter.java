@@ -5,6 +5,7 @@ import org.openmrs.module.cdss.api.data.RuleDescriptor;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 public class LibraryNameLatestVersionFilter extends RuleFilter {
 
@@ -16,16 +17,16 @@ public class LibraryNameLatestVersionFilter extends RuleFilter {
     }
 
     @Override
-    public Collection<RuleDescriptor> apply(Collection<RuleDescriptor> rules) {
-        Collection<RuleDescriptor> newCollection = nameFilter.apply(rules);
-        if (newCollection.size() <= 1) {
-            return newCollection;
+    public List<RuleDescriptor> apply(List<RuleDescriptor> rules) {
+        List<RuleDescriptor> newList = nameFilter.apply(rules);
+        if (newList.size() <= 1) {
+            return newList;
         }
 
         String greatestLexographicalVersion = "";
         RuleDescriptor latestVersion = null;
 
-        for (RuleDescriptor rule : newCollection) {
+        for (RuleDescriptor rule : newList) {
             if (rule.getVersion().compareTo(greatestLexographicalVersion) > 0) {
                 latestVersion = rule;
                 greatestLexographicalVersion = rule.getVersion();
