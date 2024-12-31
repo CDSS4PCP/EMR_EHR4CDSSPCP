@@ -10,12 +10,7 @@ import java.util.stream.Collectors;
 public class SimpleDerivedFromFilter extends RuleFilter {
     String derivedId;
 
-    Collection<RuleDescriptor> searchList;
 
-    public SimpleDerivedFromFilter(String derivedId, boolean deepDerived, Collection<RuleDescriptor> searchList) {
-        this.derivedId = derivedId;
-        this.searchList = searchList;
-    }
 
     public SimpleDerivedFromFilter(String derivedId) {
         this.derivedId = derivedId;
@@ -23,7 +18,7 @@ public class SimpleDerivedFromFilter extends RuleFilter {
 
     @Override
     public List<RuleDescriptor> apply(List<RuleDescriptor> rules) {
-        return rules.stream().filter(e -> e.getDerivedFrom().equals(derivedId)).collect(Collectors.toList());
+        return rules.stream().filter(e -> derivedId.equals(e.getDerivedFrom())).collect(Collectors.toList());
 
     }
 
