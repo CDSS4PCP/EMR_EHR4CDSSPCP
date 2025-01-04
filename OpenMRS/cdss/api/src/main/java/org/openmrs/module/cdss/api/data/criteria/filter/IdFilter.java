@@ -14,6 +14,10 @@ public class IdFilter extends RuleFilter {
 
     @Override
     public List<RuleDescriptor> apply(List<RuleDescriptor> rules) {
-        return rules.stream().filter(e -> id.equals(e.getId())).collect(Collectors.toList());
+        return rules.stream().filter(e -> {
+            if (e != null)
+                return id.equals(e.getId());
+            return false;
+        }).collect(Collectors.toList());
     }
 }

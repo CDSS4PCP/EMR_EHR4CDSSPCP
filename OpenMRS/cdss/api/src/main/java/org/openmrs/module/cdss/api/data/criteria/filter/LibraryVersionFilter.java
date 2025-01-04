@@ -2,7 +2,6 @@ package org.openmrs.module.cdss.api.data.criteria.filter;
 
 import org.openmrs.module.cdss.api.data.RuleDescriptor;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -15,6 +14,10 @@ public class LibraryVersionFilter extends RuleFilter {
 
     @Override
     public List<RuleDescriptor> apply(List<RuleDescriptor> rules) {
-        return rules.stream().filter(e -> e.getVersion().equals(libraryVersion)).collect(Collectors.toList());
+        return rules.stream().filter(e -> {
+            if (e != null)
+                return e.getVersion().equals(libraryVersion);
+            return false;
+        }).collect(Collectors.toList());
     }
 }

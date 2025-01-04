@@ -2,8 +2,8 @@ package org.openmrs.module.cdss.api;
 
 import org.openmrs.api.APIAuthenticationException;
 import org.openmrs.module.cdss.api.data.*;
-import org.openmrs.module.cdss.api.exception.RuleNotFoundException;
 import org.openmrs.module.cdss.api.data.criteria.RuleCriteria;
+import org.openmrs.module.cdss.api.exception.RuleNotFoundException;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -31,24 +31,35 @@ public interface RuleManagerService extends CdssVaccineService {
 //    List<String> getEnabledRules(RuleRole role) throws APIAuthenticationException;
 
     //    @Authorized({CDSSConfig.MODULE_PRIVILEGE})
-    List<String> getEnabledRules(RuleRole role, RuleIdentifierType identifierType) throws APIAuthenticationException;
+    List<String> getEnabledRules(RuleRole role) throws APIAuthenticationException;
 
 
     // TODO Change methods to utilize version as well as ruleId
 //    @Authorized({CDSSConfig.MODULE_PRIVILEGE})
-    String getElmRule(String ruleId, RuleIdentifierType identifierType) throws APIAuthenticationException, RuleNotFoundException, FileNotFoundException;
+    String getElmRuleById(String ruleId) throws APIAuthenticationException, RuleNotFoundException, FileNotFoundException;
 
     //    @Authorized({CDSSConfig.MODULE_PRIVILEGE})
-    String getCqlRule(String ruleId, RuleIdentifierType identifierType) throws APIAuthenticationException, RuleNotFoundException, FileNotFoundException;
+    String getCqlRuleById(String ruleId) throws APIAuthenticationException, RuleNotFoundException, FileNotFoundException;
+
+    String getElmRuleByName(String ruleName) throws APIAuthenticationException, RuleNotFoundException, FileNotFoundException;
+
+    //    @Authorized({CDSSConfig.MODULE_PRIVILEGE})
+    String getCqlRuleByName(String ruleName) throws APIAuthenticationException, RuleNotFoundException, FileNotFoundException;
+
+    String getElmRuleByNameVersion(String ruleName, String version) throws APIAuthenticationException, RuleNotFoundException, FileNotFoundException;
+
+    //    @Authorized({CDSSConfig.MODULE_PRIVILEGE})
+    String getCqlRuleByNameVersion(String ruleName, String version) throws APIAuthenticationException, RuleNotFoundException, FileNotFoundException;
+
 
     //    @Authorized({CDSSConfig.MODULE_PRIVILEGE})
     RuleManifest getRuleManifest() throws APIAuthenticationException;
 
     //    @Authorized({CDSSConfig.MODULE_PRIVILEGE})
-    Boolean enableRule(String ruleId, RuleIdentifierType identifierType) throws APIAuthenticationException, RuleNotFoundException, FileNotFoundException;
+    Boolean enableRule(String ruleId) throws APIAuthenticationException, RuleNotFoundException, FileNotFoundException;
 
     //    @Authorized({CDSSConfig.MODULE_PRIVILEGE})
-    Boolean disableRule(String ruleId, RuleIdentifierType identifierType) throws APIAuthenticationException, RuleNotFoundException, FileNotFoundException;
+    Boolean disableRule(String ruleId) throws APIAuthenticationException, RuleNotFoundException, FileNotFoundException;
 
     //    @Authorized({CDSSConfig.MODULE_PRIVILEGE})
     Boolean modifyRule(String ruleId, Map<String, ParamDescriptor> changedParameters) throws IOException;
