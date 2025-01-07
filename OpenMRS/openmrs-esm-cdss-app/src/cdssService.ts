@@ -27,7 +27,7 @@ async function loadPatient(patientId) {
 }
 
 async function loadRule(ruleId) {
-  const url = `/cdss/elm-rule/${ruleId}.form`;
+  const url = `/cdss/elm-rule/idOrName/${ruleId}.form`;
   // if (!ruleId.endsWith(".json")) {
   //   url = `/cdss/rule/${ruleId}.json`;
   // }
@@ -40,7 +40,7 @@ async function loadRule(ruleId) {
 }
 
 async function loadCqlRule(ruleId) {
-  const url = `/cdss/cql-rule/${ruleId}.form`;
+  const url = `/cdss/cql-rule/idOrName/${ruleId}.form`;
   // if (!ruleId.endsWith(".json")) {
   //   url = `/cdss/rule/${ruleId}.json`;
   // }

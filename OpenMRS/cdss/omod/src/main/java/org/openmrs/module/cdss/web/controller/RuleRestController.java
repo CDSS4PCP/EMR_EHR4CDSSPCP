@@ -36,6 +36,41 @@ public class RuleRestController extends CdssRestController {
     protected RuleManagerService ruleManagerService;
     Logger log = Logger.getLogger(RuleRestController.class);
 
+
+    @GetMapping(path = {"/elm-rule/idOrName/{ruleId}.form"}, produces = {"application/json"})
+    public ResponseEntity<String> getElmRuleByIdOrName(@PathVariable(value = "ruleId") String ruleId, @RequestParam(value = "version", required = false) String version) throws APIAuthenticationException {
+//        checkAuthorizationAndPrivilege();
+
+        try {
+            String rule = ruleManagerService.getElmRuleById(ruleId);
+            return ResponseEntity.ok(rule);
+        } catch (NullPointerException e) {
+            return new ResponseEntity<>("Rule " + ruleId + " Not found", HttpStatus.NOT_FOUND);
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (RuleNotFoundException e) {
+            try {
+                String rule;
+                if (version == null) {
+                    rule = ruleManagerService.getElmRuleByName(ruleId);
+                }
+                else {
+                    rule = ruleManagerService.getElmRuleByNameVersion(ruleId, version);
+                }
+                return ResponseEntity.ok(rule);
+            } catch (RuleNotFoundException e2) {
+                throw new RuntimeException(e);
+
+            } catch (FileNotFoundException ex) {
+                throw new RuntimeException(ex);
+            }
+
+
+//            throw new RuntimeException(e);
+        }
+    }
+
+
     @GetMapping(path = {"/elm-rule/id/{ruleId}.form", "/elm-rule/{ruleId}.form"}, produces = {"application/json"})
     public ResponseEntity<String> getElmRuleById(@PathVariable(value = "ruleId") String ruleId) throws APIAuthenticationException {
 //        checkAuthorizationAndPrivilege();
@@ -48,18 +83,7 @@ public class RuleRestController extends CdssRestController {
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         } catch (RuleNotFoundException e) {
-            try {
-                String rule = ruleManagerService.getElmRuleByName(ruleId);
-                return ResponseEntity.ok(rule);
-            } catch (RuleNotFoundException e2) {
-                throw new RuntimeException(e);
-
-            } catch (FileNotFoundException ex) {
-                throw new RuntimeException(ex);
-            }
-
-
-//            throw new RuntimeException(e);
+            throw new RuntimeException(e);
         }
     }
 
@@ -115,6 +139,39 @@ public class RuleRestController extends CdssRestController {
             return ResponseEntity.ok(rule);
         } catch (NullPointerException | RuleNotFoundException | FileNotFoundException e) {
             return new ResponseEntity<>(version != null ? "Rule with libraryName=" + libraryName + " and version=" + version + " Not found" : "Rule with libraryName=" + libraryName + " Not found", HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @GetMapping(path = {"/cql-rule/idOrName/{ruleId}.form", "/cql-rule/{ruleId}.form"}, produces = {"application/json"})
+    public ResponseEntity<String> getCqlRuleByIdOrName(@PathVariable(value = "ruleId") String ruleId, @RequestParam(value = "version", required = false) String version) throws APIAuthenticationException {
+//        checkAuthorizationAndPrivilege();
+
+        try {
+            String rule = ruleManagerService.getCqlRuleById(ruleId);
+            return ResponseEntity.ok(rule);
+        } catch (NullPointerException e) {
+            return new ResponseEntity<>("Rule " + ruleId + " Not found", HttpStatus.NOT_FOUND);
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (RuleNotFoundException e) {
+            try {
+                String rule;
+                if (version == null) {
+                  rule = ruleManagerService.getCqlRuleByName(ruleId);
+                }
+                else {
+                    rule = ruleManagerService.getCqlRuleByNameVersion(ruleId, version);
+                }
+                return ResponseEntity.ok(rule);
+            } catch (RuleNotFoundException e2) {
+                throw new RuntimeException(e);
+
+            } catch (FileNotFoundException ex) {
+                throw new RuntimeException(ex);
+            }
+
+
+//            throw new RuntimeException(e);
         }
     }
 

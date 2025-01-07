@@ -61,6 +61,13 @@
       "route": "cdss/edit",
       "online": true,
       "offline": true
+    },
+
+    {
+      "component": "debugPage",
+      "route": "cdss/debug",
+      "online": true,
+      "offline": true
     }
   ]
 }

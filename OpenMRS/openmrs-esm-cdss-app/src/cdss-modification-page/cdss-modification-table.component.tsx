@@ -39,7 +39,6 @@ async function postRuleChange(ruleId, parameterChanges, eventEmitter) {
     params: changes,
     rule: {
       id: ruleId,
-      version: "1",
     },
   };
 
@@ -52,6 +51,10 @@ async function postRuleChange(ruleId, parameterChanges, eventEmitter) {
       });
       if (response.status == 200) {
         eventEmitter.emit("modificationSucceeded", {
+          ruleId: ruleId,
+          parameterChanges: parameterChanges,
+        });
+        eventEmitter.emit("parameterReset", {
           ruleId: ruleId,
           parameterChanges: parameterChanges,
         });
