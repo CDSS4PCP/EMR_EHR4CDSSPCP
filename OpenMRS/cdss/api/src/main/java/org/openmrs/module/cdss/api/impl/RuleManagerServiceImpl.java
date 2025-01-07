@@ -242,7 +242,7 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
 
 
     @Override
-    public Boolean enableRule(String ruleId) throws APIAuthenticationException, RuleNotFoundException {
+    public Boolean enableRuleById(String ruleId) throws APIAuthenticationException, RuleNotFoundException {
         RuleDescriptor descriptor = getRuleDescriptorById(ruleId);
 
         descriptor.setEnabled(true);
@@ -250,12 +250,49 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
     }
 
     @Override
-    public Boolean disableRule(String ruleId) throws APIAuthenticationException, RuleNotFoundException, FileNotFoundException {
+    public Boolean enableRuleByName(String name) throws APIAuthenticationException, RuleNotFoundException {
+        RuleDescriptor descriptor = getRuleDescriptorByName(name);
+
+        descriptor.setEnabled(true);
+        return true;
+    }
+
+
+    @Override
+    public Boolean enableRuleByNameVersion(String name, String version) throws APIAuthenticationException, RuleNotFoundException {
+        RuleDescriptor descriptor = getRuleDescriptorByName(name, version);
+
+        descriptor.setEnabled(true);
+        return true;
+    }
+
+    @Override
+    public Boolean disableRuleById(String ruleId) throws APIAuthenticationException, RuleNotFoundException, FileNotFoundException {
         RuleDescriptor descriptor = getRuleDescriptorById(ruleId);
 
         descriptor.setEnabled(false);
         return true;
     }
+
+
+    @Override
+    public Boolean disableRuleByName(String name) throws APIAuthenticationException, RuleNotFoundException, FileNotFoundException {
+        RuleDescriptor descriptor = getRuleDescriptorByName(name);
+
+        descriptor.setEnabled(false);
+        return true;
+    }
+
+
+
+    @Override
+    public Boolean disableRuleByNameVersion(String name, String version) throws APIAuthenticationException, RuleNotFoundException, FileNotFoundException {
+        RuleDescriptor descriptor = getRuleDescriptorByName(name, version);
+
+        descriptor.setEnabled(false);
+        return true;
+    }
+
 
 
     /**
@@ -264,12 +301,32 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
      * @param ruleId The identifier of the rule to check for existence.
      * @return true if the rule exists, false otherwise.
      */
-    private boolean doesRuleExist(String ruleId, RuleIdentifierType identifierType) {
-        if (identifierType == RuleIdentifierType.RULE_ID)
-            return ruleManifest.getRules().stream().anyMatch(e -> e.getId().equals(ruleId));
-        else if (identifierType == RuleIdentifierType.LIBRARY_NAME)
-            return ruleManifest.getRules().stream().anyMatch(e -> e.getLibraryName().equals(ruleId));
-        return false;
+    private boolean doesRuleExistById(String ruleId) {
+
+        RuleCriteria criteria = new RuleCriteria();
+        criteria.setId(ruleId);
+        List<RuleDescriptor> rules = getAllRules(criteria);
+
+        return !rules.isEmpty();
+    }
+
+    private boolean doesRuleExistByName(String name) {
+
+        RuleCriteria criteria = new RuleCriteria();
+        criteria.setLibraryName(name);
+        List<RuleDescriptor> rules = getAllRules(criteria);
+
+        return !rules.isEmpty();
+    }
+
+    private boolean doesRuleExistByNameVersion(String name, String version) {
+
+        RuleCriteria criteria = new RuleCriteria();
+        criteria.setLibraryName(name);
+        criteria.setLibraryVersion(version);
+        List<RuleDescriptor> rules = getAllRules(criteria);
+
+        return !rules.isEmpty();
     }
 
 
@@ -428,113 +485,6 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
 
 
     /**
-     * Creates a new rule with the specified parameters, saving its CQL and ELM content to files.
-     * If a rule with the same ID already exists, a new unique ID is generated.
-     *
-     * @param ruleId      The identifier for the new rule.
-     * @param version     The version of the rule.
-     * @param description A description of the rule.
-     * @param params      A map of parameters associated with the rule.
-     * @param role        The role of the rule, either SUPPORT or RULE.
-     * @param cql         The CQL content of the rule.
-     * @param elm         The ELM content of the rule.
-     * @return True if the rule is successfully created and added to the manifest, false otherwise.
-     * @throws IOException      If an I/O error occurs during file operations.
-     * @throws RuntimeException If any of the required parameters (ruleId, cql, elm) are null.
-     */
-    private Boolean createRule(String ruleId, String description, Map<String, ParamDescriptor> params, RuleRole role, String cql, String elm) throws IOException {
-
-        if (ruleId == null) {
-            throw new RuntimeException("Rule id is null");
-        }
-        if (cql == null) {
-            throw new RuntimeException("CQL is null");
-        }
-        if (elm == null) {
-            throw new RuntimeException("Elm is null");
-        }
-        RuleDescriptor originalRule = getRuleDescriptorById(ruleId);
-        if (originalRule == null) {
-            throw new RuleNotFoundException(ruleId);
-        }
-
-
-        // TODO Change to timestamp
-        int count = 1;
-        String newLibraryName = originalRule.getLibraryName() + "_" + count;
-        while (doesRuleExist(newLibraryName, RuleIdentifierType.LIBRARY_NAME)) {
-            newLibraryName = newLibraryName + "_" + count;
-            count++;
-        }
-
-        String newVersion = originalRule.getVersion();
-
-        String cqlFilePath = String.format("cql/%s.cql", newLibraryName);
-        String elmFilePath = String.format("elm/%s.json", newLibraryName);
-
-        String newRuleId = UUID.randomUUID().toString();
-        RuleDescriptor descriptor = new RuleDescriptor(newRuleId, newLibraryName, newVersion, cqlFilePath, elmFilePath, role);
-        descriptor.setEnabled(true);
-        descriptor.setParams(params);
-        descriptor.setDescription(description);
-        descriptor.setDerivedFrom(ruleId);
-
-        disableRule(ruleId);
-
-
-        File cqlFile = new File(RULE_DIRECTORY_PATH + cqlFilePath);
-        log.debug("cqlFilePath: " + cqlFile.getPath());
-
-        if (cqlFile.exists()) {
-            cqlFile.delete();
-        }
-        if (!cqlFile.exists()) {
-            Files.createDirectories(cqlFile.getParentFile().toPath());
-            cqlFile.createNewFile();
-        }
-
-        FileWriter cqlFileWriter = new FileWriter(cqlFile);
-
-        cqlFileWriter.write(cql);
-        cqlFileWriter.close();
-
-        File elmFile = new File(RULE_DIRECTORY_PATH + elmFilePath);
-        log.debug("elmFilePath: " + elmFile.getPath());
-        log.debug("elmFile.exists(): " + elmFile.exists());
-
-        if (elmFile.exists()) {
-            Boolean success = elmFile.delete();
-            log.debug("Success in deleting " + elmFile.getAbsoluteFile() + " : " + success);
-        }
-        if (!elmFile.exists()) {
-            log.debug("Creating new" + elmFile.getAbsoluteFile());
-
-            Files.createDirectories(elmFile.getParentFile().toPath());
-            Boolean success = elmFile.createNewFile();
-            log.debug("Success in creating " + elmFile.getAbsoluteFile() + " : " + success);
-        }
-
-
-        FileWriter elmFileWriter = new FileWriter(elmFile);
-
-        elmFileWriter.write(elm);
-        elmFileWriter.close();
-
-        Boolean addSuccess = ruleManifest.addRule(descriptor);
-        if (addSuccess) {
-            log.debug("Saving rule " + newRuleId + " --> " + descriptor.getLibraryName() + " to " + RULE_DIRECTORY_PATH);
-
-            writeManifest();
-        } else {
-            log.error("Did not save rule " + newRuleId + " --> " + descriptor.getLibraryName() + " to " + RULE_DIRECTORY_PATH);
-        }
-        return addSuccess;
-
-
-    }
-
-
-    /**
      * Modifies an existing rule by updating its parameters and translating its CQL content to ELM.
      *
      * @param originalRuleId    The identifier of the rule to be modified.
@@ -595,6 +545,115 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
 
 
     }
+
+
+    /**
+     * Creates a new rule with the specified parameters, saving its CQL and ELM content to files.
+     * If a rule with the same ID already exists, a new unique ID is generated.
+     *
+     * @param ruleId      The identifier for the new rule.
+     * @param version     The version of the rule.
+     * @param description A description of the rule.
+     * @param params      A map of parameters associated with the rule.
+     * @param role        The role of the rule, either SUPPORT or RULE.
+     * @param cql         The CQL content of the rule.
+     * @param elm         The ELM content of the rule.
+     * @return True if the rule is successfully created and added to the manifest, false otherwise.
+     * @throws IOException      If an I/O error occurs during file operations.
+     * @throws RuntimeException If any of the required parameters (ruleId, cql, elm) are null.
+     */
+    private Boolean createRule(String ruleId, String description, Map<String, ParamDescriptor> params, RuleRole role, String cql, String elm) throws IOException {
+
+        if (ruleId == null) {
+            throw new RuntimeException("Rule id is null");
+        }
+        if (cql == null) {
+            throw new RuntimeException("CQL is null");
+        }
+        if (elm == null) {
+            throw new RuntimeException("Elm is null");
+        }
+        RuleDescriptor originalRule = getRuleDescriptorById(ruleId);
+        if (originalRule == null) {
+            throw new RuleNotFoundException(ruleId);
+        }
+
+
+        // TODO Change to timestamp
+        int count = 1;
+        String newLibraryName = originalRule.getLibraryName() + "_" + count;
+        while (doesRuleExistByName(newLibraryName)) {
+            newLibraryName = newLibraryName + "_" + count;
+            count++;
+        }
+
+        String newVersion = originalRule.getVersion();
+
+        String cqlFilePath = String.format("cql/%s.cql", newLibraryName);
+        String elmFilePath = String.format("elm/%s.json", newLibraryName);
+
+        String newRuleId = UUID.randomUUID().toString();
+        RuleDescriptor descriptor = new RuleDescriptor(newRuleId, newLibraryName, newVersion, cqlFilePath, elmFilePath, role);
+        descriptor.setEnabled(true);
+        descriptor.setParams(params);
+        descriptor.setDescription(description);
+        descriptor.setDerivedFrom(ruleId);
+
+        disableRuleById(ruleId);
+
+
+        File cqlFile = new File(RULE_DIRECTORY_PATH + cqlFilePath);
+        log.debug("cqlFilePath: " + cqlFile.getPath());
+
+        if (cqlFile.exists()) {
+            cqlFile.delete();
+        }
+        if (!cqlFile.exists()) {
+            Files.createDirectories(cqlFile.getParentFile().toPath());
+            cqlFile.createNewFile();
+        }
+
+        FileWriter cqlFileWriter = new FileWriter(cqlFile);
+
+        cqlFileWriter.write(cql);
+        cqlFileWriter.close();
+
+        File elmFile = new File(RULE_DIRECTORY_PATH + elmFilePath);
+        log.debug("elmFilePath: " + elmFile.getPath());
+        log.debug("elmFile.exists(): " + elmFile.exists());
+
+        if (elmFile.exists()) {
+            Boolean success = elmFile.delete();
+            log.debug("Success in deleting " + elmFile.getAbsoluteFile() + " : " + success);
+        }
+        if (!elmFile.exists()) {
+            log.debug("Creating new" + elmFile.getAbsoluteFile());
+
+            Files.createDirectories(elmFile.getParentFile().toPath());
+            Boolean success = elmFile.createNewFile();
+            log.debug("Success in creating " + elmFile.getAbsoluteFile() + " : " + success);
+        }
+
+
+        FileWriter elmFileWriter = new FileWriter(elmFile);
+
+        elmFileWriter.write(elm);
+        elmFileWriter.close();
+
+        Boolean addSuccess = ruleManifest.addRule(descriptor);
+        if (addSuccess) {
+            log.debug("Saving rule " + newRuleId + " --> " + descriptor.getLibraryName() + " to " + RULE_DIRECTORY_PATH);
+
+            writeManifest();
+        } else {
+            log.error("Did not save rule " + newRuleId + " --> " + descriptor.getLibraryName() + " to " + RULE_DIRECTORY_PATH);
+        }
+        return addSuccess;
+
+
+    }
+
+
 
 
     /**

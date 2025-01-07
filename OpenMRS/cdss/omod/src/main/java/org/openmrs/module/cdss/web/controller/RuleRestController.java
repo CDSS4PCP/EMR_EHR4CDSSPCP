@@ -53,8 +53,7 @@ public class RuleRestController extends CdssRestController {
                 String rule;
                 if (version == null) {
                     rule = ruleManagerService.getElmRuleByName(ruleId);
-                }
-                else {
+                } else {
                     rule = ruleManagerService.getElmRuleByNameVersion(ruleId, version);
                 }
                 return ResponseEntity.ok(rule);
@@ -157,9 +156,8 @@ public class RuleRestController extends CdssRestController {
             try {
                 String rule;
                 if (version == null) {
-                  rule = ruleManagerService.getCqlRuleByName(ruleId);
-                }
-                else {
+                    rule = ruleManagerService.getCqlRuleByName(ruleId);
+                } else {
                     rule = ruleManagerService.getCqlRuleByNameVersion(ruleId, version);
                 }
                 return ResponseEntity.ok(rule);
@@ -244,12 +242,12 @@ public class RuleRestController extends CdssRestController {
     }
 
 
-    @PostMapping(path = "/enable-rule/{ruleId}.form", produces = {"application/json"})
-    public ResponseEntity<String> enableRule(@PathVariable(value = "ruleId") String ruleId) throws APIAuthenticationException {
+    @PostMapping(path = {"/enable-rule/id/{ruleId}.form", "/enable-rule/{ruleId}.form"}, produces = {"application/json"})
+    public ResponseEntity<String> enableRuleById(@PathVariable(value = "ruleId") String ruleId) throws APIAuthenticationException {
 //        checkAuthorizationAndPrivilege();
 
         try {
-            ruleManagerService.enableRule(ruleId);
+            ruleManagerService.enableRuleById(ruleId);
         } catch (RuleNotFoundException e) {
             throw new RuntimeException(e);
         } catch (FileNotFoundException e) {
@@ -258,18 +256,57 @@ public class RuleRestController extends CdssRestController {
         return ResponseEntity.ok("true");
     }
 
-    @PostMapping(path = "/disable-rule/{ruleId}.form", produces = {"application/json"})
-    public ResponseEntity<String> disableRule(@PathVariable(value = "ruleId") String ruleId) throws APIAuthenticationException {
+    @PostMapping(path = {"/enable-rule/name/{libraryName}.form"}, produces = {"application/json"})
+    public ResponseEntity<String> enableRuleByName(@PathVariable(value = "libraryName") String libraryName, @RequestParam(value = "version", required = false) String version) throws APIAuthenticationException {
 //        checkAuthorizationAndPrivilege();
 
         try {
-            ruleManagerService.disableRule(ruleId);
+            Boolean success;
+            if (version == null) {
+                success = ruleManagerService.enableRuleByName(libraryName);
+            } else {
+                success = ruleManagerService.enableRuleByNameVersion(libraryName, version);
+            }
+            return ResponseEntity.ok(success + "");
+
+        } catch (RuleNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @PostMapping(path = {"/disable-rule/id/{ruleId}.form", "/disable-rule/{ruleId}.form"}, produces = {"application/json"})
+    public ResponseEntity<String> disableRuleById(@PathVariable(value = "ruleId") String ruleId) throws APIAuthenticationException {
+//        checkAuthorizationAndPrivilege();
+
+        try {
+            ruleManagerService.disableRuleById(ruleId);
         } catch (RuleNotFoundException e) {
             throw new RuntimeException(e);
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
         return ResponseEntity.ok("true");
+    }
+
+    @PostMapping(path = {"/disable-rule/name/{libraryName}.form"}, produces = {"application/json"})
+    public ResponseEntity<String> disableRuleByName(@PathVariable(value = "libraryName") String libraryName, @RequestParam(value = "version", required = false) String version) throws APIAuthenticationException {
+//        checkAuthorizationAndPrivilege();
+
+        try {
+            Boolean success;
+            if (version == null) {
+                success = ruleManagerService.enableRuleByName(libraryName);
+            } else {
+                success = ruleManagerService.enableRuleByNameVersion(libraryName, version);
+            }
+            return ResponseEntity.ok(success + "");
+        } catch (RuleNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 

@@ -1,7 +1,10 @@
 package org.openmrs.module.cdss.api;
 
 import org.openmrs.api.APIAuthenticationException;
-import org.openmrs.module.cdss.api.data.*;
+import org.openmrs.module.cdss.api.data.ParamDescriptor;
+import org.openmrs.module.cdss.api.data.RuleDescriptor;
+import org.openmrs.module.cdss.api.data.RuleManifest;
+import org.openmrs.module.cdss.api.data.RuleRole;
 import org.openmrs.module.cdss.api.data.criteria.RuleCriteria;
 import org.openmrs.module.cdss.api.exception.RuleNotFoundException;
 
@@ -56,10 +59,18 @@ public interface RuleManagerService extends CdssVaccineService {
     RuleManifest getRuleManifest() throws APIAuthenticationException;
 
     //    @Authorized({CDSSConfig.MODULE_PRIVILEGE})
-    Boolean enableRule(String ruleId) throws APIAuthenticationException, RuleNotFoundException, FileNotFoundException;
+    Boolean enableRuleById(String ruleId) throws APIAuthenticationException, RuleNotFoundException, FileNotFoundException;
+
+    Boolean enableRuleByName(String name) throws APIAuthenticationException, RuleNotFoundException, FileNotFoundException;
+
+    Boolean enableRuleByNameVersion(String name, String version) throws APIAuthenticationException, RuleNotFoundException, FileNotFoundException;
 
     //    @Authorized({CDSSConfig.MODULE_PRIVILEGE})
-    Boolean disableRule(String ruleId) throws APIAuthenticationException, RuleNotFoundException, FileNotFoundException;
+    Boolean disableRuleById(String ruleId) throws APIAuthenticationException, RuleNotFoundException, FileNotFoundException;
+
+    Boolean disableRuleByName(String name) throws APIAuthenticationException, RuleNotFoundException, FileNotFoundException;
+
+    Boolean disableRuleByNameVersion(String name, String version) throws APIAuthenticationException, RuleNotFoundException, FileNotFoundException;
 
     //    @Authorized({CDSSConfig.MODULE_PRIVILEGE})
     Boolean modifyRule(String ruleId, Map<String, ParamDescriptor> changedParameters) throws IOException;
