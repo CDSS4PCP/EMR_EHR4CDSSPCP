@@ -37,6 +37,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static org.openmrs.module.cdss.CDSSUtil.decodeCql;
 import static org.openmrs.module.cdss.CDSSUtil.encodeCql;
 
 
@@ -284,7 +285,6 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
     }
 
 
-
     @Override
     public Boolean disableRuleByNameVersion(String name, String version) throws APIAuthenticationException, RuleNotFoundException, FileNotFoundException {
         RuleDescriptor descriptor = getRuleDescriptorByName(name, version);
@@ -292,7 +292,6 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
         descriptor.setEnabled(false);
         return true;
     }
-
 
 
     /**
@@ -527,18 +526,18 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
 
         String stringBody = objectMapper.writeValueAsString(modifyRuleRequest);
 
-        log.debug("Created body for injection\n " + stringBody);
+//        log.debug("Created body for injection\n " + stringBody);
         String resultString = callModificationService(modificationServiceUrl + "api/inject", stringBody);
-        log.debug("Got result from injection: " + resultString);
+//        log.debug("Got result from injection: " + resultString);
 
         ModifyRuleRequest result = objectMapper.readValue(resultString, ModifyRuleRequest.class);
         String cql = result.getRule().getCqlContent();
-        log.debug("new cql: " + cql);
+//        log.debug("new cql: " + cql);
 
 
-        log.debug("Translating");
+//        log.debug("Translating");
         String elm = translate(originalRuleId, cql);
-        log.debug("Got result from translation: " + elm);
+//        log.debug("Got result from translation: " + elm);
 
 
         return createRule(originalRuleId, originalRule.getDescription(), changedParameters, RuleRole.RULE, cql, elm);
@@ -603,7 +602,7 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
 
 
         File cqlFile = new File(RULE_DIRECTORY_PATH + cqlFilePath);
-        log.debug("cqlFilePath: " + cqlFile.getPath());
+//        log.debug("cqlFilePath: " + cqlFile.getPath());
 
         if (cqlFile.exists()) {
             cqlFile.delete();
@@ -619,8 +618,8 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
         cqlFileWriter.close();
 
         File elmFile = new File(RULE_DIRECTORY_PATH + elmFilePath);
-        log.debug("elmFilePath: " + elmFile.getPath());
-        log.debug("elmFile.exists(): " + elmFile.exists());
+//        log.debug("elmFilePath: " + elmFile.getPath());
+//        log.debug("elmFile.exists(): " + elmFile.exists());
 
         if (elmFile.exists()) {
             Boolean success = elmFile.delete();
@@ -654,8 +653,6 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
     }
 
 
-
-
     /**
      * Translates a given CQL rule into its corresponding ELM representation by calling an external service.
      *
@@ -673,14 +670,26 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
         String modificationServiceUrl = getRuleModificationServiceUrl();
         HashMap<String, ModifyRuleRequestRuleDescriptor> libraries = new HashMap<>();
         // TODO how to manage dependency libraries?
-//        libraries.put("MMR_Common_Library", new ModifyRuleRequestRuleDescriptor("MMR_Common_Library", "1", encodeCql(getCqlRule("MMR_Common_Library"))));
+
+        RuleDescriptor mmrCommon = getRuleDescriptorByName("MMR_Common_Library");
+        String mmrCommonString = getCqlRuleByName("MMR_Common_Library");
+        String mmrCommonEncoded = encodeCql(mmrCommonString);
+//        log.debug("mmrCommonEncoded -->\n" + mmrCommonEncoded);
+//        log.debug("mmrCommonDecoded -->\n" + decodeCql(mmrCommonEncoded));
+
+        libraries.put("MMR_Common_Library", new ModifyRuleRequestRuleDescriptor(mmrCommon.getId(), mmrCommon.getLibraryName(), mmrCommon.getVersion(), mmrCommonEncoded));
 
         ModifyRuleRequest translateRuleRequest = new ModifyRuleRequest();
-        translateRuleRequest.setRule(new ModifyRuleRequestRuleDescriptor(ruleId, originalRuleDescriptor.getLibraryName(), originalRuleDescriptor.getVersion(), encodeCql(cql)));
+        ModifyRuleRequestRuleDescriptor modifyRuleRequestRuleDescriptor = new ModifyRuleRequestRuleDescriptor(ruleId, originalRuleDescriptor.getLibraryName(), originalRuleDescriptor.getVersion());
+        modifyRuleRequestRuleDescriptor.setCqlContent(mmrCommonString);
+        translateRuleRequest.setRule(modifyRuleRequestRuleDescriptor);
         translateRuleRequest.setLibraries(libraries);
 
 
         String stringBody = objectMapper.writeValueAsString(translateRuleRequest);
+
+
+//        log.debug("Sending this to translation ---> \n\n" + stringBody);
 
         String resultString = callModificationService(modificationServiceUrl + "api/translate", stringBody);
         return resultString;
