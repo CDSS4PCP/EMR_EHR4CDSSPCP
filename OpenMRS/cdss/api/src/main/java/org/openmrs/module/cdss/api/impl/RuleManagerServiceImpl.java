@@ -95,6 +95,7 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
     }
 
 
+
     /**
      * Retrieves an array of IDs for all enabled rules from the rule manifest.
      *

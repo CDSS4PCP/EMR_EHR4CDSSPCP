@@ -319,6 +319,7 @@ public class RuleRestController extends CdssRestController {
     @GetMapping(path = "/rule-manifest.form", produces = {"application/json"})
     public ResponseEntity<String> getRuleManifest() throws APIAuthenticationException, JsonProcessingException {
 //        checkAuthorizationAndPrivilege();
+
         String val = cdssService.getCdssObjectMapper().writeValueAsString(ruleManagerService.getRuleManifest());
 
         return ResponseEntity.ok(val);

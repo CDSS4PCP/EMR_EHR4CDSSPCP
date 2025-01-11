@@ -58,6 +58,7 @@ public interface RuleManagerService extends CdssVaccineService {
     //    @Authorized({CDSSConfig.MODULE_PRIVILEGE})
     RuleManifest getRuleManifest() throws APIAuthenticationException;
 
+
     //    @Authorized({CDSSConfig.MODULE_PRIVILEGE})
     Boolean enableRuleById(String ruleId) throws APIAuthenticationException, RuleNotFoundException, FileNotFoundException;
 
