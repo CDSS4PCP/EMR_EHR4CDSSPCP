@@ -155,19 +155,14 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                rule:
-                  type: object
-                  properties:
-                    id:
-                      type: string
-                    version:
-                      type: string
-                params:
-                  type: object
-                  additionalProperties:
-                    $ref: '#/components/schemas/ParamDescriptor'
+              $ref: '#/components/schemas/ModifyRuleRequest'
+            example:
+              {
+                rule: { id: "fe69e61e-3b51-4fe6-a9e6-1e3b511fe6ba", libraryName: "LibraryOne", version: "1.0.0", content: "bGlicmFyeSBSdWxlT25lCgp1c2luZyBGSElSIHZlcnNpb24gJzQuMC4xJwoKaW5jbHVkZSBGSElSSGVscGVycyB2ZXJzaW9uICc0LjAuMScKCmNvbnRleHQgUGF0aWVudAoKZGVmaW5lICIkTWluaW11bUFnZSI6IDEyCgpkZWZpbmUgSW5Qb3B1bGF0aW9uOiBBZ2VJbk1vbnRocyhQYXRpZW50LmJpcnRoZGF0ZSkgPiAiJE1pbmltdW1BZ2Ui" },
+                params: { "$MinimumAge": { type: "Integer", value: 18 } },
+                libraries: { "LibraryOne": { id: "7ff03626-a2a8-48fc-b036-26a2a898fcaf", libraryName: "LibraryOne", version: "1.0.0", content: "bGlicmFyeSBMaWJyYXJ5T25lCgp1c2luZyBGSElSIHZlcnNpb24gJzQuMC4xJwoKaW5jbHVkZSBGSElSSGVscGVycyB2ZXJzaW9uICc0LjAuMScKCmNvbnRleHQgUGF0aWVudAoKZGVmaW5lIGZ1bmN0aW9uIEdldEFnZSh1bml0IFN0cmluZyk6CiAgICBpZiB1bml0ID0gJ3dlZWsnIHRoZW4KICAgICAgICBBZ2VJbldlZWtzKCkKICAgIGVsc2UgaWYgdW5pdCA9ICdtb250aCcgdGhlbgogICAgICAgIEFnZUluTW9udGhzKCkKICAgIGVsc2UgaWYgdW5pdCA9ICd5ZWFyJyB0aGVuCiAgICAgICAgQWdlSW5ZZWFycygpCiAgICBlbHNlCiAgICAgICAgbnVsbA" } }
+              }
+
       responses:
         200:
           description: Rule modified successfully.
@@ -218,4 +213,41 @@ components:
           description: The default value of the parameter. Must be of the type specified under the "type" property
       required:
         - type
+    ModifyRuleRequest:
+      type: "object"
+      properties:
+        rule:
+          $ref: '#/components/schemas/CqlRule'
+          description: Rule to be modified
+        params:
+          type: "string"
+          additionalProperties:
+            $ref: '#/components/schemas/ParamDescriptor'
+        libraries:
+          type: "string"
+          additionalProperties:
+            type: "object"
+            $ref: "#/components/schemas/CqlRule"
+
+    CqlRule:
+      type: "object"
+      properties:
+        id:
+          type: "string"
+          description: CQL rule library id
+        libraryName:
+          type: "string"
+          description: CQL rule library name
+        version:
+          type: "string"
+          description: CQL rule library version
+        content:
+          type: "string"
+          description: Base64 encoded CQL content
+      required:
+        - id
+        - libraryName
+        - content
+
+
 

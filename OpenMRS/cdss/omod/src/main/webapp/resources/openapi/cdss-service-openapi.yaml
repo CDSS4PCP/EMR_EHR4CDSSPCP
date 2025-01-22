@@ -15,7 +15,7 @@ paths:
             schema:
               $ref: "#/components/schemas/CdssUsage"
               description: JSON string representing the new CdssUsage to be recorded.
-              example: >
+              example:
                 { vaccine: "MMR", patientId: "patientOne", timestamp: [2024, 4, 21, 9, 34, 23], rule: "MMR-Rule-One", recommendations: [], status: "ACCEPTED" }
               required: true
       responses:
