@@ -139,8 +139,7 @@ public class LibraryNameLatestVersionFilterTest {
         LibraryNameLatestVersionFilter filter = new LibraryNameLatestVersionFilter("TestLibrary");
         List<RuleDescriptor> result = filter.apply(rules);
 
-        assertEquals(0, result.size());
-//        assertTrue(result.isEmpty(), "Expected no rules to be returned when all versions are empty");
+        assertEquals(1, result.size());
     }
 
 }

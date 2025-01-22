@@ -1,5 +1,6 @@
 package org.openmrs.module.cdss.api.data.criteria.filter;
 
+import org.apache.maven.artifact.versioning.ComparableVersion;
 import org.openmrs.module.cdss.api.data.RuleDescriptor;
 
 import java.util.ArrayList;
@@ -30,27 +31,35 @@ public class LibraryNameLatestVersionFilter extends RuleFilter {
      */
     @Override
     public List<RuleDescriptor> apply(List<RuleDescriptor> rules) {
+
+
         List<RuleDescriptor> newList = nameFilter.apply(rules);
         if (newList.size() <= 1) {
             return newList;
         }
 
-        String greatestLexicographicalVersion = "";
-        RuleDescriptor latestVersion = null;
+
+        ComparableVersion latestVersion = null;
+        RuleDescriptor latestDescriptor = null;
 
         for (RuleDescriptor rule : newList) {
             if (rule.getVersion() == null) {
                 continue;
             }
-            if (rule.getVersion().compareTo(greatestLexicographicalVersion) > 0) {
-                latestVersion = rule;
-                greatestLexicographicalVersion = rule.getVersion();
+            if (latestVersion == null && rule.getVersion() != null) {
+                latestVersion = new ComparableVersion(rule.getVersion());
+                latestDescriptor = rule;
+            }
+            ComparableVersion newVersion = new ComparableVersion(rule.getVersion());
+            if (newVersion.compareTo(latestVersion) > 0) {
+                latestVersion = newVersion;
+                latestDescriptor = rule;
             }
         }
 
         if (latestVersion == null) {
             return new ArrayList<>();
         }
-        return Collections.singletonList(latestVersion);
+        return Collections.singletonList(latestDescriptor);
     }
 }
