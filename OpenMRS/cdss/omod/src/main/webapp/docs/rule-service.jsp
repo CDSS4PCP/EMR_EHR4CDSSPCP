@@ -13,7 +13,7 @@
 <script>
     window.onload = () => {
         window.ui = SwaggerUIBundle({
-            url: '/openmrs/cdss/docs/rule-service-openapi.form',
+            url: '/openmrs/moduleResources/cdss/openapi/rule-service-openapi.yaml',
             dom_id: '#swagger-ui',
         });
     };

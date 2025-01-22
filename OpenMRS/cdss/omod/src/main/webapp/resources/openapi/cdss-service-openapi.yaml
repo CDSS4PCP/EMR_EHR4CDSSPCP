@@ -1,0 +1,149 @@
+openapi: 3.1.0
+info:
+  title: CDSS Clientside API
+  description: API endpoints for the Clinical Decision Support System (CDSS) for clientside operations.
+  version: 1.0.0
+paths:
+  /openmrs/cdss/record-usage.form:
+    post:
+      summary: Record Cdss usage
+      description: Records the usage of a Clinical Decision Support System (Cdss) based on the provided newUsageString.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CdssUsage"
+              description: JSON string representing the new CdssUsage to be recorded.
+              example: >
+                { vaccine: "MMR", patientId: "patientOne", timestamp: [2024, 4, 21, 9, 34, 23], rule: "MMR-Rule-One", recommendations: [], status: "ACCEPTED" }
+              required: true
+      responses:
+        '200':
+          description: Successfully recorded Cdss usage.
+          content:
+            application/json:
+              schema:
+                type: string
+                description: JSON string of the saved CdssUsage.
+        '500':
+          description: Internal error encountered during processing.
+
+  /openmrs/cdss/usages.form:
+    get:
+      summary: Get Cdss usage records
+      description: Retrieves the list of CdssUsage objects and serializes them into a JSON string.
+      responses:
+        '200':
+          description: Successfully retrieved Cdss usage records.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CdssUsage"
+                  description: CdssUsage object.
+        '500':
+          description: Internal error encountered during processing.
+
+  /openmrs/cdss/RetrieveSvsValueSet.form:
+    get:
+      summary: Retrieve SVS value sets
+      description: Retrieves the valuesets based on the provided id and version.
+      parameters:
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: string
+          description: The unique identifier of the valueset to retrieve.
+        - name: version
+          in: query
+          required: false
+          schema:
+            type: string
+          description: The version of the valueset (optional).
+      responses:
+        '200':
+          description: Successfully retrieved valueset.
+          content:
+            application/xml:
+              schema:
+                type: string
+                description: The content of the retrieved valueset.
+        '500':
+          description: Internal error encountered during processing.
+
+  /openmrs/cdss/RetrieveFhirValueSet/{id}.form:
+    get:
+      summary: Retrieve FHIR value sets
+      description: Retrieves FHIR value sets based on the provided id, version, and offset.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The unique identifier of the value set to retrieve.
+        - name: version
+          in: query
+          required: false
+          schema:
+            type: string
+          description: The version of the value set (optional).
+        - name: offset
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: The offset for pagination (optional).
+      responses:
+        '200':
+          description: Successfully retrieved FHIR value set.
+          content:
+            application/json:
+              schema:
+                type: string
+                description: The content of the retrieved value set.
+        '500':
+          description: Internal error encountered during processing.
+components:
+  schemas:
+    CdssUsage:
+      type: "object"
+      properties:
+        vaccine:
+          type: "string"
+          description: The vaccine which the Cdss service was used for
+        patientId:
+          type: "string"
+          description: The id of the patient which used the Cdss service
+        timestamp:
+          type: "array"
+          description: The time at which the Cdss service was used. Must be an array of integers in the form of return [year, month, day, hour, minute, second];
+        rule:
+          type: "string"
+          description: The id of the rule which used the Cdss service
+        recommendations:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/CdssRecommendation"
+          description: The id of the rule which used the Cdss service
+        status:
+          type: "string"
+          description: The action that was taken as result of the Cdss service
+          enum:
+            - "ROUTINE"
+            - "ACCEPTED"
+            - "DECLINED"
+
+    CdssRecommendation:
+      type: "object"
+      properties:
+        recommendation:
+          type: "string"
+          description: The recommendation that the Cdss service generated
+        priority:
+          type: "number"
+          description: A number representing how crucial this recomendation is
+
