@@ -89,10 +89,10 @@
     <!--    </bean>-->
 
 
-    <bean id="cdss.CdssServiceImpl"
-          class="org.openmrs.module.cdss.api.impl.CdssServiceImpl">
+<!--    <bean id="cdss.CdssServiceImpl"-->
+<!--          class="org.openmrs.module.cdss.api.impl.CdssServiceImpl">-->
 
-    </bean>
+<!--    </bean>-->
 
     <bean id="cdss.ValueSetServiceImpl"
           class="org.openmrs.module.cdss.api.impl.ValueSetServiceImpl">
@@ -147,15 +147,15 @@
         </property>
     </bean>
 
-
-    <bean parent="serviceContext">
-        <property name="moduleService">
-            <list>
-                <value>org.openmrs.module.cdss.api.CDSSService</value>
-                <ref bean="cdss.CdssServiceImpl"/>
-            </list>
-        </property>
-    </bean>
+<!-- This may be causing stalled context load -->
+<!--    <bean parent="serviceContext">-->
+<!--        <property name="moduleService">-->
+<!--            <list>-->
+<!--                <value>org.openmrs.module.cdss.api.CDSSService</value>-->
+<!--                <ref bean="cdss.CdssServiceImpl"/>-->
+<!--            </list>-->
+<!--        </property>-->
+<!--    </bean>-->
 
     <bean parent="serviceContext">
         <property name="moduleService">
@@ -166,13 +166,5 @@
         </property>
     </bean>
 
-    <!--    <bean parent="serviceContext">-->
-    <!--        <property name="moduleService">-->
-    <!--            <list>-->
-    <!--                <value>org.openmrs.module.cdss.api.CDSSService</value>-->
-    <!--                <ref bean="cdss.CDSSServiceImpl"/>-->
-    <!--            </list>-->
-    <!--        </property>-->
-    <!--    </bean>-->
 
 </beans>
