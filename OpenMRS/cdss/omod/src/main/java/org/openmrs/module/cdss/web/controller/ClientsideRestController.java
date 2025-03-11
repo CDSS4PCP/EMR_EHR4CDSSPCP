@@ -30,7 +30,7 @@ public class ClientsideRestController extends CdssRestController {
     @Autowired
     protected CDSSDao dao;
 
-    @Autowired
+//    @Autowired
     protected CDSSService cdssService;
 
     @Autowired

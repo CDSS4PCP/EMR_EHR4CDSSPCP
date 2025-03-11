@@ -12,7 +12,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 public abstract class CdssRestController {
-    @Autowired
+//    @Autowired
     protected CDSSService cdssService;
 
     protected void checkAuthorizationAndPrivilege() {

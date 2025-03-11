@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import org.apache.log4j.Logger;
 import org.openmrs.api.APIAuthenticationException;
 import org.openmrs.api.AdministrationService;
+import org.openmrs.module.cdss.api.CDSSService;
 import org.openmrs.module.cdss.api.RuleManagerService;
 import org.openmrs.module.cdss.api.data.ModifyRuleRequest;
 import org.openmrs.module.cdss.api.data.ParamDescriptor;
@@ -27,6 +28,10 @@ import java.util.Map;
 @RestController
 @RequestMapping("/cdss")
 public class RuleRestController extends CdssRestController {
+
+//    @Autowired
+    protected CDSSService cdssService;
+
     @Autowired
     @Qualifier("adminService")
     protected AdministrationService administrationService;
