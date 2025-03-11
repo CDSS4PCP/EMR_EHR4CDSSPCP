@@ -2,18 +2,21 @@ package org.openmrs.module.cdss.web.controller;
 
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.apache.log4j.Logger;
 import org.openmrs.api.APIAuthenticationException;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.module.cdss.api.CDSSService;
 import org.openmrs.module.cdss.api.RuleManagerService;
-import org.openmrs.module.cdss.api.data.ModifyRuleRequest;
-import org.openmrs.module.cdss.api.data.ParamDescriptor;
-import org.openmrs.module.cdss.api.data.RuleDescriptor;
-import org.openmrs.module.cdss.api.data.RuleRole;
+import org.openmrs.module.cdss.api.data.*;
 import org.openmrs.module.cdss.api.data.criteria.RuleCriteria;
 import org.openmrs.module.cdss.api.data.criteria.projection.*;
 import org.openmrs.module.cdss.api.exception.RuleNotFoundException;
+import org.openmrs.module.cdss.api.serialization.CdssUsageDeserializer;
+import org.openmrs.module.cdss.api.serialization.CdssUsageSerializer;
+import org.openmrs.module.cdss.api.serialization.RuleManifestDeserializer;
+import org.openmrs.module.cdss.api.serialization.RuleManifestSerializer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
@@ -407,9 +410,17 @@ public class RuleRestController extends CdssRestController {
      */
     @GetMapping(path = "/rule-manifest.form", produces = {"application/json"})
     public ResponseEntity<String> getRuleManifest() throws APIAuthenticationException, JsonProcessingException {
-//        checkAuthorizationAndPrivilege();
+        checkAuthorizationAndPrivilege();
 
-        String val = cdssService.getCdssObjectMapper().writeValueAsString(ruleManagerService.getRuleManifest());
+         ObjectMapper objectMapper= new ObjectMapper();
+         SimpleModule simpleModule=new SimpleModule();
+
+
+        simpleModule.addSerializer(RuleManifest.class, new RuleManifestSerializer());
+        simpleModule.addDeserializer(RuleManifest.class, new RuleManifestDeserializer());
+        objectMapper.registerModule(simpleModule);
+
+        String val = objectMapper.writeValueAsString(ruleManagerService.getRuleManifest());
 
         return ResponseEntity.ok(val);
 

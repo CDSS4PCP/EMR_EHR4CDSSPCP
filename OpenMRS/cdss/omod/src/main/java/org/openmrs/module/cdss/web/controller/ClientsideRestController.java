@@ -1,6 +1,8 @@
 package org.openmrs.module.cdss.web.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.apache.log4j.Logger;
 import org.openmrs.api.APIAuthenticationException;
 import org.openmrs.api.AdministrationService;
@@ -10,6 +12,11 @@ import org.openmrs.module.cdss.api.RuleManagerService;
 import org.openmrs.module.cdss.api.ValueSetService;
 import org.openmrs.module.cdss.api.dao.CDSSDao;
 import org.openmrs.module.cdss.api.data.CdssUsage;
+import org.openmrs.module.cdss.api.data.RuleManifest;
+import org.openmrs.module.cdss.api.serialization.CdssUsageDeserializer;
+import org.openmrs.module.cdss.api.serialization.CdssUsageSerializer;
+import org.openmrs.module.cdss.api.serialization.RuleManifestDeserializer;
+import org.openmrs.module.cdss.api.serialization.RuleManifestSerializer;
 import org.openmrs.module.cdss.api.util.ValueSetResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -31,7 +38,7 @@ public class ClientsideRestController extends CdssRestController {
     protected CDSSDao dao;
 
 //    @Autowired
-    protected CDSSService cdssService;
+//    protected CDSSService cdssService;
 
     @Autowired
     @Qualifier("adminService")
@@ -59,10 +66,18 @@ public class ClientsideRestController extends CdssRestController {
     public ResponseEntity<String> recordUsage(@RequestBody String newUsageString) {
         checkAuthorizationAndPrivilege();
 
+
+
+        ObjectMapper  objectMapper = new ObjectMapper();
+        SimpleModule  simpleModule = new SimpleModule();
+        simpleModule.addSerializer(CdssUsage.class, new CdssUsageSerializer());
+        simpleModule.addDeserializer(CdssUsage.class, new CdssUsageDeserializer());
+        objectMapper.registerModule(simpleModule);
+
         log.debug("Received new usage string: \n" + newUsageString + "\n will attempt to parse");
         CdssUsage newUsage;
         try {
-            newUsage = cdssService.getCdssObjectMapper().readValue(newUsageString, CdssUsage.class);
+            newUsage = objectMapper.readValue(newUsageString, CdssUsage.class);
             log.debug(newUsage);
         } catch (JsonProcessingException e) {
             log.error("Error encountered when deserializing CdssUsage\n" + e.getMessage());
@@ -78,7 +93,7 @@ public class ClientsideRestController extends CdssRestController {
         }
 
         try {
-            String savedString = cdssService.getCdssObjectMapper().writeValueAsString(saved);
+            String savedString =objectMapper.writeValueAsString(saved);
 
             return new ResponseEntity<>(savedString, HttpStatus.OK);
 
@@ -88,6 +103,8 @@ public class ClientsideRestController extends CdssRestController {
             return new ResponseEntity<>("Internal Error encountered", HttpStatus.INTERNAL_SERVER_ERROR);
 
         }
+//        return new ResponseEntity<>("Did not save because cdssService is disbled", HttpStatus.OK);
+
     }
 
     /**
@@ -102,11 +119,20 @@ public class ClientsideRestController extends CdssRestController {
     public ResponseEntity<String> getUsages() {
         checkAuthorizationAndPrivilege();
 
+
+        ObjectMapper  objectMapper = new ObjectMapper();
+        SimpleModule  simpleModule = new SimpleModule();
+        simpleModule.addSerializer(CdssUsage.class, new CdssUsageSerializer());
+        simpleModule.addDeserializer(CdssUsage.class, new CdssUsageDeserializer());
+        objectMapper.registerModule(simpleModule);
+
+
+// This block is disabled because cdssService is disabled
         List<CdssUsage> usages = ruleLoggerService.getRuleUsages();
 
         String out = null;
         try {
-            out = cdssService.getCdssObjectMapper().writeValueAsString(usages);
+            out = objectMapper.writeValueAsString(usages);
         } catch (JsonProcessingException e) {
             log.error("Error encountered when serializing CdssUsage\n" + e.getMessage());
             return new ResponseEntity<>("Internal Error encountered", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -115,6 +141,8 @@ public class ClientsideRestController extends CdssRestController {
 
 
         return new ResponseEntity<>(out, HttpStatus.OK);
+
+
     }
 
     /**
