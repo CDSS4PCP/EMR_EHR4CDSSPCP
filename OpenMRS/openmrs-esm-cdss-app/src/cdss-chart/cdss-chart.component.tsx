@@ -38,17 +38,19 @@ import { types } from "sass";
 import { CdssUsage } from "../cdssTypes";
 import { ListItem, UnorderedList } from "@carbon/react";
 
-async function loadResults(patientUuid) {
+async function loadResults(patientUuid, setResultsCallback) {
   const rules = await getRules();
   const results = [];
   for (const rule of rules) {
     try {
       const result = await getRecommendations(patientUuid, rule);
       results.push(result);
+      setResultsCallback([...results]);
     } catch (error) {
       console.log("Ran into error getting Recommendation for ", rule, error);
     }
   }
+  setResultsCallback([...results]);
   return results;
 }
 
@@ -62,6 +64,7 @@ export const CdssChart: React.FC<CdssChartComponentProps> = ({
   const { t } = useTranslation();
 
   const [results, setResults] = useState([]);
+  const [rules, setRules] = useState([]);
   const [usages, setExistingUsages] = useState([]);
   const [actionConfirmDialogOpen, setActionConfirmDialogOpen] = useState(false);
   const [actionDeclineDialogOpen, setActionDeclineDialogOpen] = useState(false);
@@ -69,9 +72,11 @@ export const CdssChart: React.FC<CdssChartComponentProps> = ({
   const [actionTaking, setActionTaking] = useState<CdssUsage>();
 
   useEffect(() => {
-    loadResults(patientUuid).then((result) => {
-      setResults(result);
-    });
+    getRules().then(rules =>{
+      setRules(rules);
+      loadResults(patientUuid, setResults);
+    })
+
   }, []);
 
   useEffect(() => {
@@ -144,14 +149,11 @@ export const CdssChart: React.FC<CdssChartComponentProps> = ({
         <hr />
       </CardHeader>
 
-      {/*<p>*/}
-      {/*  <pre> {JSON.stringify(results, null, 2)}</pre>*/}
-      {/*</p>*/}
 
-      {results == null || (Array.isArray(results) && results.length == 0) ? (
+      {results == null || (Array.isArray(results) && results.length != rules.length) ? (
         <div style={{ justifyContent: "center" }}>
           <Loading withOverlay={false} small={true} active={true}></Loading>
-          Results Loading...
+          {results.length} of { rules.length} rules checked
         </div>
       ) : (
         <CdssResultsTable

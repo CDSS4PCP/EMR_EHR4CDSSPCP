@@ -22,6 +22,16 @@ public class RuleManifestSerializer extends StdSerializer<RuleManifest> {
         this(null);
     }
 
+    /**
+     * Serializes a RuleManifest object into JSON format using the provided JsonGenerator.
+     * The serialized JSON includes an array of rules, each represented by a RuleDescriptor.
+     *
+     * @param value the RuleManifest object to serialize
+     * @param jsonGenerator the JsonGenerator used to write the JSON output
+     * @param provider the SerializerProvider that can be used to get serializers for serializing
+     *                 the object's properties
+     * @throws IOException if an I/O error occurs during serialization
+     */
     @Override
     public void serialize(RuleManifest value, JsonGenerator jsonGenerator, SerializerProvider provider) throws IOException {
         jsonGenerator.writeStartObject();
@@ -35,15 +45,28 @@ public class RuleManifestSerializer extends StdSerializer<RuleManifest> {
 
     }
 
+    /**
+     * Serializes a RuleDescriptor object into JSON format using the provided JsonGenerator.
+     * The JSON output includes fields such as id, libraryName, version, cqlFilePath, elmFilePath,
+     * description, role, derivedFrom, enabled, and params. If params are present, each parameter
+     * is serialized with its type, value, default value, and allowed values.
+     *
+     * @param jsonGenerator the JsonGenerator used to write the JSON output
+     * @param ruleDescriptor the RuleDescriptor object to serialize
+     * @throws IOException if an I/O error occurs during serialization
+     */
     private void writeRuleDescriptor(JsonGenerator jsonGenerator, RuleDescriptor ruleDescriptor) throws IOException {
 
         jsonGenerator.writeStartObject();
         jsonGenerator.writeStringField("id", ruleDescriptor.getId());
+        jsonGenerator.writeStringField("libraryName", ruleDescriptor.getLibraryName());
         jsonGenerator.writeStringField("version", ruleDescriptor.getVersion());
         jsonGenerator.writeStringField("cqlFilePath", ruleDescriptor.getCqlFilePath());
         jsonGenerator.writeStringField("elmFilePath", ruleDescriptor.getElmFilePath());
         jsonGenerator.writeStringField("description", ruleDescriptor.getDescription());
         jsonGenerator.writeStringField("role", ruleDescriptor.getRole().toString());
+        if (ruleDescriptor.getDerivedFrom() != null)
+            jsonGenerator.writeStringField("derivedFrom", ruleDescriptor.getDerivedFrom());
         jsonGenerator.writeBooleanField("enabled", ruleDescriptor.isEnabled());
         if (ruleDescriptor.getParams() != null) {
             jsonGenerator.writeFieldName("params");

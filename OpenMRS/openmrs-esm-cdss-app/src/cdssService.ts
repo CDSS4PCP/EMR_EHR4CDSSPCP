@@ -27,10 +27,7 @@ async function loadPatient(patientId) {
 }
 
 async function loadRule(ruleId) {
-  const url = `/cdss/elm-rule/${ruleId}.form`;
-  // if (!ruleId.endsWith(".json")) {
-  //   url = `/cdss/rule/${ruleId}.json`;
-  // }
+  const url = `/cdss/elm-rule/idOrName/${ruleId}.form`;
 
   const result = await openmrsFetch(url, {});
   // console.debug("Loaded rule", ruleId);
@@ -40,10 +37,7 @@ async function loadRule(ruleId) {
 }
 
 async function loadCqlRule(ruleId) {
-  const url = `/cdss/cql-rule/${ruleId}.form`;
-  // if (!ruleId.endsWith(".json")) {
-  //   url = `/cdss/rule/${ruleId}.json`;
-  // }
+  const url = `/cdss/cql-rule/idOrName/${ruleId}.form`;
 
   const result = await openmrsFetch(url, {});
   const pat = await result.text();
@@ -124,24 +118,24 @@ async function loadConditions(patientId) {
 // };
 
 const recordRuleUsage = (usage: CdssUsage) => {
-  // const ac: AbortController = new AbortController();
-  //
-  // const payload = {
-  //   vaccine: usage.vaccine,
-  //   patientId: usage.patientId,
-  //   timestamp: convertDateToTimestamp(usage.timestamp),
-  //   rule: usage.ruleId,
-  //   recommendations: usage.recommendations,
-  //   status: usage.status,
-  // };
-  //
-  // // console.log("Sending: ", payload);
-  // openmrsFetch(`/cdss/record-usage.form`, {
-  //   signal: ac.signal,
-  //   method: "POST",
-  //   headers: { "Content-Type": "application/json" },
-  //   body: payload,
-  // }).catch((error) => console.log(error));
+  const ac: AbortController = new AbortController();
+
+  const payload = {
+    vaccine: usage.vaccine,
+    patientId: usage.patientId,
+    timestamp: convertDateToTimestamp(usage.timestamp),
+    rule: usage.ruleId,
+    recommendations: usage.recommendations,
+    status: usage.status,
+  };
+
+  // console.log("Sending: ", payload);
+  openmrsFetch(`/cdss/record-usage.form`, {
+    signal: ac.signal,
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: payload,
+  }).catch((error) => console.log(error));
 };
 
 async function getUsages() {

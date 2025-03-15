@@ -117,6 +117,15 @@ public class CdssUsageDeserializer extends StdDeserializer<CdssUsage> {
         return timestamp;
     }
 
+    /**
+     * Parses the "recommendations" field from the provided JSON node, extracting each recommendation
+     * along with its priority. The recommendations are stored in a TreeMap to maintain order by priority.
+     * Returns a list of recommendations sorted by their priority.
+     *
+     * @param rootNode the JSON node containing the "recommendations" array
+     * @return a list of recommendations sorted by priority
+     * @throws RuntimeException if any recommendation or priority is null
+     */
     private List<String> parseRecommendations(JsonNode rootNode) {
 
         TreeMap<Integer, String> recomendations = new TreeMap<>();

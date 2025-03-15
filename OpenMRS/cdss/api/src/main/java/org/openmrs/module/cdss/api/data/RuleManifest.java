@@ -1,16 +1,20 @@
 package org.openmrs.module.cdss.api.data;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.log4j.Logger;
+import org.openmrs.module.cdss.api.data.criteria.RuleCriteria;
+import org.openmrs.module.cdss.api.exception.RuleNotFoundException;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 public class RuleManifest {
 
+    private final Logger log = Logger.getLogger(getClass());
 
     @JsonProperty("rules")
-
     private List<RuleDescriptor> rules = new ArrayList<>();
 
     public RuleManifest(List<RuleDescriptor> rules) {
@@ -35,35 +39,44 @@ public class RuleManifest {
         return Collections.unmodifiableList(rules);
     }
 
-    public RuleDescriptor getRule(String id, String version) {
-        if (version == null) {
-            return getRule(id);
-        }
-        for (RuleDescriptor rule : rules) {
+    public RuleDescriptor getRuleById(String libraryName, String version) throws RuleNotFoundException {
 
-            if (rule.getId().equals(id) && rule.getVersion().equals(version)) {
-                return rule;
-            }
+
+        Optional<RuleDescriptor> descriptorOptional = Optional.empty();
+
+        if (version != null)
+            descriptorOptional = getRules().stream().filter(e -> e.getLibraryName().equals(libraryName)).filter(e -> e.getVersion().equals(version)).findFirst();
+        else
+            descriptorOptional = getRules().stream().filter(e -> e.getLibraryName().equals(libraryName)).findFirst();
+
+        if (!descriptorOptional.isPresent()) {
+            throw new RuleNotFoundException(libraryName, version);
         }
-        return null;
+        return descriptorOptional.get();
+
+
     }
 
-    public RuleDescriptor getRule(String id) {
-        for (RuleDescriptor rule : rules) {
 
-            if (rule.getId().equals(id)) {
-                return rule;
-            }
+    public RuleDescriptor getRuleById(String ruleId) throws RuleNotFoundException {
+        Optional<RuleDescriptor> descriptorOptional = Optional.empty();
+        RuleCriteria criteria = new RuleCriteria();
+        criteria.setId(ruleId);
+        descriptorOptional = getRules().stream().filter(e -> e.getId().equals(criteria.getId())).findFirst();
+        if (!descriptorOptional.isPresent()) {
+            throw new RuleNotFoundException(ruleId);
         }
-        return null;
+        return descriptorOptional.get();
     }
 
     public Boolean addRule(RuleDescriptor descriptor) {
-        RuleDescriptor existingDescriptor = getRule(descriptor.getId(), descriptor.getVersion());
-        if (existingDescriptor != null) {
+        try {
+            RuleDescriptor existingDescriptor = getRuleById(descriptor.getId());
             return false;
+
+        } catch (RuleNotFoundException e) {
+            return rules.add(descriptor);
         }
-        return rules.add(descriptor);
 
 
     }

@@ -27,6 +27,15 @@ public class RuleManifestDeserializer extends StdDeserializer<RuleManifest> {
     }
 
 
+    /**
+     * Deserializes a JSON object into a RuleManifest instance.
+     *
+     * @param jsonParser the JSON parser used to read the JSON content
+     * @param ctxt the deserialization context
+     * @return a RuleManifest object containing a list of RuleDescriptor objects
+     *         if the "rules" field is present and non-null; otherwise, returns null
+     * @throws IOException if the JSON object is empty or an error occurs during deserialization
+     */
     @Override
     public RuleManifest deserialize(JsonParser jsonParser, DeserializationContext ctxt) throws IOException {
         JsonNode rootNode = jsonParser.getCodec().readTree(jsonParser);
@@ -49,9 +58,17 @@ public class RuleManifestDeserializer extends StdDeserializer<RuleManifest> {
         return null;
     }
 
-
+    /**
+     * Parses a JSON node to create a RuleDescriptor object.
+     *
+     * @param node the JSON node containing rule details
+     * @return a RuleDescriptor object initialized with the id, library name, version,
+     *         file paths, description, role, enabled status, derived information,
+     *         and parameters extracted from the JSON node
+     */
     private RuleDescriptor parseRuleDescriptor(JsonNode node) {
         String id = node.get("id").asText();
+        String libraryName = node.get("libraryName").asText();
 
         String version = node.get("version").asText();
         String cqlFilePath = node.get("cqlFilePath").asText();
@@ -59,10 +76,12 @@ public class RuleManifestDeserializer extends StdDeserializer<RuleManifest> {
         String description = node.get("description").asText();
         RuleRole role = node.get("role").asText().equalsIgnoreCase("support") ? RuleRole.SUPPORT : RuleRole.RULE;
         Boolean enabled = node.get("enabled").asBoolean();
+        String derivedFrom = node.get("derivedFrom").asText();
 
-        RuleDescriptor descriptor = new RuleDescriptor(id, version, cqlFilePath, elmFilePath, role);
+        RuleDescriptor descriptor = new RuleDescriptor(id, libraryName, version, cqlFilePath, elmFilePath, role);
         descriptor.setDescription(description);
         descriptor.setEnabled(enabled);
+        descriptor.setDerivedFrom(derivedFrom);
 
         Map<String, ParamDescriptor> paramDescriptors = new HashMap<>();
 
@@ -81,7 +100,14 @@ public class RuleManifestDeserializer extends StdDeserializer<RuleManifest> {
 
     }
 
-
+    /**
+     * Parses a JSON node to create a ParamDescriptor object.
+     *
+     * @param node the JSON node containing parameter details
+     * @return a ParamDescriptor object initialized with the type, value, default value,
+     *         and allowed values extracted from the JSON node
+     * @throws NullPointerException if the node is null
+     */
     private ParamDescriptor parseParam(JsonNode node) {
         String type = node.get("type").asText();
         String value = node.get("value").asText();

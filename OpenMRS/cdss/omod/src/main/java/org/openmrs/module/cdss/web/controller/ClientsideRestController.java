@@ -1,10 +1,9 @@
 package org.openmrs.module.cdss.web.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.log4j.Logger;
-import org.openmrs.api.APIAuthenticationException;
 import org.openmrs.api.AdministrationService;
-import org.openmrs.module.cdss.api.CDSSService;
 import org.openmrs.module.cdss.api.RuleLoggerService;
 import org.openmrs.module.cdss.api.RuleManagerService;
 import org.openmrs.module.cdss.api.ValueSetService;
@@ -13,10 +12,8 @@ import org.openmrs.module.cdss.api.data.CdssUsage;
 import org.openmrs.module.cdss.api.util.ValueSetResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,26 +22,20 @@ import java.util.List;
 @RequestMapping("/cdss")
 public class ClientsideRestController extends CdssRestController {
 
-    Logger log = Logger.getLogger(ClientsideRestController.class);
-
     @Autowired
     protected CDSSDao dao;
-
-    @Autowired
-    protected CDSSService cdssService;
-
     @Autowired
     @Qualifier("adminService")
     protected AdministrationService administrationService;
-
     @Autowired
     protected RuleLoggerService ruleLoggerService;
-
     @Autowired
     protected RuleManagerService ruleManagerService;
-
     @Autowired
     protected ValueSetService valueSetService;
+    Logger log = Logger.getLogger(ClientsideRestController.class);
+    @Autowired
+    ObjectMapper objectMapper;
 
 
     /**
@@ -59,10 +50,11 @@ public class ClientsideRestController extends CdssRestController {
     public ResponseEntity<String> recordUsage(@RequestBody String newUsageString) {
         checkAuthorizationAndPrivilege();
 
+
         log.debug("Received new usage string: \n" + newUsageString + "\n will attempt to parse");
         CdssUsage newUsage;
         try {
-            newUsage = cdssService.getCdssObjectMapper().readValue(newUsageString, CdssUsage.class);
+            newUsage = objectMapper.readValue(newUsageString, CdssUsage.class);
             log.debug(newUsage);
         } catch (JsonProcessingException e) {
             log.error("Error encountered when deserializing CdssUsage\n" + e.getMessage());
@@ -78,7 +70,7 @@ public class ClientsideRestController extends CdssRestController {
         }
 
         try {
-            String savedString = cdssService.getCdssObjectMapper().writeValueAsString(saved);
+            String savedString = objectMapper.writeValueAsString(saved);
 
             return new ResponseEntity<>(savedString, HttpStatus.OK);
 
@@ -88,6 +80,7 @@ public class ClientsideRestController extends CdssRestController {
             return new ResponseEntity<>("Internal Error encountered", HttpStatus.INTERNAL_SERVER_ERROR);
 
         }
+
     }
 
     /**
@@ -102,11 +95,13 @@ public class ClientsideRestController extends CdssRestController {
     public ResponseEntity<String> getUsages() {
         checkAuthorizationAndPrivilege();
 
+
+
         List<CdssUsage> usages = ruleLoggerService.getRuleUsages();
 
         String out = null;
         try {
-            out = cdssService.getCdssObjectMapper().writeValueAsString(usages);
+            out = objectMapper.writeValueAsString(usages);
         } catch (JsonProcessingException e) {
             log.error("Error encountered when serializing CdssUsage\n" + e.getMessage());
             return new ResponseEntity<>("Internal Error encountered", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -115,6 +110,8 @@ public class ClientsideRestController extends CdssRestController {
 
 
         return new ResponseEntity<>(out, HttpStatus.OK);
+
+
     }
 
     /**
@@ -158,8 +155,6 @@ public class ClientsideRestController extends CdssRestController {
         return new ResponseEntity<>("Valueset was null", HttpStatus.INTERNAL_SERVER_ERROR);
 
     }
-
-
 
 
 }

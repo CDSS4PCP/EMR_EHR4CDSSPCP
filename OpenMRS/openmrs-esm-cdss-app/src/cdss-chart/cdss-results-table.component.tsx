@@ -65,6 +65,7 @@ function doesActionApply(patientId, rule, patientResult, existingUsages) {
   patientResult["Recommendations"].forEach((r) =>
     recommendationSet.add(r.recommendation)
   );
+
   for (const usage of existingUsages) {
     let condition =
       patientId == usage["patientId"] &&

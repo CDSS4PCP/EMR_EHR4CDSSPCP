@@ -1,10 +1,11 @@
 package org.openmrs.module.cdss.api;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.openmrs.api.APIAuthenticationException;
 import org.openmrs.module.cdss.api.data.ParamDescriptor;
+import org.openmrs.module.cdss.api.data.RuleDescriptor;
 import org.openmrs.module.cdss.api.data.RuleManifest;
 import org.openmrs.module.cdss.api.data.RuleRole;
+import org.openmrs.module.cdss.api.data.criteria.RuleCriteria;
 import org.openmrs.module.cdss.api.exception.RuleNotFoundException;
 
 import java.io.FileNotFoundException;
@@ -17,12 +18,20 @@ public interface RuleManagerService extends CdssVaccineService {
     //    @Authorized({CDSSConfig.MODULE_PRIVILEGE})
     List<String> getAllRules() throws APIAuthenticationException;
 
+    List<RuleDescriptor> getAllRules(RuleCriteria ruleCriteria) throws APIAuthenticationException;
+
     //    @Authorized({CDSSConfig.MODULE_PRIVILEGE})
-    List<String> getAllRules(RuleRole role) throws APIAuthenticationException;
+//    List<String> getAllRules(RuleRole role) throws APIAuthenticationException;
+
+    //    @Authorized({CDSSConfig.MODULE_PRIVILEGE})
+//    List<String> getAllRules(RuleRole role, RuleIdentifierType identifierType) throws APIAuthenticationException;
 
 
     //    @Authorized({CDSSConfig.MODULE_PRIVILEGE})
     List<String> getEnabledRules() throws APIAuthenticationException;
+
+    //    @Authorized({CDSSConfig.MODULE_PRIVILEGE})
+//    List<String> getEnabledRules(RuleRole role) throws APIAuthenticationException;
 
     //    @Authorized({CDSSConfig.MODULE_PRIVILEGE})
     List<String> getEnabledRules(RuleRole role) throws APIAuthenticationException;
@@ -30,20 +39,40 @@ public interface RuleManagerService extends CdssVaccineService {
 
     // TODO Change methods to utilize version as well as ruleId
 //    @Authorized({CDSSConfig.MODULE_PRIVILEGE})
-    String getElmRule(String ruleId) throws APIAuthenticationException, RuleNotFoundException, FileNotFoundException;
+    String getElmRuleById(String ruleId) throws APIAuthenticationException, RuleNotFoundException, FileNotFoundException;
 
     //    @Authorized({CDSSConfig.MODULE_PRIVILEGE})
-    String getCqlRule(String ruleId) throws APIAuthenticationException, RuleNotFoundException, FileNotFoundException;
+    String getCqlRuleById(String ruleId) throws APIAuthenticationException, RuleNotFoundException, FileNotFoundException;
+
+    String getElmRuleByName(String ruleName) throws APIAuthenticationException, RuleNotFoundException, FileNotFoundException;
+
+    //    @Authorized({CDSSConfig.MODULE_PRIVILEGE})
+    String getCqlRuleByName(String ruleName) throws APIAuthenticationException, RuleNotFoundException, FileNotFoundException;
+
+    String getElmRuleByNameVersion(String ruleName, String version) throws APIAuthenticationException, RuleNotFoundException, FileNotFoundException;
+
+    //    @Authorized({CDSSConfig.MODULE_PRIVILEGE})
+    String getCqlRuleByNameVersion(String ruleName, String version) throws APIAuthenticationException, RuleNotFoundException, FileNotFoundException;
+
 
     //    @Authorized({CDSSConfig.MODULE_PRIVILEGE})
     RuleManifest getRuleManifest() throws APIAuthenticationException;
 
-    //    @Authorized({CDSSConfig.MODULE_PRIVILEGE})
-    Boolean enableRule(String ruleId) throws APIAuthenticationException, RuleNotFoundException, FileNotFoundException;
 
     //    @Authorized({CDSSConfig.MODULE_PRIVILEGE})
-    Boolean disableRule(String ruleId) throws APIAuthenticationException, RuleNotFoundException, FileNotFoundException;
+    Boolean enableRuleById(String ruleId) throws APIAuthenticationException, RuleNotFoundException, FileNotFoundException;
+
+    Boolean enableRuleByName(String name) throws APIAuthenticationException, RuleNotFoundException, FileNotFoundException;
+
+    Boolean enableRuleByNameVersion(String name, String version) throws APIAuthenticationException, RuleNotFoundException, FileNotFoundException;
 
     //    @Authorized({CDSSConfig.MODULE_PRIVILEGE})
-    Boolean modifyRule(String ruleId, String version, Map<String, ParamDescriptor> changedParameters) throws IOException;
+    Boolean disableRuleById(String ruleId) throws APIAuthenticationException, RuleNotFoundException, FileNotFoundException;
+
+    Boolean disableRuleByName(String name) throws APIAuthenticationException, RuleNotFoundException, FileNotFoundException;
+
+    Boolean disableRuleByNameVersion(String name, String version) throws APIAuthenticationException, RuleNotFoundException, FileNotFoundException;
+
+    //    @Authorized({CDSSConfig.MODULE_PRIVILEGE})
+    Boolean modifyRule(String ruleId, Map<String, ParamDescriptor> changedParameters) throws IOException;
 }

@@ -14,23 +14,23 @@
 
     <!-- Wraps CDSSService methods in DB transactions and OpenMRS interceptors,
     which set audit info like dateCreated, changedBy, etc.-->
-    <bean id="cdss.RuleEngineServiceImpl"
-          class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
-        <property name="transactionManager">
-            <ref bean="transactionManager"/>
-        </property>
-        <property name="target">
-            <bean class="org.openmrs.module.cdss.api.impl.RuleEngineServiceImpl">
-                <property name="dao" ref="cdss.CDSSDao"/>
-            </bean>
-        </property>
-        <property name="preInterceptors">
-            <ref bean="serviceInterceptors"/>
-        </property>
-        <property name="transactionAttributeSource">
-            <ref bean="transactionAttributeSource"/>
-        </property>
-    </bean>
+<!--    <bean id="cdss.RuleEngineServiceImpl"-->
+<!--          class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">-->
+<!--        <property name="transactionManager">-->
+<!--            <ref bean="transactionManager"/>-->
+<!--        </property>-->
+<!--        <property name="target">-->
+<!--            <bean class="org.openmrs.module.cdss.api.impl.RuleEngineServiceImpl">-->
+<!--                <property name="dao" ref="cdss.CDSSDao"/>-->
+<!--            </bean>-->
+<!--        </property>-->
+<!--        <property name="preInterceptors">-->
+<!--            <ref bean="serviceInterceptors"/>-->
+<!--        </property>-->
+<!--        <property name="transactionAttributeSource">-->
+<!--            <ref bean="transactionAttributeSource"/>-->
+<!--        </property>-->
+<!--    </bean>-->
 
 
     <bean id="cdss.RuleManagerServiceImpl"
@@ -70,64 +70,12 @@
         </property>
     </bean>
 
-    <!--    <bean id="cdss.CdssServiceImpl"-->
-    <!--          class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">-->
-    <!--        <property name="transactionManager">-->
-    <!--            <ref bean="transactionManager"/>-->
-    <!--        </property>-->
-    <!--        <property name="target">-->
-    <!--            <bean class="org.openmrs.module.cdss.api.impl.CdssServiceImpl">-->
-    <!--&lt;!&ndash;                <property name="dao" ref="cdss.CDSSDao"/>&ndash;&gt;-->
-    <!--            </bean>-->
-    <!--        </property>-->
-    <!--        <property name="preInterceptors">-->
-    <!--            <ref bean="serviceInterceptors"/>-->
-    <!--        </property>-->
-    <!--        <property name="transactionAttributeSource">-->
-    <!--            <ref bean="transactionAttributeSource"/>-->
-    <!--        </property>-->
-    <!--    </bean>-->
 
-
-    <bean id="cdss.CdssServiceImpl"
-          class="org.openmrs.module.cdss.api.impl.CdssServiceImpl">
-
-    </bean>
 
     <bean id="cdss.ValueSetServiceImpl"
           class="org.openmrs.module.cdss.api.impl.ValueSetServiceImpl">
 
     </bean>
-
-    <!--    <bean id="cdss.CDSSServiceImpl"-->
-    <!--          class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">-->
-    <!--        <property name="transactionManager">-->
-    <!--            <ref bean="transactionManager"/>-->
-    <!--        </property>-->
-    <!--        <property name="target">-->
-    <!--            <bean class="org.openmrs.module.cdss.api.impl.RuleEngineServiceImpl">-->
-    <!--&lt;!&ndash;                <property name="dao" ref="cdss.CDSSDao"/>&ndash;&gt;-->
-    <!--            </bean>-->
-    <!--        </property>-->
-    <!--        <property name="preInterceptors">-->
-    <!--            <ref bean="serviceInterceptors"/>-->
-    <!--        </property>-->
-    <!--        <property name="transactionAttributeSource">-->
-    <!--            <ref bean="transactionAttributeSource"/>-->
-    <!--        </property>-->
-    <!--    </bean>-->
-
-    <!-- Adds CDSSService to OpenMRS context so it can be accessed
-    calling Context.getService(CDSSService.class) -->
-    <bean parent="serviceContext">
-        <property name="moduleService">
-            <list>
-                <value>org.openmrs.module.cdss.api.RuleEngineService</value>
-                <ref bean="cdss.RuleEngineServiceImpl"/>
-            </list>
-        </property>
-    </bean>
-
 
     <bean parent="serviceContext">
         <property name="moduleService">
@@ -151,28 +99,11 @@
     <bean parent="serviceContext">
         <property name="moduleService">
             <list>
-                <value>org.openmrs.module.cdss.api.CDSSService</value>
-                <ref bean="cdss.CdssServiceImpl"/>
-            </list>
-        </property>
-    </bean>
-
-    <bean parent="serviceContext">
-        <property name="moduleService">
-            <list>
                 <value>org.openmrs.module.cdss.api.ValueSetService</value>
                 <ref bean="cdss.ValueSetServiceImpl"/>
             </list>
         </property>
     </bean>
 
-    <!--    <bean parent="serviceContext">-->
-    <!--        <property name="moduleService">-->
-    <!--            <list>-->
-    <!--                <value>org.openmrs.module.cdss.api.CDSSService</value>-->
-    <!--                <ref bean="cdss.CDSSServiceImpl"/>-->
-    <!--            </list>-->
-    <!--        </property>-->
-    <!--    </bean>-->
 
 </beans>

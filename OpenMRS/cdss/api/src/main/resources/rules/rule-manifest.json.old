@@ -1,0 +1,432 @@
+{
+  "rules": [
+    {
+      "id": "FHIRHelpers",
+      "version": "1",
+      "cqlFilePath": "cql/FHIRHelpers.cql",
+      "elmFilePath": "elm/FHIRHelpers.json",
+      "description": "Helper functions for working with FHIR data types",
+      "role": "support",
+      "enabled": true,
+      "params": {
+      }
+    },
+    {
+      "id": "MMR_Common_Library",
+      "version": "1",
+      "cqlFilePath": "cql/MMR_Common_Library.cql",
+      "elmFilePath": "elm/MMR_Common_Library.json",
+      "description": "Helper functions for MMR vaccines",
+      "role": "support",
+      "enabled": true
+    },
+    {
+      "id": "MMR1regularyoungerthan12monthsNoMMRRecommendation",
+      "version": "1",
+      "cqlFilePath": "cql/MMR_Rule1.cql",
+      "elmFilePath": "elm/MMR_Rule1.json",
+      "description": "Regular and catch-up without prior vaccination records",
+      "role": "rule",
+      "enabled": false,
+      "params": {
+        "$Age1": {
+          "type": "Integer",
+          "value": 0,
+          "default": 0
+        },
+        "$Age1_unit": {
+          "type": "String",
+          "value": "month",
+          "default": "month",
+          "allowedValues": [
+            "year",
+            "month",
+            "week"
+          ]
+        },
+        "$Age2": {
+          "type": "Integer",
+          "value": 12,
+          "default": 12
+        },
+        "$Age2_unit": {
+          "type": "String",
+          "value": "month",
+          "default": "month",
+          "allowedValues": [
+            "year",
+            "month",
+            "week"
+          ]
+        }
+      }
+    },
+    {
+      "id": "MMR2regularyoungerthan12_47monthsNoMMRRecommendation",
+      "version": "1",
+      "cqlFilePath": "cql/MMR_Rule2.cql",
+      "elmFilePath": "elm/MMR_Rule2.json",
+      "description": "Regular and catch-up without prior vaccination records",
+      "role": "rule",
+      "enabled": false,
+      "params": {
+        "$Age1": {
+          "type": "Integer",
+          "value": 12,
+          "default": 12
+        },
+        "$Age1_unit": {
+          "type": "String",
+          "value": "month",
+          "default": "month",
+          "allowedValues": [
+            "year",
+            "month",
+            "week"
+          ]
+        },
+        "$Age2": {
+          "type": "Integer",
+          "value": 47,
+          "default": 47
+        },
+        "$Age2_unit": {
+          "type": "String",
+          "value": "month",
+          "default": "month",
+          "allowedValues": [
+            "year",
+            "month",
+            "week"
+          ]
+        }
+      }
+    },
+    {
+      "id": "MMR3regularyoungerthan47months_18yrsNoMMRRecommendation",
+      "version": "1",
+      "cqlFilePath": "cql/MMR_Rule3.cql",
+      "elmFilePath": "elm/MMR_Rule3.json",
+      "description": "Regular and catch-up without prior vaccination records",
+      "role": "rule",
+      "enabled": false,
+      "params": {
+        "$Age1": {
+          "type": "Integer",
+          "value": 47,
+          "default": 47
+        },
+        "$Age1_unit": {
+          "type": "String",
+          "value": "month",
+          "default": "month",
+          "allowedValues": [
+            "year",
+            "month",
+            "week"
+          ]
+        },
+        "$Age2": {
+          "type": "Integer",
+          "value": 18,
+          "default": 18
+        },
+        "$Age2_unit": {
+          "type": "String",
+          "value": "year",
+          "default": "year",
+          "allowedValues": [
+            "year",
+            "month",
+            "week"
+          ]
+        }
+      }
+    },
+    {
+      "id": "MMR4regular12months_4yrs_OneMMRRecommendation",
+      "version": "1",
+      "cqlFilePath": "cql/MMR_Rule4.cql",
+      "elmFilePath": "elm/MMR_Rule4.json",
+      "description": "Recommendation for patients aged 12 months to 4 years with one dose of MMR vaccine administered.",
+      "role": "rule",
+      "enabled": false,
+      "params": {
+        "$Age1": {
+          "type": "Integer",
+          "value": 12,
+          "default": 12
+        },
+        "$Age1_unit": {
+          "type": "String",
+          "value": "month",
+          "default": "month",
+          "allowedValues": ["year", "month", "week"]
+        },
+        "$Age2": {
+          "type": "Integer",
+          "value": 4,
+          "default": 4
+        },
+        "$Age2_unit": {
+          "type": "String",
+          "value": "year",
+          "default": "year",
+          "allowedValues": ["year", "month", "week"]
+        },
+        "$Dose1AdminMinAge": {
+          "type": "Integer",
+          "value": 12,
+          "default": 12
+        },
+        "$Dose1AdminMinAge_unit": {
+          "type": "String",
+          "value": "month",
+          "default": "month",
+          "allowedValues": ["year", "month", "week"]
+        },
+        "$Dose1AdminMaxAge": {
+          "type": "Integer",
+          "value": 15,
+          "default": 15
+        },
+        "$Dose1AdminMaxAge_unit": {
+          "type": "String",
+          "value": "month",
+          "default": "month",
+          "allowedValues": ["year", "month", "week"]
+        }
+      }
+    },
+    {
+      "id": "MMR5regular12months_4yrs_OneDoseOutOf12to15MonRecommendation",
+      "version": "1",
+      "cqlFilePath": "cql/MMR_Rule5.cql",
+      "elmFilePath": "elm/MMR_Rule5.json",
+      "description": "Recommendation for patients aged 12 months to 4 years with one dose of MMR vaccine administered outside the 12 to 15-month window.",
+      "role": "rule",
+      "enabled": false,
+      "params": {
+        "$Age1": {
+          "type": "Integer",
+          "value": 12,
+          "default": 12
+        },
+        "$Age1_unit": {
+          "type": "String",
+          "value": "month",
+          "default": "month",
+          "allowedValues": ["year", "month", "week"]
+        },
+        "$Age2": {
+          "type": "Integer",
+          "value": 4,
+          "default": 4
+        },
+        "$Age2_unit": {
+          "type": "String",
+          "value": "year",
+          "default": "year",
+          "allowedValues": ["year", "month", "week"]
+        },
+        "$Dose1AdminMinAge": {
+          "type": "Integer",
+          "value": 12,
+          "default": 12
+        },
+        "$Dose1AdminMinAge_unit": {
+          "type": "String",
+          "value": "month",
+          "default": "month",
+          "allowedValues": ["year", "month", "week"]
+        },
+        "$Dose1AdminMaxAge": {
+          "type": "Integer",
+          "value": 15,
+          "default": 15
+        },
+        "$Dose1AdminMaxAge_unit": {
+          "type": "String",
+          "value": "month",
+          "default": "month",
+          "allowedValues": ["year", "month", "week"]
+        },
+        "$WeeksSinceDose": {
+          "type": "Integer",
+          "value": 4,
+          "default": 4
+        },
+        "$WeeksSinceDose_unit": {
+          "type": "String",
+          "value": "week",
+          "default": "week",
+          "allowedValues": ["year", "month", "week"]
+        }
+      }
+    },
+    {
+      "id": "MMR6regular12months_4yrs_OneDoseOutOf12to15MonRecommendation",
+      "version": "1",
+      "cqlFilePath": "cql/MMR_Rule6.cql",
+      "elmFilePath": "elm/MMR_Rule6.json",
+      "description": "Recommendation for patients aged 12 months to 4 years with one dose of MMR vaccine administered outside the 12 to 15-month window and less than 4 weeks since the first dose.",
+      "role": "rule",
+      "enabled": false,
+      "params": {
+        "$Age1": {
+          "type": "Integer",
+          "value": 12,
+          "default": 12
+        },
+        "$Age1_unit": {
+          "type": "String",
+          "value": "month",
+          "default": "month",
+          "allowedValues": ["year", "month", "week"]
+        },
+        "$Age2": {
+          "type": "Integer",
+          "value": 4,
+          "default": 4
+        },
+        "$Age2_unit": {
+          "type": "String",
+          "value": "year",
+          "default": "year",
+          "allowedValues": ["year", "month", "week"]
+        },
+        "$Dose1AdminMinAge": {
+          "type": "Integer",
+          "value": 12,
+          "default": 12
+        },
+        "$Dose1AdminMinAge_unit": {
+          "type": "String",
+          "value": "month",
+          "default": "month",
+          "allowedValues": ["year", "month", "week"]
+        },
+        "$Dose1AdminMaxAge": {
+          "type": "Integer",
+          "value": 15,
+          "default": 15
+        },
+        "$Dose1AdminMaxAge_unit": {
+          "type": "String",
+          "value": "month",
+          "default": "month",
+          "allowedValues": ["year", "month", "week"]
+        },
+        "$WeeksSinceDose": {
+          "type": "Integer",
+          "value": 4,
+          "default": 4
+        },
+        "$WeeksSinceDose_unit": {
+          "type": "String",
+          "value": "week",
+          "default": "week",
+          "allowedValues": ["year", "month", "week"]
+        }
+      }
+    },
+    {
+      "id": "MMR7regular4_18yrs_OneDoseRecommendation",
+      "version": "1",
+      "cqlFilePath": "cql/MMR_Rule7.cql",
+      "elmFilePath": "elm/MMR_Rule7.json",
+      "description": "Recommendation for patients aged 4 to 18 years with one dose of MMR vaccine administered less than 4 weeks ago.",
+      "role": "rule",
+      "enabled": false,
+      "params": {
+        "$Age1": {
+          "type": "Integer",
+          "value": 4,
+          "default": 4
+        },
+        "$Age1_unit": {
+          "type": "String",
+          "value": "year",
+          "default": "year",
+          "allowedValues": ["year", "month", "week"]
+        },
+        "$Age2": {
+          "type": "Integer",
+          "value": 18,
+          "default": 18
+        },
+        "$Age2_unit": {
+          "type": "String",
+          "value": "year",
+          "default": "year",
+          "allowedValues": ["year", "month", "week"]
+        },
+        "$WeeksSinceDose": {
+          "type": "Integer",
+          "value": 4,
+          "default": 4
+        },
+        "$WeeksSinceDose_unit": {
+          "type": "String",
+          "value": "week",
+          "default": "week",
+          "allowedValues": ["year", "month", "week"]
+        }
+      }
+    },
+    {
+      "id": "MMR8regular4_18yrs_OneDoseRecommendation",
+      "version": "1",
+      "cqlFilePath": "cql/MMR_Rule8.cql",
+      "elmFilePath": "elm/MMR_Rule8.json",
+      "description": "Recommendation for patients aged 4 to 18 years with one dose of MMR vaccine administered less than 4 weeks ago.",
+      "role": "rule",
+      "enabled": false,
+      "params": {
+        "$Age1": {
+          "type": "Integer",
+          "value": 4,
+          "default": 4
+        },
+        "$Age1_unit": {
+          "type": "String",
+          "value": "year",
+          "default": "year",
+          "allowedValues": ["year", "month", "week"]
+        },
+        "$Age2": {
+          "type": "Integer",
+          "value": 18,
+          "default": 18
+        },
+        "$Age2_unit": {
+          "type": "String",
+          "value": "year",
+          "default": "year",
+          "allowedValues": ["year", "month", "week"]
+        },
+        "$WeeksSinceDose": {
+          "type": "Integer",
+          "value": 4,
+          "default": 4
+        },
+        "$WeeksSinceDose_unit": {
+          "type": "String",
+          "value": "week",
+          "default": "week",
+          "allowedValues": ["year", "month", "week"]
+        }
+      }
+    },
+    {
+      "id": "MMR9MedicalContraPrecautionMMRRecommendation",
+      "version": "1",
+      "cqlFilePath": "cql/MMR_Rule9.cql",
+      "elmFilePath": "elm/MMR_Rule9.json",
+      "description": "Recommendation for patients without MMR records who are pregnant.",
+      "role": "rule",
+      "enabled": true,
+      "params": {}
+    }
+  ]
+}

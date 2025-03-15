@@ -1,0 +1,253 @@
+openapi: 3.1.0
+info:
+  title: CDSS API
+  description: API for managing and retrieving Clinical Decision Support System (CDSS) rules.
+  version: 1.0.0
+paths:
+  /openmrs/cdss/elm-rule/idOrName/{ruleId}.form:
+    get:
+      summary: Retrieve an ELM rule by ID or name.
+      parameters:
+        - name: ruleId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The ID or name of the rule to retrieve. This will attempt to find the rule by it's rule id first. If none are found, ruleId parameter will be treated as a name, and will attempt to find the rule by name.
+        - name: version
+          in: query
+          required: false
+          schema:
+            type: string
+          description: The version of the rule.
+      responses:
+        200:
+          description: Successfully retrieved the ELM rule.
+          content:
+            application/json:
+              schema:
+                type: object
+        404:
+          description: Rule not found.
+
+  /openmrs/cdss/elm-rule/id/{ruleId}.form:
+    get:
+      summary: Retrieve an ELM rule by ID.
+      parameters:
+        - name: ruleId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The ID of the rule to retrieve.
+      responses:
+        200:
+          description: Successfully retrieved the ELM rule.
+          content:
+            application/json:
+              schema:
+                type: object
+        404:
+          description: Rule not found.
+
+  /openmrs/cdss/cql-rule/id/{ruleId}.form:
+    get:
+      summary: Retrieve a CQL rule by ID.
+      parameters:
+        - name: ruleId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The ID of the rule to retrieve.
+      responses:
+        200:
+          description: Successfully retrieved the CQL rule.
+          content:
+            application/json:
+              schema:
+                type: string
+        404:
+          description: Rule not found.
+
+  /openmrs/cdss/rule.form:
+    get:
+      summary: Retrieve a list of rules based on criteria.
+      parameters:
+        - name: allRules
+          in: query
+          required: false
+          schema:
+            type: boolean
+          description: Include all rules or only enabled ones. If true, then all rules will be return. If false, only enabled rules will be returned. Other filters also apply.
+        - name: role
+          in: query
+          required: false
+          schema:
+            type: string
+            enum:
+              - "RULE"
+              - "SUPPORT"
+          description: Role to filter rules by. If "RULE" then only rules that have recommendations will be returned. If "SUPPORT", then only supporting libraries are returned.
+        - name: showNames
+          in: query
+          required: false
+          schema:
+            type: boolean
+          description: Include rule names in the response instead of rule ids.
+        - name: showVersions
+          in: query
+          required: false
+          schema:
+            type: boolean
+          description: Include rule versions in the response.
+      responses:
+        200:
+          description: Successfully retrieved rules.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+
+  /openmrs/cdss/enable-rule/id/{ruleId}.form:
+    post:
+      summary: Enable a rule by ID.
+      parameters:
+        - name: ruleId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The ID of the rule to enable.
+      responses:
+        200:
+          description: Rule enabled successfully.
+          content:
+            application/json:
+              schema:
+                type: boolean
+
+  /openmrs/cdss/disable-rule/id/{ruleId}.form:
+    post:
+      summary: Disable a rule by ID.
+      parameters:
+        - name: ruleId
+          in: path
+          required: true
+          schema:
+            type: boolean
+          description: The ID of the rule to disable.
+      responses:
+        200:
+          description: Rule disabled successfully.
+          content:
+            application/json:
+              schema:
+                type: boolean
+
+  /openmrs/cdss/modify-rule.form:
+    post:
+      summary: Modify an existing rule.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ModifyRuleRequest'
+            example:
+              {
+                rule: { id: "fe69e61e-3b51-4fe6-a9e6-1e3b511fe6ba", libraryName: "LibraryOne", version: "1.0.0", content: "bGlicmFyeSBSdWxlT25lCgp1c2luZyBGSElSIHZlcnNpb24gJzQuMC4xJwoKaW5jbHVkZSBGSElSSGVscGVycyB2ZXJzaW9uICc0LjAuMScKCmNvbnRleHQgUGF0aWVudAoKZGVmaW5lICIkTWluaW11bUFnZSI6IDEyCgpkZWZpbmUgSW5Qb3B1bGF0aW9uOiBBZ2VJbk1vbnRocyhQYXRpZW50LmJpcnRoZGF0ZSkgPiAiJE1pbmltdW1BZ2Ui" },
+                params: { "$MinimumAge": { type: "Integer", value: 18 } },
+                libraries: { "LibraryOne": { id: "7ff03626-a2a8-48fc-b036-26a2a898fcaf", libraryName: "LibraryOne", version: "1.0.0", content: "bGlicmFyeSBMaWJyYXJ5T25lCgp1c2luZyBGSElSIHZlcnNpb24gJzQuMC4xJwoKaW5jbHVkZSBGSElSSGVscGVycyB2ZXJzaW9uICc0LjAuMScKCmNvbnRleHQgUGF0aWVudAoKZGVmaW5lIGZ1bmN0aW9uIEdldEFnZSh1bml0IFN0cmluZyk6CiAgICBpZiB1bml0ID0gJ3dlZWsnIHRoZW4KICAgICAgICBBZ2VJbldlZWtzKCkKICAgIGVsc2UgaWYgdW5pdCA9ICdtb250aCcgdGhlbgogICAgICAgIEFnZUluTW9udGhzKCkKICAgIGVsc2UgaWYgdW5pdCA9ICd5ZWFyJyB0aGVuCiAgICAgICAgQWdlSW5ZZWFycygpCiAgICBlbHNlCiAgICAgICAgbnVsbA" } }
+              }
+
+      responses:
+        200:
+          description: Rule modified successfully.
+          content:
+            application/json:
+              schema:
+                type: string
+        500:
+          description: Server error while modifying the rule
+
+
+  /openmrs/cdss/rule-manifest.form:
+    get:
+      summary: Retrieve the manifest (metadata) file for all rules
+      responses:
+        200:
+          description: Manifest file successfully read and returned
+          content:
+            application/json:
+              schema:
+                type: object
+        500:
+          description: Server error while reading the manifest file
+
+
+components:
+  schemas:
+    ParamDescriptor:
+      type: object
+      properties:
+        type:
+          type: string
+          description: The type of the parameter.
+          enum:
+            - "String"
+            - "Integer"
+            - "Boolean"
+        value:
+          type: object
+          description: The current value of the parameter. Must be of the type specified under the "type" property
+        allowedValues:
+          type: array
+          items:
+            type: object
+          description: The allowed values for the parameter. Must be of the type specified under the "type" property
+        default:
+          type: object
+          description: The default value of the parameter. Must be of the type specified under the "type" property
+      required:
+        - type
+    ModifyRuleRequest:
+      type: "object"
+      properties:
+        rule:
+          $ref: '#/components/schemas/CqlRule'
+          description: Rule to be modified
+        params:
+          type: "string"
+          additionalProperties:
+            $ref: '#/components/schemas/ParamDescriptor'
+        libraries:
+          type: "string"
+          additionalProperties:
+            type: "object"
+            $ref: "#/components/schemas/CqlRule"
+
+    CqlRule:
+      type: "object"
+      properties:
+        id:
+          type: "string"
+          description: CQL rule library id
+        libraryName:
+          type: "string"
+          description: CQL rule library name
+        version:
+          type: "string"
+          description: CQL rule library version
+        content:
+          type: "string"
+          description: Base64 encoded CQL content
+      required:
+        - id
+        - libraryName
+        - content
+
+
+

@@ -19,6 +19,7 @@ import cdssReportsPageComponent, {
 } from "./cdss-reports-page/cdss-reports-page.component";
 import CdssReportsLink from "./cdss-reports-link/cdss-reports-link.component";
 import { CdssModificationPage } from "./cdss-modification-page/cdss-modification-page.component";
+import { CdssDebugPage } from "./cdss-debug-page/CdssDebugPage";
 
 const moduleName = "@openmrs/esm-cdss-app";
 
@@ -95,3 +96,5 @@ export const cdssModificationPage = getSyncLifecycle(
   CdssModificationPage,
   options
 );
+
+export const debugPage = getSyncLifecycle(CdssDebugPage, options);

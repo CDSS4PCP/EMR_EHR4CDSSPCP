@@ -36,9 +36,9 @@ export const CdssModificationPage: React.FC = () => {
   const [errorMessage, setErrorMessage] = useState(null);
   const [pendingParameterChanges, setPendingParameterChanges] = useState({});
 
-  const setPendingParameterChanges2 = (newValue) => {
-    setPendingParameterChanges(newValue);
-  };
+  // const setPendingParameterChanges2 = (newValue) => {
+  //   setPendingParameterChanges(newValue);
+  // };
 
   function loadAndProcessData() {
     getRuleData().then((r) => {
@@ -59,11 +59,15 @@ export const CdssModificationPage: React.FC = () => {
       columnList.sort((a, b) => a?.name.localeCompare(b.name));
       setColumns(columnList);
     });
-
-    setPendingParameterChanges2({});
+    setPendingParameterChanges({});
+    // setPendingParameterChanges2({});
   }
 
   eventEmitter.on("modificationSucceeded", (args) => {
+    const newPendingChanges = { ...pendingParameterChanges };
+    delete newPendingChanges[args.ruleId];
+    setPendingParameterChanges(newPendingChanges);
+    console.log(pendingParameterChanges, args);
     loadAndProcessData();
   });
 
@@ -132,7 +136,7 @@ export const CdssModificationPage: React.FC = () => {
         rules={rules}
         columns={columns}
         pendingParameterChanges={pendingParameterChanges}
-        setPendingParameterChanges={setPendingParameterChanges2}
+        setPendingParameterChanges={setPendingParameterChanges}
         eventEmitter={eventEmitter}
       />
     </div>

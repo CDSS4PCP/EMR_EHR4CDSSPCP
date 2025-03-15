@@ -15,12 +15,21 @@ import static org.openmrs.module.cdss.CDSSUtil.encodeCql;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ModifyRuleRequestRuleDescriptor {
-    @JsonProperty(value = "id", required = true)
+    @JsonProperty(value = "id", required = false)
     public String id;
+
+    @JsonProperty(value = "libraryName", required = true)
+    public String libraryName;
     @JsonProperty(value = "version", required = false)
     String version;
     @JsonProperty(value = "content", required = true)
     String content;
+
+    public ModifyRuleRequestRuleDescriptor(String id, String libraryName, String version) {
+        this.id = id;
+        this.libraryName = libraryName;
+        this.version = version;
+    }
 
     @JsonIgnore
     public String getCqlContent() {
