@@ -2,28 +2,18 @@ package org.openmrs.module.cdss.web.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.apache.log4j.Logger;
-import org.openmrs.api.APIAuthenticationException;
 import org.openmrs.api.AdministrationService;
-import org.openmrs.module.cdss.api.CDSSService;
 import org.openmrs.module.cdss.api.RuleLoggerService;
 import org.openmrs.module.cdss.api.RuleManagerService;
 import org.openmrs.module.cdss.api.ValueSetService;
 import org.openmrs.module.cdss.api.dao.CDSSDao;
 import org.openmrs.module.cdss.api.data.CdssUsage;
-import org.openmrs.module.cdss.api.data.RuleManifest;
-import org.openmrs.module.cdss.api.serialization.CdssUsageDeserializer;
-import org.openmrs.module.cdss.api.serialization.CdssUsageSerializer;
-import org.openmrs.module.cdss.api.serialization.RuleManifestDeserializer;
-import org.openmrs.module.cdss.api.serialization.RuleManifestSerializer;
 import org.openmrs.module.cdss.api.util.ValueSetResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -32,26 +22,20 @@ import java.util.List;
 @RequestMapping("/cdss")
 public class ClientsideRestController extends CdssRestController {
 
-    Logger log = Logger.getLogger(ClientsideRestController.class);
-
     @Autowired
     protected CDSSDao dao;
-
-//    @Autowired
-//    protected CDSSService cdssService;
-
     @Autowired
     @Qualifier("adminService")
     protected AdministrationService administrationService;
-
     @Autowired
     protected RuleLoggerService ruleLoggerService;
-
     @Autowired
     protected RuleManagerService ruleManagerService;
-
     @Autowired
     protected ValueSetService valueSetService;
+    Logger log = Logger.getLogger(ClientsideRestController.class);
+    @Autowired
+    ObjectMapper objectMapper;
 
 
     /**
@@ -66,13 +50,6 @@ public class ClientsideRestController extends CdssRestController {
     public ResponseEntity<String> recordUsage(@RequestBody String newUsageString) {
         checkAuthorizationAndPrivilege();
 
-
-
-        ObjectMapper  objectMapper = new ObjectMapper();
-        SimpleModule  simpleModule = new SimpleModule();
-        simpleModule.addSerializer(CdssUsage.class, new CdssUsageSerializer());
-        simpleModule.addDeserializer(CdssUsage.class, new CdssUsageDeserializer());
-        objectMapper.registerModule(simpleModule);
 
         log.debug("Received new usage string: \n" + newUsageString + "\n will attempt to parse");
         CdssUsage newUsage;
@@ -93,7 +70,7 @@ public class ClientsideRestController extends CdssRestController {
         }
 
         try {
-            String savedString =objectMapper.writeValueAsString(saved);
+            String savedString = objectMapper.writeValueAsString(saved);
 
             return new ResponseEntity<>(savedString, HttpStatus.OK);
 
@@ -103,7 +80,6 @@ public class ClientsideRestController extends CdssRestController {
             return new ResponseEntity<>("Internal Error encountered", HttpStatus.INTERNAL_SERVER_ERROR);
 
         }
-//        return new ResponseEntity<>("Did not save because cdssService is disbled", HttpStatus.OK);
 
     }
 
@@ -120,14 +96,7 @@ public class ClientsideRestController extends CdssRestController {
         checkAuthorizationAndPrivilege();
 
 
-        ObjectMapper  objectMapper = new ObjectMapper();
-        SimpleModule  simpleModule = new SimpleModule();
-        simpleModule.addSerializer(CdssUsage.class, new CdssUsageSerializer());
-        simpleModule.addDeserializer(CdssUsage.class, new CdssUsageDeserializer());
-        objectMapper.registerModule(simpleModule);
 
-
-// This block is disabled because cdssService is disabled
         List<CdssUsage> usages = ruleLoggerService.getRuleUsages();
 
         String out = null;
@@ -186,8 +155,6 @@ public class ClientsideRestController extends CdssRestController {
         return new ResponseEntity<>("Valueset was null", HttpStatus.INTERNAL_SERVER_ERROR);
 
     }
-
-
 
 
 }

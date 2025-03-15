@@ -3,20 +3,17 @@ package org.openmrs.module.cdss.web.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.apache.log4j.Logger;
 import org.openmrs.api.APIAuthenticationException;
 import org.openmrs.api.AdministrationService;
-import org.openmrs.module.cdss.api.CDSSService;
 import org.openmrs.module.cdss.api.RuleManagerService;
-import org.openmrs.module.cdss.api.data.*;
+import org.openmrs.module.cdss.api.data.ModifyRuleRequest;
+import org.openmrs.module.cdss.api.data.ParamDescriptor;
+import org.openmrs.module.cdss.api.data.RuleDescriptor;
+import org.openmrs.module.cdss.api.data.RuleRole;
 import org.openmrs.module.cdss.api.data.criteria.RuleCriteria;
 import org.openmrs.module.cdss.api.data.criteria.projection.*;
 import org.openmrs.module.cdss.api.exception.RuleNotFoundException;
-import org.openmrs.module.cdss.api.serialization.CdssUsageDeserializer;
-import org.openmrs.module.cdss.api.serialization.CdssUsageSerializer;
-import org.openmrs.module.cdss.api.serialization.RuleManifestDeserializer;
-import org.openmrs.module.cdss.api.serialization.RuleManifestSerializer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
@@ -32,9 +29,6 @@ import java.util.Map;
 @RequestMapping("/cdss")
 public class RuleRestController extends CdssRestController {
 
-//    @Autowired
-    protected CDSSService cdssService;
-
     @Autowired
     @Qualifier("adminService")
     protected AdministrationService administrationService;
@@ -43,6 +37,10 @@ public class RuleRestController extends CdssRestController {
     @Autowired
     protected RuleManagerService ruleManagerService;
     Logger log = Logger.getLogger(RuleRestController.class);
+
+
+    @Autowired
+    ObjectMapper objectMapper;
 
     /**
      * Retrieves an ELM rule by its ID or name, optionally considering the version.
@@ -412,17 +410,24 @@ public class RuleRestController extends CdssRestController {
     public ResponseEntity<String> getRuleManifest() throws APIAuthenticationException, JsonProcessingException {
         checkAuthorizationAndPrivilege();
 
-         ObjectMapper objectMapper= new ObjectMapper();
-         SimpleModule simpleModule=new SimpleModule();
+//         ObjectMapper objectMapper= new ObjectMapper();
+//         SimpleModule simpleModule=new SimpleModule();
+//
+//
+//        simpleModule.addSerializer(RuleManifest.class, new RuleManifestSerializer());
+//        simpleModule.addDeserializer(RuleManifest.class, new RuleManifestDeserializer());
+//        objectMapper.registerModule(simpleModule);
+//
+//        String val = objectMapper.writeValueAsString(ruleManagerService.getRuleManifest());
+//
+//        return ResponseEntity.ok(val);
 
+        if (objectMapper == null) {
+            return ResponseEntity.internalServerError().body("ObjectMapper is null");
+        } else {
+            return ResponseEntity.ok(objectMapper.writeValueAsString(ruleManagerService.getRuleManifest()));
+        }
 
-        simpleModule.addSerializer(RuleManifest.class, new RuleManifestSerializer());
-        simpleModule.addDeserializer(RuleManifest.class, new RuleManifestDeserializer());
-        objectMapper.registerModule(simpleModule);
-
-        String val = objectMapper.writeValueAsString(ruleManagerService.getRuleManifest());
-
-        return ResponseEntity.ok(val);
 
     }
 
