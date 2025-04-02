@@ -13,6 +13,8 @@ import styles from "./cdss-modification-page.module.scss";
 import Select from "@carbon/react/lib/components/Select/Select";
 import CdssModificationTable from "./cdss-modification-table.component";
 import { recordRuleUsage } from "../cdssService";
+import UploadRuleDialog from "./upload-rule-dialog";
+import { Buffer } from "buffer";
 
 // Events used for parameter resets
 const eventEmitter = new EventEmitter();
@@ -36,9 +38,41 @@ export const CdssModificationPage: React.FC = () => {
   const [errorMessage, setErrorMessage] = useState(null);
   const [pendingParameterChanges, setPendingParameterChanges] = useState({});
 
-  // const setPendingParameterChanges2 = (newValue) => {
-  //   setPendingParameterChanges(newValue);
-  // };
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  const handleOpenDialog = () => {
+    setIsDialogOpen(true);
+  };
+
+  const handleCloseDialog = () => {
+    setIsDialogOpen(false);
+  };
+
+  const handleUploadRuleSubmit = async (
+    libraryName: string,
+    libraryVersion: string,
+    description: string,
+    enabled: boolean,
+    file: File
+  ) => {
+    const cqlContents = await file.text();
+    const cqlEncoded = Buffer.from(cqlContents).toString("base64");
+    const body = {
+      libraryName: libraryName,
+      libraryVersion: libraryVersion,
+      description: description,
+      ruleRole: "RULE",
+      cql: cqlEncoded,
+    };
+    console.log("sending ", body);
+    const result = await openmrsFetch("/cdss/create-rule.form", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: body,
+    });
+
+    console.log("result", result);
+  };
 
   function loadAndProcessData() {
     getRuleData().then((r) => {
@@ -83,6 +117,7 @@ export const CdssModificationPage: React.FC = () => {
   eventEmitter.on("ruleDisableSucceeded", (args) => {
     loadAndProcessData();
   });
+
   eventEmitter.on("ruleEnableFailed", (args) => {
     setShowErrorMessage(true);
     setErrorMessage(args.message);
@@ -130,6 +165,12 @@ export const CdssModificationPage: React.FC = () => {
         <code>{errorMessage}</code>
       </Modal>
 
+      <UploadRuleDialog
+        isOpen={isDialogOpen}
+        onClose={handleCloseDialog}
+        onSubmit={handleUploadRuleSubmit}
+      />
+
       <h1 className={styles.modHeader}>Rule Modification</h1>
 
       <CdssModificationTable
@@ -138,6 +179,7 @@ export const CdssModificationPage: React.FC = () => {
         pendingParameterChanges={pendingParameterChanges}
         setPendingParameterChanges={setPendingParameterChanges}
         eventEmitter={eventEmitter}
+        uploadRuleButtonClicked={handleOpenDialog}
       />
     </div>
   );

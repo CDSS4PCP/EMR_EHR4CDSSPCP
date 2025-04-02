@@ -61,8 +61,6 @@ export interface CdssChartComponentProps {
 export const CdssChart: React.FC<CdssChartComponentProps> = ({
   patientUuid,
 }) => {
-  const { t } = useTranslation();
-
   const [results, setResults] = useState([]);
   const [rules, setRules] = useState([]);
   const [usages, setExistingUsages] = useState([]);
@@ -72,11 +70,10 @@ export const CdssChart: React.FC<CdssChartComponentProps> = ({
   const [actionTaking, setActionTaking] = useState<CdssUsage>();
 
   useEffect(() => {
-    getRules().then(rules =>{
+    getRules().then((rules) => {
       setRules(rules);
       loadResults(patientUuid, setResults);
-    })
-
+    });
   }, []);
 
   useEffect(() => {
@@ -149,11 +146,11 @@ export const CdssChart: React.FC<CdssChartComponentProps> = ({
         <hr />
       </CardHeader>
 
-
-      {results == null || (Array.isArray(results) && results.length != rules.length) ? (
+      {results == null ||
+      (Array.isArray(results) && results.length != rules.length) ? (
         <div style={{ justifyContent: "center" }}>
           <Loading withOverlay={false} small={true} active={true}></Loading>
-          {results.length} of { rules.length} rules checked
+          {results.length} of {rules.length} rules checked
         </div>
       ) : (
         <CdssResultsTable

@@ -7,10 +7,7 @@ import org.apache.log4j.Logger;
 import org.openmrs.api.APIAuthenticationException;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.module.cdss.api.RuleManagerService;
-import org.openmrs.module.cdss.api.data.ModifyRuleRequest;
-import org.openmrs.module.cdss.api.data.ParamDescriptor;
-import org.openmrs.module.cdss.api.data.RuleDescriptor;
-import org.openmrs.module.cdss.api.data.RuleRole;
+import org.openmrs.module.cdss.api.data.*;
 import org.openmrs.module.cdss.api.data.criteria.RuleCriteria;
 import org.openmrs.module.cdss.api.data.criteria.projection.*;
 import org.openmrs.module.cdss.api.exception.RuleNotFoundException;
@@ -52,7 +49,7 @@ public class RuleRestController extends CdssRestController {
      */
     @GetMapping(path = {"/elm-rule/idOrName/{ruleId}.form"}, produces = {"application/json"})
     public ResponseEntity<String> getElmRuleByIdOrName(@PathVariable(value = "ruleId") String ruleId, @RequestParam(value = "version", required = false) String version) throws APIAuthenticationException {
-//        checkAuthorizationAndPrivilege();
+        checkAuthorizationAndPrivilege();
 
         try {
             String rule = ruleManagerService.getElmRuleById(ruleId);
@@ -91,7 +88,7 @@ public class RuleRestController extends CdssRestController {
      */
     @GetMapping(path = {"/elm-rule/id/{ruleId}.form", "/elm-rule/{ruleId}.form"}, produces = {"application/json"})
     public ResponseEntity<String> getElmRuleById(@PathVariable(value = "ruleId") String ruleId) throws APIAuthenticationException {
-//        checkAuthorizationAndPrivilege();
+        checkAuthorizationAndPrivilege();
 
         try {
             String rule = ruleManagerService.getElmRuleById(ruleId);
@@ -114,7 +111,7 @@ public class RuleRestController extends CdssRestController {
      */
     @GetMapping(path = {"/cql-rule/id/{ruleId}.form", "/cql-rule/{ruleId}.form"}, produces = {"application/json"})
     public ResponseEntity<String> getCqlRuleById(@PathVariable(value = "ruleId") String ruleId) throws APIAuthenticationException {
-//        checkAuthorizationAndPrivilege();
+        checkAuthorizationAndPrivilege();
 
 
         try {
@@ -135,7 +132,7 @@ public class RuleRestController extends CdssRestController {
      */
     @GetMapping(path = "/elm-rule/name/{libraryName}.form", produces = {"application/json"})
     public ResponseEntity<String> getElmRuleByName(@PathVariable(value = "libraryName") String libraryName, @RequestParam(value = "version", required = false) String version) throws APIAuthenticationException {
-//        checkAuthorizationAndPrivilege();
+        checkAuthorizationAndPrivilege();
 
         try {
             String rule;
@@ -164,7 +161,7 @@ public class RuleRestController extends CdssRestController {
      */
     @GetMapping(path = "/cql-rule/name/{libraryName}.form", produces = {"application/json"})
     public ResponseEntity<String> getCqlRuleById(@PathVariable(value = "libraryName") String libraryName, @RequestParam(value = "version", required = false) String version) throws APIAuthenticationException {
-//        checkAuthorizationAndPrivilege();
+        checkAuthorizationAndPrivilege();
 
 
         try {
@@ -190,7 +187,7 @@ public class RuleRestController extends CdssRestController {
      */
     @GetMapping(path = {"/cql-rule/idOrName/{ruleId}.form", "/cql-rule/{ruleId}.form"}, produces = {"application/json"})
     public ResponseEntity<String> getCqlRuleByIdOrName(@PathVariable(value = "ruleId") String ruleId, @RequestParam(value = "version", required = false) String version) throws APIAuthenticationException {
-//        checkAuthorizationAndPrivilege();
+        checkAuthorizationAndPrivilege();
 
         try {
             String rule = ruleManagerService.getCqlRuleById(ruleId);
@@ -232,7 +229,7 @@ public class RuleRestController extends CdssRestController {
      */
     @GetMapping(path = "/rule.form", produces = {"application/json"})
     public ResponseEntity<List<String>> getRules(@RequestParam(required = false) Boolean allRules, @RequestParam(required = false) String role, @RequestParam(required = false) Boolean showNames, @RequestParam(required = false) Boolean showVersions) throws APIAuthenticationException {
-//        checkAuthorizationAndPrivilege();
+        checkAuthorizationAndPrivilege();
 
 
         if (showNames == null) {
@@ -307,7 +304,7 @@ public class RuleRestController extends CdssRestController {
      */
     @PostMapping(path = {"/enable-rule/id/{ruleId}.form", "/enable-rule/{ruleId}.form"}, produces = {"application/json"})
     public ResponseEntity<String> enableRuleById(@PathVariable(value = "ruleId") String ruleId) throws APIAuthenticationException {
-//        checkAuthorizationAndPrivilege();
+        checkAuthorizationAndPrivilege();
 
         try {
             ruleManagerService.enableRuleById(ruleId);
@@ -330,7 +327,7 @@ public class RuleRestController extends CdssRestController {
      */
     @PostMapping(path = {"/enable-rule/name/{libraryName}.form"}, produces = {"application/json"})
     public ResponseEntity<String> enableRuleByName(@PathVariable(value = "libraryName") String libraryName, @RequestParam(value = "version", required = false) String version) throws APIAuthenticationException {
-//        checkAuthorizationAndPrivilege();
+        checkAuthorizationAndPrivilege();
 
         try {
             Boolean success;
@@ -358,7 +355,7 @@ public class RuleRestController extends CdssRestController {
      */
     @PostMapping(path = {"/disable-rule/id/{ruleId}.form", "/disable-rule/{ruleId}.form"}, produces = {"application/json"})
     public ResponseEntity<String> disableRuleById(@PathVariable(value = "ruleId") String ruleId) throws APIAuthenticationException {
-//        checkAuthorizationAndPrivilege();
+        checkAuthorizationAndPrivilege();
 
         try {
             ruleManagerService.disableRuleById(ruleId);
@@ -381,7 +378,7 @@ public class RuleRestController extends CdssRestController {
      */
     @PostMapping(path = {"/disable-rule/name/{libraryName}.form"}, produces = {"application/json"})
     public ResponseEntity<String> disableRuleByName(@PathVariable(value = "libraryName") String libraryName, @RequestParam(value = "version", required = false) String version) throws APIAuthenticationException {
-//        checkAuthorizationAndPrivilege();
+        checkAuthorizationAndPrivilege();
 
         try {
             Boolean success;
@@ -442,7 +439,7 @@ public class RuleRestController extends CdssRestController {
      */
     @PostMapping(path = "/modify-rule.form", produces = {"application/json"})
     public ResponseEntity<String> modifyRule(@RequestBody ModifyRuleRequest body) throws APIAuthenticationException, JsonProcessingException {
-//        checkAuthorizationAndPrivilege();
+        checkAuthorizationAndPrivilege();
 
         String ruleId = body.rule.id;
         String version = body.rule.getVersion();
@@ -459,6 +456,28 @@ public class RuleRestController extends CdssRestController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity<>(result.toString(), HttpStatus.OK);
+
+    }
+
+
+    /**
+     * Modifies an existing rule based on the provided request body.
+     *
+     * @param body the request body containing the rule descriptor and parameters to modify
+     * @return ResponseEntity containing "true" if the rule is successfully modified, or an error message if an exception occurs
+     * @throws APIAuthenticationException if there is an issue with API authentication
+     * @throws JsonProcessingException    if there is an error processing JSON
+     */
+    @PostMapping(path = "/create-rule.form", produces = {"application/json"})
+    public ResponseEntity<String> createRule(@RequestBody CreateRuleRequest body) throws APIAuthenticationException, JsonProcessingException {
+        checkAuthorizationAndPrivilege();
+
+        String ruleId = body.libraryName;
+        String version = body.libraryVersion;
+
+        log.debug("Received " + ruleId + " with " + version);
+        log.debug(body);
+        return new ResponseEntity<>("Received " + ruleId + " with " + version, HttpStatus.OK);
 
     }
 

@@ -62,6 +62,13 @@
             <version>3.9.9</version>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/org.semver4j/semver4j -->
+        <dependency>
+            <groupId>org.semver4j</groupId>
+            <artifactId>semver4j</artifactId>
+            <version>5.6.0</version>
+        </dependency>
+
 
     </dependencies>
     <build>

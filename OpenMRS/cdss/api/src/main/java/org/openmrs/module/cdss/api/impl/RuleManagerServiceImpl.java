@@ -24,6 +24,7 @@ import org.openmrs.module.cdss.api.exception.MultipleRulesFoundException;
 import org.openmrs.module.cdss.api.exception.RuleNotEnabledException;
 import org.openmrs.module.cdss.api.exception.RuleNotFoundException;
 import org.openmrs.module.cdss.api.serialization.RuleManifestDeserializer;
+import org.semver4j.Semver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -37,7 +38,6 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static org.openmrs.module.cdss.CDSSUtil.decodeCql;
 import static org.openmrs.module.cdss.CDSSUtil.encodeCql;
 
 
@@ -93,7 +93,6 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
     public List<String> getLoadedVaccineRulesets() {
         return CDSSConfig.VACCINE_CODES;
     }
-
 
 
     /**
@@ -488,7 +487,6 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
      * Modifies an existing rule by updating its parameters and translating its CQL content to ELM.
      *
      * @param originalRuleId    The identifier of the rule to be modified.
-     * @param version           The version of the rule.
      * @param changedParameters A map of parameters to be updated in the rule.
      * @return True if the rule is successfully modified and saved, false otherwise.
      * @throws JsonProcessingException If there is an error processing JSON content.
@@ -552,7 +550,6 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
      * If a rule with the same ID already exists, a new unique ID is generated.
      *
      * @param ruleId      The identifier for the new rule.
-     * @param version     The version of the rule.
      * @param description A description of the rule.
      * @param params      A map of parameters associated with the rule.
      * @param role        The role of the rule, either SUPPORT or RULE.
@@ -562,7 +559,7 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
      * @throws IOException      If an I/O error occurs during file operations.
      * @throws RuntimeException If any of the required parameters (ruleId, cql, elm) are null.
      */
-    private Boolean createRule(String ruleId, String description, Map<String, ParamDescriptor> params, RuleRole role, String cql, String elm) throws IOException {
+    public Boolean createRule(String ruleId, String description, Map<String, ParamDescriptor> params, RuleRole role, String cql, String elm) throws IOException {
 
         if (ruleId == null) {
             throw new RuntimeException("Rule id is null");
@@ -579,15 +576,11 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
         }
 
 
-        // TODO Change to timestamp
-        int count = 1;
-        String newLibraryName = originalRule.getLibraryName() + "_" + count;
-        while (doesRuleExistByName(newLibraryName)) {
-            newLibraryName = newLibraryName + "_" + count;
-            count++;
-        }
+        Semver semver = new Semver(originalRule.getVersion());
+        semver.withIncMajor(1);
 
-        String newVersion = originalRule.getVersion();
+        String newVersion = semver.getVersion();
+        String newLibraryName = originalRule.getLibraryName() + "-" + newVersion;
 
         String cqlFilePath = String.format("cql/%s.cql", newLibraryName);
         String elmFilePath = String.format("elm/%s.json", newLibraryName);
@@ -623,14 +616,14 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
 //        log.debug("elmFile.exists(): " + elmFile.exists());
 
         if (elmFile.exists()) {
-            Boolean success = elmFile.delete();
+            boolean success = elmFile.delete();
             log.debug("Success in deleting " + elmFile.getAbsoluteFile() + " : " + success);
         }
         if (!elmFile.exists()) {
             log.debug("Creating new" + elmFile.getAbsoluteFile());
 
             Files.createDirectories(elmFile.getParentFile().toPath());
-            Boolean success = elmFile.createNewFile();
+            boolean success = elmFile.createNewFile();
             log.debug("Success in creating " + elmFile.getAbsoluteFile() + " : " + success);
         }
 
@@ -657,9 +650,8 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
     /**
      * Translates a given CQL rule into its corresponding ELM representation by calling an external service.
      *
-     * @param ruleId  The identifier of the rule to be translated.
-     * @param version The version of the rule.
-     * @param cql     The CQL content of the rule.
+     * @param ruleId The identifier of the rule to be translated.
+     * @param cql    The CQL content of the rule.
      * @return The translated ELM content as a string.
      * @throws JsonProcessingException If there is an error processing JSON content.
      * @throws FileNotFoundException   If the CQL rule file is not found.
