@@ -15,14 +15,13 @@ import {
   TableToolbarContent,
   Toggle,
 } from "@carbon/react";
-import { Add } from "@carbon/react/icons";
+import { DocumentAdd, Subtract } from "@carbon/react/icons";
 
 import styles from "./cdss-modification-page.module.scss";
 import CdssEditableCell from "./cdss-editable-cell.component";
 import { EventEmitter } from "events";
 import CdssRuleEnableCell from "./cdss-rule-enable-cell.component";
 import { openmrsFetch } from "@openmrs/esm-framework";
-import UploadRuleDialog from "./upload-rule-dialog";
 
 async function postRuleChange(ruleId, parameterChanges, eventEmitter) {
   const changes = {};
@@ -187,13 +186,25 @@ const CdssModificationTable = React.forwardRef<
                   <IconButton
                     tooltip={"Upload a new Rule"}
                     label={"Upload a new Rule"}
+                    size={"sm"}
+                    autoalign
                     onClick={() => {
                       if (uploadRuleButtonClicked !== null) {
                         uploadRuleButtonClicked();
                       }
                     }}
                   >
-                    <Add size={"large"} />
+                    <DocumentAdd size="lg" />
+                  </IconButton>
+
+                  <IconButton
+                    tooltip={"Delete Rule"}
+                    label={"Delete Rule"}
+                    size={"sm"}
+                    autoalign
+                    onClick={() => {}}
+                  >
+                    <Subtract size="lg" />
                   </IconButton>
 
                   <div>

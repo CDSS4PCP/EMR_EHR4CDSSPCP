@@ -1,14 +1,11 @@
 import React, { useRef, useState } from "react";
 import {
   Modal,
-  ModalHeader,
   ModalBody,
   TextInput,
-  Button,
   FileUploader,
   Checkbox,
   Form,
-  ComposedModal,
 } from "@carbon/react";
 
 interface UploadRuleDialogProps {
@@ -65,6 +62,8 @@ const UploadRuleDialog: React.FC<UploadRuleDialogProps> = ({
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
       setFile(event.target.files[0]);
+    } else {
+      setFile(null);
     }
   };
 
@@ -72,8 +71,8 @@ const UploadRuleDialog: React.FC<UploadRuleDialogProps> = ({
     <Modal
       open={isOpen}
       onClose={onClose}
-      modalHeading="Add a custom domain"
-      modalLabel="Account resources"
+      modalHeading="Upload a rule"
+      modalLabel="Rule Management"
       primaryButtonText="Upload"
       secondaryButtonText="Cancel"
       onRequestClose={() => onClose()}
@@ -107,18 +106,22 @@ const UploadRuleDialog: React.FC<UploadRuleDialogProps> = ({
             id="enabled"
             labelText="Enabled"
             checked={isEnabled}
-            onChange={setIsEnabled}
+            onChange={(e) => {
+              setIsEnabled(e.target.checked);
+            }}
           />
           <FileUploader
             accept={[".cql"]}
             buttonKind="primary"
+            filenameStatus={"edit"}
             filenameStatusText={file ? file.name : "No file chosen"}
             labelDescription="Click or drag and drop a cql file here"
             labelTitle="Upload CQL File"
             onChange={(event) => {
-              if (event.target.files && event.target.files.length > 0) {
-                handleFileChange(event);
-              }
+              handleFileChange(event);
+            }}
+            onDelete={(event) => {
+              handleFileChange(event);
             }}
             required
           />

@@ -171,7 +171,7 @@ export const CdssModificationPage: React.FC = () => {
         onSubmit={handleUploadRuleSubmit}
       />
 
-      <h1 className={styles.modHeader}>Rule Modification</h1>
+      <h1 className={styles.modHeader}>Rule Management</h1>
 
       <CdssModificationTable
         rules={rules}
