@@ -6,7 +6,19 @@ import {
   FileUploader,
   Checkbox,
   Form,
+  FormGroup,
+  SelectItem,
+  Select,
+  Button,
+  IconButton,
 } from "@carbon/react";
+import { Add, Subtract } from "@carbon/react/icons";
+
+interface ParameterProps {
+  // onChange: (index: number, key: keyof Variable, value: string) => void;
+  onRemove: (index: number) => void;
+  index: number;
+}
 
 interface UploadRuleDialogProps {
   isOpen: boolean;
@@ -20,6 +32,51 @@ interface UploadRuleDialogProps {
   ) => void; // Callback for form submission
 }
 
+const ParameterInput: React.FC<ParameterProps> = ({ index, onRemove }) => {
+  const [paramId, setParamId] = useState<string>("");
+
+  return (
+    <div style={{ borderStyle: "solid", borderWidth: "2px", padding: "10px" }}>
+      <Form>
+        <IconButton
+          hasIconOnly
+          onClick={() => {
+            console.log(`Removing index ${index} with value ${paramId}`);
+            onRemove(index);
+          }}
+        >
+          <Subtract></Subtract>
+        </IconButton>
+        <FormGroup>
+          <TextInput
+            id={"parameterInput-id-" + index}
+            labelText="Parameter Name"
+            value={paramId}
+            required={true}
+            onChange={(e) => setParamId(e.target.value)}
+          />
+          <Select id="type" labelText="Type" required={true}>
+            <SelectItem text={"String"} value="String">
+              String
+            </SelectItem>
+            <SelectItem text={"Integer"} value="Number">
+              Integer
+            </SelectItem>
+            <SelectItem text={"Boolean"} value="Boolean">
+              Boolean
+            </SelectItem>
+          </Select>
+          <TextInput
+            id="defaultValue"
+            labelText="Default Value"
+            required={true}
+          />
+        </FormGroup>
+      </Form>
+    </div>
+  );
+};
+
 const UploadRuleDialog: React.FC<UploadRuleDialogProps> = ({
   isOpen,
   onClose,
@@ -29,7 +86,11 @@ const UploadRuleDialog: React.FC<UploadRuleDialogProps> = ({
   const [libraryVersion, setLibraryVersion] = useState("");
   const [description, setDescription] = useState("");
   const [isEnabled, setIsEnabled] = useState(false);
+  const [isAdvancedOpen, setAdvancedOpen] = useState(false);
   const [file, setFile] = useState<File | null>(null);
+  const [parameterComponents, setParameterComponents] = useState<
+    React.ReactNode[]
+  >([]);
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
@@ -65,6 +126,15 @@ const UploadRuleDialog: React.FC<UploadRuleDialogProps> = ({
     } else {
       setFile(null);
     }
+  };
+
+  const handleRemove = (index) => {
+    setParameterComponents((parameterComponents) =>
+      parameterComponents.filter((_, i) => {
+        console.log(i, _);
+        return i !== index + 1;
+      })
+    );
   };
 
   return (
@@ -125,13 +195,43 @@ const UploadRuleDialog: React.FC<UploadRuleDialogProps> = ({
             }}
             required
           />
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "flex-end",
-              marginTop: "1rem",
-            }}
-          ></div>
+
+          {/*<Checkbox*/}
+          {/*  id="advanced"*/}
+          {/*  labelText="Advanced"*/}
+          {/*  checked={isAdvancedOpen}*/}
+          {/*  onChange={(e) => {*/}
+          {/*    setAdvancedOpen(e.target.checked);*/}
+          {/*  }}*/}
+          {/*/>*/}
+
+          {/*{isAdvancedOpen && (*/}
+          {/*  <div>*/}
+          {/*    <FormGroup legendText="Parameters">*/}
+          {/*      <IconButton*/}
+          {/*        onClick={() => {*/}
+          {/*          const index = parameterComponents.length;*/}
+
+          {/*          console.log(parameterComponents.length);*/}
+          {/*          const component = (*/}
+          {/*            <ParameterInput*/}
+          {/*              index={index}*/}
+          {/*              onRemove={handleRemove}*/}
+          {/*            ></ParameterInput>*/}
+          {/*          );*/}
+
+          {/*          setParameterComponents((parameterComponents) => [*/}
+          {/*            ...parameterComponents,*/}
+          {/*            component,*/}
+          {/*          ]);*/}
+          {/*        }}*/}
+          {/*      >*/}
+          {/*        <Add></Add>*/}
+          {/*      </IconButton>*/}
+          {/*      {parameterComponents.map((c) => c)}*/}
+          {/*    </FormGroup>*/}
+          {/*  </div>*/}
+          {/*)}*/}
         </Form>
       </ModalBody>
     </Modal>
