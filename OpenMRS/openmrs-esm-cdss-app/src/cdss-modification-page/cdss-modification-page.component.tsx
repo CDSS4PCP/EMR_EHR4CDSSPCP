@@ -64,14 +64,18 @@ export const CdssModificationPage: React.FC = () => {
       ruleRole: "RULE",
       cql: cqlEncoded,
     };
-    console.log("sending ", body);
-    const result = await openmrsFetch("/cdss/create-rule.form", {
+    openmrsFetch("/cdss/create-rule.form", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: body,
-    });
-
-    console.log("result", result);
+    })
+      .then((response) => {
+        console.log("Result", response);
+        eventEmitter.emit("ruleUploadSucceeded", {});
+      })
+      .catch((error) => {
+        eventEmitter.emit("ruleUploadFailed", { message: error.message });
+      });
   };
 
   function loadAndProcessData() {
@@ -101,7 +105,7 @@ export const CdssModificationPage: React.FC = () => {
     const newPendingChanges = { ...pendingParameterChanges };
     delete newPendingChanges[args.ruleId];
     setPendingParameterChanges(newPendingChanges);
-    console.log(pendingParameterChanges, args);
+
     loadAndProcessData();
   });
 
@@ -118,12 +122,20 @@ export const CdssModificationPage: React.FC = () => {
     loadAndProcessData();
   });
 
+  eventEmitter.on("ruleUploadSucceeded", (args) => {
+    loadAndProcessData();
+  });
+
   eventEmitter.on("ruleEnableFailed", (args) => {
     setShowErrorMessage(true);
     setErrorMessage(args.message);
   });
 
   eventEmitter.on("ruleDisableFailed", (args) => {
+    setShowErrorMessage(true);
+    setErrorMessage(args.message);
+  });
+  eventEmitter.on("ruleUploadFailed", (args) => {
     setShowErrorMessage(true);
     setErrorMessage(args.message);
   });

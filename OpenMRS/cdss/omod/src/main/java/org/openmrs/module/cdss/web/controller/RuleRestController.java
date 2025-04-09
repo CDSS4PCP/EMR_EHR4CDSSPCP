@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -474,10 +475,14 @@ public class RuleRestController extends CdssRestController {
 
         String ruleId = body.libraryName;
         String version = body.libraryVersion;
+        try {
+            Boolean success = ruleManagerService.createNewRule(body.libraryName, body.libraryVersion, body.description, new HashMap<>(), body.ruleRole, body.cql, null);
+            return new ResponseEntity<>(success + "", HttpStatus.OK);
 
-        log.debug("Received " + ruleId + " with " + version);
-        log.debug(body);
-        return new ResponseEntity<>("Received " + ruleId + " with " + version, HttpStatus.OK);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
 
     }
 

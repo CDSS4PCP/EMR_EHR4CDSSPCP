@@ -498,9 +498,7 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
         log.debug("CDSS Attempting to modify rule " + originalRuleId);
         String modificationServiceUrl = getRuleModificationServiceUrl();
 
-
         RuleDescriptor originalRule = getRuleDescriptorById(originalRuleId);
-
 
         if (originalRule == null) {
             throw new RuleNotFoundException(originalRuleId);
@@ -521,22 +519,11 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
         }
 
         modifyRuleRequest.setParams(changedParameters);
-
-
         String stringBody = objectMapper.writeValueAsString(modifyRuleRequest);
-
-//        log.debug("Created body for injection\n " + stringBody);
         String resultString = callModificationService(modificationServiceUrl + "api/inject", stringBody);
-//        log.debug("Got result from injection: " + resultString);
-
         ModifyRuleRequest result = objectMapper.readValue(resultString, ModifyRuleRequest.class);
         String cql = result.getRule().getCqlContent();
-//        log.debug("new cql: " + cql);
-
-
-//        log.debug("Translating");
         String elm = translate(originalRuleId, cql);
-//        log.debug("Got result from translation: " + elm);
 
 
         return createRule(originalRuleId, originalRule.getDescription(), changedParameters, RuleRole.RULE, cql, elm);
@@ -647,6 +634,79 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
     }
 
 
+    public Boolean createNewRule(String libraryName, String libraryVersion, String description, Map<String, ParamDescriptor> params, RuleRole role, String cql, String elm) throws IOException {
+
+        if (libraryName == null) {
+            throw new RuntimeException("Rule id is null");
+        }
+        if (cql == null) {
+            throw new RuntimeException("CQL is null");
+        }
+
+        String cqlFilePath = String.format("cql/%s-%s.cql", libraryName, libraryVersion);
+        String elmFilePath = String.format("elm/%s-%s.json", libraryName, libraryVersion);
+
+        String newRuleId = UUID.randomUUID().toString();
+        RuleDescriptor descriptor = new RuleDescriptor(newRuleId, libraryName, libraryVersion, cqlFilePath, elmFilePath, role);
+        descriptor.setEnabled(true);
+        descriptor.setParams(params);
+        descriptor.setDescription(description);
+        descriptor.setDerivedFrom(null);
+
+
+        File cqlFile = new File(RULE_DIRECTORY_PATH + cqlFilePath);
+
+        if (cqlFile.exists()) {
+            cqlFile.delete();
+        }
+        if (!cqlFile.exists()) {
+            Files.createDirectories(cqlFile.getParentFile().toPath());
+            cqlFile.createNewFile();
+        }
+
+        FileWriter cqlFileWriter = new FileWriter(cqlFile);
+
+        cqlFileWriter.write(cql);
+        cqlFileWriter.close();
+
+        if (elm == null) {
+            elm = translate(newRuleId, libraryName, libraryVersion, cql);
+        }
+
+
+        File elmFile = new File(RULE_DIRECTORY_PATH + elmFilePath);
+
+        if (elmFile.exists()) {
+            boolean success = elmFile.delete();
+            log.debug("Success in deleting " + elmFile.getAbsoluteFile() + " : " + success);
+        }
+        if (!elmFile.exists()) {
+            log.debug("Creating new" + elmFile.getAbsoluteFile());
+
+            Files.createDirectories(elmFile.getParentFile().toPath());
+            boolean success = elmFile.createNewFile();
+            log.debug("Success in creating " + elmFile.getAbsoluteFile() + " : " + success);
+        }
+
+
+        FileWriter elmFileWriter = new FileWriter(elmFile);
+
+        elmFileWriter.write(elm);
+        elmFileWriter.close();
+
+        Boolean addSuccess = ruleManifest.addRule(descriptor);
+        if (addSuccess) {
+            log.debug("Saving rule " + newRuleId + " --> " + descriptor.getLibraryName() + " to " + RULE_DIRECTORY_PATH);
+
+            writeManifest();
+        } else {
+            log.error("Did not save rule " + newRuleId + " --> " + descriptor.getLibraryName() + " to " + RULE_DIRECTORY_PATH);
+        }
+        return addSuccess;
+
+
+    }
+
     /**
      * Translates a given CQL rule into its corresponding ELM representation by calling an external service.
      *
@@ -674,6 +734,47 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
 
         ModifyRuleRequest translateRuleRequest = new ModifyRuleRequest();
         ModifyRuleRequestRuleDescriptor modifyRuleRequestRuleDescriptor = new ModifyRuleRequestRuleDescriptor(ruleId, originalRuleDescriptor.getLibraryName(), originalRuleDescriptor.getVersion());
+        modifyRuleRequestRuleDescriptor.setCqlContent(mmrCommonString);
+        translateRuleRequest.setRule(modifyRuleRequestRuleDescriptor);
+        translateRuleRequest.setLibraries(libraries);
+
+
+        String stringBody = objectMapper.writeValueAsString(translateRuleRequest);
+
+
+//        log.debug("Sending this to translation ---> \n\n" + stringBody);
+
+        String resultString = callModificationService(modificationServiceUrl + "api/translate", stringBody);
+        return resultString;
+    }
+
+
+    /**
+     * Translates a given CQL rule into its corresponding ELM representation by calling an external service.
+     *
+     * @param ruleId The identifier of the rule to be translated.
+     * @param cql    The CQL content of the rule.
+     * @return The translated ELM content as a string.
+     * @throws JsonProcessingException If there is an error processing JSON content.
+     * @throws FileNotFoundException   If the CQL rule file is not found.
+     * @throws RuleNotFoundException   If the specified rule is not found.
+     */
+    private String translate(String ruleId, String libraryName, String libraryVersion, String cql) throws IOException {
+
+        String modificationServiceUrl = getRuleModificationServiceUrl();
+        HashMap<String, ModifyRuleRequestRuleDescriptor> libraries = new HashMap<>();
+        // TODO how to manage dependency libraries?
+
+        RuleDescriptor mmrCommon = getRuleDescriptorByName("MMR_Common_Library");
+        String mmrCommonString = getCqlRuleByName("MMR_Common_Library");
+        String mmrCommonEncoded = encodeCql(mmrCommonString);
+//        log.debug("mmrCommonEncoded -->\n" + mmrCommonEncoded);
+//        log.debug("mmrCommonDecoded -->\n" + decodeCql(mmrCommonEncoded));
+
+        libraries.put("MMR_Common_Library", new ModifyRuleRequestRuleDescriptor(mmrCommon.getId(), mmrCommon.getLibraryName(), mmrCommon.getVersion(), mmrCommonEncoded));
+
+        ModifyRuleRequest translateRuleRequest = new ModifyRuleRequest();
+        ModifyRuleRequestRuleDescriptor modifyRuleRequestRuleDescriptor = new ModifyRuleRequestRuleDescriptor(ruleId, libraryName, libraryVersion);
         modifyRuleRequestRuleDescriptor.setCqlContent(mmrCommonString);
         translateRuleRequest.setRule(modifyRuleRequestRuleDescriptor);
         translateRuleRequest.setLibraries(libraries);

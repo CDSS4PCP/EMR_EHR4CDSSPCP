@@ -76,4 +76,5 @@ public interface RuleManagerService extends CdssVaccineService {
     //    @Authorized({CDSSConfig.MODULE_PRIVILEGE})
     Boolean modifyRule(String ruleId, Map<String, ParamDescriptor> changedParameters) throws IOException;
     Boolean createRule(String ruleId, String description, Map<String, ParamDescriptor> params, RuleRole role, String cql, String elm) throws IOException;
+    Boolean createNewRule(String ruleId, String version, String description, Map<String, ParamDescriptor> params, RuleRole role, String cql, String elm) throws IOException;
 }

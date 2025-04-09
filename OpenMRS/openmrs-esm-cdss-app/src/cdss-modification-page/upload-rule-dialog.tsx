@@ -9,10 +9,10 @@ import {
   FormGroup,
   SelectItem,
   Select,
-  Button,
   IconButton,
 } from "@carbon/react";
-import { Add, Subtract } from "@carbon/react/icons";
+import { Subtract } from "@carbon/react/icons";
+import { EventEmitter } from "events";
 
 interface ParameterProps {
   // onChange: (index: number, key: keyof Variable, value: string) => void;
@@ -41,7 +41,6 @@ const ParameterInput: React.FC<ParameterProps> = ({ index, onRemove }) => {
         <IconButton
           hasIconOnly
           onClick={() => {
-            console.log(`Removing index ${index} with value ${paramId}`);
             onRemove(index);
           }}
         >
@@ -94,10 +93,10 @@ const UploadRuleDialog: React.FC<UploadRuleDialogProps> = ({
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    // if (!file) {
-    //   alert("Please upload a CQL file.");
-    //   return;
-    // }
+    if (!file) {
+      alert("Please upload a CQL file.");
+      return;
+    }
     const versionExpr = new RegExp(
       "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$"
     );
@@ -131,7 +130,6 @@ const UploadRuleDialog: React.FC<UploadRuleDialogProps> = ({
   const handleRemove = (index) => {
     setParameterComponents((parameterComponents) =>
       parameterComponents.filter((_, i) => {
-        console.log(i, _);
         return i !== index + 1;
       })
     );
@@ -204,14 +202,12 @@ const UploadRuleDialog: React.FC<UploadRuleDialogProps> = ({
           {/*    setAdvancedOpen(e.target.checked);*/}
           {/*  }}*/}
           {/*/>*/}
-
           {/*{isAdvancedOpen && (*/}
           {/*  <div>*/}
           {/*    <FormGroup legendText="Parameters">*/}
           {/*      <IconButton*/}
           {/*        onClick={() => {*/}
           {/*          const index = parameterComponents.length;*/}
-
           {/*          console.log(parameterComponents.length);*/}
           {/*          const component = (*/}
           {/*            <ParameterInput*/}
@@ -219,7 +215,6 @@ const UploadRuleDialog: React.FC<UploadRuleDialogProps> = ({
           {/*              onRemove={handleRemove}*/}
           {/*            ></ParameterInput>*/}
           {/*          );*/}
-
           {/*          setParameterComponents((parameterComponents) => [*/}
           {/*            ...parameterComponents,*/}
           {/*            component,*/}

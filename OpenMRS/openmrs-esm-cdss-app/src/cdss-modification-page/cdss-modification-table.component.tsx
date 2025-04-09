@@ -187,7 +187,12 @@ const CdssModificationTable = React.forwardRef<
                     tooltip={"Upload a new Rule"}
                     label={"Upload a new Rule"}
                     size={"sm"}
-                    autoalign
+                    style={{
+                      marginLeft: "1rem",
+                      marginRight: "1rem",
+                      marginTop: "2px",
+                      marginBottom: "2px",
+                    }}
                     onClick={() => {
                       if (uploadRuleButtonClicked !== null) {
                         uploadRuleButtonClicked();
@@ -201,7 +206,12 @@ const CdssModificationTable = React.forwardRef<
                     tooltip={"Delete Rule"}
                     label={"Delete Rule"}
                     size={"sm"}
-                    autoalign
+                    style={{
+                      marginLeft: "1rem",
+                      marginRight: "1rem",
+                      marginTop: "2px",
+                      marginBottom: "2px",
+                    }}
                     onClick={() => {}}
                   >
                     <Subtract size="lg" />
