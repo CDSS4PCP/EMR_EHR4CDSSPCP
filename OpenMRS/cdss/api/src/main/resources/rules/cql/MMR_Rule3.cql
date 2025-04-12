@@ -1,10 +1,10 @@
-library "MMR3regularyoungerthan47months_18yrsNoMMRRecommendation" version '1'
+library "MMR3regularyoungerthan47months_18yrsNoMMRRecommendation" version '1.0.0'
 
 
 using FHIR version '4.0.1'
 
 include "FHIRHelpers" version '4.0.1' called FHIRHelpers
-include "MMR_Common_Library" version '1' called Common
+include "MMR_Common_Library" version '1.0.0' called Common
 
 
 parameter Imm List<Immunization>

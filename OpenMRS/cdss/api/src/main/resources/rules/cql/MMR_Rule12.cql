@@ -1,6 +1,6 @@
-library "MMR12MedicalContraPrecautionMMRRecommendation_HIVImmunocompromised" version '1'
+library "MMR12MedicalContraPrecautionMMRRecommendation_HIVImmunocompromised" version '1.0.0'
 
-include "MMR_Common_Library" version '1' called Common
+include "MMR_Common_Library" version '1.0.0' called Common
 
 using FHIR version '4.0.1'
 

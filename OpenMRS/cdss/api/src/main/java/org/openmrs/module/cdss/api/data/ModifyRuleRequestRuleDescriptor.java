@@ -25,6 +25,7 @@ public class ModifyRuleRequestRuleDescriptor {
     @JsonProperty(value = "content", required = true)
     String content;
 
+
     public ModifyRuleRequestRuleDescriptor(String id, String libraryName, String version) {
         this.id = id;
         this.libraryName = libraryName;

@@ -476,7 +476,7 @@ public class RuleRestController extends CdssRestController {
         String ruleId = body.libraryName;
         String version = body.libraryVersion;
         try {
-            Boolean success = ruleManagerService.createNewRule(body.libraryName, body.libraryVersion, body.description, new HashMap<>(), body.ruleRole, body.cql, null);
+            Boolean success = ruleManagerService.createRule(body.libraryName, body.libraryVersion, body.description, new HashMap<>(), body.ruleRole, null, body.cql, null);
             return new ResponseEntity<>(success + "", HttpStatus.OK);
 
         } catch (IOException e) {

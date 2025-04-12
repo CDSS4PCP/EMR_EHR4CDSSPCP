@@ -1,12 +1,12 @@
-library "MMR4regular12months_4yrs_OneMMRRecommendation" version '1'
+library "MMR4regular12months_4yrs_OneMMRRecommendation" version '1.0.0'
 
-//include "MMR_Common_Library" version '1' called Common
+//include "MMR_Common_Library" version '1.0.0' called Common
 using FHIR version '4.0.1'
 
 using QUICK
 
 include "FHIRHelpers" version '4.0.1' called FHIRHelpers
-include "MMR_Common_Library" version '1' called Common
+include "MMR_Common_Library" version '1.0.0' called Common
 
 //MMR valuesets and codesystems
 parameter Imm List<Immunization>

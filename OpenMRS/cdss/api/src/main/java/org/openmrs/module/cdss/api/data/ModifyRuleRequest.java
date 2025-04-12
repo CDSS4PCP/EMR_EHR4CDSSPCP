@@ -19,4 +19,10 @@ public class ModifyRuleRequest {
     @JsonProperty(value = "libraries", required = false)
     Map<String, ModifyRuleRequestRuleDescriptor> libraries;
 
+    @JsonProperty(value = "newLibraryName", required = false)
+    private String newLibraryName;
+
+    @JsonProperty(value = "newLibraryVersion", required = false)
+    private String newLibraryVersion;
+
 }
