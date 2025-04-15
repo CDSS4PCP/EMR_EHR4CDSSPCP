@@ -10,9 +10,11 @@ import {
   SelectItem,
   Select,
   IconButton,
+  ComposedModal,
+  ModalHeader,
+  ModalFooter,
 } from "@carbon/react";
-import { Subtract } from "@carbon/react/icons";
-import { EventEmitter } from "events";
+import { Subtract, Add, Close } from "@carbon/react/icons";
 
 interface ParameterProps {
   // onChange: (index: number, key: keyof Variable, value: string) => void;
@@ -136,100 +138,109 @@ const UploadRuleDialog: React.FC<UploadRuleDialogProps> = ({
   };
 
   return (
-    <Modal
-      open={isOpen}
-      onClose={onClose}
-      modalHeading="Upload a rule"
-      modalLabel="Rule Management"
-      primaryButtonText="Upload"
-      secondaryButtonText="Cancel"
-      onRequestClose={() => onClose()}
-      onRequestSubmit={handleSubmit}
-      closeButton={onClose}
-    >
-      <ModalBody>
-        <Form>
-          <TextInput
-            id="libraryName"
-            labelText="Library Name"
-            value={libraryName}
-            onChange={(e) => setLibraryName(e.target.value)}
-            required
-          />
-          <TextInput
-            id="libraryVersion"
-            labelText="Library Version"
-            value={libraryVersion}
-            onChange={(e) => setLibraryVersion(e.target.value)}
-            required
-          />
-          <TextInput
-            id="description"
-            labelText="Description"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            required
-          />
-          <Checkbox
-            id="enabled"
-            labelText="Enabled"
-            checked={isEnabled}
-            onChange={(e) => {
-              setIsEnabled(e.target.checked);
-            }}
-          />
-          <FileUploader
-            accept={[".cql"]}
-            buttonKind="primary"
-            filenameStatus={"edit"}
-            filenameStatusText={file ? file.name : "No file chosen"}
-            labelDescription="Click or drag and drop a cql file here"
-            labelTitle="Upload CQL File"
-            onChange={(event) => {
-              handleFileChange(event);
-            }}
-            onDelete={(event) => {
-              handleFileChange(event);
-            }}
-            required
-          />
+    <React.Fragment>
+      <ComposedModal
+        open={isOpen}
+        onClose={onClose}
+        passiveModal={true}
+        modalHeading="Upload a rule"
+        modalLabel="Rule Management"
+        primaryButtonText="Upload"
+        secondaryButtonText="Cancel"
+        onRequestClose={() => onClose()}
+        onRequestSubmit={handleSubmit}
+        closeButton={onClose}
+        size="md"
+      >
+        <ModalHeader></ModalHeader>
+        <ModalBody>
+          {/*<div>*/}
+          {/*  <h4>Upload a Rule</h4>*/}
+          {/*</div>*/}
+          <Form>
+            <TextInput
+              id="libraryName"
+              labelText="Library Name"
+              value={libraryName}
+              onChange={(e) => setLibraryName(e.target.value)}
+              required
+            />
+            <TextInput
+              id="libraryVersion"
+              labelText="Library Version"
+              value={libraryVersion}
+              onChange={(e) => setLibraryVersion(e.target.value)}
+              required
+            />
+            <TextInput
+              id="description"
+              labelText="Description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              required
+            />
+            <Checkbox
+              id="enabled"
+              labelText="Enabled"
+              checked={isEnabled}
+              onChange={(e) => {
+                setIsEnabled(e.target.checked);
+              }}
+            />
+            <FileUploader
+              accept={[".cql"]}
+              buttonKind="primary"
+              filenameStatus={"edit"}
+              filenameStatusText={file ? file.name : "No file chosen"}
+              labelDescription="Click or drag and drop a cql file here"
+              labelTitle="Upload CQL File"
+              onChange={(event) => {
+                handleFileChange(event);
+              }}
+              onDelete={(event) => {
+                handleFileChange(event);
+              }}
+              required
+            />
 
-          {/*<Checkbox*/}
-          {/*  id="advanced"*/}
-          {/*  labelText="Advanced"*/}
-          {/*  checked={isAdvancedOpen}*/}
-          {/*  onChange={(e) => {*/}
-          {/*    setAdvancedOpen(e.target.checked);*/}
-          {/*  }}*/}
-          {/*/>*/}
-          {/*{isAdvancedOpen && (*/}
-          {/*  <div>*/}
-          {/*    <FormGroup legendText="Parameters">*/}
-          {/*      <IconButton*/}
-          {/*        onClick={() => {*/}
-          {/*          const index = parameterComponents.length;*/}
-          {/*          console.log(parameterComponents.length);*/}
-          {/*          const component = (*/}
-          {/*            <ParameterInput*/}
-          {/*              index={index}*/}
-          {/*              onRemove={handleRemove}*/}
-          {/*            ></ParameterInput>*/}
-          {/*          );*/}
-          {/*          setParameterComponents((parameterComponents) => [*/}
-          {/*            ...parameterComponents,*/}
-          {/*            component,*/}
-          {/*          ]);*/}
-          {/*        }}*/}
-          {/*      >*/}
-          {/*        <Add></Add>*/}
-          {/*      </IconButton>*/}
-          {/*      {parameterComponents.map((c) => c)}*/}
-          {/*    </FormGroup>*/}
-          {/*  </div>*/}
-          {/*)}*/}
-        </Form>
-      </ModalBody>
-    </Modal>
+            <Checkbox
+              id="advanced"
+              labelText="Advanced"
+              checked={isAdvancedOpen}
+              onChange={(e) => {
+                setAdvancedOpen(e.target.checked);
+              }}
+            />
+            {isAdvancedOpen && (
+              <div>
+                <FormGroup legendText="Parameters">
+                  <IconButton
+                    onClick={() => {
+                      const index = parameterComponents.length;
+                      console.log(parameterComponents.length);
+                      const component = (
+                        <ParameterInput
+                          index={index}
+                          onRemove={handleRemove}
+                        ></ParameterInput>
+                      );
+                      setParameterComponents((parameterComponents) => [
+                        ...parameterComponents,
+                        component,
+                      ]);
+                    }}
+                  >
+                    <Add></Add>
+                  </IconButton>
+                  {parameterComponents.map((c) => c)}
+                </FormGroup>
+              </div>
+            )}
+          </Form>
+        </ModalBody>
+        <ModalFooter primaryButtonText="Upload" secondaryButtonText="Cancel" />
+      </ComposedModal>
+    </React.Fragment>
   );
 };
 

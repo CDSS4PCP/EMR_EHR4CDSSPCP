@@ -39,6 +39,10 @@ let endpoints = {
         address: null,
         method: 'GET'
     },
+    'medicationById': {
+        address: null,
+        method: 'GET'
+    },
     'immunizationByPatientId': {
         address: null,
         method: 'GET',
@@ -262,23 +266,37 @@ async function getFhirResource(patientId, resourceType) {
 
     }
 
-    if (res != null) {
-        return res;
+
+    if (res == null) {
+        if (response == null && res == null) {
+            throw new Error('Could not find proper endpoint type for ' + resourceType);
+        }
+        if (response?.status !== 200 && res == null) {
+            throw new Error(resourceType + ' responded with HTTP ' + response.status);
+        }
+        if (res == null && response != null)
+            res = await response.json();
     }
 
-    if (response == null && res == null) {
-        throw new Error('Could not find proper endpoint type for ' + resourceType);
-    }
-    if (response?.status !== 200 && res == null) {
-        throw new Error(resourceType + ' responded with HTTP ' + response.status);
-    }
-    if (res == null && response != null)
-        res = await response.json();
 
     // if (res.resourceType !== resourceType.replace("{http://hl7.org/fhir}", "")) {
     //     throw new Error("Requested Patient was not a Patient, rather it is " + res.type);
     // }
-    return res;
+
+    // TODO Need to validate res for reference links
+    // Idea:
+    const referenceMappings = {};
+    referenceMappings[FhirTypes.MEDICATION_REQUEST] = {medicationReference: "medication", patientReference: "patient"};
+    // etc
+
+    if (resourceType == ContainerTypes.LIST(FhirTypes.MEDICATION_REQUEST)) {
+
+    }
+
+
+    if (res != null) {
+        return res;
+    }
 }
 
 /**
@@ -365,7 +383,7 @@ async function executeRuleWithPatient(patientId, ruleId, shouldRecordUsage = tru
  * @param {boolean} shouldRecordUsage - Flag to determine if the rule usage should be recorded. Default is true.
  * @returns {Object} The result of the CQL execution on the patient, including patient-specific results.
  */
-async function executeRuleWithPatientLibsParams(patient, rule, libraries, parameters, shouldRecordUsage = true, shouldUseDefaultVsacAddress= true) {
+async function executeRuleWithPatientLibsParams(patient, rule, libraries, parameters, shouldRecordUsage = true, shouldUseDefaultVsacAddress = true) {
 
     const codeService = new vsac.CodeService(shouldUseDefaultVsacAddress, true, global.cdss.endpoints.vsacSvs.address, global.cdss.endpoints.vsacFhir.address);
     let results = await executeCql(patient, rule, libraries, parameters, codeService, global.cdss.endpoints.metadata.vsacApiKey);

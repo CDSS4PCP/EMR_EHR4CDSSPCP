@@ -4,13 +4,15 @@ import {
   TextInput,
   SelectItem,
   Button,
+  Modal,
+  Select,
 } from "@carbon/react";
 import { openmrsFetch } from "@openmrs/esm-framework";
-import Modal from "@carbon/react/es/components/Modal/Modal";
+// import Modal from "@carbon/react/lib/components/Modal/Modal";
 
 import { EventEmitter } from "events";
 import styles from "./cdss-modification-page.module.scss";
-import Select from "@carbon/react/lib/components/Select/Select";
+// import Select from "@carbon/react/lib/components/Select/Select";
 import CdssModificationTable from "./cdss-modification-table.component";
 import { recordRuleUsage } from "../cdssService";
 import UploadRuleDialog from "./upload-rule-dialog";
