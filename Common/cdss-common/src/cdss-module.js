@@ -43,6 +43,33 @@ const ContainerTypes = Object.freeze({
     },
 });
 
+function isFhirList(typeSpecifier) {
+    return typeSpecifier.indexOf('ListTypeSpecifier') !== -1;
+}
+
+function isURL(str) {
+    var pattern = new RegExp(/(?:https?):\/\/(\w+:?\w*)?(\S+)(:\d+)?(\/|\/([\w#!:.?+=&%!\-\/]))?/);
+    return pattern.test(str);
+}
+
+
+// Setup reference mappings
+var ReferenceMappings = {};
+ReferenceMappings[FhirTypes.MEDICATION_REQUEST] = {
+    medicationReference: {
+        field: 'medication', type: FhirTypes.MEDICATION
+    },
+    patientReference: {field: 'patient', type: FhirTypes.PATIENT}
+};
+
+ReferenceMappings[ContainerTypes.LIST(FhirTypes.MEDICATION_REQUEST)] = {
+    medicationReference: {
+        field: 'medication', type: FhirTypes.MEDICATION
+    },
+    patientReference: {field: 'patient', type: FhirTypes.PATIENT}
+};
+
+
 /**
  * Retrieves a list of expected parameters required buy the rule.
  *
@@ -364,4 +391,7 @@ module.exports = {
     FhirTypes,
     UsageStatus,
     ContainerTypes,
+    ReferenceMappings,
+    isFhirList,
+    isURL
 };

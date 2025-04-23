@@ -6,7 +6,10 @@ import {
     getListOfExpectedLibraries,
     FhirTypes,
     UsageStatus,
-    ContainerTypes
+    ContainerTypes,
+    ReferenceMappings,
+    isFhirList,
+    isURL
 } from './cdss-module';
 import vsac from 'browserfy-cql-exec-vsac';
 
@@ -19,63 +22,36 @@ const DEBUG_MODE = false;
  */
 let endpoints = {
     'metadata': {
-        'systemName': null, 'remoteAddress': null,
-        vsacApiKey: null
+        'systemName': null, 'remoteAddress': null, vsacApiKey: null
 
-    },
-    'patientById': {
-        address: null,
-        method: 'GET',
-    },
-    'medicationRequestByPatientId': {
-        address: null,
-        method: 'GET',
-    },
-    'medicationStatementByPatientId': {
-        address: null,
-        method: 'GET',
-    },
-    'medicationByMedicationRequestId': {
-        address: null,
-        method: 'GET'
-    },
-    'medicationById': {
-        address: null,
-        method: 'GET'
-    },
-    'immunizationByPatientId': {
-        address: null,
-        method: 'GET',
-    },
-    'observationByPatientId': {
-        address: null,
-        method: 'GET',
-    },
-    'conditionByPatientId': {
-        address: null,
-        method: 'GET',
-    },
-    'ruleById': {
-        address: null,
-        method: 'GET',
-    },
-    'getRules': {
-        address: null,
-        method: 'GET'
-    },
-    'getUsages': {
-        address: null,
-        method: 'GET'
-    },
-    'recordUsage': {
-        address: null,
-        method: 'POST'
-    },
-    'vsacSvs': {
+    }, 'patientById': {
+        address: null, method: 'GET',
+    }, 'medicationRequestByPatientId': {
+        address: null, method: 'GET',
+    }, 'medicationStatementByPatientId': {
+        address: null, method: 'GET',
+    }, 'medicationByMedicationRequestId': {
+        address: null, method: 'GET'
+    }, 'medicationById': {
+        address: null, method: 'GET'
+    }, 'immunizationByPatientId': {
+        address: null, method: 'GET',
+    }, 'observationByPatientId': {
+        address: null, method: 'GET',
+    }, 'conditionByPatientId': {
+        address: null, method: 'GET',
+    }, 'ruleById': {
+        address: null, method: 'GET',
+    }, 'getRules': {
+        address: null, method: 'GET'
+    }, 'getUsages': {
+        address: null, method: 'GET'
+    }, 'recordUsage': {
+        address: null, method: 'POST'
+    }, 'vsacSvs': {
         address: null
 
-    },
-    'vsacFhir': {
+    }, 'vsacFhir': {
         address: null
     }
 };
@@ -224,44 +200,32 @@ async function getPatientResource(patientId) {
 /**
  * Retrieves a FHIR resource for a specific patient and resource type from the server.
  *
- * @param {string} patientId - The unique identifier of the patient
+ * @param {string} resourceId - The unique identifier of the patient, or resource
  * @param {string} resourceType - The type of FHIR resource to retrieve(must be either a ContainerTypes or FhirTypes enum)
  * @returns {Object} The FHIR resource object
  */
-async function getFhirResource(patientId, resourceType) {
+async function getFhirResource(resourceId, resourceType) {
     let response = null;
     let res = null;
     switch (resourceType) {
         case ContainerTypes.LIST(FhirTypes.IMMUNIZATION):
-            if (typeof global.cdss.endpoints.immunizationByPatientId.address == 'string')
-                response = await fetch(global.cdss.endpoints.immunizationByPatientId.address.replace('{{patientId}}', patientId), endpoints.immunizationByPatientId);
-            else if (typeof global.cdss.endpoints.immunizationByPatientId.address == 'function')
-                res = await global.cdss.endpoints.immunizationByPatientId.address(patientId);
+            if (typeof global.cdss.endpoints.immunizationByPatientId.address == 'string') response = await fetch(global.cdss.endpoints.immunizationByPatientId.address.replace('{{patientId}}', resourceId), endpoints.immunizationByPatientId); else if (typeof global.cdss.endpoints.immunizationByPatientId.address == 'function') res = await global.cdss.endpoints.immunizationByPatientId.address(resourceId);
             break;
 
         case ContainerTypes.LIST(FhirTypes.OBSERVATION):
-            if (typeof global.cdss.endpoints.observationByPatientId.address == 'string')
-                response = await fetch(global.cdss.endpoints.observationByPatientId.address.replace('{{patientId}}', patientId), endpoints.observationByPatientId);
-            else if (typeof global.cdss.endpoints.observationByPatientId.address == 'function')
-                res = await global.cdss.endpoints.observationByPatientId.address(patientId);
+            if (typeof global.cdss.endpoints.observationByPatientId.address == 'string') response = await fetch(global.cdss.endpoints.observationByPatientId.address.replace('{{patientId}}', resourceId), endpoints.observationByPatientId); else if (typeof global.cdss.endpoints.observationByPatientId.address == 'function') res = await global.cdss.endpoints.observationByPatientId.address(resourceId);
             break;
         case ContainerTypes.LIST(FhirTypes.MEDICATION_REQUEST):
-            if (typeof global.cdss.endpoints.medicationRequestByPatientId.address == 'string')
-                response = await fetch(global.cdss.endpoints.medicationRequestByPatientId.address.replace('{{patientId}}', patientId), endpoints.medicationRequestByPatientId);
-            else if (typeof global.cdss.endpoints.medicationRequestByPatientId.address == 'function')
-                res = await global.cdss.endpoints.medicationRequestByPatientId.address(patientId);
+            if (typeof global.cdss.endpoints.medicationRequestByPatientId.address == 'string') response = await fetch(global.cdss.endpoints.medicationRequestByPatientId.address.replace('{{patientId}}', resourceId), endpoints.medicationRequestByPatientId); else if (typeof global.cdss.endpoints.medicationRequestByPatientId.address == 'function') res = await global.cdss.endpoints.medicationRequestByPatientId.address(resourceId);
             break;
         case ContainerTypes.LIST(FhirTypes.MEDICATION_STATEMENT):
-            if (typeof global.cdss.endpoints.medicationStatementByPatientId.address == 'string')
-                response = await fetch(global.cdss.endpoints.medicationStatementByPatientId.address.replace('{{patientId}}', patientId), endpoints.medicationStatementByPatientId);
-            else if (typeof global.cdss.endpoints.medicationStatementByPatientId.address == 'function')
-                res = await global.cdss.endpoints.medicationStatementByPatientId.address(patientId);
+            if (typeof global.cdss.endpoints.medicationStatementByPatientId.address == 'string') response = await fetch(global.cdss.endpoints.medicationStatementByPatientId.address.replace('{{patientId}}', resourceId), endpoints.medicationStatementByPatientId); else if (typeof global.cdss.endpoints.medicationStatementByPatientId.address == 'function') res = await global.cdss.endpoints.medicationStatementByPatientId.address(resourceId);
             break;
         case ContainerTypes.LIST(FhirTypes.CONDITION):
-            if (typeof global.cdss.endpoints.conditionByPatientId.address == 'string')
-                response = await fetch(global.cdss.endpoints.conditionByPatientId.address.replace('{{patientId}}', patientId), endpoints.medicationRequestByPatientId);
-            else if (typeof global.cdss.endpoints.conditionByPatientId.address == 'function')
-                res = await global.cdss.endpoints.conditionByPatientId.address(patientId);
+            if (typeof global.cdss.endpoints.conditionByPatientId.address == 'string') response = await fetch(global.cdss.endpoints.conditionByPatientId.address.replace('{{patientId}}', resourceId), endpoints.conditionByPatientId); else if (typeof global.cdss.endpoints.conditionByPatientId.address == 'function') res = await global.cdss.endpoints.conditionByPatientId.address(resourceId);
+            break;
+        case FhirTypes.MEDICATION:
+            if (typeof global.cdss.endpoints.medicationById.address == 'string') response = await fetch(global.cdss.endpoints.medicationById.address.replace('{{medicationId}}', resourceId), endpoints.medicationById); else if (typeof global.cdss.endpoints.medicationById.address == 'function') res = await global.cdss.endpoints.medicationById.address(resourceId);
             break;
 
     }
@@ -274,8 +238,7 @@ async function getFhirResource(patientId, resourceType) {
         if (response?.status !== 200 && res == null) {
             throw new Error(resourceType + ' responded with HTTP ' + response.status);
         }
-        if (res == null && response != null)
-            res = await response.json();
+        if (res == null && response != null) res = await response.json();
     }
 
 
@@ -283,20 +246,49 @@ async function getFhirResource(patientId, resourceType) {
     //     throw new Error("Requested Patient was not a Patient, rather it is " + res.type);
     // }
 
-    // TODO Need to validate res for reference links
-    // Idea:
-    const referenceMappings = {};
-    referenceMappings[FhirTypes.MEDICATION_REQUEST] = {medicationReference: "medication", patientReference: "patient"};
-    // etc
 
-    if (resourceType == ContainerTypes.LIST(FhirTypes.MEDICATION_REQUEST)) {
+    if (isFhirList(resourceType)) {
+        if (res && res.entry)
+            // Assuming that `res` is a Bundle
+            for (const entry of res.entry) {
+                let resource = entry.resource;
+                for (const reference of Object.keys(ReferenceMappings[resourceType])) {
 
+                    const fieldMapping = ReferenceMappings[resourceType][reference];
+
+                    if ((resource[reference] !== null && resource[reference] !== undefined) && (resource[fieldMapping.field] === undefined || resource[fieldMapping.field] === null)) {
+                        // Get url or id of resource
+                        let urlOrId = resource[reference].reference;
+
+                        console.log(`${reference} has reference of ${urlOrId}, will attempt to retrieve the underlying resource`);
+                        const isUrl = isURL(urlOrId);
+                        if (!isUrl) {
+
+                            const id = urlOrId.substring(urlOrId.lastIndexOf('/'), urlOrId.length);
+
+                            const newResource = await getFhirResource(id, fieldMapping.type);
+
+                            resource[fieldMapping.field] = newResource;
+
+                        } else {
+                            console.log(`WARING: ${urlOrId} is a url, will fetch with GET and empty body`);
+                            try {
+                                response = await fetch(urlOrId, {method: "GET"});
+                                let newResource = await response.json();
+                                resource[fieldMapping.field] = newResource;
+                            } catch (err) {
+                                console.error(err);
+                                console.error(`ERROR: Was not able to fetch ${urlOrId}, ignoring it now`);
+                            }
+                        }
+                    }
+                }
+
+            }
     }
 
 
-    if (res != null) {
-        return res;
-    }
+    return res;
 }
 
 /**
@@ -340,21 +332,19 @@ async function executeRuleWithPatient(patientId, ruleId, shouldRecordUsage = tru
 
     let libraries = {};
     let expectedLibraries = getListOfExpectedLibraries(rule);
-    if (expectedLibraries !== undefined)
-        for (const lib of expectedLibraries) {
-            libraries[lib.name] = await getRule(lib.path);
-        }
+    if (expectedLibraries !== undefined) for (const lib of expectedLibraries) {
+        libraries[lib.name] = await getRule(lib.path);
+    }
 
 
     let parameters = {};
 
     let expectedParameters = getListOfExpectedParameters(rule);
 
-    if (expectedParameters !== undefined)
-        for (const par of expectedParameters) {
-            parameters[par.name] = await getFhirResource(patientId, par.type);
+    if (expectedParameters !== undefined) for (const par of expectedParameters) {
+        parameters[par.name] = await getFhirResource(patientId, par.type);
 
-        }
+    }
 
     const codeService = new vsac.CodeService(false, true, global.cdss.endpoints.vsacSvs.address, global.cdss.endpoints.vsacFhir.address);
 
@@ -366,8 +356,7 @@ async function executeRuleWithPatient(patientId, ruleId, shouldRecordUsage = tru
     // console.log("codeService", codeService)
 
     let results = await executeCql(patient, rule, libraries, parameters, codeService, global.cdss.endpoints.metadata.vsacApiKey);
-    if (shouldRecordUsage)
-        await recordRoutineUsage(rule.library.identifier.id, patient.id, results[patient.id].VaccineName, results[patient.id].Recommendations);
+    if (shouldRecordUsage) await recordRoutineUsage(rule.library.identifier.id, patient.id, results[patient.id].VaccineName, results[patient.id].Recommendations);
 
     return results;
 }
@@ -387,8 +376,7 @@ async function executeRuleWithPatientLibsParams(patient, rule, libraries, parame
 
     const codeService = new vsac.CodeService(shouldUseDefaultVsacAddress, true, global.cdss.endpoints.vsacSvs.address, global.cdss.endpoints.vsacFhir.address);
     let results = await executeCql(patient, rule, libraries, parameters, codeService, global.cdss.endpoints.metadata.vsacApiKey);
-    if (shouldRecordUsage)
-        await recordRoutineUsage(rule.library.identifier.id, patient.id, results[patient.id].VaccineName, results[patient.id].Recommendations);
+    if (shouldRecordUsage) await recordRoutineUsage(rule.library.identifier.id, patient.id, results[patient.id].VaccineName, results[patient.id].Recommendations);
 
     return results;
 }
@@ -402,7 +390,9 @@ global.cdss = {
     getListOfExpectedLibraries: getListOfExpectedLibraries,
     executeRuleWithPatient: executeRuleWithPatient,
     executeRuleWithPatientLibsParams: executeRuleWithPatientLibsParams,
-    DEBUG_MODE: DEBUG_MODE
+    getFhirResource: getFhirResource,
+
+    // DEBUG_MODE: DEBUG_MODE
 };
 
 export {
@@ -411,6 +401,7 @@ export {
     executeCql,
     getListOfExpectedParameters,
     getListOfExpectedLibraries,
+    getFhirResource,
     executeRuleWithPatient,
     executeRuleWithPatientLibsParams
 };
