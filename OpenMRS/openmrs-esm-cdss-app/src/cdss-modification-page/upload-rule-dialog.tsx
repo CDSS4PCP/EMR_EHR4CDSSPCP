@@ -13,6 +13,8 @@ import {
   ComposedModal,
   ModalHeader,
   ModalFooter,
+  ContainedList,
+  ContainedListItem,
 } from "@carbon/react";
 import { Subtract, Add, Close } from "@carbon/react/icons";
 
@@ -89,9 +91,38 @@ const UploadRuleDialog: React.FC<UploadRuleDialogProps> = ({
   const [isEnabled, setIsEnabled] = useState(false);
   const [isAdvancedOpen, setAdvancedOpen] = useState(false);
   const [file, setFile] = useState<File | null>(null);
-  const [parameterComponents, setParameterComponents] = useState<
-    React.ReactNode[]
-  >([]);
+  const [params, setParams] = useState([]);
+
+  const findParams = async (file: File) => {
+    const text: string = await file.text();
+    const integerPattern = new RegExp('define\\s*"(.)+":\\s*(-)?\\d+', "g");
+    const integerMatches = [...text.matchAll(integerPattern)];
+    const booleanPattern = new RegExp(
+      'define\\s*"(.)+":\\s*(-)?((true)|(false))',
+      "g"
+    );
+    const booleanMatches = [...text.matchAll(booleanPattern)];
+    const stringPattern = new RegExp(
+      "define\\s*\"(.)+\":\\s*(-)?'[a-zA-Z0-9]*'",
+      "g"
+    );
+    const stringMatches = [...text.matchAll(stringPattern)];
+    console.log(integerMatches);
+    console.log(booleanMatches);
+    console.log(stringMatches);
+
+    const foundParams = [];
+    integerMatches.forEach(
+      (match) => match && match.length > 0 && foundParams.push(match[0])
+    );
+    booleanMatches.forEach(
+      (match) => match && match.length > 0 && foundParams.push(match[0])
+    );
+    stringMatches.forEach(
+      (match) => match && match.length > 0 && foundParams.push(match[0])
+    );
+    setParams(foundParams);
+  };
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
@@ -124,17 +155,10 @@ const UploadRuleDialog: React.FC<UploadRuleDialogProps> = ({
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
       setFile(event.target.files[0]);
+      findParams(event.target.files[0]);
     } else {
       setFile(null);
     }
-  };
-
-  const handleRemove = (index) => {
-    setParameterComponents((parameterComponents) =>
-      parameterComponents.filter((_, i) => {
-        return i !== index + 1;
-      })
-    );
   };
 
   return (
@@ -152,11 +176,7 @@ const UploadRuleDialog: React.FC<UploadRuleDialogProps> = ({
         closeButton={onClose}
         size="md"
       >
-        <ModalHeader></ModalHeader>
         <ModalBody>
-          {/*<div>*/}
-          {/*  <h4>Upload a Rule</h4>*/}
-          {/*</div>*/}
           <Form>
             <TextInput
               id="libraryName"
@@ -203,39 +223,14 @@ const UploadRuleDialog: React.FC<UploadRuleDialogProps> = ({
               required
             />
 
-            <Checkbox
-              id="advanced"
-              labelText="Advanced"
-              checked={isAdvancedOpen}
-              onChange={(e) => {
-                setAdvancedOpen(e.target.checked);
-              }}
-            />
-            {isAdvancedOpen && (
-              <div>
-                <FormGroup legendText="Parameters">
-                  <IconButton
-                    onClick={() => {
-                      const index = parameterComponents.length;
-                      console.log(parameterComponents.length);
-                      const component = (
-                        <ParameterInput
-                          index={index}
-                          onRemove={handleRemove}
-                        ></ParameterInput>
-                      );
-                      setParameterComponents((parameterComponents) => [
-                        ...parameterComponents,
-                        component,
-                      ]);
-                    }}
-                  >
-                    <Add></Add>
-                  </IconButton>
-                  {parameterComponents.map((c) => c)}
-                </FormGroup>
-              </div>
-            )}
+            <ContainedList>
+              {params &&
+                params.map((param, index) => (
+                  <ContainedListItem key={"Param-" + index}>
+                    {param}
+                  </ContainedListItem>
+                ))}
+            </ContainedList>
           </Form>
         </ModalBody>
         <ModalFooter primaryButtonText="Upload" secondaryButtonText="Cancel" />
