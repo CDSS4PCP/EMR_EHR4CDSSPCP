@@ -15,7 +15,7 @@ import styles from "./cdss-modification-page.module.scss";
 // import Select from "@carbon/react/lib/components/Select/Select";
 import CdssModificationTable from "./cdss-modification-table.component";
 import { recordRuleUsage } from "../cdssService";
-import UploadRuleDialog from "./upload-rule-dialog";
+import UploadRuleDialog, { ParameterProps } from "./upload-rule-dialog";
 import { Buffer } from "buffer";
 
 // Events used for parameter resets
@@ -55,7 +55,8 @@ export const CdssModificationPage: React.FC = () => {
     libraryVersion: string,
     description: string,
     enabled: boolean,
-    file: File
+    file: File,
+    params: Record<string, ParameterProps>
   ) => {
     const cqlContents = await file.text();
     const cqlEncoded = Buffer.from(cqlContents).toString("base64");
@@ -65,6 +66,7 @@ export const CdssModificationPage: React.FC = () => {
       description: description,
       ruleRole: "RULE",
       cql: cqlEncoded,
+      params: params,
     };
     openmrsFetch("/cdss/create-rule.form", {
       method: "POST",
@@ -72,7 +74,6 @@ export const CdssModificationPage: React.FC = () => {
       body: body,
     })
       .then((response) => {
-        console.log("Result", response);
         eventEmitter.emit("ruleUploadSucceeded", {});
       })
       .catch((error) => {
