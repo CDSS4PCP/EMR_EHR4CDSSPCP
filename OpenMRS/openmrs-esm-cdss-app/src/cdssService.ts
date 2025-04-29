@@ -53,6 +53,15 @@ async function loadMedicationRequest(patientId) {
   return pat;
 }
 
+async function loadMedication(medicationId) {
+  const result = await openmrsFetch(
+    `/ws/fhir2/R4/Medication/${medicationId}`,
+    {}
+  );
+  const pat = await result.json();
+  return pat;
+}
+
 async function loadMedicationStatement(patientId) {
   const result = await openmrsFetch(
     `/ws/fhir2/R4/MedicationStatement?patient=${patientId}`,
@@ -243,8 +252,10 @@ function setupEndpointsMap() {
       },
       method: "GET",
     },
-    medicationByMedicationRequestId: {
-      address: `${SERVER_URL}/openmrs/ws/fhir2/R4/Medication/{{medicationId}}`,
+    medicationById: {
+      address: async (medicationId) => {
+        return await loadMedication(medicationId);
+      },
       method: "GET",
     },
     immunizationByPatientId: {

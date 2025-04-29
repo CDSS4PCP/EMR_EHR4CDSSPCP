@@ -20,6 +20,10 @@ public class CreateRuleRequest {
 
     @JsonProperty(value = "ruleRole", required = true)
     public RuleRole ruleRole;
+
+    @JsonProperty(value = "enabled", required = false)
+    public Boolean enabled;
+
     @JsonProperty(value = "cql", required = true)
     public String cql;
     @JsonProperty(value = "elm", required = false)

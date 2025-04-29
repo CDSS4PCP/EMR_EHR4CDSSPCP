@@ -1,17 +1,11 @@
 import React, { useRef, useState } from "react";
 import {
-  Modal,
   ModalBody,
   TextInput,
   FileUploader,
   Checkbox,
   Form,
-  FormGroup,
-  SelectItem,
-  Select,
-  IconButton,
   ComposedModal,
-  ModalHeader,
   ModalFooter,
   ContainedList,
   ContainedListItem,
@@ -20,7 +14,12 @@ import {
 interface ParameterProps {
   type: string;
   value: any;
-  defaultValue?: any;
+  default?: any;
+}
+
+interface LibraryNameProps {
+  libraryName: string;
+  libraryVersion: string;
 }
 
 interface UploadRuleDialogProps {
@@ -79,33 +78,41 @@ const UploadRuleDialog: React.FC<UploadRuleDialogProps> = ({
   // Attempt to detect all parameters using regex
   const extractParams = async (file: File) => {
     const text: string = await file.text();
-    const integerPattern = new RegExp('define\\s*"(.+)":\\s*([-]?\\d+)', "g");
+    const integerPattern = new RegExp(
+      'define\\s*"(\\$.+)":\\s*([-]?\\d+)',
+      "g"
+    );
     const integerMatches = [...text.matchAll(integerPattern)];
-    const booleanPattern = new RegExp('define\\s*"(.+)":\\s*(true|false)', "g");
+    const booleanPattern = new RegExp(
+      'define\\s*"(\\$.+)":\\s*(true|false)',
+      "g"
+    );
     const booleanMatches = [...text.matchAll(booleanPattern)];
     const stringPattern = new RegExp(
-      "define\\s*\"(.+)\":\\s*'([a-zA-Z0-9 _]*)'",
+      "define\\s*\"(\\$.+)\":\\s*'([a-zA-Z0-9 _]*)'",
       "g"
     );
     const stringMatches = [...text.matchAll(stringPattern)];
 
-    const foundParams = {};
+    const foundParams: { [key: string]: ParameterProps } = {};
     integerMatches.forEach((match) => {
       const rawValue = match[2].trim();
       const paramName = match[1].trim();
 
-      const parsedValue: object = {
+      const parsedValue: ParameterProps = {
         type: "Integer",
         value: parseInt(rawValue, 10),
+        default: parseInt(rawValue, 10),
       };
       foundParams[paramName] = parsedValue;
     });
     booleanMatches.forEach((match) => {
       const rawValue = match[2].trim();
       const paramName = match[1].trim();
-      const parsedValue: object = {
+      const parsedValue: ParameterProps = {
         type: "Boolean",
         value: rawValue === "true",
+        default: rawValue === "true",
       };
 
       foundParams[paramName] = parsedValue;
@@ -114,9 +121,10 @@ const UploadRuleDialog: React.FC<UploadRuleDialogProps> = ({
       const rawValue = match[2].trim();
       const paramName = match[1].trim();
 
-      const parsedValue: object = {
+      const parsedValue: ParameterProps = {
         type: "String",
         value: rawValue,
+        default: rawValue,
       };
       foundParams[paramName] = parsedValue;
     });
@@ -156,6 +164,7 @@ const UploadRuleDialog: React.FC<UploadRuleDialogProps> = ({
     setLibraryNameAutomaticallySet(false);
     setLibraryVersionAutomaticallySet(false);
     setFile(null);
+    setParams({});
 
     onClose(); // Close modal after form submission
   };
@@ -268,10 +277,6 @@ const UploadRuleDialog: React.FC<UploadRuleDialogProps> = ({
                 <ContainedList>
                   {Object.keys(params).map((paramName) => {
                     return (
-                      // style={
-                      //   "display: grid; grid-template-columns: repeat(3, 1fr); column-gap: 1rem;"
-                      // }
-
                       <ContainedListItem key={"Param-" + paramName}>
                         <div
                           style={{

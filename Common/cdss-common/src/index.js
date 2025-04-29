@@ -30,8 +30,6 @@ let endpoints = {
         address: null, method: 'GET',
     }, 'medicationStatementByPatientId': {
         address: null, method: 'GET',
-    }, 'medicationByMedicationRequestId': {
-        address: null, method: 'GET'
     }, 'medicationById': {
         address: null, method: 'GET'
     }, 'immunizationByPatientId': {
@@ -248,7 +246,7 @@ async function getFhirResource(resourceId, resourceType) {
 
 
     if (isFhirList(resourceType)) {
-        if (res && res.entry)
+        if (res && res.entry && ReferenceMappings[resourceType])
             // Assuming that `res` is a Bundle
             for (const entry of res.entry) {
                 let resource = entry.resource;

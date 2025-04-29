@@ -19,9 +19,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/cdss")
@@ -53,21 +53,25 @@ public class RuleRestController extends CdssRestController {
         checkAuthorizationAndPrivilege();
 
         try {
-            String rule = ruleManagerService.getElmRuleById(ruleId);
-            return ResponseEntity.ok(rule);
+            Optional<String> ruleOptional = ruleManagerService.getElmRuleById(ruleId);
+            if (ruleOptional.isPresent()) {
+                return ResponseEntity.ok(ruleOptional.get());
+            }
         } catch (NullPointerException e) {
             return new ResponseEntity<>("Rule " + ruleId + " Not found", HttpStatus.NOT_FOUND);
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         } catch (RuleNotFoundException e) {
             try {
-                String rule;
+                Optional<String> ruleOptional;
                 if (version == null) {
-                    rule = ruleManagerService.getElmRuleByName(ruleId);
+                    ruleOptional = ruleManagerService.getElmRuleByName(ruleId);
                 } else {
-                    rule = ruleManagerService.getElmRuleByNameVersion(ruleId, version);
+                    ruleOptional = ruleManagerService.getElmRuleByNameVersion(ruleId, version);
                 }
-                return ResponseEntity.ok(rule);
+                if (ruleOptional.isPresent()) {
+                    return ResponseEntity.ok(ruleOptional.get());
+                }
             } catch (RuleNotFoundException e2) {
                 throw new RuntimeException(e);
 
@@ -76,8 +80,8 @@ public class RuleRestController extends CdssRestController {
             }
 
 
-//            throw new RuntimeException(e);
         }
+        return new ResponseEntity<>("Rule " + ruleId + " not found", HttpStatus.NOT_FOUND);
     }
 
     /**
@@ -92,8 +96,10 @@ public class RuleRestController extends CdssRestController {
         checkAuthorizationAndPrivilege();
 
         try {
-            String rule = ruleManagerService.getElmRuleById(ruleId);
-            return ResponseEntity.ok(rule);
+            Optional<String> ruleOptional = ruleManagerService.getElmRuleById(ruleId);
+            if (ruleOptional.isPresent()) {
+                return ResponseEntity.ok(ruleOptional.get());
+            }
         } catch (NullPointerException e) {
             return new ResponseEntity<>("Rule " + ruleId + " Not found", HttpStatus.NOT_FOUND);
         } catch (FileNotFoundException e) {
@@ -101,6 +107,7 @@ public class RuleRestController extends CdssRestController {
         } catch (RuleNotFoundException e) {
             throw new RuntimeException(e);
         }
+        return new ResponseEntity<>("Rule " + ruleId + " not found", HttpStatus.NOT_FOUND);
     }
 
     /**
@@ -116,11 +123,14 @@ public class RuleRestController extends CdssRestController {
 
 
         try {
-            String rule = ruleManagerService.getCqlRuleById(ruleId);
-            return ResponseEntity.ok(rule);
+            Optional<String> ruleOptional = ruleManagerService.getCqlRuleById(ruleId);
+            if (ruleOptional.isPresent()) {
+                return ResponseEntity.ok(ruleOptional.get());
+            }
         } catch (NullPointerException | RuleNotFoundException | FileNotFoundException e) {
             return new ResponseEntity<>("Rule " + ruleId + " Not found", HttpStatus.NOT_FOUND);
         }
+        return new ResponseEntity<>("Rule " + ruleId + " not found", HttpStatus.NOT_FOUND);
     }
 
     /**
@@ -136,13 +146,15 @@ public class RuleRestController extends CdssRestController {
         checkAuthorizationAndPrivilege();
 
         try {
-            String rule;
+            Optional<String> ruleOptional;
             if (version != null) {
-                rule = ruleManagerService.getCqlRuleByNameVersion(libraryName, version);
+                ruleOptional = ruleManagerService.getCqlRuleByNameVersion(libraryName, version);
             } else {
-                rule = ruleManagerService.getElmRuleByName(libraryName);
+                ruleOptional = ruleManagerService.getElmRuleByName(libraryName);
             }
-            return ResponseEntity.ok(rule);
+            if (ruleOptional.isPresent()) {
+                return ResponseEntity.ok(ruleOptional.get());
+            }
         } catch (NullPointerException e) {
             return new ResponseEntity<>(version != null ? "Rule with libraryName=" + libraryName + " and version=" + version + " Not found" : "Rule with libraryName=" + libraryName + " Not found", HttpStatus.NOT_FOUND);
         } catch (FileNotFoundException e) {
@@ -150,6 +162,7 @@ public class RuleRestController extends CdssRestController {
         } catch (RuleNotFoundException e) {
             throw new RuntimeException(e);
         }
+        return new ResponseEntity<>("Rule " + libraryName + " not found", HttpStatus.NOT_FOUND);
     }
 
     /**
@@ -166,16 +179,20 @@ public class RuleRestController extends CdssRestController {
 
 
         try {
-            String rule;
+            Optional<String> ruleOptional;
             if (version != null) {
-                rule = ruleManagerService.getCqlRuleByNameVersion(libraryName, version);
+                ruleOptional = ruleManagerService.getCqlRuleByNameVersion(libraryName, version);
             } else {
-                rule = ruleManagerService.getCqlRuleByName(libraryName);
+                ruleOptional = ruleManagerService.getCqlRuleByName(libraryName);
             }
-            return ResponseEntity.ok(rule);
+
+            if (ruleOptional.isPresent()) {
+                return ResponseEntity.ok(ruleOptional.get());
+            }
         } catch (NullPointerException | RuleNotFoundException | FileNotFoundException e) {
             return new ResponseEntity<>(version != null ? "Rule with libraryName=" + libraryName + " and version=" + version + " Not found" : "Rule with libraryName=" + libraryName + " Not found", HttpStatus.NOT_FOUND);
         }
+        return new ResponseEntity<>("Rule " + libraryName + " not found", HttpStatus.NOT_FOUND);
     }
 
     /**
@@ -191,31 +208,33 @@ public class RuleRestController extends CdssRestController {
         checkAuthorizationAndPrivilege();
 
         try {
-            String rule = ruleManagerService.getCqlRuleById(ruleId);
-            return ResponseEntity.ok(rule);
+            Optional<String> ruleOptional = ruleManagerService.getCqlRuleById(ruleId);
+            if (ruleOptional.isPresent()) {
+                return ResponseEntity.ok(ruleOptional.get());
+            }
         } catch (NullPointerException e) {
             return new ResponseEntity<>("Rule " + ruleId + " Not found", HttpStatus.NOT_FOUND);
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         } catch (RuleNotFoundException e) {
             try {
-                String rule;
+                Optional<String> ruleOptional;
                 if (version == null) {
-                    rule = ruleManagerService.getCqlRuleByName(ruleId);
+                    ruleOptional = ruleManagerService.getCqlRuleByName(ruleId);
                 } else {
-                    rule = ruleManagerService.getCqlRuleByNameVersion(ruleId, version);
+                    ruleOptional = ruleManagerService.getCqlRuleByNameVersion(ruleId, version);
                 }
-                return ResponseEntity.ok(rule);
+                if (ruleOptional.isPresent()) {
+                    return ResponseEntity.ok(ruleOptional.get());
+                }
             } catch (RuleNotFoundException e2) {
                 throw new RuntimeException(e);
 
             } catch (FileNotFoundException ex) {
                 throw new RuntimeException(ex);
             }
-
-
-//            throw new RuntimeException(e);
         }
+        return new ResponseEntity<>("Rule " + ruleId + " not found", HttpStatus.NOT_FOUND);
     }
 
     /**
@@ -308,13 +327,18 @@ public class RuleRestController extends CdssRestController {
         checkAuthorizationAndPrivilege();
 
         try {
-            ruleManagerService.enableRuleById(ruleId);
+            Optional<String> ruleIdOptional = ruleManagerService.enableRuleById(ruleId);
+
+            if (ruleIdOptional.isPresent()) {
+                return ResponseEntity.ok(ruleIdOptional.get());
+            }
+
         } catch (RuleNotFoundException e) {
             throw new RuntimeException(e);
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
-        return ResponseEntity.ok("true");
+        return new ResponseEntity<>("Rule " + ruleId + " not found", HttpStatus.NOT_FOUND);
     }
 
     /**
@@ -331,19 +355,21 @@ public class RuleRestController extends CdssRestController {
         checkAuthorizationAndPrivilege();
 
         try {
-            Boolean success;
+            Optional<String> ruleIdOptional;
             if (version == null) {
-                success = ruleManagerService.enableRuleByName(libraryName);
+                ruleIdOptional = ruleManagerService.enableRuleByName(libraryName);
             } else {
-                success = ruleManagerService.enableRuleByNameVersion(libraryName, version);
+                ruleIdOptional = ruleManagerService.enableRuleByNameVersion(libraryName, version);
             }
-            return ResponseEntity.ok(success + "");
-
+            if (ruleIdOptional.isPresent()) {
+                return ResponseEntity.ok(ruleIdOptional.get());
+            }
         } catch (RuleNotFoundException e) {
             throw new RuntimeException(e);
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
+        return new ResponseEntity<>(version != null ? "Rule with libraryName=" + libraryName + " and version=" + version + " Not found" : "Rule with libraryName=" + libraryName + " Not found", HttpStatus.NOT_FOUND);
     }
 
     /**
@@ -359,13 +385,18 @@ public class RuleRestController extends CdssRestController {
         checkAuthorizationAndPrivilege();
 
         try {
-            ruleManagerService.disableRuleById(ruleId);
+            Optional<String> ruleIdOptional = ruleManagerService.disableRuleById(ruleId);
+
+            if (ruleIdOptional.isPresent()) {
+                return ResponseEntity.ok(ruleIdOptional.get());
+            }
         } catch (RuleNotFoundException e) {
             throw new RuntimeException(e);
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
-        return ResponseEntity.ok("true");
+
+        return new ResponseEntity<>("Rule " + ruleId + " not found", HttpStatus.NOT_FOUND);
     }
 
     /**
@@ -382,18 +413,22 @@ public class RuleRestController extends CdssRestController {
         checkAuthorizationAndPrivilege();
 
         try {
-            Boolean success;
+            Optional<String> ruleIdOptional;
             if (version == null) {
-                success = ruleManagerService.enableRuleByName(libraryName);
+                ruleIdOptional = ruleManagerService.enableRuleByName(libraryName);
             } else {
-                success = ruleManagerService.enableRuleByNameVersion(libraryName, version);
+                ruleIdOptional = ruleManagerService.enableRuleByNameVersion(libraryName, version);
             }
-            return ResponseEntity.ok(success + "");
+
+            if (ruleIdOptional.isPresent()) {
+                return ResponseEntity.ok(ruleIdOptional.get());
+            }
         } catch (RuleNotFoundException e) {
             throw new RuntimeException(e);
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
+        return new ResponseEntity<>("Rule " + libraryName + " not found", HttpStatus.NOT_FOUND);
     }
 
 
@@ -442,13 +477,13 @@ public class RuleRestController extends CdssRestController {
     public ResponseEntity<String> modifyRule(@RequestBody ModifyRuleRequest body) throws APIAuthenticationException, JsonProcessingException {
         checkAuthorizationAndPrivilege();
 
-        String ruleId = body.rule.id;
+        String ruleId = body.rule.getId();
         String version = body.rule.getVersion();
         Map<String, ParamDescriptor> params = body.getParams();
 
-        Boolean result = null;
+        Optional<String> newRuleIdOptional;
         try {
-            result = ruleManagerService.modifyRule(ruleId, params);
+            newRuleIdOptional = ruleManagerService.modifyRule(ruleId, params);
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         } catch (RuleNotFoundException e) {
@@ -456,7 +491,10 @@ public class RuleRestController extends CdssRestController {
         } catch (IOException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return new ResponseEntity<>(result.toString(), HttpStatus.OK);
+        if (newRuleIdOptional.isPresent()) {
+            return ResponseEntity.ok(newRuleIdOptional.get());
+        }
+        return new ResponseEntity<>("Rule " + ruleId + " not found", HttpStatus.NOT_FOUND);
 
     }
 
@@ -476,14 +514,18 @@ public class RuleRestController extends CdssRestController {
         String ruleId = body.libraryName;
         String version = body.libraryVersion;
         try {
-            Boolean success = ruleManagerService.createRule(body.libraryName, body.libraryVersion, body.description, new HashMap<>(), body.ruleRole, null, body.cql, null);
-            return new ResponseEntity<>(success + "", HttpStatus.OK);
 
+            Optional<String> newRuleIdOptional = ruleManagerService.createRule(body.libraryName, body.libraryVersion, body.description, body.getParams(), body.ruleRole, null, body.cql, null);
+            if (newRuleIdOptional.isPresent()) {
+                if (body.enabled != null && body.enabled)
+                    ruleManagerService.enableRuleById(newRuleIdOptional.get());
+                else ruleManagerService.disableRuleById(newRuleIdOptional.get());
+                return new ResponseEntity<>(newRuleIdOptional.get(), HttpStatus.OK);
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
-
+        return new ResponseEntity<>("Rule " + ruleId + " not found", HttpStatus.NOT_FOUND);
     }
 
 }

@@ -1,14 +1,6 @@
 import React, { useEffect, useState } from "react";
-import {
-  DataTableSkeleton,
-  TextInput,
-  SelectItem,
-  Button,
-  Modal,
-  Select,
-} from "@carbon/react";
+import { Modal } from "@carbon/react";
 import { openmrsFetch } from "@openmrs/esm-framework";
-// import Modal from "@carbon/react/lib/components/Modal/Modal";
 
 import { EventEmitter } from "events";
 import styles from "./cdss-modification-page.module.scss";
