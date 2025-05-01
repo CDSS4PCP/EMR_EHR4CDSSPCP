@@ -5,7 +5,6 @@ import com.fasterxml.jackson.core.exc.StreamWriteException;
 import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 import lombok.Getter;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -23,7 +22,6 @@ import org.openmrs.module.cdss.api.data.criteria.projection.IdProjection;
 import org.openmrs.module.cdss.api.exception.MultipleRulesFoundException;
 import org.openmrs.module.cdss.api.exception.RuleNotEnabledException;
 import org.openmrs.module.cdss.api.exception.RuleNotFoundException;
-import org.openmrs.module.cdss.api.serialization.RuleManifestDeserializer;
 import org.semver4j.Semver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -42,15 +40,22 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
 
     // The directory where ELM rules are stored
     private static final String RULE_DIRECTORY_PATH = "rules/";
+    private static final String ARCHIVE_DIRECTORY_PATH = "rules/archive/";
     // The path to rule manifest file
     private static final String RULE_MANIFEST_PATH = "rules/rule-manifest.json";
     private final Logger log = Logger.getLogger(getClass());
+
     @Autowired
     @Qualifier("adminService")
     protected AdministrationService administrationService;
+
     @Getter
     private RuleManifest ruleManifest;
+
+    @Autowired
+    @Qualifier("objectMapper")
     private ObjectMapper objectMapper;
+
     private OkHttpClient client;
 
     /**
@@ -62,10 +67,10 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
         if (client == null) {
             client = new OkHttpClient();
         }
-        objectMapper = new ObjectMapper();
-        SimpleModule simpleModule = new SimpleModule();
-        simpleModule.addDeserializer(RuleManifest.class, new RuleManifestDeserializer());
-        objectMapper.registerModule(simpleModule);
+//        objectMapper = new ObjectMapper();
+//        SimpleModule simpleModule = new SimpleModule();
+//        simpleModule.addDeserializer(RuleManifest.class, new RuleManifestDeserializer());
+//        objectMapper.registerModule(simpleModule);
 
         try {
             setUpDirectoryHierarchy();
@@ -645,6 +650,21 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
             return Optional.empty();
         }
 
+
+    }
+
+
+    public Optional<String> archiveRule(String ruleId) throws IOException {
+        RuleManifest manifest = getRuleManifest();
+        RuleDescriptor descriptor = getRuleDescriptorById(ruleId);
+        Boolean success = manifest.archiveRule(descriptor);
+
+
+        if (!success) {
+            return Optional.empty();
+        } else {
+            return Optional.of(ruleId);
+        }
 
     }
 

@@ -34,11 +34,11 @@ public class RuleRestController extends CdssRestController {
     //    @Qualifier("ruleManagerService")
     @Autowired
     protected RuleManagerService ruleManagerService;
-    Logger log = Logger.getLogger(RuleRestController.class);
-
-
     @Autowired
-    ObjectMapper objectMapper;
+    @Qualifier("webObjectMapper")
+    protected ObjectMapper webObjectMapper;
+
+    private Logger log = Logger.getLogger(RuleRestController.class);
 
     /**
      * Retrieves an ELM rule by its ID or name, optionally considering the version.
@@ -433,6 +433,35 @@ public class RuleRestController extends CdssRestController {
 
 
     /**
+     * Disables a rule by its ID.
+     *
+     * @param ruleId the ID of the rule to disable
+     * @return ResponseEntity containing "true" if the rule is successfully disabled
+     * @throws APIAuthenticationException if there is an issue with API authentication
+     * @throws RuntimeException           if the rule is not found or a file-related error occurs
+     */
+    @PostMapping(path = {"/archive-rule/id/{ruleId}.form", "/disable-rule/{ruleId}.form"}, produces = {"application/json"})
+    public ResponseEntity<String> archiveRuleById(@PathVariable(value = "ruleId") String ruleId) throws APIAuthenticationException {
+        checkAuthorizationAndPrivilege();
+
+        try {
+            Optional<String> ruleIdOptional = ruleManagerService.archiveRule(ruleId);
+
+            if (ruleIdOptional.isPresent()) {
+                return ResponseEntity.ok(ruleIdOptional.get());
+            }
+        } catch (RuleNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        return new ResponseEntity<>("Rule " + ruleId + " not found", HttpStatus.NOT_FOUND);
+    }
+
+    /**
      * Retrieves the rule manifest as a JSON string.
      *
      * @return ResponseEntity containing the rule manifest in JSON format
@@ -455,10 +484,10 @@ public class RuleRestController extends CdssRestController {
 //
 //        return ResponseEntity.ok(val);
 
-        if (objectMapper == null) {
+        if (webObjectMapper == null) {
             return ResponseEntity.internalServerError().body("ObjectMapper is null");
         } else {
-            return ResponseEntity.ok(objectMapper.writeValueAsString(ruleManagerService.getRuleManifest()));
+            return ResponseEntity.ok(webObjectMapper.writeValueAsString(ruleManagerService.getRuleManifest()));
         }
 
 
@@ -478,6 +507,7 @@ public class RuleRestController extends CdssRestController {
         checkAuthorizationAndPrivilege();
 
         String ruleId = body.rule.getId();
+        String libraryName = body.rule.getLibraryName();
         String version = body.rule.getVersion();
         Map<String, ParamDescriptor> params = body.getParams();
 

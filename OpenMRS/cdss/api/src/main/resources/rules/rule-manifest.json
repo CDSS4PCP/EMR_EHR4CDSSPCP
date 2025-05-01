@@ -526,9 +526,22 @@
       "elmFilePath": "elm/MMR_Rule9.json",
       "description": "Recommendation for patients without MMR records who are pregnant.",
       "role": "rule",
+      "enabled": false,
+      "derivedFrom": null,
+      "params": {}
+    },
+    {
+      "id": "e05d70d6-e382-46b0-9d70-d6e382b6b0ae",
+      "libraryName": "Test",
+      "version": "1.0.0",
+      "cqlFilePath": "cql/Test.cql",
+      "elmFilePath": "elm/Test.json",
+      "description": "MedicationRequest Test",
+      "role": "rule",
       "enabled": true,
       "derivedFrom": null,
       "params": {}
     }
-  ]
+  ],
+  "archivedRules": []
 }

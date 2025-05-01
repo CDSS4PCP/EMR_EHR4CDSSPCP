@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import org.apache.log4j.Logger;
+import org.openmrs.module.cdss.api.data.InternalJsonView;
 import org.openmrs.module.cdss.api.data.ParamDescriptor;
 import org.openmrs.module.cdss.api.data.RuleDescriptor;
 import org.openmrs.module.cdss.api.data.RuleManifest;
@@ -26,21 +27,35 @@ public class RuleManifestSerializer extends StdSerializer<RuleManifest> {
      * Serializes a RuleManifest object into JSON format using the provided JsonGenerator.
      * The serialized JSON includes an array of rules, each represented by a RuleDescriptor.
      *
-     * @param value the RuleManifest object to serialize
+     * @param value         the RuleManifest object to serialize
      * @param jsonGenerator the JsonGenerator used to write the JSON output
-     * @param provider the SerializerProvider that can be used to get serializers for serializing
-     *                 the object's properties
+     * @param provider      the SerializerProvider that can be used to get serializers for serializing
+     *                      the object's properties
      * @throws IOException if an I/O error occurs during serialization
      */
     @Override
     public void serialize(RuleManifest value, JsonGenerator jsonGenerator, SerializerProvider provider) throws IOException {
+
+        log.debug("Active View: " + provider.getActiveView());
+
         jsonGenerator.writeStartObject();
         jsonGenerator.writeFieldName("rules");
         jsonGenerator.writeStartArray();
         for (RuleDescriptor rule : value.getRules()) {
-            writeRuleDescriptor(jsonGenerator, rule);
+            writeRuleDescriptor(rule, jsonGenerator, provider);
         }
         jsonGenerator.writeEndArray();
+
+        if (provider.getActiveView() != null && provider.getActiveView() == InternalJsonView.class) {
+            jsonGenerator.writeFieldName("archivedRules");
+            jsonGenerator.writeStartArray();
+            for (RuleDescriptor rule : value.getRules()) {
+                writeRuleDescriptor(rule, jsonGenerator, provider);
+            }
+            jsonGenerator.writeEndArray();
+
+
+        }
         jsonGenerator.writeEndObject();
 
     }
@@ -51,18 +66,22 @@ public class RuleManifestSerializer extends StdSerializer<RuleManifest> {
      * description, role, derivedFrom, enabled, and params. If params are present, each parameter
      * is serialized with its type, value, default value, and allowed values.
      *
-     * @param jsonGenerator the JsonGenerator used to write the JSON output
+     * @param jsonGenerator  the JsonGenerator used to write the JSON output
      * @param ruleDescriptor the RuleDescriptor object to serialize
      * @throws IOException if an I/O error occurs during serialization
      */
-    private void writeRuleDescriptor(JsonGenerator jsonGenerator, RuleDescriptor ruleDescriptor) throws IOException {
+    private void writeRuleDescriptor(RuleDescriptor ruleDescriptor, JsonGenerator jsonGenerator, SerializerProvider provider) throws IOException {
 
         jsonGenerator.writeStartObject();
         jsonGenerator.writeStringField("id", ruleDescriptor.getId());
         jsonGenerator.writeStringField("libraryName", ruleDescriptor.getLibraryName());
         jsonGenerator.writeStringField("version", ruleDescriptor.getVersion());
-        jsonGenerator.writeStringField("cqlFilePath", ruleDescriptor.getCqlFilePath());
-        jsonGenerator.writeStringField("elmFilePath", ruleDescriptor.getElmFilePath());
+        if (provider.getActiveView() != null && provider.getActiveView() == InternalJsonView.class) {
+            jsonGenerator.writeStringField("cqlFilePath", ruleDescriptor.getCqlFilePath());
+        }
+        if (provider.getActiveView() != null && provider.getActiveView() == InternalJsonView.class) {
+            jsonGenerator.writeStringField("elmFilePath", ruleDescriptor.getElmFilePath());
+        }
         jsonGenerator.writeStringField("description", ruleDescriptor.getDescription());
         jsonGenerator.writeStringField("role", ruleDescriptor.getRole().toString());
         if (ruleDescriptor.getDerivedFrom() != null)
@@ -89,10 +108,7 @@ public class RuleManifestSerializer extends StdSerializer<RuleManifest> {
                     }
                     jsonGenerator.writeEndArray();
                 }
-
-
                 jsonGenerator.writeEndObject();
-
             }
             jsonGenerator.writeEndObject();
         }
