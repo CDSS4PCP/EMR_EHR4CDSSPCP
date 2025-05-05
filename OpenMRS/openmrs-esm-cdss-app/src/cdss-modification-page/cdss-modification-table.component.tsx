@@ -14,8 +14,9 @@ import {
   TableToolbar,
   TableToolbarContent,
   Toggle,
+  Tooltip,
 } from "@carbon/react";
-import { DocumentAdd, Subtract } from "@carbon/react/icons";
+import { DocumentAdd, DocumentSubtract } from "@carbon/react/icons";
 
 import styles from "./cdss-modification-page.module.scss";
 import CdssEditableCell from "./cdss-editable-cell.component";
@@ -131,6 +132,7 @@ interface CdssModificationTableProps {
   setPendingParameterChanges: React.Dispatch<React.SetStateAction<any>>;
   eventEmitter: EventEmitter;
   uploadRuleButtonClicked?: () => any;
+  archiveButtonClicked?: (ruleId) => any;
 }
 
 const CdssModificationTable = React.forwardRef<
@@ -145,6 +147,7 @@ const CdssModificationTable = React.forwardRef<
       setPendingParameterChanges,
       eventEmitter,
       uploadRuleButtonClicked,
+      archiveButtonClicked,
     },
     ref
   ) => {
@@ -200,21 +203,6 @@ const CdssModificationTable = React.forwardRef<
                     }}
                   >
                     <DocumentAdd size="lg" />
-                  </IconButton>
-
-                  <IconButton
-                    tooltip={"Delete Rule"}
-                    label={"Delete Rule"}
-                    size={"sm"}
-                    style={{
-                      marginLeft: "1rem",
-                      marginRight: "1rem",
-                      marginTop: "2px",
-                      marginBottom: "2px",
-                    }}
-                    onClick={() => {}}
-                  >
-                    <Subtract size="lg" />
                   </IconButton>
 
                   <div>
@@ -320,28 +308,49 @@ const CdssModificationTable = React.forwardRef<
                             pendingParameterChanges[row.id].enabled !=
                               null) && (
                             <div>
-                              <Button
-                                kind={"primary"}
-                                onClick={(e) => {
-                                  const changes =
-                                    pendingParameterChanges[row.id];
-                                  postRuleChange(row.id, changes, eventEmitter);
-                                }}
-                              >
-                                Save
-                              </Button>
-                              <Button
-                                kind={"secondary"}
-                                onClick={(e) => {
-                                  eventEmitter.emit("parameterReset", {
-                                    ruleId: row.id,
-                                  });
-                                }}
-                              >
-                                Reset
-                              </Button>
+                              <Tooltip label={"Save Changes"}>
+                                <Button
+                                  kind={"primary"}
+                                  onClick={(e) => {
+                                    const changes =
+                                      pendingParameterChanges[row.id];
+                                    postRuleChange(
+                                      row.id,
+                                      changes,
+                                      eventEmitter
+                                    );
+                                  }}
+                                  tooltip={"Save Changes"}
+                                >
+                                  Save
+                                </Button>
+                              </Tooltip>
+
+                              <Tooltip label={"Reset Changes"}>
+                                <Button
+                                  kind={"secondary"}
+                                  onClick={(e) => {
+                                    eventEmitter.emit("parameterReset", {
+                                      ruleId: row.id,
+                                    });
+                                  }}
+                                  tooltip={"Reset Changes"}
+                                >
+                                  Reset
+                                </Button>
+                              </Tooltip>
                             </div>
                           )}
+                        <Tooltip label={"Archive Rule"}>
+                          <IconButton
+                            kind={"secondary"}
+                            onClick={(e) => {
+                              archiveButtonClicked(row.id);
+                            }}
+                          >
+                            <DocumentSubtract size="sm" />
+                          </IconButton>
+                        </Tooltip>
                       </TableCell>
                     </TableRow>
                   ))}

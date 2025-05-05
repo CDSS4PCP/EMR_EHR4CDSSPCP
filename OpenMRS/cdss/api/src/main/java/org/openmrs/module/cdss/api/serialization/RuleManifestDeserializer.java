@@ -67,7 +67,7 @@ public class RuleManifestDeserializer extends StdDeserializer<RuleManifest> {
             }
         }
 
-
+        log.debug("RuleManifest deserialized archivedRules: " + archivedRules);
         if (rules.isEmpty() && archivedRules.isEmpty()) {
             return null;
         } else {

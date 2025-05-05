@@ -30,16 +30,42 @@ export const CdssModificationPage: React.FC = () => {
   const [columns, setColumns] = useState(null);
   const [showErrorMessage, setShowErrorMessage] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
+  const [showArchiveConfirmationMessage, setShowArchiveConfirmationMessage] =
+    useState(false);
+  const [confirmationArchiveRuleId, setConfirmationArchiveRuleId] =
+    useState(null);
+
   const [pendingParameterChanges, setPendingParameterChanges] = useState({});
 
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isUploadRuleDialogOpen, setIsUploadRuleDialogOpen] = useState(false);
 
-  const handleOpenDialog = () => {
-    setIsDialogOpen(true);
+  const handleUploadRuleButtonClicked = () => {
+    setIsUploadRuleDialogOpen(true);
   };
 
-  const handleCloseDialog = () => {
-    setIsDialogOpen(false);
+  const handleCloseUploadRuleDialog = () => {
+    setIsUploadRuleDialogOpen(false);
+  };
+
+  const fulfillArchiveRuleRequest = (ruleId) => {
+    if (ruleId == null) {
+      eventEmitter.emit("ruleArchiveFailed", { message: "RuleId was null" });
+      return;
+    }
+    openmrsFetch(`/cdss/archive-rule/id/${ruleId}.form`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+    })
+      .then((response) => {
+        eventEmitter.emit("ruleArchiveSucceeded", {});
+      })
+      .catch((error) => {
+        eventEmitter.emit("ruleArchiveFailed", { message: error.message });
+      });
+  };
+  const handleArchiveButtonClicked = (ruleId) => {
+    setConfirmationArchiveRuleId(ruleId);
+    setShowArchiveConfirmationMessage(true);
   };
 
   const handleUploadRuleSubmit = async (
@@ -104,21 +130,32 @@ export const CdssModificationPage: React.FC = () => {
     loadAndProcessData();
   });
 
-  eventEmitter.on("modificationFailed", (args) => {
-    setShowErrorMessage(true);
-    setErrorMessage(args.message);
-  });
-
   eventEmitter.on("ruleEnableSucceeded", (args) => {
+    setShowErrorMessage(false);
+
     loadAndProcessData();
   });
 
   eventEmitter.on("ruleDisableSucceeded", (args) => {
+    setShowErrorMessage(false);
+
     loadAndProcessData();
   });
 
   eventEmitter.on("ruleUploadSucceeded", (args) => {
+    setShowErrorMessage(false);
+
     loadAndProcessData();
+  });
+
+  eventEmitter.on("ruleArchiveSucceeded", (args) => {
+    setShowErrorMessage(false);
+    loadAndProcessData();
+  });
+
+  eventEmitter.on("modificationFailed", (args) => {
+    setShowErrorMessage(true);
+    setErrorMessage(args.message);
   });
 
   eventEmitter.on("ruleEnableFailed", (args) => {
@@ -135,6 +172,10 @@ export const CdssModificationPage: React.FC = () => {
     setErrorMessage(args.message);
   });
 
+  eventEmitter.on("ruleArchiveFailed", (args) => {
+    setShowErrorMessage(true);
+    setErrorMessage(args.message);
+  });
   // Data structure to keep track of parameter changes
   useEffect(() => {
     loadAndProcessData();
@@ -159,7 +200,7 @@ export const CdssModificationPage: React.FC = () => {
   return (
     <div>
       <Modal
-        modalHeading="Take action"
+        modalHeading="Error"
         open={showErrorMessage}
         primaryButtonText="Ok"
         passiveModal
@@ -172,9 +213,26 @@ export const CdssModificationPage: React.FC = () => {
         <code>{errorMessage}</code>
       </Modal>
 
+      <Modal
+        modalHeading="Take action"
+        open={showArchiveConfirmationMessage}
+        primaryButtonText="Yes"
+        secondaryButtonText="No"
+        onRequestClose={() => {
+          setShowArchiveConfirmationMessage(false);
+          setConfirmationArchiveRuleId(null);
+        }}
+        onRequestSubmit={() => {
+          fulfillArchiveRuleRequest(confirmationArchiveRuleId);
+          setShowArchiveConfirmationMessage(false);
+        }}
+      >
+        <p>Are you sure you want to archive this rule?</p>
+      </Modal>
+
       <UploadRuleDialog
-        isOpen={isDialogOpen}
-        onClose={handleCloseDialog}
+        isOpen={isUploadRuleDialogOpen}
+        onClose={handleCloseUploadRuleDialog}
         onSubmit={handleUploadRuleSubmit}
       />
 
@@ -186,7 +244,8 @@ export const CdssModificationPage: React.FC = () => {
         pendingParameterChanges={pendingParameterChanges}
         setPendingParameterChanges={setPendingParameterChanges}
         eventEmitter={eventEmitter}
-        uploadRuleButtonClicked={handleOpenDialog}
+        uploadRuleButtonClicked={handleUploadRuleButtonClicked}
+        archiveButtonClicked={handleArchiveButtonClicked}
       />
     </div>
   );

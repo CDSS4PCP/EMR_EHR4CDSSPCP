@@ -46,10 +46,10 @@ public class RuleManifestSerializer extends StdSerializer<RuleManifest> {
         }
         jsonGenerator.writeEndArray();
 
-        if (provider.getActiveView() != null && provider.getActiveView() == InternalJsonView.class) {
+        if (provider.getActiveView() == null || provider.getActiveView() == InternalJsonView.class) {
             jsonGenerator.writeFieldName("archivedRules");
             jsonGenerator.writeStartArray();
-            for (RuleDescriptor rule : value.getRules()) {
+            for (RuleDescriptor rule : value.getArchivedRules()) {
                 writeRuleDescriptor(rule, jsonGenerator, provider);
             }
             jsonGenerator.writeEndArray();

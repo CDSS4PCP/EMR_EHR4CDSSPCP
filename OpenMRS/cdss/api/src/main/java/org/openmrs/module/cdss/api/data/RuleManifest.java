@@ -49,6 +49,9 @@ public class RuleManifest {
     public List<RuleDescriptor> getRules() {
         return Collections.unmodifiableList(rules);
     }
+    public List<RuleDescriptor> getArchivedRules() {
+        return Collections.unmodifiableList(archivedRules);
+    }
 
     public RuleDescriptor getRuleById(String libraryName, String version) throws RuleNotFoundException {
 
@@ -96,9 +99,17 @@ public class RuleManifest {
             RuleDescriptor existingDescriptor = getRuleById(descriptor.getId());
 
 //            Integer indexOfDescriptor = rules.indexOf(existingDescriptor);
+
+            log.debug("Rules Before" + rules);
             boolean success = rules.remove(existingDescriptor);
+            log.debug("Rules After " + success + "\n" + rules);
+
             if (success) {
+                log.debug("archivedRules Before " + rules);
+
                 success = archivedRules.add(descriptor);
+                log.debug("archivedRules After " + success + "\n" + rules);
+
             }
             return success;
 

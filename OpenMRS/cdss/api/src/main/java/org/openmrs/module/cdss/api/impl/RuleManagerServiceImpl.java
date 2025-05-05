@@ -658,6 +658,7 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
         RuleManifest manifest = getRuleManifest();
         RuleDescriptor descriptor = getRuleDescriptorById(ruleId);
         Boolean success = manifest.archiveRule(descriptor);
+        writeManifest();
 
 
         if (!success) {
@@ -665,6 +666,7 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
         } else {
             return Optional.of(ruleId);
         }
+
 
     }
 
