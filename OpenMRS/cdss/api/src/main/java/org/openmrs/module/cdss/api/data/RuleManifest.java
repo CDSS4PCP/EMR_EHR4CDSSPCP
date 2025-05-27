@@ -40,15 +40,14 @@ public class RuleManifest {
 
     @Override
     public String toString() {
-        return "RuleManifest{" +
-                "rules=" + rules +
-                '}';
+        return "RuleManifest{" + "rules=" + rules + '}';
     }
 
 
     public List<RuleDescriptor> getRules() {
         return Collections.unmodifiableList(rules);
     }
+
     public List<RuleDescriptor> getArchivedRules() {
         return Collections.unmodifiableList(archivedRules);
     }
@@ -60,8 +59,7 @@ public class RuleManifest {
 
         if (version != null)
             descriptorOptional = getRules().stream().filter(e -> e.getLibraryName().equals(libraryName)).filter(e -> e.getVersion().equals(version)).findFirst();
-        else
-            descriptorOptional = getRules().stream().filter(e -> e.getLibraryName().equals(libraryName)).findFirst();
+        else descriptorOptional = getRules().stream().filter(e -> e.getLibraryName().equals(libraryName)).findFirst();
 
         if (!descriptorOptional.isPresent()) {
             throw new RuleNotFoundException(libraryName, version);
@@ -83,6 +81,18 @@ public class RuleManifest {
         return descriptorOptional.get();
     }
 
+    public RuleDescriptor getArchivedRuleById(String ruleId) throws RuleNotFoundException {
+        Optional<RuleDescriptor> descriptorOptional = Optional.empty();
+        RuleCriteria criteria = new RuleCriteria();
+        criteria.setId(ruleId);
+        log.debug("getArchivedRules() =>" + getArchivedRules());
+        descriptorOptional = getArchivedRules().stream().filter(e -> e.getId().equals(criteria.getId())).findFirst();
+        if (!descriptorOptional.isPresent()) {
+            throw new RuleNotFoundException(ruleId);
+        }
+        return descriptorOptional.get();
+    }
+
     public Boolean addRule(RuleDescriptor descriptor) {
         try {
             RuleDescriptor existingDescriptor = getRuleById(descriptor.getId());
@@ -98,18 +108,30 @@ public class RuleManifest {
         try {
             RuleDescriptor existingDescriptor = getRuleById(descriptor.getId());
 
-//            Integer indexOfDescriptor = rules.indexOf(existingDescriptor);
-
-            log.debug("Rules Before" + rules);
             boolean success = rules.remove(existingDescriptor);
-            log.debug("Rules After " + success + "\n" + rules);
 
             if (success) {
-                log.debug("archivedRules Before " + rules);
-
                 success = archivedRules.add(descriptor);
-                log.debug("archivedRules After " + success + "\n" + rules);
+            }
+            return success;
 
+        } catch (RuleNotFoundException e) {
+            return false;
+        }
+    }
+
+
+    public Boolean restoreRule(RuleDescriptor descriptor) {
+        log.debug("getArchivedRules() =>" + getArchivedRules());
+
+        try {
+            log.debug("Attempt8ing to restore rule " + descriptor.getId());
+            RuleDescriptor existingDescriptor = getArchivedRuleById(descriptor.getId());
+
+            boolean success = archivedRules.remove(existingDescriptor);
+
+            if (success) {
+                success = rules.add(descriptor);
             }
             return success;
 

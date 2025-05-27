@@ -76,15 +76,15 @@ public class RuleManifestSerializer extends StdSerializer<RuleManifest> {
         jsonGenerator.writeStringField("id", ruleDescriptor.getId());
         jsonGenerator.writeStringField("libraryName", ruleDescriptor.getLibraryName());
         jsonGenerator.writeStringField("version", ruleDescriptor.getVersion());
-        if (provider.getActiveView() != null && provider.getActiveView() == InternalJsonView.class) {
+        if (provider.getActiveView() == null || provider.getActiveView() == InternalJsonView.class) {
             jsonGenerator.writeStringField("cqlFilePath", ruleDescriptor.getCqlFilePath());
         }
-        if (provider.getActiveView() != null && provider.getActiveView() == InternalJsonView.class) {
+        if (provider.getActiveView() == null || provider.getActiveView() == InternalJsonView.class) {
             jsonGenerator.writeStringField("elmFilePath", ruleDescriptor.getElmFilePath());
         }
         jsonGenerator.writeStringField("description", ruleDescriptor.getDescription());
         jsonGenerator.writeStringField("role", ruleDescriptor.getRole().toString());
-        if (ruleDescriptor.getDerivedFrom() != null)
+        if (provider.getActiveView() == null || provider.getActiveView() == InternalJsonView.class)
             jsonGenerator.writeStringField("derivedFrom", ruleDescriptor.getDerivedFrom());
         jsonGenerator.writeBooleanField("enabled", ruleDescriptor.isEnabled());
         if (ruleDescriptor.getParams() != null) {

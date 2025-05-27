@@ -66,6 +66,8 @@ public interface RuleManagerService extends CdssVaccineService {
 
     Optional<String> archiveRule(String ruleId) throws IOException;
 
+    Optional<String> restoreRule(String ruleId) throws IOException;
+
     //    @Authorized({CDSSConfig.MODULE_PRIVILEGE})
     Optional<String> modifyRule(String ruleId, Map<String, ParamDescriptor> changedParameters) throws IOException;
 

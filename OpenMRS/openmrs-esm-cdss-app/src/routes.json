@@ -62,6 +62,12 @@
       "online": true,
       "offline": true
     },
+    {
+      "component": "cdssArchivePage",
+      "route": "cdss/archive",
+      "online": true,
+      "offline": true
+    },
 
     {
       "component": "debugPage",

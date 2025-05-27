@@ -4,6 +4,7 @@ import {
   DataTable,
   DataTableSkeleton,
   IconButton,
+  Stack,
   Table,
   TableBody,
   TableCell,
@@ -22,108 +23,6 @@ import styles from "./cdss-modification-page.module.scss";
 import CdssEditableCell from "./cdss-editable-cell.component";
 import { EventEmitter } from "events";
 import CdssRuleEnableCell from "./cdss-rule-enable-cell.component";
-import { openmrsFetch } from "@openmrs/esm-framework";
-
-async function postRuleChange(ruleId, parameterChanges, eventEmitter) {
-  const changes = {};
-  if (parameterChanges.params != null)
-    for (const paramName of Object.keys(parameterChanges.params)) {
-      changes[paramName] = {
-        value: parameterChanges.params[paramName].newValue,
-        type: parameterChanges.params[paramName].type,
-      };
-    }
-
-  const body = {
-    params: changes,
-    rule: {
-      id: ruleId,
-    },
-  };
-
-  if (Object.keys(changes).length > 0) {
-    try {
-      const response = await openmrsFetch(`/cdss/modify-rule.form`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      });
-      if (response.status == 200) {
-        eventEmitter.emit("modificationSucceeded", {
-          ruleId: ruleId,
-          parameterChanges: parameterChanges,
-        });
-        eventEmitter.emit("parameterReset", {
-          ruleId: ruleId,
-          parameterChanges: parameterChanges,
-        });
-      } else {
-        eventEmitter.emit("modificationFailed", {
-          ruleId: ruleId,
-          parameterChanges: parameterChanges,
-          message: await response.text(),
-        });
-      }
-    } catch (e) {
-      eventEmitter.emit("modificationFailed", {
-        ruleId: ruleId,
-        parameterChanges: parameterChanges,
-        message: e.message,
-      });
-    }
-  }
-
-  if (parameterChanges.enabled != null) {
-    if (parameterChanges.enabled == true) {
-      try {
-        const response = await openmrsFetch(
-          `/cdss/enable-rule/${ruleId}.form`,
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-          }
-        );
-
-        if (response.status == 200) {
-          eventEmitter.emit("ruleEnableSucceeded", { ruleId: ruleId });
-        } else {
-          eventEmitter.emit("ruleEnableFailed", {
-            ruleId: ruleId,
-            message: await response.text(),
-          });
-        }
-      } catch (e) {
-        eventEmitter.emit("ruleEnableFailed", {
-          ruleId: ruleId,
-          message: e.message,
-        });
-      }
-    } else {
-      try {
-        const response = await openmrsFetch(
-          `/cdss/disable-rule/${ruleId}.form`,
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-          }
-        );
-        if (response.status == 200) {
-          eventEmitter.emit("ruleDisableSucceeded", { ruleId: ruleId });
-        } else {
-          eventEmitter.emit("ruleDisableFailed", {
-            ruleId: ruleId,
-            message: await response.text(),
-          });
-        }
-      } catch (e) {
-        eventEmitter.emit("ruleDisableFailed", {
-          ruleId: ruleId,
-          message: e.message,
-        });
-      }
-    }
-  }
-}
 
 interface CdssModificationTableProps {
   rules?: Array<any>;
@@ -133,6 +32,7 @@ interface CdssModificationTableProps {
   eventEmitter: EventEmitter;
   uploadRuleButtonClicked?: () => any;
   archiveButtonClicked?: (ruleId) => any;
+  postRuleChange?: (ruleId: string, parameterChanges: any) => void;
 }
 
 const CdssModificationTable = React.forwardRef<
@@ -148,6 +48,7 @@ const CdssModificationTable = React.forwardRef<
       eventEmitter,
       uploadRuleButtonClicked,
       archiveButtonClicked,
+      postRuleChange,
     },
     ref
   ) => {
@@ -300,57 +201,56 @@ const CdssModificationTable = React.forwardRef<
                       ))}
 
                       <TableCell>
-                        {pendingParameterChanges &&
-                          pendingParameterChanges[row.id] &&
-                          ((pendingParameterChanges[row.id].params &&
-                            Object.keys(pendingParameterChanges[row.id].params)
-                              .length > 0) ||
-                            pendingParameterChanges[row.id].enabled !=
-                              null) && (
-                            <div>
-                              <Tooltip label={"Save Changes"}>
-                                <Button
-                                  kind={"primary"}
-                                  onClick={(e) => {
-                                    const changes =
-                                      pendingParameterChanges[row.id];
-                                    postRuleChange(
-                                      row.id,
-                                      changes,
-                                      eventEmitter
-                                    );
-                                  }}
-                                  tooltip={"Save Changes"}
-                                >
-                                  Save
-                                </Button>
-                              </Tooltip>
+                        <Stack orientation={"horizontal"}>
+                          {pendingParameterChanges &&
+                            pendingParameterChanges[row.id] &&
+                            ((pendingParameterChanges[row.id].params &&
+                              Object.keys(
+                                pendingParameterChanges[row.id].params
+                              ).length > 0) ||
+                              pendingParameterChanges[row.id].enabled !=
+                                null) && (
+                              <div>
+                                <Tooltip label={"Save Changes"}>
+                                  <Button
+                                    kind={"primary"}
+                                    onClick={(e) => {
+                                      const changes =
+                                        pendingParameterChanges[row.id];
+                                      postRuleChange(row.id, changes);
+                                    }}
+                                    tooltip={"Save Changes"}
+                                  >
+                                    Save
+                                  </Button>
+                                </Tooltip>
 
-                              <Tooltip label={"Reset Changes"}>
-                                <Button
-                                  kind={"secondary"}
-                                  onClick={(e) => {
-                                    eventEmitter.emit("parameterReset", {
-                                      ruleId: row.id,
-                                    });
-                                  }}
-                                  tooltip={"Reset Changes"}
-                                >
-                                  Reset
-                                </Button>
-                              </Tooltip>
-                            </div>
-                          )}
-                        <Tooltip label={"Archive Rule"}>
-                          <IconButton
-                            kind={"secondary"}
-                            onClick={(e) => {
-                              archiveButtonClicked(row.id);
-                            }}
-                          >
-                            <DocumentSubtract size="sm" />
-                          </IconButton>
-                        </Tooltip>
+                                <Tooltip label={"Reset Changes"}>
+                                  <Button
+                                    kind={"secondary"}
+                                    onClick={(e) => {
+                                      eventEmitter.emit("parameterReset", {
+                                        ruleId: row.id,
+                                      });
+                                    }}
+                                    tooltip={"Reset Changes"}
+                                  >
+                                    Reset
+                                  </Button>
+                                </Tooltip>
+                              </div>
+                            )}
+                          <Tooltip label={"Archive Rule"}>
+                            <IconButton
+                              kind={"secondary"}
+                              onClick={(e) => {
+                                archiveButtonClicked(row.id);
+                              }}
+                            >
+                              <DocumentSubtract size="sm" />
+                            </IconButton>
+                          </Tooltip>
+                        </Stack>
                       </TableCell>
                     </TableRow>
                   ))}

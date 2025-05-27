@@ -1,5 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Modal } from "@carbon/react";
+import {
+  Accordion,
+  AccordionItem,
+  Button,
+  IconButton,
+  Modal,
+  Stack,
+  Tooltip,
+} from "@carbon/react";
 import { openmrsFetch } from "@openmrs/esm-framework";
 
 import { EventEmitter } from "events";
@@ -9,10 +17,115 @@ import CdssModificationTable from "./cdss-modification-table.component";
 import { recordRuleUsage } from "../cdssService";
 import UploadRuleDialog, { ParameterProps } from "./upload-rule-dialog";
 import { Buffer } from "buffer";
+import CdssEditableCell from "./cdss-editable-cell.component";
+import CdssRuleEnableCell from "./cdss-rule-enable-cell.component";
+import { DocumentSubtract } from "@carbon/react/icons";
+import CdssModificationList from "./cdss-modification-list.component";
 
 // Events used for parameter resets
 const eventEmitter = new EventEmitter();
 eventEmitter.setMaxListeners(1000); // Arbitrary number
+
+async function postRuleChange(ruleId, parameterChanges) {
+  const changes = {};
+  if (parameterChanges.params != null)
+    for (const paramName of Object.keys(parameterChanges.params)) {
+      changes[paramName] = {
+        value: parameterChanges.params[paramName].newValue,
+        type: parameterChanges.params[paramName].type,
+      };
+    }
+
+  const body = {
+    params: changes,
+    rule: {
+      id: ruleId,
+    },
+  };
+
+  if (Object.keys(changes).length > 0) {
+    try {
+      const response = await openmrsFetch(`/cdss/modify-rule.form`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      if (response.status == 200) {
+        eventEmitter.emit("modificationSucceeded", {
+          ruleId: ruleId,
+          parameterChanges: parameterChanges,
+        });
+        eventEmitter.emit("parameterReset", {
+          ruleId: ruleId,
+          parameterChanges: parameterChanges,
+        });
+      } else {
+        eventEmitter.emit("modificationFailed", {
+          ruleId: ruleId,
+          parameterChanges: parameterChanges,
+          message: await response.text(),
+        });
+      }
+    } catch (e) {
+      eventEmitter.emit("modificationFailed", {
+        ruleId: ruleId,
+        parameterChanges: parameterChanges,
+        message: e.message,
+      });
+    }
+  }
+
+  if (parameterChanges.enabled != null) {
+    if (parameterChanges.enabled == true) {
+      try {
+        const response = await openmrsFetch(
+          `/cdss/enable-rule/${ruleId}.form`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+          }
+        );
+
+        if (response.status == 200) {
+          eventEmitter.emit("ruleEnableSucceeded", { ruleId: ruleId });
+        } else {
+          eventEmitter.emit("ruleEnableFailed", {
+            ruleId: ruleId,
+            message: await response.text(),
+          });
+        }
+      } catch (e) {
+        eventEmitter.emit("ruleEnableFailed", {
+          ruleId: ruleId,
+          message: e.message,
+        });
+      }
+    } else {
+      try {
+        const response = await openmrsFetch(
+          `/cdss/disable-rule/${ruleId}.form`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+          }
+        );
+        if (response.status == 200) {
+          eventEmitter.emit("ruleDisableSucceeded", { ruleId: ruleId });
+        } else {
+          eventEmitter.emit("ruleDisableFailed", {
+            ruleId: ruleId,
+            message: await response.text(),
+          });
+        }
+      } catch (e) {
+        eventEmitter.emit("ruleDisableFailed", {
+          ruleId: ruleId,
+          message: e.message,
+        });
+      }
+    }
+  }
+}
 
 /**
  * Fetches rule manifest data from the server.
@@ -38,6 +151,7 @@ export const CdssModificationPage: React.FC = () => {
   const [pendingParameterChanges, setPendingParameterChanges] = useState({});
 
   const [isUploadRuleDialogOpen, setIsUploadRuleDialogOpen] = useState(false);
+  const [viewMode, setViewMode] = useState("list");
 
   const handleUploadRuleButtonClicked = () => {
     setIsUploadRuleDialogOpen(true);
@@ -182,18 +296,21 @@ export const CdssModificationPage: React.FC = () => {
   }, []);
 
   const rules = ruleData?.rules
-    .filter((r) => r.role.toLowerCase() == "rule")
+    ?.filter((r) => r.role.toLowerCase() == "rule")
     .map((r) => {
+      const name = r.libraryName != null ? r.libraryName : r.name;
       const obj = {
         id: r.id,
+        name: name,
         version: r.version,
-        cqlFilePath: r.cqlFilePath,
-        elmFilePath: r.elmFilePath,
+        // cqlFilePath: r.cqlFilePath,
+        // elmFilePath: r.elmFilePath,
         description: r.description,
         role: r.role,
         enabled: r.enabled,
-        ...r.params,
+        params: r.params,
       };
+
       return obj;
     });
 
@@ -238,15 +355,28 @@ export const CdssModificationPage: React.FC = () => {
 
       <h1 className={styles.modHeader}>Rule Management</h1>
 
-      <CdssModificationTable
-        rules={rules}
-        columns={columns}
-        pendingParameterChanges={pendingParameterChanges}
-        setPendingParameterChanges={setPendingParameterChanges}
-        eventEmitter={eventEmitter}
-        uploadRuleButtonClicked={handleUploadRuleButtonClicked}
-        archiveButtonClicked={handleArchiveButtonClicked}
-      />
+      {viewMode == "table" ? (
+        <CdssModificationTable
+          rules={rules}
+          columns={columns}
+          pendingParameterChanges={pendingParameterChanges}
+          setPendingParameterChanges={setPendingParameterChanges}
+          eventEmitter={eventEmitter}
+          uploadRuleButtonClicked={handleUploadRuleButtonClicked}
+          archiveButtonClicked={handleArchiveButtonClicked}
+          postRuleChange={postRuleChange}
+        />
+      ) : (
+        <CdssModificationList
+          rules={rules}
+          pendingParameterChanges={pendingParameterChanges}
+          setPendingParameterChanges={setPendingParameterChanges}
+          eventEmitter={eventEmitter}
+          uploadRuleButtonClicked={handleUploadRuleButtonClicked}
+          archiveButtonClicked={handleArchiveButtonClicked}
+          postRuleChange={postRuleChange}
+        ></CdssModificationList>
+      )}
     </div>
   );
 };

@@ -440,7 +440,7 @@ public class RuleRestController extends CdssRestController {
      * @throws APIAuthenticationException if there is an issue with API authentication
      * @throws RuntimeException           if the rule is not found or a file-related error occurs
      */
-    @PostMapping(path = {"/archive-rule/id/{ruleId}.form", "/disable-rule/{ruleId}.form"}, produces = {"application/json"})
+    @PostMapping(path = {"/archive-rule/id/{ruleId}.form"}, produces = {"application/json"})
     public ResponseEntity<String> archiveRuleById(@PathVariable(value = "ruleId") String ruleId) throws APIAuthenticationException {
         checkAuthorizationAndPrivilege();
 
@@ -462,6 +462,36 @@ public class RuleRestController extends CdssRestController {
     }
 
     /**
+     * Disables a rule by its ID.
+     *
+     * @param ruleId the ID of the rule to disable
+     * @return ResponseEntity containing "true" if the rule is successfully disabled
+     * @throws APIAuthenticationException if there is an issue with API authentication
+     * @throws RuntimeException           if the rule is not found or a file-related error occurs
+     */
+    @PostMapping(path = {"/restore-rule/id/{ruleId}.form"}, produces = {"application/json"})
+    public ResponseEntity<String> restoreRuleById(@PathVariable(value = "ruleId") String ruleId) throws APIAuthenticationException {
+        checkAuthorizationAndPrivilege();
+
+        try {
+            Optional<String> ruleIdOptional = ruleManagerService.restoreRule(ruleId);
+
+            if (ruleIdOptional.isPresent()) {
+                return ResponseEntity.ok(ruleIdOptional.get());
+            }
+        } catch (RuleNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        return new ResponseEntity<>("Rule " + ruleId + " not found", HttpStatus.NOT_FOUND);
+    }
+
+
+    /**
      * Retrieves the rule manifest as a JSON string.
      *
      * @return ResponseEntity containing the rule manifest in JSON format
@@ -472,25 +502,32 @@ public class RuleRestController extends CdssRestController {
     public ResponseEntity<String> getRuleManifest() throws APIAuthenticationException, JsonProcessingException {
         checkAuthorizationAndPrivilege();
 
-//         ObjectMapper objectMapper= new ObjectMapper();
-//         SimpleModule simpleModule=new SimpleModule();
-//
-//
-//        simpleModule.addSerializer(RuleManifest.class, new RuleManifestSerializer());
-//        simpleModule.addDeserializer(RuleManifest.class, new RuleManifestDeserializer());
-//        objectMapper.registerModule(simpleModule);
-//
-//        String val = objectMapper.writeValueAsString(ruleManagerService.getRuleManifest());
-//
-//        return ResponseEntity.ok(val);
 
         if (webObjectMapper == null) {
             return ResponseEntity.internalServerError().body("ObjectMapper is null");
         } else {
             return ResponseEntity.ok(webObjectMapper.writeValueAsString(ruleManagerService.getRuleManifest()));
         }
+    }
 
 
+    /**
+     * Retrieves the rule manifest as a JSON string.
+     *
+     * @return ResponseEntity containing the rule manifest in JSON format
+     * @throws APIAuthenticationException if there is an issue with API authentication
+     * @throws JsonProcessingException    if there is an error processing JSON
+     */
+    @GetMapping(path = "/rule-archive.form", produces = {"application/json"})
+    public ResponseEntity<String> getArchivedRules() throws APIAuthenticationException, JsonProcessingException {
+        checkAuthorizationAndPrivilege();
+
+
+        if (webObjectMapper == null) {
+            return ResponseEntity.internalServerError().body("ObjectMapper is null");
+        } else {
+            return ResponseEntity.ok(webObjectMapper.writeValueAsString(ruleManagerService.getRuleManifest().getArchivedRules()));
+        }
     }
 
 

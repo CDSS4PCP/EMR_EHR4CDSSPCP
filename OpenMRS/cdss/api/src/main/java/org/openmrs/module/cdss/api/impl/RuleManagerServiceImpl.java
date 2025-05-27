@@ -666,8 +666,22 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
         } else {
             return Optional.of(ruleId);
         }
+    }
 
 
+    public Optional<String> restoreRule(String ruleId) throws IOException {
+        log.info("Restoring rule " + ruleId);
+        RuleManifest manifest = getRuleManifest();
+        RuleDescriptor descriptor = getRuleDescriptorById(ruleId);
+        Boolean success = manifest.restoreRule(descriptor);
+        writeManifest();
+
+
+        if (!success) {
+            return Optional.empty();
+        } else {
+            return Optional.of(ruleId);
+        }
     }
 
     /**

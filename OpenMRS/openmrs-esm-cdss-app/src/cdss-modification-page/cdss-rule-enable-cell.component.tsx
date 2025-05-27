@@ -73,6 +73,9 @@ const CdssRuleEnableCell = React.forwardRef<
             setPendingParameterChanges({ ...pendingParameterChanges });
             return true;
           }}
+          onClick={(e) => e.stopPropagation()}
+          onMouseDown={(e) => e.stopPropagation()}
+          onFocus={(e) => e.stopPropagation()}
         >
           <SelectItem text={"Yes"} value={true}>
             Yes
