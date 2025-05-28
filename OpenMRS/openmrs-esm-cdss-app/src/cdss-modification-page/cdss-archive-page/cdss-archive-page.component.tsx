@@ -1,19 +1,19 @@
 import React, { useEffect, useState } from "react";
 import {
+  Accordion,
+  AccordionItem,
   ContainedList,
   ContainedListItem,
   IconButton,
   ListItem,
   Modal,
+  Stack,
   UnorderedList,
 } from "@carbon/react";
 import { openmrsFetch } from "@openmrs/esm-framework";
 import { Restart } from "@carbon/react/icons";
 
 import { EventEmitter } from "events";
-import styles from "./cdss-modification-page.module.scss";
-import { recordRuleUsage } from "../../cdssService";
-import { Buffer } from "buffer";
 
 // Events used for parameter resets
 const eventEmitter = new EventEmitter();
@@ -32,60 +32,44 @@ async function getRuleData() {
 
 export const CdssArchivePage: React.FC = () => {
   const [ruleData, setRuleData] = useState(null);
-  const [columns, setColumns] = useState(null);
   const [showErrorMessage, setShowErrorMessage] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
-  const [showArchiveConfirmationMessage, setShowArchiveConfirmationMessage] =
+  const [showRestoreConfirmationMessage, setShowRestoreConfirmationMessage] =
     useState(false);
-  const [confirmationArchiveRuleId, setConfirmationArchiveRuleId] =
+  const [confirmationRestoreRuleId, setConfirmationRestoreRuleId] =
     useState(null);
 
-  const [pendingParameterChanges, setPendingParameterChanges] = useState({});
+  eventEmitter.on("ruleRestoreSucceeded", (args) => {
+    setShowErrorMessage(false);
+    loadAndProcessData();
+  });
 
-  const [isUploadRuleDialogOpen, setIsUploadRuleDialogOpen] = useState(false);
+  eventEmitter.on("ruleRestoreFailed", (args) => {
+    setShowErrorMessage(true);
+    setErrorMessage(args.message);
+  });
 
-  const handleUploadRuleButtonClicked = () => {
-    setIsUploadRuleDialogOpen(true);
+  const handleRestoreButtonClicked = async (ruleId) => {
+    setConfirmationRestoreRuleId(ruleId);
+    setShowRestoreConfirmationMessage(true);
   };
 
-  const handleCloseUploadRuleDialog = () => {
-    setIsUploadRuleDialogOpen(false);
-  };
-
-  const fulfillArchiveRuleRequest = (ruleId) => {
-    if (ruleId == null) {
-      eventEmitter.emit("ruleArchiveFailed", { message: "RuleId was null" });
-      return;
-    }
-    openmrsFetch(`/cdss/archive-rule/id/${ruleId}.form`, {
+  const fulfillRestoreRuleRequest = async (ruleId) => {
+    openmrsFetch(`/cdss/restore-rule/id/${ruleId}.form`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
     })
-      .then((response) => {
-        eventEmitter.emit("ruleArchiveSucceeded", {});
+      .then(async (result) => {
+        eventEmitter.emit("ruleRestoreSucceeded", {});
       })
       .catch((error) => {
-        eventEmitter.emit("ruleArchiveFailed", { message: error.message });
+        eventEmitter.emit("ruleRestoreFailed", { message: error.message });
       });
-  };
-  const handleRestoreButtonClicked = async (ruleId) => {
-    // setConfirmationArchiveRuleId(ruleId);
-    // setShowArchiveConfirmationMessage(true);
-    console.log("restoreButtonClicked", ruleId);
-    const result = await openmrsFetch(`/cdss/restore-rule/id/${ruleId}.form`, {
-      method: "POST",
-    });
-    // const json = await result.json();
-    // console.log(json);
-    return result;
   };
 
   function loadAndProcessData() {
     getRuleData().then((r) => {
       setRuleData(r);
     });
-    setPendingParameterChanges({});
-    // setPendingParameterChanges2({});
   }
 
   // Data structure to keep track of parameter changes
@@ -105,39 +89,97 @@ export const CdssArchivePage: React.FC = () => {
         description: r.description,
         role: r.role,
         enabled: r.enabled,
-        ...r.params,
+        params: r.params,
       };
       return obj;
     });
 
   return (
     <div>
-      <ContainedList label={"Archived Rules"} size={"lg"}>
+      <Modal
+        modalHeading="Error"
+        open={showErrorMessage}
+        primaryButtonText="Ok"
+        passiveModal
+        onRequestClose={() => setShowErrorMessage(false)}
+        onRequestSubmit={() => {
+          setShowErrorMessage(false);
+        }}
+      >
+        <p>Could not fulfill request because of an error</p>
+        <code>{errorMessage}</code>
+      </Modal>
+
+      <Modal
+        modalHeading="Take action"
+        open={showRestoreConfirmationMessage}
+        primaryButtonText="Yes"
+        secondaryButtonText="No"
+        onRequestClose={() => {
+          setShowRestoreConfirmationMessage(false);
+          setConfirmationRestoreRuleId(null);
+        }}
+        onRequestSubmit={() => {
+          fulfillRestoreRuleRequest(confirmationRestoreRuleId);
+          setShowRestoreConfirmationMessage(false);
+        }}
+      >
+        <p>Are you sure you want to restore this rule?</p>
+      </Modal>
+
+      <Accordion label={"Archived Rules"} size={"lg"}>
         {rules && rules.length > 0 ? (
           rules.map((rule) => {
             return (
-              <ContainedListItem
-                action={
-                  <IconButton
-                    size={"lg"}
-                    onClick={() => {
-                      handleRestoreButtonClicked(rule.id);
+              <AccordionItem
+                title={
+                  <Stack
+                    orientation={"horizontal"}
+                    gap={10}
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      width: "100%",
                     }}
                   >
-                    <Restart size={"lg"}></Restart>
-                  </IconButton>
+                    <p>
+                      <strong>
+                        {rule.name}-{rule.version}
+                      </strong>
+                    </p>
+
+                    <IconButton
+                      size={"lg"}
+                      onClick={(e) => {
+                        handleRestoreButtonClicked(rule.id);
+                        e.stopPropagation();
+                      }}
+                    >
+                      <Restart size={"lg"}></Restart>
+                    </IconButton>
+                  </Stack>
                 }
               >
-                <p>
-                  {rule.name}-{rule.version}
-                </p>
-              </ContainedListItem>
+                <p>{rule.description}</p>
+
+                {rule.params &&
+                  Object.keys(rule.params).length > 0 &&
+                  Object.keys(rule.params).map((paramName) => {
+                    return (
+                      <div style={{ marginTop: "0.5rem" }}>
+                        <strong>{paramName}</strong>
+                        <p>{rule.params[paramName].value}</p>
+                      </div>
+                    );
+                  })}
+              </AccordionItem>
             );
           })
         ) : (
           <ContainedListItem>No archived Rules</ContainedListItem>
         )}
-      </ContainedList>
+      </Accordion>
     </div>
   );
 };
