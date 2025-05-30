@@ -240,6 +240,12 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
 
         return ruleCriteria.applyFilters(rules);
     }
+//    @Override
+    public List<RuleDescriptor> getAllArchivedRules(RuleCriteria ruleCriteria) throws APIAuthenticationException {
+        List<RuleDescriptor> rules = ruleManifest.getArchivedRules();
+
+        return ruleCriteria.applyFilters(rules);
+    }
 
 
     @Override
@@ -404,6 +410,23 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
 
     }
 
+
+    private RuleDescriptor getArchivedRuleDescriptorById(String ruleId) throws RuleNotFoundException {
+
+        RuleCriteria ruleCriteria = new RuleCriteria();
+        ruleCriteria.setId(ruleId);
+
+        List<RuleDescriptor> rules = getAllArchivedRules(ruleCriteria);
+        if (rules.size() <= 0) {
+            throw new RuleNotFoundException(ruleId);
+        }
+        if (rules.size() > 1) {
+            throw new MultipleRulesFoundException(rules);
+        }
+        RuleDescriptor rule = rules.get(0);
+        return rule;
+
+    }
 
     /**
      * Writes the current rule manifest to a file specified by RULE_MANIFEST_PATH.
@@ -672,7 +695,7 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
     public Optional<String> restoreRule(String ruleId) throws IOException {
         log.info("Restoring rule " + ruleId);
         RuleManifest manifest = getRuleManifest();
-        RuleDescriptor descriptor = getRuleDescriptorById(ruleId);
+        RuleDescriptor descriptor = getArchivedRuleDescriptorById(ruleId);
         Boolean success = manifest.restoreRule(descriptor);
         writeManifest();
 

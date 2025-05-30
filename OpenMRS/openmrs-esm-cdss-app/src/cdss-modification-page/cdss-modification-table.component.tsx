@@ -61,6 +61,8 @@ const CdssModificationTable = React.forwardRef<
     }
     const ruleDict = {};
 
+    console.log(rules);
+
     rules.forEach((r) => {
       ruleDict[r.id] = r;
     });
@@ -77,187 +79,195 @@ const CdssModificationTable = React.forwardRef<
             getTableProps,
             getTableContainerProps,
             getToolbarProps,
-          }) => (
-            <TableContainer
-              title="Modifcation Table"
-              {...getTableContainerProps()}
-            >
-              <TableToolbar
-                {...getToolbarProps()}
-                aria-label="data table toolbar"
+          }) => {
+            return (
+              <TableContainer
+                title="Modifcation Table"
+                {...getTableContainerProps()}
               >
-                <TableToolbarContent>
-                  <IconButton
-                    tooltip={"Upload a new Rule"}
-                    label={"Upload a new Rule"}
-                    size={"sm"}
-                    style={{
-                      marginLeft: "1rem",
-                      marginRight: "1rem",
-                      marginTop: "2px",
-                      marginBottom: "2px",
-                    }}
-                    onClick={() => {
-                      if (uploadRuleButtonClicked !== null) {
-                        uploadRuleButtonClicked();
-                      }
-                    }}
-                  >
-                    <DocumentAdd size="lg" />
-                  </IconButton>
-
-                  <div>
-                    <div
-                      style={{
-                        marginBlockEnd: "0.5rem",
-                      }}
-                    >
-                      Descriptions
-                    </div>
-                    <Toggle
+                <TableToolbar
+                  {...getToolbarProps()}
+                  aria-label="data table toolbar"
+                >
+                  <TableToolbarContent>
+                    <IconButton
+                      tooltip={"Upload a new Rule"}
+                      label={"Upload a new Rule"}
                       size={"sm"}
-                      onToggle={(e) => {
-                        setShowDescription(e);
-                        return true;
+                      style={{
+                        marginLeft: "1rem",
+                        marginRight: "1rem",
+                        marginTop: "2px",
+                        marginBottom: "2px",
                       }}
-                      defaultToggled={showDescription}
-                    />
-                  </div>
-                </TableToolbarContent>
-              </TableToolbar>
-
-              <Table {...getTableProps()} style={{ marginTop: "1rem" }}>
-                <TableHead>
-                  <TableRow>
-                    {/*<TableSelectAll {...getSelectionProps()} />*/}
-                    {showDescription && (
-                      <TableHeader key={"ruleDescriptionHeader"}>
-                        Description
-                      </TableHeader>
-                    )}
-
-                    <TableHeader key={"enableHeader"}>Enabled</TableHeader>
-                    {headers.map((header, i) => (
-                      <TableHeader
-                        key={i}
-                        {...getHeaderProps({
-                          header,
-                        })}
-                      >
-                        {header.name}
-                      </TableHeader>
-                    ))}
-                    <TableHeader key={"actionHeader"}>Action</TableHeader>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {rows.map((row) => (
-                    <TableRow
-                      key={row.id}
-                      className={
-                        ruleDict[row.id]?.enabled
-                          ? styles.cdssEnabledTableRow
-                          : styles.cdssDisabledTableRow
-                      }
-                      {...getRowProps({
-                        row,
-                      })}
+                      onClick={() => {
+                        if (uploadRuleButtonClicked !== null) {
+                          uploadRuleButtonClicked();
+                        }
+                      }}
                     >
-                      {/*<TableSelectRow*/}
-                      {/*  {...getSelectionProps({*/}
-                      {/*    row,*/}
-                      {/*    onChange: () => {*/}
-                      {/*      const isSelected = selectedRows.includes(row.id);*/}
-                      {/*      setSelectedRows((prevSelectedRows) =>*/}
-                      {/*        isSelected*/}
-                      {/*          ? prevSelectedRows.filter((id) => id !== row.id)*/}
-                      {/*          : [...prevSelectedRows, row.id]*/}
-                      {/*      );*/}
-                      {/*    },*/}
-                      {/*  })}*/}
-                      {/*/>*/}
+                      <DocumentAdd size="lg" />
+                    </IconButton>
+
+                    <div>
+                      <div
+                        style={{
+                          marginBlockEnd: "0.5rem",
+                        }}
+                      >
+                        Descriptions
+                      </div>
+                      <Toggle
+                        size={"sm"}
+                        onToggle={(e) => {
+                          setShowDescription(e);
+                          return true;
+                        }}
+                        defaultToggled={showDescription}
+                      />
+                    </div>
+                  </TableToolbarContent>
+                </TableToolbar>
+
+                <Table {...getTableProps()} style={{ marginTop: "1rem" }}>
+                  <TableHead>
+                    <TableRow>
+                      {/*<TableSelectAll {...getSelectionProps()} />*/}
                       {showDescription && (
-                        <TableCell>{ruleDict[row.id]?.description}</TableCell>
+                        <TableHeader key={"ruleDescriptionHeader"}>
+                          Description
+                        </TableHeader>
                       )}
 
-                      <CdssRuleEnableCell
-                        ruleId={row.id}
-                        initialEnabled={ruleDict[row.id]?.enabled}
-                        pendingParameterChanges={pendingParameterChanges}
-                        setPendingParameterChanges={setPendingParameterChanges}
-                        eventEmitter={eventEmitter}
-                      ></CdssRuleEnableCell>
-
-                      {row.cells.map((cell) => (
-                        <CdssEditableCell
-                          cellId={cell.id}
-                          ruleId={row.id}
-                          parameter={cell.value}
-                          pendingChanges={pendingParameterChanges}
-                          setPendingChanges={setPendingParameterChanges}
-                          disabled={!ruleDict[row.id]?.enabled}
-                          eventEmitter={eventEmitter}
-                        />
+                      <TableHeader key={"enableHeader"}>Enabled</TableHeader>
+                      {headers.map((header, i) => (
+                        <TableHeader
+                          key={i}
+                          {...getHeaderProps({
+                            header,
+                          })}
+                        >
+                          {header.name}
+                        </TableHeader>
                       ))}
-
-                      <TableCell>
-                        <Stack orientation={"horizontal"}>
-                          {pendingParameterChanges &&
-                            pendingParameterChanges[row.id] &&
-                            ((pendingParameterChanges[row.id].params &&
-                              Object.keys(
-                                pendingParameterChanges[row.id].params
-                              ).length > 0) ||
-                              pendingParameterChanges[row.id].enabled !=
-                                null) && (
-                              <div>
-                                <Tooltip label={"Save Changes"}>
-                                  <Button
-                                    kind={"primary"}
-                                    onClick={(e) => {
-                                      const changes =
-                                        pendingParameterChanges[row.id];
-                                      postRuleChange(row.id, changes);
-                                    }}
-                                    tooltip={"Save Changes"}
-                                  >
-                                    Save
-                                  </Button>
-                                </Tooltip>
-
-                                <Tooltip label={"Reset Changes"}>
-                                  <Button
-                                    kind={"secondary"}
-                                    onClick={(e) => {
-                                      eventEmitter.emit("parameterReset", {
-                                        ruleId: row.id,
-                                      });
-                                    }}
-                                    tooltip={"Reset Changes"}
-                                  >
-                                    Reset
-                                  </Button>
-                                </Tooltip>
-                              </div>
-                            )}
-                          <Tooltip label={"Archive Rule"}>
-                            <IconButton
-                              kind={"secondary"}
-                              onClick={(e) => {
-                                archiveButtonClicked(row.id);
-                              }}
-                            >
-                              <DocumentSubtract size="sm" />
-                            </IconButton>
-                          </Tooltip>
-                        </Stack>
-                      </TableCell>
+                      <TableHeader key={"actionHeader"}>Action</TableHeader>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          )}
+                  </TableHead>
+                  <TableBody>
+                    {rows.map((row) => (
+                      <TableRow
+                        key={row.id}
+                        className={
+                          ruleDict[row.id]?.enabled
+                            ? styles.cdssEnabledTableRow
+                            : styles.cdssDisabledTableRow
+                        }
+                        {...getRowProps({
+                          row,
+                        })}
+                      >
+                        {/*<TableSelectRow*/}
+                        {/*  {...getSelectionProps({*/}
+                        {/*    row,*/}
+                        {/*    onChange: () => {*/}
+                        {/*      const isSelected = selectedRows.includes(row.id);*/}
+                        {/*      setSelectedRows((prevSelectedRows) =>*/}
+                        {/*        isSelected*/}
+                        {/*          ? prevSelectedRows.filter((id) => id !== row.id)*/}
+                        {/*          : [...prevSelectedRows, row.id]*/}
+                        {/*      );*/}
+                        {/*    },*/}
+                        {/*  })}*/}
+                        {/*/>*/}
+                        {showDescription && (
+                          <TableCell>{ruleDict[row.id]?.description}</TableCell>
+                        )}
+
+                        <CdssRuleEnableCell
+                          ruleId={row.id}
+                          initialEnabled={ruleDict[row.id]?.enabled}
+                          pendingParameterChanges={pendingParameterChanges}
+                          setPendingParameterChanges={
+                            setPendingParameterChanges
+                          }
+                          eventEmitter={eventEmitter}
+                        ></CdssRuleEnableCell>
+
+                        {row.cells.map((cell) => {
+                          const param =
+                            ruleDict[row.id]?.params[cell.info.header];
+                          return (
+                            <CdssEditableCell
+                              cellId={cell.id}
+                              ruleId={row.id}
+                              parameter={param}
+                              pendingChanges={pendingParameterChanges}
+                              setPendingChanges={setPendingParameterChanges}
+                              disabled={!ruleDict[row.id]?.enabled}
+                              eventEmitter={eventEmitter}
+                            />
+                          );
+                        })}
+
+                        <TableCell>
+                          <Stack orientation={"horizontal"}>
+                            {pendingParameterChanges &&
+                              pendingParameterChanges[row.id] &&
+                              ((pendingParameterChanges[row.id].params &&
+                                Object.keys(
+                                  pendingParameterChanges[row.id].params
+                                ).length > 0) ||
+                                pendingParameterChanges[row.id].enabled !=
+                                  null) && (
+                                <div>
+                                  <Tooltip label={"Save Changes"}>
+                                    <Button
+                                      kind={"primary"}
+                                      onClick={(e) => {
+                                        const changes =
+                                          pendingParameterChanges[row.id];
+                                        postRuleChange(row.id, changes);
+                                      }}
+                                      tooltip={"Save Changes"}
+                                    >
+                                      Save
+                                    </Button>
+                                  </Tooltip>
+
+                                  <Tooltip label={"Reset Changes"}>
+                                    <Button
+                                      kind={"secondary"}
+                                      onClick={(e) => {
+                                        eventEmitter.emit("parameterReset", {
+                                          ruleId: row.id,
+                                        });
+                                      }}
+                                      tooltip={"Reset Changes"}
+                                    >
+                                      Reset
+                                    </Button>
+                                  </Tooltip>
+                                </div>
+                              )}
+                            <Tooltip label={"Archive Rule"}>
+                              <IconButton
+                                kind={"secondary"}
+                                onClick={(e) => {
+                                  archiveButtonClicked(row.id);
+                                }}
+                              >
+                                <DocumentSubtract size="sm" />
+                              </IconButton>
+                            </Tooltip>
+                          </Stack>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            );
+          }}
         </DataTable>
       </div>
     );

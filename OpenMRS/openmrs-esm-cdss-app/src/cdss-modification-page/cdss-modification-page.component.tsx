@@ -3,8 +3,10 @@ import {
   Accordion,
   AccordionItem,
   Button,
+  Dropdown,
   IconButton,
   Modal,
+  SelectItem,
   Stack,
   Tooltip,
 } from "@carbon/react";
@@ -21,6 +23,7 @@ import CdssEditableCell from "./cdss-editable-cell.component";
 import CdssRuleEnableCell from "./cdss-rule-enable-cell.component";
 import { DocumentSubtract } from "@carbon/react/icons";
 import CdssModificationList from "./cdss-modification-list.component";
+import Select from "@carbon/react/lib/components/Select/Select";
 
 // Events used for parameter resets
 const eventEmitter = new EventEmitter();
@@ -151,7 +154,7 @@ export const CdssModificationPage: React.FC = () => {
   const [pendingParameterChanges, setPendingParameterChanges] = useState({});
 
   const [isUploadRuleDialogOpen, setIsUploadRuleDialogOpen] = useState(false);
-  const [viewMode, setViewMode] = useState("list");
+  const [viewMode, setViewMode] = useState("table");
 
   const handleUploadRuleButtonClicked = () => {
     setIsUploadRuleDialogOpen(true);
@@ -355,6 +358,19 @@ export const CdssModificationPage: React.FC = () => {
 
       <h1 className={styles.modHeader}>Rule Management</h1>
 
+      <Select
+        helperText="Select your view"
+        labelText="Select your view"
+        id={"view-select"}
+        defaultValue={"table"}
+        onChange={(e) => {
+          setViewMode(e.target.value);
+        }}
+        size="sm"
+      >
+        <SelectItem text="Table" value="table" />
+        <SelectItem text="List" value="list" />
+      </Select>
       {viewMode == "table" ? (
         <CdssModificationTable
           rules={rules}
