@@ -47,6 +47,20 @@
       "component": "cdssReportsLink",
       "online": true,
       "offline": true
+    },
+    {
+      "name": "cdss-management-link",
+      "slot": "app-menu-slot",
+      "component": "cdssManagementLink",
+      "online": true,
+      "offline": true
+    },
+    {
+      "name": "cdss-archive-link",
+      "slot": "app-menu-slot",
+      "component": "cdssArchiveLink",
+      "online": true,
+      "offline": true
     }
   ],
   "pages": [

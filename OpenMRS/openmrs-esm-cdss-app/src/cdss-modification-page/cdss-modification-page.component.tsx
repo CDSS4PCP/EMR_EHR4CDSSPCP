@@ -4,6 +4,8 @@ import {
   AccordionItem,
   Button,
   Dropdown,
+  Form,
+  FormGroup,
   IconButton,
   Modal,
   SelectItem,
@@ -21,7 +23,7 @@ import UploadRuleDialog, { ParameterProps } from "./upload-rule-dialog";
 import { Buffer } from "buffer";
 import CdssEditableCell from "./cdss-editable-cell.component";
 import CdssRuleEnableCell from "./cdss-rule-enable-cell.component";
-import { DocumentSubtract } from "@carbon/react/icons";
+import { DocumentAdd, DocumentSubtract } from "@carbon/react/icons";
 import CdssModificationList from "./cdss-modification-list.component";
 import Select from "@carbon/react/lib/components/Select/Select";
 
@@ -358,19 +360,54 @@ export const CdssModificationPage: React.FC = () => {
 
       <h1 className={styles.modHeader}>Rule Management</h1>
 
-      <Select
-        helperText="Select your view"
-        labelText="Select your view"
-        id={"view-select"}
-        defaultValue={"table"}
-        onChange={(e) => {
-          setViewMode(e.target.value);
-        }}
-        size="sm"
-      >
-        <SelectItem text="Table" value="table" />
-        <SelectItem text="List" value="list" />
-      </Select>
+      <Form>
+        <Stack
+          orientation="horizontal"
+          spacing={2}
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            width: "100%",
+          }}
+        >
+          <div style={{ flexShrink: 0 }}>
+            <Select
+              helperText="Select your view"
+              labelText="Select your view"
+              id={"view-select"}
+              defaultValue={"table"}
+              onChange={(e) => {
+                setViewMode(e.target.value);
+              }}
+              size="sm"
+            >
+              <SelectItem text="Table" value="table" />
+              <SelectItem text="List" value="list" />
+            </Select>
+          </div>
+          <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
+            <IconButton
+              tooltip={"Upload a new Rule"}
+              label={"Upload a new Rule"}
+              size={"lg"}
+              style={{
+                marginLeft: "2rem",
+                marginRight: "2rem",
+                marginTop: "2px",
+                marginBottom: "2px",
+              }}
+              onClick={() => {
+                if (handleUploadRuleButtonClicked !== null) {
+                  handleUploadRuleButtonClicked();
+                }
+              }}
+            >
+              <DocumentAdd style={{ transform: "scale(2)" }} />
+            </IconButton>
+          </div>
+        </Stack>
+      </Form>
       {viewMode == "table" ? (
         <CdssModificationTable
           rules={rules}

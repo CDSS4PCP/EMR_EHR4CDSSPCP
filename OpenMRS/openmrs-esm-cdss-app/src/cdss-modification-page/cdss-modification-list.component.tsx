@@ -179,7 +179,9 @@ const CdssModificationList = React.forwardRef<
                             onMouseDown={(e) => e.stopPropagation()}
                             onFocus={(e) => e.stopPropagation()}
                           >
-                            <DocumentSubtract size="sm" />
+                            <DocumentSubtract
+                              style={{ transform: "scale(2)" }}
+                            />
                           </IconButton>
                         </Tooltip>
                       </Stack>

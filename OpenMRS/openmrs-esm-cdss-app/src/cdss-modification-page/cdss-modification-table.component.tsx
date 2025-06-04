@@ -88,25 +88,6 @@ const CdssModificationTable = React.forwardRef<
                   aria-label="data table toolbar"
                 >
                   <TableToolbarContent>
-                    <IconButton
-                      tooltip={"Upload a new Rule"}
-                      label={"Upload a new Rule"}
-                      size={"sm"}
-                      style={{
-                        marginLeft: "1rem",
-                        marginRight: "1rem",
-                        marginTop: "2px",
-                        marginBottom: "2px",
-                      }}
-                      onClick={() => {
-                        if (uploadRuleButtonClicked !== null) {
-                          uploadRuleButtonClicked();
-                        }
-                      }}
-                    >
-                      <DocumentAdd size="lg" />
-                    </IconButton>
-
                     <div>
                       <div
                         style={{
@@ -254,7 +235,9 @@ const CdssModificationTable = React.forwardRef<
                                   archiveButtonClicked(row.id);
                                 }}
                               >
-                                <DocumentSubtract size="sm" />
+                                <DocumentSubtract
+                                  style={{ transform: "scale(2)" }}
+                                />
                               </IconButton>
                             </Tooltip>
                           </Stack>

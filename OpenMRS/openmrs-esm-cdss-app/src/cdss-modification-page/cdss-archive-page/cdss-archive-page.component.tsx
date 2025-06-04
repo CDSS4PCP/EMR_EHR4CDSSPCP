@@ -156,7 +156,7 @@ export const CdssArchivePage: React.FC = () => {
                         e.stopPropagation();
                       }}
                     >
-                      <Restart size={"lg"}></Restart>
+                      <Restart style={{ transform: "scale(2)" }}></Restart>
                     </IconButton>
                   </Stack>
                 }
