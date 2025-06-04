@@ -61,8 +61,6 @@ const CdssModificationTable = React.forwardRef<
     }
     const ruleDict = {};
 
-    console.log(rules);
-
     rules.forEach((r) => {
       ruleDict[r.id] = r;
     });

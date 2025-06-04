@@ -2,6 +2,7 @@ package org.openmrs.module.cdss.api.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jdk.jpackage.internal.Log;
 import lombok.Getter;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -974,6 +975,7 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
      */
     private String translate(String ruleId, String libraryName, String libraryVersion, String cql) throws IOException {
 
+        log.debug("Translating rule " + ruleId + " --> " + libraryName + " -> " + libraryVersion);
         String modificationServiceUrl = getRuleModificationServiceUrl();
         HashMap<String, ModifyRuleRequestRuleDescriptor> libraries = new HashMap<>();
         // TODO how to manage dependency libraries?
@@ -991,7 +993,7 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
 
         ModifyRuleRequest translateRuleRequest = new ModifyRuleRequest();
         ModifyRuleRequestRuleDescriptor modifyRuleRequestRuleDescriptor = new ModifyRuleRequestRuleDescriptor(ruleId, libraryName, libraryVersion);
-        modifyRuleRequestRuleDescriptor.setCqlContent(mmrCommonString);
+        modifyRuleRequestRuleDescriptor.setCqlContent(cql);
         translateRuleRequest.setRule(modifyRuleRequestRuleDescriptor);
         translateRuleRequest.setLibraries(libraries);
 

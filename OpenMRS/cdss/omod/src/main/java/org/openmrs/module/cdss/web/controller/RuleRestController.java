@@ -577,22 +577,23 @@ public class RuleRestController extends CdssRestController {
     @PostMapping(path = "/create-rule.form", produces = {"application/json"})
     public ResponseEntity<String> createRule(@RequestBody CreateRuleRequest body) throws APIAuthenticationException, JsonProcessingException {
         checkAuthorizationAndPrivilege();
+        log.debug("body = " + body);
 
         String ruleId = body.libraryName;
         String version = body.libraryVersion;
         try {
 
-            Optional<String> newRuleIdOptional = ruleManagerService.createRule(body.libraryName, body.libraryVersion, body.description, body.getParams(), body.ruleRole, null, body.cql, null);
+            Optional<String> newRuleIdOptional = ruleManagerService.createRule(body.libraryName, body.libraryVersion, body.description, body.getParams(), body.ruleRole, null, body.getCqlContent(), null);
             if (newRuleIdOptional.isPresent()) {
                 if (body.enabled != null && body.enabled)
                     ruleManagerService.enableRuleById(newRuleIdOptional.get());
                 else ruleManagerService.disableRuleById(newRuleIdOptional.get());
-                return new ResponseEntity<>(newRuleIdOptional.get(), HttpStatus.OK);
+                return new ResponseEntity<>(newRuleIdOptional.get(), HttpStatus.CREATED);
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        return new ResponseEntity<>("Rule " + ruleId + " not found", HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>("Unable to create rule " + ruleId, HttpStatus.BAD_REQUEST);
     }
 
 }
