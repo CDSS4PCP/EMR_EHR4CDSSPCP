@@ -10,7 +10,7 @@
 
     <groupId>org.openmrs.module</groupId>
     <artifactId>cdss</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0-ALPHA</version>
     <packaging>pom</packaging>
     <name>CDSS</name>
     <description>CDSS module for OpenMRS, that provides clinical decision support for vaccinations.</description>
