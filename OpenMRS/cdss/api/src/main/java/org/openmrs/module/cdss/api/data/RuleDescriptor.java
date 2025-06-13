@@ -1,6 +1,7 @@
 package org.openmrs.module.cdss.api.data;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,48 +13,58 @@ import java.util.Map;
 public class RuleDescriptor implements Cloneable {
     @Getter
     @JsonProperty("id")
+    @JsonView({InternalJsonView.class, WebJsonView.class})
     private String id;
 
     @Getter
     @JsonProperty("libraryName")
+    @JsonView({InternalJsonView.class, WebJsonView.class})
     private String libraryName;
 
     @Getter
     @JsonProperty("version")
+    @JsonView({InternalJsonView.class, WebJsonView.class})
     private String version;
 
     @Getter
     @JsonProperty("cqlFilePath")
+    @JsonView({InternalJsonView.class})
     private String cqlFilePath;
 
     @Getter
     @JsonProperty("elmFilePath")
+    @JsonView({InternalJsonView.class})
     private String elmFilePath;
 
     @Getter
     @Setter
     @JsonProperty("description")
+    @JsonView({InternalJsonView.class, WebJsonView.class})
     private String description;
 
 
     @Getter
     @Setter
     @JsonProperty("derivedFrom")
+    @JsonView({InternalJsonView.class, WebJsonView.class})
     private String derivedFrom;
 
 
     @Getter
     @JsonProperty("role")
+    @JsonView({InternalJsonView.class, WebJsonView.class})
     private RuleRole role;
 
     @Getter
     @Setter
     @JsonProperty("enabled")
+    @JsonView({InternalJsonView.class, WebJsonView.class})
     private boolean enabled;
 
     @Getter
     @Setter
     @JsonProperty("params")
+    @JsonView({InternalJsonView.class, WebJsonView.class})
     private Map<String, ParamDescriptor> params;
 
 

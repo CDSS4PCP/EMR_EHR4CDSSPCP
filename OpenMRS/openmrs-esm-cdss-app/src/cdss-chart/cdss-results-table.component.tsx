@@ -169,7 +169,9 @@ const CdssResultsTableRow: React.FC<CdssResultsTableRowProps> = ({
               takeAction(usage);
             }}
           >
-            <CheckmarkOutline></CheckmarkOutline>
+            <CheckmarkOutline
+              style={{ transform: "scale(2)" }}
+            ></CheckmarkOutline>
           </IconButton>
           <IconButton
             kind={"secondary"}
@@ -187,7 +189,7 @@ const CdssResultsTableRow: React.FC<CdssResultsTableRowProps> = ({
               declineAction(usage);
             }}
           >
-            <CloseOutline></CloseOutline>
+            <CloseOutline style={{ transform: "scale(2)" }}></CloseOutline>
           </IconButton>
         </Stack>
       </TableCell>

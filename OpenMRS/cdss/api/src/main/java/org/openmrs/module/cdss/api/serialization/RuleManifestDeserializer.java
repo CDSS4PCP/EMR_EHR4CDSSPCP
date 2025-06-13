@@ -31,31 +31,49 @@ public class RuleManifestDeserializer extends StdDeserializer<RuleManifest> {
      * Deserializes a JSON object into a RuleManifest instance.
      *
      * @param jsonParser the JSON parser used to read the JSON content
-     * @param ctxt the deserialization context
+     * @param ctxt       the deserialization context
      * @return a RuleManifest object containing a list of RuleDescriptor objects
-     *         if the "rules" field is present and non-null; otherwise, returns null
+     * if the "rules" field is present and non-null; otherwise, returns null
      * @throws IOException if the JSON object is empty or an error occurs during deserialization
      */
     @Override
     public RuleManifest deserialize(JsonParser jsonParser, DeserializationContext ctxt) throws IOException {
+
+
         JsonNode rootNode = jsonParser.getCodec().readTree(jsonParser);
 
         if (rootNode.isEmpty()) {
             throw new IOException("Empty object when deserializing \"RuleManifest\"");
         }
+        List<RuleDescriptor> rules = new ArrayList<>();
 
         if (rootNode.hasNonNull("rules")) {
 
-            List<RuleDescriptor> rules = new ArrayList<>();
             for (Iterator<JsonNode> it = rootNode.get("rules").elements(); it.hasNext(); ) {
 
                 JsonNode node = it.next();
                 RuleDescriptor descriptor = parseRuleDescriptor(node);
                 rules.add(descriptor);
             }
-            return new RuleManifest(rules);
         }
-        return null;
+        List<RuleDescriptor> archivedRules = new ArrayList<>();
+
+        if (rootNode.hasNonNull("archivedRules")) {
+            for (Iterator<JsonNode> it = rootNode.get("archivedRules").elements(); it.hasNext(); ) {
+
+                JsonNode node = it.next();
+                RuleDescriptor descriptor = parseRuleDescriptor(node);
+                archivedRules.add(descriptor);
+            }
+        }
+
+        log.debug("RuleManifest deserialized archivedRules: " + archivedRules);
+        if (rules.isEmpty() && archivedRules.isEmpty()) {
+            return null;
+        } else {
+            return new RuleManifest(rules, archivedRules);
+        }
+
     }
 
     /**
@@ -63,8 +81,8 @@ public class RuleManifestDeserializer extends StdDeserializer<RuleManifest> {
      *
      * @param node the JSON node containing rule details
      * @return a RuleDescriptor object initialized with the id, library name, version,
-     *         file paths, description, role, enabled status, derived information,
-     *         and parameters extracted from the JSON node
+     * file paths, description, role, enabled status, derived information,
+     * and parameters extracted from the JSON node
      */
     private RuleDescriptor parseRuleDescriptor(JsonNode node) {
         String id = node.get("id").asText();
@@ -105,7 +123,7 @@ public class RuleManifestDeserializer extends StdDeserializer<RuleManifest> {
      *
      * @param node the JSON node containing parameter details
      * @return a ParamDescriptor object initialized with the type, value, default value,
-     *         and allowed values extracted from the JSON node
+     * and allowed values extracted from the JSON node
      * @throws NullPointerException if the node is null
      */
     private ParamDescriptor parseParam(JsonNode node) {

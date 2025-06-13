@@ -1,10 +1,14 @@
 package org.openmrs.module.cdss.api.data;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.Map;
+
+import static org.openmrs.module.cdss.CDSSUtil.decodeCql;
+import static org.openmrs.module.cdss.CDSSUtil.encodeCql;
 
 @Getter
 @Setter
@@ -26,6 +30,7 @@ public class CreateRuleRequest {
 
     @JsonProperty(value = "cql", required = true)
     public String cql;
+
     @JsonProperty(value = "elm", required = false)
     public String elm;
     @JsonProperty(value = "params", required = true)
@@ -44,6 +49,18 @@ public class CreateRuleRequest {
                 ", elm='" + elm + '\'' +
                 ", params=" + params +
                 ", libraries=" + libraries +
+                ", enabled=" + enabled +
                 '}';
+    }
+
+
+    @JsonIgnore
+    public String getCqlContent() {
+        return decodeCql(cql);
+    }
+
+    @JsonIgnore
+    public void setCqlContent(String cql) {
+        this.cql = encodeCql(cql);
     }
 }

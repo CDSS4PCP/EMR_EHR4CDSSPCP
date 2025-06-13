@@ -2,6 +2,7 @@ package org.openmrs.module.cdss.api.data;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -16,17 +17,21 @@ public class ParamDescriptor implements Cloneable {
     String name;
 
     @JsonProperty("type")
+    @JsonView({InternalJsonView.class, WebJsonView.class})
     private String type;
 
     @Setter
     @JsonProperty("value")
+    @JsonView({InternalJsonView.class, WebJsonView.class})
     private Object value;
 
     @Setter
     @JsonProperty("allowedValues")
+    @JsonView({InternalJsonView.class, WebJsonView.class})
     private Object[] allowedValues;
 
     @JsonProperty(value = "default", required = false)
+    @JsonView({InternalJsonView.class, WebJsonView.class})
     private Object defaultValue;
 
     public ParamDescriptor(String type, Object defaultValue) {

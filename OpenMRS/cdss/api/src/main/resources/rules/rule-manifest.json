@@ -526,9 +526,11 @@
       "elmFilePath": "elm/MMR_Rule9.json",
       "description": "Recommendation for patients without MMR records who are pregnant.",
       "role": "rule",
-      "enabled": true,
+      "enabled": false,
       "derivedFrom": null,
       "params": {}
     }
-  ]
+
+  ],
+  "archivedRules": []
 }

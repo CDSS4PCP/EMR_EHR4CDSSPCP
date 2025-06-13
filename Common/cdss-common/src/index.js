@@ -240,21 +240,18 @@ async function getFhirResource(resourceId, resourceType) {
     }
 
 
-    // if (res.resourceType !== resourceType.replace("{http://hl7.org/fhir}", "")) {
-    //     throw new Error("Requested Patient was not a Patient, rather it is " + res.type);
-    // }
-
-
     if (isFhirList(resourceType)) {
         if (res && res.entry && ReferenceMappings[resourceType])
-            // Assuming that `res` is a Bundle
+            // NOTE: Assuming that `res` is a Bundle
             for (const entry of res.entry) {
                 let resource = entry.resource;
                 for (const reference of Object.keys(ReferenceMappings[resourceType])) {
 
                     const fieldMapping = ReferenceMappings[resourceType][reference];
-
+                    console.log(`Looking for ${reference} in `, resource);
                     if ((resource[reference] !== null && resource[reference] !== undefined) && (resource[fieldMapping.field] === undefined || resource[fieldMapping.field] === null)) {
+                        console.log(`Found  ${reference} in ${resource}`);
+
                         // Get url or id of resource
                         let urlOrId = resource[reference].reference;
 
@@ -266,10 +263,15 @@ async function getFhirResource(resourceId, resourceType) {
 
                             const newResource = await getFhirResource(id, fieldMapping.type);
 
-                            resource[fieldMapping.field] = newResource;
 
+                            resource[fieldMapping.field] = newResource[fieldMapping.value]
+
+                            if (fieldMapping.deleteOriginalReference) {
+                                console.warn(`Deleting resource[${reference}]`);
+                                delete resource[reference];
+                            }
                         } else {
-                            console.log(`WARING: ${urlOrId} is a url, will fetch with GET and empty body`);
+                            console.warn(`WARING: ${urlOrId} is a url, will fetch with GET and empty body`);
                             try {
                                 response = await fetch(urlOrId, {method: "GET"});
                                 let newResource = await response.json();
@@ -279,6 +281,9 @@ async function getFhirResource(resourceId, resourceType) {
                                 console.error(`ERROR: Was not able to fetch ${urlOrId}, ignoring it now`);
                             }
                         }
+                    } else {
+                        console.log(`Did not find a ${reference}. Skipping it.`, resource);
+
                     }
                 }
 

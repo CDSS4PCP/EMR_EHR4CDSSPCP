@@ -27,6 +27,7 @@ const FhirTypes = Object.freeze({
     MEDICATION: '{http://hl7.org/fhir}Medication',
     OBSERVATION: '{http://hl7.org/fhir}Observation',
     CONDITION: '{http://hl7.org/fhir}Condition',
+    CODEABLE_CONCEPT: '{http://hl7.org/fhir}CodeableConcept',
 });
 
 /**
@@ -53,20 +54,76 @@ function isURL(str) {
 }
 
 
-// Setup reference mappings
+/**
+ * ReferenceMappings
+ * -----------------
+ * This object defines how to handle FHIR resource references within specific resource types.
+ * It provides a declarative way to specify how a reference field (e.g., `medicationReference`)
+ * should be resolved and replaced with more usable, embedded data (e.g., `medicationCodeableConcept`).
+ *
+ * Each key in ReferenceMappings corresponds to a FHIR resource type (e.g., `FhirTypes.MEDICATION_REQUEST`)
+ * or a container type (e.g., `ContainerTypes.LIST(...)`) representing a list of those resources.
+ *
+ * Mapping Format:
+ * ----------------
+ * ReferenceMappings[ResourceType] = {
+ *   referenceFieldName: {
+ *     field: <string>,                 // The destination field to insert resolved data into
+ *     type: <FhirTypes>,               // The expected type of the referenced resource
+ *     value: <string>,                 // The property of the referenced resource to extract (e.g., "code", "display")
+ *     deleteOriginalReference: <bool>  // Whether to remove the original reference field after transformation
+ *   },
+ *   ...
+ * };
+ *
+ * Example:
+ * --------
+ * For FhirTypes.MEDICATION_REQUEST:
+ * {
+ *   medicationReference: {
+ *     field: 'medicationCodeableConcept',
+ *     type: FhirTypes.MEDICATION,
+ *     value: 'code',
+ *     deleteOriginalReference: true
+ *   }
+ * }
+ * This means:
+ *   - Resolve `medicationReference` to a `Medication` resource.
+ *   - Extract the `code` field from that resource.
+ *   - Put the extracted value into `medicationCodeableConcept`.
+ *   - Delete the original `medicationReference` field.
+ *
+ * Extension Guidelines:
+ * ---------------------
+ * To extend support for additional FHIR resource types or reference fields:
+ * 1. Add a new key to `ReferenceMappings` for the relevant resource type (or container type).
+ * 2. Define the reference fields to be resolved with the same format.
+ * 3. Ensure the FHIR client/service layer understands how to use this mapping to fetch, resolve,
+ *    and transform the referenced data appropriately.
+ *
+ * Notes:
+ * ------
+ * - This structure supports both single resources and collections (via `ContainerTypes.LIST(...)`).
+ * - Ensure that your code correctly handles asynchronous resolution of references.
+ * - If the referenced resource is not found or is incomplete, consider adding fallback behavior.
+ * - Keep this structure in sync with any custom extensions or profile-specific mappings.
+ */
 var ReferenceMappings = {};
 ReferenceMappings[FhirTypes.MEDICATION_REQUEST] = {
     medicationReference: {
-        field: 'medication', type: FhirTypes.MEDICATION
+        field: 'medicationCodeableConcept', type: FhirTypes.MEDICATION,
+        value: "code",
+        deleteOriginalReference: true
     },
-    patientReference: {field: 'patient', type: FhirTypes.PATIENT}
 };
 
 ReferenceMappings[ContainerTypes.LIST(FhirTypes.MEDICATION_REQUEST)] = {
     medicationReference: {
-        field: 'medication', type: FhirTypes.MEDICATION
+        field: 'medicationCodeableConcept', type: FhirTypes.MEDICATION,
+        value: "code",
+        deleteOriginalReference: true
+
     },
-    patientReference: {field: 'patient', type: FhirTypes.PATIENT}
 };
 
 

@@ -34,11 +34,11 @@ public class RuleRestController extends CdssRestController {
     //    @Qualifier("ruleManagerService")
     @Autowired
     protected RuleManagerService ruleManagerService;
-    Logger log = Logger.getLogger(RuleRestController.class);
-
-
     @Autowired
-    ObjectMapper objectMapper;
+    @Qualifier("webObjectMapper")
+    protected ObjectMapper webObjectMapper;
+
+    private Logger log = Logger.getLogger(RuleRestController.class);
 
     /**
      * Retrieves an ELM rule by its ID or name, optionally considering the version.
@@ -433,6 +433,65 @@ public class RuleRestController extends CdssRestController {
 
 
     /**
+     * Disables a rule by its ID.
+     *
+     * @param ruleId the ID of the rule to disable
+     * @return ResponseEntity containing "true" if the rule is successfully disabled
+     * @throws APIAuthenticationException if there is an issue with API authentication
+     * @throws RuntimeException           if the rule is not found or a file-related error occurs
+     */
+    @PostMapping(path = {"/archive-rule/id/{ruleId}.form"}, produces = {"application/json"})
+    public ResponseEntity<String> archiveRuleById(@PathVariable(value = "ruleId") String ruleId) throws APIAuthenticationException {
+        checkAuthorizationAndPrivilege();
+
+        try {
+            Optional<String> ruleIdOptional = ruleManagerService.archiveRule(ruleId);
+
+            if (ruleIdOptional.isPresent()) {
+                return ResponseEntity.ok(ruleIdOptional.get());
+            }
+        } catch (RuleNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        return new ResponseEntity<>("Rule " + ruleId + " not found", HttpStatus.NOT_FOUND);
+    }
+
+    /**
+     * Disables a rule by its ID.
+     *
+     * @param ruleId the ID of the rule to disable
+     * @return ResponseEntity containing "true" if the rule is successfully disabled
+     * @throws APIAuthenticationException if there is an issue with API authentication
+     * @throws RuntimeException           if the rule is not found or a file-related error occurs
+     */
+    @PostMapping(path = {"/restore-rule/id/{ruleId}.form"}, produces = {"application/json"})
+    public ResponseEntity<String> restoreRuleById(@PathVariable(value = "ruleId") String ruleId) throws APIAuthenticationException {
+        checkAuthorizationAndPrivilege();
+
+        try {
+            Optional<String> ruleIdOptional = ruleManagerService.restoreRule(ruleId);
+
+            if (ruleIdOptional.isPresent()) {
+                return ResponseEntity.ok(ruleIdOptional.get());
+            }
+        } catch (RuleNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        return new ResponseEntity<>("Rule " + ruleId + " not found", HttpStatus.NOT_FOUND);
+    }
+
+
+    /**
      * Retrieves the rule manifest as a JSON string.
      *
      * @return ResponseEntity containing the rule manifest in JSON format
@@ -443,25 +502,32 @@ public class RuleRestController extends CdssRestController {
     public ResponseEntity<String> getRuleManifest() throws APIAuthenticationException, JsonProcessingException {
         checkAuthorizationAndPrivilege();
 
-//         ObjectMapper objectMapper= new ObjectMapper();
-//         SimpleModule simpleModule=new SimpleModule();
-//
-//
-//        simpleModule.addSerializer(RuleManifest.class, new RuleManifestSerializer());
-//        simpleModule.addDeserializer(RuleManifest.class, new RuleManifestDeserializer());
-//        objectMapper.registerModule(simpleModule);
-//
-//        String val = objectMapper.writeValueAsString(ruleManagerService.getRuleManifest());
-//
-//        return ResponseEntity.ok(val);
 
-        if (objectMapper == null) {
+        if (webObjectMapper == null) {
             return ResponseEntity.internalServerError().body("ObjectMapper is null");
         } else {
-            return ResponseEntity.ok(objectMapper.writeValueAsString(ruleManagerService.getRuleManifest()));
+            return ResponseEntity.ok(webObjectMapper.writeValueAsString(ruleManagerService.getRuleManifest()));
         }
+    }
 
 
+    /**
+     * Retrieves the rule manifest as a JSON string.
+     *
+     * @return ResponseEntity containing the rule manifest in JSON format
+     * @throws APIAuthenticationException if there is an issue with API authentication
+     * @throws JsonProcessingException    if there is an error processing JSON
+     */
+    @GetMapping(path = "/rule-archive.form", produces = {"application/json"})
+    public ResponseEntity<String> getArchivedRules() throws APIAuthenticationException, JsonProcessingException {
+        checkAuthorizationAndPrivilege();
+
+
+        if (webObjectMapper == null) {
+            return ResponseEntity.internalServerError().body("ObjectMapper is null");
+        } else {
+            return ResponseEntity.ok(webObjectMapper.writeValueAsString(ruleManagerService.getRuleManifest().getArchivedRules()));
+        }
     }
 
 
@@ -478,6 +544,7 @@ public class RuleRestController extends CdssRestController {
         checkAuthorizationAndPrivilege();
 
         String ruleId = body.rule.getId();
+        String libraryName = body.rule.getLibraryName();
         String version = body.rule.getVersion();
         Map<String, ParamDescriptor> params = body.getParams();
 
@@ -510,22 +577,23 @@ public class RuleRestController extends CdssRestController {
     @PostMapping(path = "/create-rule.form", produces = {"application/json"})
     public ResponseEntity<String> createRule(@RequestBody CreateRuleRequest body) throws APIAuthenticationException, JsonProcessingException {
         checkAuthorizationAndPrivilege();
+        log.debug("body = " + body);
 
         String ruleId = body.libraryName;
         String version = body.libraryVersion;
         try {
 
-            Optional<String> newRuleIdOptional = ruleManagerService.createRule(body.libraryName, body.libraryVersion, body.description, body.getParams(), body.ruleRole, null, body.cql, null);
+            Optional<String> newRuleIdOptional = ruleManagerService.createRule(body.libraryName, body.libraryVersion, body.description, body.getParams(), body.ruleRole, null, body.getCqlContent(), null);
             if (newRuleIdOptional.isPresent()) {
                 if (body.enabled != null && body.enabled)
                     ruleManagerService.enableRuleById(newRuleIdOptional.get());
                 else ruleManagerService.disableRuleById(newRuleIdOptional.get());
-                return new ResponseEntity<>(newRuleIdOptional.get(), HttpStatus.OK);
+                return new ResponseEntity<>(newRuleIdOptional.get(), HttpStatus.CREATED);
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        return new ResponseEntity<>("Rule " + ruleId + " not found", HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>("Unable to create rule " + ruleId, HttpStatus.BAD_REQUEST);
     }
 
 }
