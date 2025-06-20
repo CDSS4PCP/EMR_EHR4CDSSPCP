@@ -15,6 +15,8 @@ public class RuleCriteria {
     protected String libraryName;
     protected String libraryVersion;
     protected String id;
+    protected String vaccine;
+    protected Boolean noVaccine;
     protected RuleRole role;
     protected Boolean enabled;
 
@@ -139,6 +141,24 @@ public class RuleCriteria {
         return this;
     }
 
+    public String getVaccine() {
+        return vaccine;
+    }
+
+    public RuleCriteria setVaccine(String vaccine) {
+        this.vaccine = vaccine;
+        return this;
+    }
+
+    public Boolean getNoVaccine() {
+        return noVaccine;
+    }
+
+    public RuleCriteria setNoVaccine(Boolean noVaccine) {
+        this.noVaccine = noVaccine;
+        return this;
+    }
+
     /**
      * Constructs a list of filters based on the criteria.
      *
@@ -160,6 +180,13 @@ public class RuleCriteria {
         }
         if (enabled != null) {
             filters.add(new EnabledFilter(enabled));
+        }
+
+        if (vaccine != null && (
+                noVaccine == null || !noVaccine)) {
+            filters.add(new VaccineFilter(vaccine));
+        } else if (vaccine == null && noVaccine != null && noVaccine) {
+            filters.add(new NoVaccineFilter());
         }
         return filters;
     }

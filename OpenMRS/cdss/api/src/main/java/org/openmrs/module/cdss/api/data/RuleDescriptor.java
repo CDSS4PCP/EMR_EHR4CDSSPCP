@@ -63,6 +63,12 @@ public class RuleDescriptor implements Cloneable {
 
     @Getter
     @Setter
+    @JsonProperty(value = "vaccine", required = false)
+    @JsonView({InternalJsonView.class, WebJsonView.class})
+    private String vaccine;
+
+    @Getter
+    @Setter
     @JsonProperty("params")
     @JsonView({InternalJsonView.class, WebJsonView.class})
     private Map<String, ParamDescriptor> params;
@@ -79,16 +85,7 @@ public class RuleDescriptor implements Cloneable {
 
     @Override
     public String toString() {
-        return "RuleDescriptor{" +
-                "id='" + id + '\'' +
-                ", version='" + version + '\'' +
-                ", cqlFilePath='" + cqlFilePath + '\'' +
-                ", elmFilePath='" + elmFilePath + '\'' +
-                ", description='" + description + '\'' +
-                ", role=" + role +
-                ", enabled=" + enabled +
-                ", params=" + params +
-                '}';
+        return "RuleDescriptor{" + "id='" + id + '\'' + ", version='" + version + '\'' + ", cqlFilePath='" + cqlFilePath + '\'' + ", elmFilePath='" + elmFilePath + '\'' + ", description='" + description + '\'' + ", role=" + role + ", enabled=" + enabled + ", params=" + params + '}';
     }
 
     @Override

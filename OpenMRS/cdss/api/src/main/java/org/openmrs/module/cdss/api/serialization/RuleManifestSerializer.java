@@ -36,7 +36,6 @@ public class RuleManifestSerializer extends StdSerializer<RuleManifest> {
     @Override
     public void serialize(RuleManifest value, JsonGenerator jsonGenerator, SerializerProvider provider) throws IOException {
 
-        log.debug("Active View: " + provider.getActiveView());
 
         jsonGenerator.writeStartObject();
         jsonGenerator.writeFieldName("rules");
@@ -87,6 +86,7 @@ public class RuleManifestSerializer extends StdSerializer<RuleManifest> {
         if (provider.getActiveView() == null || provider.getActiveView() == InternalJsonView.class)
             jsonGenerator.writeStringField("derivedFrom", ruleDescriptor.getDerivedFrom());
         jsonGenerator.writeBooleanField("enabled", ruleDescriptor.isEnabled());
+        jsonGenerator.writeStringField("vaccine", ruleDescriptor.getVaccine());
         if (ruleDescriptor.getParams() != null) {
             jsonGenerator.writeFieldName("params");
             jsonGenerator.writeStartObject();

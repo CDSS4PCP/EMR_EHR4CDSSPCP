@@ -2,7 +2,6 @@ package org.openmrs.module.cdss.api.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jdk.jpackage.internal.Log;
 import lombok.Getter;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -17,6 +16,7 @@ import org.openmrs.module.cdss.api.RuleManagerService;
 import org.openmrs.module.cdss.api.data.*;
 import org.openmrs.module.cdss.api.data.criteria.RuleCriteria;
 import org.openmrs.module.cdss.api.data.criteria.projection.IdProjection;
+import org.openmrs.module.cdss.api.data.criteria.projection.VaccineProjection;
 import org.openmrs.module.cdss.api.exception.MultipleRulesFoundException;
 import org.openmrs.module.cdss.api.exception.RuleNotEnabledException;
 import org.openmrs.module.cdss.api.exception.RuleNotFoundException;
@@ -318,7 +318,7 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
      * @throws APIAuthenticationException If there is an authentication issue.
      */
     @Override
-    public List<String> getAllRules() throws APIAuthenticationException {
+    public List<String> getAllRulesIds() throws APIAuthenticationException {
         RuleCriteria criteria = new RuleCriteria();
         List<RuleDescriptor> rules = getAllRules(criteria);
         return criteria.applyProjection(rules, new IdProjection());
@@ -336,6 +336,26 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
         List<RuleDescriptor> rules = ruleManifest.getRules();
 
         return ruleCriteria.applyFilters(rules);
+    }
+
+    /**
+     * Retrieves a list of unique vaccine identifiers from the available rules.
+     *
+     * @return a list of unique vaccine IDs with null values removed
+     * @throws APIAuthenticationException if authentication fails during retrieval
+     */
+    @Override
+    public List<String> getVaccines() throws APIAuthenticationException {
+        RuleCriteria criteria = new RuleCriteria();
+
+        List<RuleDescriptor> rules = ruleManifest.getRules();
+
+        log.debug(rules.toString());
+        List<String> vaccines = criteria.applyProjection(rules, new VaccineProjection());
+        Set<String> vaccinesSet = new HashSet<>(vaccines);
+        // Remove null values
+        vaccinesSet.remove(null);
+        return new ArrayList<>(vaccinesSet);
     }
 
     /**

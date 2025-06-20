@@ -248,7 +248,12 @@ public class RuleRestController extends CdssRestController {
      * @throws APIAuthenticationException if there is an issue with API authentication
      */
     @GetMapping(path = "/rule.form", produces = {"application/json"})
-    public ResponseEntity<List<String>> getRules(@RequestParam(required = false) Boolean allRules, @RequestParam(required = false) String role, @RequestParam(required = false) Boolean showNames, @RequestParam(required = false) Boolean showVersions) throws APIAuthenticationException {
+    public ResponseEntity<List<String>> getRules(@RequestParam(required = false) Boolean allRules,
+                                                 @RequestParam(required = false) String role,
+                                                 @RequestParam(required = false) String vaccine,
+                                                 @RequestParam(required = false) Boolean noVaccine,
+                                                 @RequestParam(required = false) Boolean showNames,
+                                                 @RequestParam(required = false) Boolean showVersions) throws APIAuthenticationException {
         checkAuthorizationAndPrivilege();
 
 
@@ -268,6 +273,14 @@ public class RuleRestController extends CdssRestController {
         if (role != null) {
             criteria.setRole(RuleRole.valueOf(role.toUpperCase()));
         }
+
+        if (vaccine != null) {
+            criteria.setVaccine(vaccine);
+        }
+        if (noVaccine != null && noVaccine) {
+            criteria.setNoVaccine(true);
+        }
+
         RuleProjection<String> projection = new IdProjection();
 
         boolean showNameAndVersions = showNames && showVersions;
@@ -285,34 +298,25 @@ public class RuleRestController extends CdssRestController {
         List<String> s = criteria.applyProjection(rules, projection);
 
         return new ResponseEntity<>(s, HttpStatus.OK);
+    }
 
 
-//        checkAuthorizationAndPrivilege();
-//        if (allRules == null) {
-//            allRules = false;
-//        }
-//
-//        if (role != null && role.trim().isEmpty()) {
-//            role = null;
-//        }
-//
-//
-//        if (identifierType != null && identifierType.trim().isEmpty()) {
-//            identifierType = null;
-//        }
-//
-//
-//        RuleRole ruleRole = role == null ? null : RuleRole.valueOf(role.toUpperCase());
-//        RuleIdentifierType identifierType1 = identifierType == null ? null : RuleIdentifierType.valueOf(identifierType.toUpperCase());
-//        List<String> rules;
-//
-//        if (allRules) rules = ruleManagerService.getAllRules(ruleRole, identifierType1);
-//        else rules = ruleManagerService.getEnabledRules(ruleRole, identifierType1);
-//
-//
-//        return ResponseEntity.ok(rules);
+    /**
+     * Retrieves a list of vaccines
+     *
+     * @return ResponseEntity containing a list of vaccines in JSON format
+     * @throws APIAuthenticationException if there is an issue with API authentication
+     */
+    @GetMapping(path = "/vaccines.form", produces = {"application/json"})
+    public ResponseEntity<List<String>> getVaccines() throws APIAuthenticationException {
+        checkAuthorizationAndPrivilege();
+
+        List<String> vaccines = ruleManagerService.getVaccines();
+
+        return new ResponseEntity<>(vaccines, HttpStatus.OK);
 
     }
+
 
     /**
      * Enables a rule by its ID.
