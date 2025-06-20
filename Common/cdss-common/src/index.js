@@ -351,12 +351,6 @@ async function executeRuleWithPatient(patientId, ruleId, shouldRecordUsage = tru
 
     const codeService = new vsac.CodeService(false, true, global.cdss.endpoints.vsacSvs.address, global.cdss.endpoints.vsacFhir.address);
 
-    // console.log("Executing CQL with ...")
-    // console.log("Patient", patient)
-    // console.log("rule", rule)
-    // console.log("libraries", libraries)
-    // console.log("parameters", JSON.stringify(parameters, null, 2))
-    // console.log("codeService", codeService)
 
     let results = await executeCql(patient, rule, libraries, parameters, codeService, global.cdss.endpoints.metadata.vsacApiKey);
     if (shouldRecordUsage) await recordRoutineUsage(rule.library.identifier.id, patient.id, results[patient.id].VaccineName, results[patient.id].Recommendations);

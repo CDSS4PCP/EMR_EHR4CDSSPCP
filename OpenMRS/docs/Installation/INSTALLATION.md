@@ -1,6 +1,6 @@
 # Setting up OpenMRS 3 for development
 
-###### Rev 09/05/2024
+###### Rev 06/16/2024
 
 ## Requirements
 
@@ -11,7 +11,7 @@
 
 1. Go to [https://github.com/openmrs/openmrs-distro-referenceapplication](https://github.com/openmrs/openmrs-distro-referenceapplication) and the [release tags page](https://github.com/openmrs/openmrs-distro-referenceapplication/tags)
 
-2. Find and click on the version you want to use. (This tutorial uses [v3.0.0](https://github.com/openmrs/openmrs-distro-referenceapplication/releases/tag/3.0.0))
+2. Find and click on the version you want to use. (This tutorial uses [v1.0.0-ALPHA](https://github.com/openmrs/openmrs-distro-referenceapplication/releases/tag/1.0.0-ALPHA))
 
 3. Download the source code (either tar.gz or zip, whichever you prefer)
 
@@ -38,11 +38,11 @@
 
 8. When it is finished, navigate to [http://localhost/openmrs/](http://localhost/openmrs/).You should see the following page
 
-![alt_text](C:\Users\C2\Documents\Clemson\Assistantship\Documentation\Installation.png "image_tooltip")
+![](./Installation.png "image_tooltip")
 
 9. Wait for installation to complete. Once it is finished, you will see the following screen. (You might need to restart the docker containers)
 
-![alt_text](C:\Users\C2\Documents\Clemson\Assistantship\Documentation\Login.png "image_tooltip")
+![](./Login.png "image_tooltip")
 
 10. Log in with the following credentials:
     
@@ -81,23 +81,23 @@ The cdss module is the module that provides the api for the common module. It do
 
 1. Log into OpenMRS.
    
-   ![alt_text](C:\Users\C2\Documents\Clemson\Assistantship\Documentation\Login.png "image_tooltip")
+   ![](./Login.png "image_tooltip")
 
 2. Find <u>Administration</u> in the top right of the main menu. Click it
 
-![screenshot-turing-2024.07 (3).png](C:\Users\C2\Documents\Clemson\Assistantship\Documentation\AdministrationLink.png)
+![screenshot-turing-2024.07 (3).png](./AdministrationLink.png)
 
 3. Find <u>Manage modules</u> on the screen. Click it.
 
-![alt_text](C:\Users\C2\Documents\Clemson\Assistantship\Documentation\ManageModulesLink.png "image_tooltip")
+![](./ManageModulesLink.png "image_tooltip")
 
 4. Find the <u>Add or Upgrade Module</u> button. 
 
-![screenshot-turing-2024.07 (5).png](C:\Users\C2\Documents\Clemson\Assistantship\Documentation\ManageModules.png)
+![](./ManageModules.png)
 
 5. Click the <u>Add or Upgrade Module</u> button. 
 
-![screenshot-turing-2024.07 (6).png](C:\Users\C2\Documents\Clemson\Assistantship\Documentation\AddModule.png)
+![](./AddModule.png)
 
 6. In the popup, click <u>Choose file</u> in the <u>Add Module</u> section.
 
@@ -119,14 +119,24 @@ You can also install CDSS module file by coping the `.omod` into the OpenMRS bac
 
 You can verify that CDSS module is successfully running by looking at its status in the <u>Manage Modules</u> page. See figure below
 
-![screenshot-turing-2024.08.png](C:\Users\C2\Documents\Clemson\Assistantship\Documentation\CdssRunning.png)
+![screenshot-turing-2024.08.png](./CdssRunning.png)
 
 Additionally, you send a `GET` request to `http://localhost/openmrs/cdss/rule.form` to see all the rules that the CDSS module is using. This will respond with a JSON array of strings. Note: You must validate the session first by logging into OpenMRS.
 
 Example response:
 
 ```json
-["MMR_Rule9.json","MMR_Rule12.json","MMR_Rule11.json","MMR_Rule1.json","FHIRHelpers.json","MMR_Common_Library.json","MMR_Rule7.json","MMR_Rule8.json","MMR_Rule6.json","MMR_Rule2.json","MMR_Rule4.json","MMR_Rule3.json","MMR_Rule10.json","MMR_Rule5.json"]
+["29d386b1-fc91-41f8-9386-b1fc9181f8b2",
+  "a947fd89-fb3e-4555-87fd-89fb3e455588",
+  "a8edba14-0d8b-4adc-adba-140d8bcadca7",
+  "1ef7a883-1d71-4cd6-b7a8-831d71ccd68f",
+  "3dc04c93-3109-4284-804c-93310992846c",
+  "d7936c27-fa0a-4a63-936c-27fa0a7a63bf",
+  "5fc3f746-63a1-4497-83f7-4663a1e497dd",
+  "29b20267-76db-4a90-b202-6776dbaa90f3",
+  "db829f86-b414-4ebc-829f-86b414eebcef",
+  "aca80b30-a2ec-4380-a80b-30a2ec4380af",
+  "c6defa17-be0d-4e04-9efa-17be0d3e04ea"]
 ```
 
 ## Configure the CDSS module
@@ -137,25 +147,25 @@ The CDSS module requires a UMLS API key to download valuesets. Use the [UMLS Met
 
 1. Log into OpenMRS.
    
-   ![](C:\Users\C2\Documents\Clemson\Assistantship\Documentation\Login.png)
+   ![](./Login.png)
 
 2. Find <u>Administration</u> in the top right of the main menu. Click it
    
-   ![](C:\Users\C2\Documents\Clemson\Assistantship\Documentation\AdministrationLink.png)
+   ![](./AdministrationLink.png)
 
 3. Find <u>Advanced Settings</u>. Click it.
    
-   ![](C:\Users\C2\Documents\Clemson\Assistantship\Documentation\AdvancedSettingsLink.png)
+   ![](./AdvancedSettingsLink.png)
 
 4. Scroll down and find the property named `cdss.vsacApiKey`. Alternatively, you can search for it.
    
-   ![](C:\Users\C2\Documents\Clemson\Assistantship\Documentation\CdssVsacApiKey.png)
+   ![](./CdssVsacApiKey.png)
 
 5. Change the value `No key set` to you VSAC API Key
 
 6. Click save in the yellow box in the lower right corner.
    
-   ![](C:\Users\C2\Documents\Clemson\Assistantship\Documentation\SaveGlobalProps.png)
+   ![](./SaveGlobalProps.png)
 
 # Compiling and Installing the CDSS ESM app
 
@@ -198,28 +208,30 @@ Normally, developers would publish their ESM modules on NPM (for example [@openm
    
    ```json
    "name": "@openmrs/esm-cdss-app",
-   "version": "3.0.0"
+   "version": "1.0.0-ALPHA"
    ```
 
-3. Copy the entire `dist` directory into the frontend container `docker cp dist frontend_container_id:/usr/share/nginx/html/openmrs-esm-cdss-app-3.0.0`. Note: the `openmrs-cdss-app-3.0.0` name should be adjusted based on the actual name of the CDSS app and the version as determined in the previous step.
+3. Copy the entire `dist` directory into the frontend container `docker cp dist frontend_container_id:/usr/share/nginx/html/openmrs-esm-cdss-app-1.0.0-ALPHA`. Note: the `openmrs-cdss-app-1.0.0-ALPHA` name should be adjusted based on the actual name of the CDSS app and the version as determined in the previous step.
 
 4. `routes.registry.json` needs to also be updated to reflect the CDSS app installation. Download `routes.registry.json` from the frontend container with `docker cp frontend_container_id:/usr/share/nginx/html/routes.registry.json routes.registry.json`
 
 5. Open the downloaded `routes.registry.json`. This file contains all the links and action of all installed apps. Our compiled CDSS app also has a `routes.json` file. Copy the contents of `dist/routes.json` and paste them into `routes.registry.json`  under the app name of `@openmrs/esm-cdss-app` (or the actual name of the app).
    
    ```json
-   {
+     {
    // ...routes.resgistry.json contents
    
-   "@openmrs/esm-cdss-app": { // dist/routes.json contents
-       "$schema":"https://json.openmrs.org/routes.schema.json",
-       "backendDependencies":{
-           "fhir2":"^1.2.0",
-           "webservices.rest":"^2.24.0",
-           "cdss":"1.0.0-SNAPSHOT"},
-       "extensions":[{"name":"Red box","component":"redBox","slot":"Boxes"},{"name":"Blue box","component":"blueBox","slot":"Boxes"},{"name":"Brand box","component":"blueBox","slot":"Boxes"},{"name":"cdss-chart","component":"cdssChart","slot":"patient-chart-cdss-dashboard-slot","meta":{"columnSpan":4},"order":8},{"name":"cdss-summary-dashboard","component":"cdssDashboardLink","slot":"patient-chart-dashboard-slot","meta":{"slot":"patient-chart-cdss-dashboard-slot","columns":1,"path":"Cdss"},"order":12},{"name":"cdss-reports-link","slot":"app-menu-slot","component":"cdssReportsLink","online":true,"offline":true}],"pages":[{"component":"cdssReportsPage","route":"cdss/reports","online":true,"offline":true},{"component":"cdssModificationPage","route":"cdss/edit","online":true,"offline":true}],
-       "version":"3.0.0"
-       }
+   "@openmrs/esm-cdss-app": { // routes.json contents
+     "$schema": "https://json.openmrs.org/routes.schema.json",
+     "backendDependencies": {
+       "fhir2": ">=1.2.0",
+       "webservices.rest": ">=2.24.0",
+       "cdss": "1.0.0-ALPHA"
+     },
+     "extensions": [{"name":"cdss-chart","component":"cdssChart","slot":"patient-chart-cdss-dashboard-slot","meta":{"columnSpan":4},"order":8},{"name":"cdss-summary-dashboard","component":"cdssDashboardLink","slot":"patient-chart-dashboard-slot","meta":{"slot":"patient-chart-cdss-dashboard-slot","columns":1,"path":"Cdss"},"order":12},{"name":"cdss-reports-link","slot":"app-menu-slot","component":"cdssReportsLink","online":true,"offline":true},{"name":"cdss-management-link","slot":"app-menu-slot","component":"cdssManagementLink","online":true,"offline":true},{"name":"cdss-archive-link","slot":"app-menu-slot","component":"cdssArchiveLink","online":true,"offline":true}],
+     "pages": [{"component":"cdssReportsPage","route":"cdss/reports","online":true,"offline":true},{"component":"cdssModificationPage","route":"cdss/edit","online":true,"offline":true},{"component":"cdssArchivePage","route":"cdss/archive","online":true,"offline":true}],
+     "version": "1.0.0-ALPHA"
+	}
    }
    ```
 
@@ -227,11 +239,11 @@ Normally, developers would publish their ESM modules on NPM (for example [@openm
 
 7. Finally, `importmap.json` needs to be updated. The importmap defines where the code for apps is to be found. Download `importmap.json` with `docker cp frontend_container_id:/usr/share/nginx/html/importmap.json importmap.json`
 
-8. Add a new line that defines `"@openmrs/esm-cdss-app"` with the value of `"./openmrs-esm-cdss-3.0.0/openmrs-esm-cdss-app.js"` (Note: you may need to adjust the version and name based on the values in `package.json`)
+8. Add a new line that defines `"@openmrs/esm-cdss-app"` with the value of `"./openmrs-esm-cdss-1.0.0-ALPHA/openmrs-esm-cdss-app.js"` (Note: you may need to adjust the version and name based on the values in `package.json`)
    
    ```json
    { // Other contents from importmap.json
-    "@openmrs/esm-cdss-app": "./openmrs-esm-cdss-app-3.0.0/openmrs-esm-cdss-app.js"
+    "@openmrs/esm-cdss-app": "./openmrs-esm-cdss-app-1.0.0-ALPHA/openmrs-esm-cdss-app.js"
    }
    ```
 
