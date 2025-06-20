@@ -1,35 +1,109 @@
 import React, { useEffect, useState } from "react";
 import {
-  Accordion,
-  AccordionItem,
   Button,
-  Dropdown,
+  ComposedModal,
   Form,
-  FormGroup,
   IconButton,
   Modal,
+  ModalBody,
+  ModalFooter,
+  ModalHeader,
   SelectItem,
   Stack,
-  Tooltip,
 } from "@carbon/react";
 import { openmrsFetch } from "@openmrs/esm-framework";
 
 import { EventEmitter } from "events";
 import styles from "./cdss-modification-page.module.scss";
-// import Select from "@carbon/react/lib/components/Select/Select";
 import CdssModificationTable from "./cdss-modification-table.component";
-import { recordRuleUsage } from "../cdssService";
 import UploadRuleDialog, { ParameterProps } from "./upload-rule-dialog";
 import { Buffer } from "buffer";
-import CdssEditableCell from "./cdss-editable-cell.component";
-import CdssRuleEnableCell from "./cdss-rule-enable-cell.component";
-import { DocumentAdd, DocumentSubtract } from "@carbon/react/icons";
+import { DocumentAdd } from "@carbon/react/icons";
 import CdssModificationList from "./cdss-modification-list.component";
 import Select from "@carbon/react/lib/components/Select/Select";
+import * as url from "node:url";
 
 // Events used for parameter resets
 const eventEmitter = new EventEmitter();
 eventEmitter.setMaxListeners(1000); // Arbitrary number
+
+async function enableRule(ruleId) {
+  const url = `/cdss/enable-rule/${ruleId}.form`;
+  try {
+    const response = await openmrsFetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+    });
+
+    if (response.url.includes(url) && response.status === 200) {
+      eventEmitter.emit("ruleEnableSucceeded", { ruleId });
+    } else {
+      const message = await response.text();
+      eventEmitter.emit("ruleEnableFailed", { ruleId, message });
+    }
+  } catch (e) {
+    eventEmitter.emit("ruleEnableFailed", { ruleId, message: e.message });
+  }
+}
+
+async function disableRule(ruleId) {
+  const url = `/cdss/disable-rule/${ruleId}.form`;
+  try {
+    const response = await openmrsFetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+    });
+
+    if (response.url.includes(url) && response.status === 200) {
+      eventEmitter.emit("ruleDisableSucceeded", { ruleId });
+    } else {
+      const message = await response.text();
+      eventEmitter.emit("ruleDisableFailed", { ruleId, message });
+    }
+  } catch (e) {
+    eventEmitter.emit("ruleDisableFailed", { ruleId, message: e.message });
+  }
+}
+
+async function sendParameterChanges(ruleId, changes, parameterChanges) {
+  const url = `/cdss/modify-rule.form`;
+  const body = {
+    params: changes,
+    rule: { id: ruleId },
+  };
+
+  try {
+    const response = await openmrsFetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+
+    if (response.url.includes(url) && response.status === 200) {
+      eventEmitter.emit("modificationSucceeded", {
+        ruleId: ruleId,
+        parameterChanges: parameterChanges,
+      });
+      eventEmitter.emit("parameterReset", {
+        ruleId: ruleId,
+        parameterChanges: parameterChanges,
+      });
+    } else {
+      const message = await response.text();
+      eventEmitter.emit("modificationFailed", {
+        ruleId: ruleId,
+        parameterChanges: parameterChanges,
+        message: message,
+      });
+    }
+  } catch (e) {
+    eventEmitter.emit("modificationFailed", {
+      ruleId: ruleId,
+      parameterChanges: parameterChanges,
+      message: e.message,
+    });
+  }
+}
 
 async function postRuleChange(ruleId, parameterChanges) {
   const changes = {};
@@ -41,94 +115,68 @@ async function postRuleChange(ruleId, parameterChanges) {
       };
     }
 
-  const body = {
-    params: changes,
-    rule: {
-      id: ruleId,
-    },
-  };
-
   if (Object.keys(changes).length > 0) {
-    try {
-      const response = await openmrsFetch(`/cdss/modify-rule.form`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      });
-      if (response.status == 200) {
-        eventEmitter.emit("modificationSucceeded", {
-          ruleId: ruleId,
-          parameterChanges: parameterChanges,
-        });
-        eventEmitter.emit("parameterReset", {
-          ruleId: ruleId,
-          parameterChanges: parameterChanges,
-        });
-      } else {
-        eventEmitter.emit("modificationFailed", {
-          ruleId: ruleId,
-          parameterChanges: parameterChanges,
-          message: await response.text(),
-        });
-      }
-    } catch (e) {
-      eventEmitter.emit("modificationFailed", {
-        ruleId: ruleId,
-        parameterChanges: parameterChanges,
-        message: e.message,
-      });
-    }
+    await sendParameterChanges(ruleId, changes, parameterChanges);
+
+    // try {
+    //   const response = await openmrsFetch(`/cdss/modify-rule.form`, {
+    //     method: "POST",
+    //     headers: { "Content-Type": "application/json" },
+    //     body: JSON.stringify(body),
+    //   });
+    //   if (response.status == 200) {
+    //     eventEmitter.emit("modificationSucceeded", {
+    //       ruleId: ruleId,
+    //       parameterChanges: parameterChanges,
+    //     });
+    //     eventEmitter.emit("parameterReset", {
+    //       ruleId: ruleId,
+    //       parameterChanges: parameterChanges,
+    //     });
+    //   } else {
+    //     eventEmitter.emit("modificationFailed", {
+    //       ruleId: ruleId,
+    //       parameterChanges: parameterChanges,
+    //       message: await response.text(),
+    //     });
+    //   }
+    // } catch (e) {
+    //   eventEmitter.emit("modificationFailed", {
+    //     ruleId: ruleId,
+    //     parameterChanges: parameterChanges,
+    //     message: e.message,
+    //   });
+    // }
   }
 
   if (parameterChanges.enabled != null) {
     if (parameterChanges.enabled == true) {
-      try {
-        const response = await openmrsFetch(
-          `/cdss/enable-rule/${ruleId}.form`,
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-          }
-        );
-
-        if (response.status == 200) {
-          eventEmitter.emit("ruleEnableSucceeded", { ruleId: ruleId });
-        } else {
-          eventEmitter.emit("ruleEnableFailed", {
-            ruleId: ruleId,
-            message: await response.text(),
-          });
-        }
-      } catch (e) {
-        eventEmitter.emit("ruleEnableFailed", {
-          ruleId: ruleId,
-          message: e.message,
-        });
-      }
+      await enableRule(ruleId);
     } else {
-      try {
-        const response = await openmrsFetch(
-          `/cdss/disable-rule/${ruleId}.form`,
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-          }
-        );
-        if (response.status == 200) {
-          eventEmitter.emit("ruleDisableSucceeded", { ruleId: ruleId });
-        } else {
-          eventEmitter.emit("ruleDisableFailed", {
-            ruleId: ruleId,
-            message: await response.text(),
-          });
-        }
-      } catch (e) {
-        eventEmitter.emit("ruleDisableFailed", {
-          ruleId: ruleId,
-          message: e.message,
-        });
-      }
+      await disableRule(ruleId);
     }
+  }
+}
+
+async function fulfillArchiveRuleRequest(ruleId) {
+  if (ruleId == null) {
+    eventEmitter.emit("ruleArchiveFailed", { message: "RuleId was null" });
+    return;
+  }
+  const url = `/cdss/archive-rule/id/${ruleId}.form`;
+  const response = await openmrsFetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+  });
+  if (response.url.includes(url) && response.status == 200) {
+    eventEmitter.emit("ruleArchiveSucceeded", { ruleId: ruleId });
+  } else {
+    const message = await response.text();
+
+    eventEmitter.emit("ruleArchiveFailed", {
+      ruleId: ruleId,
+      message: message,
+    });
   }
 }
 
@@ -166,22 +214,6 @@ export const CdssModificationPage: React.FC = () => {
     setIsUploadRuleDialogOpen(false);
   };
 
-  const fulfillArchiveRuleRequest = (ruleId) => {
-    if (ruleId == null) {
-      eventEmitter.emit("ruleArchiveFailed", { message: "RuleId was null" });
-      return;
-    }
-    openmrsFetch(`/cdss/archive-rule/id/${ruleId}.form`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-    })
-      .then((response) => {
-        eventEmitter.emit("ruleArchiveSucceeded", {});
-      })
-      .catch((error) => {
-        eventEmitter.emit("ruleArchiveFailed", { message: error.message });
-      });
-  };
   const handleArchiveButtonClicked = (ruleId) => {
     setConfirmationArchiveRuleId(ruleId);
     setShowArchiveConfirmationMessage(true);
@@ -238,7 +270,6 @@ export const CdssModificationPage: React.FC = () => {
       setColumns(columnList);
     });
     setPendingParameterChanges({});
-    // setPendingParameterChanges2({});
   }
 
   eventEmitter.on("modificationSucceeded", (args) => {
@@ -280,11 +311,13 @@ export const CdssModificationPage: React.FC = () => {
   eventEmitter.on("ruleEnableFailed", (args) => {
     setShowErrorMessage(true);
     setErrorMessage(args.message);
+    eventEmitter.emit("parameterReset", { ruleId: args.ruleId });
   });
 
   eventEmitter.on("ruleDisableFailed", (args) => {
     setShowErrorMessage(true);
     setErrorMessage(args.message);
+    eventEmitter.emit("parameterReset", { ruleId: args.ruleId });
   });
   eventEmitter.on("ruleUploadFailed", (args) => {
     setShowErrorMessage(true);
@@ -321,36 +354,31 @@ export const CdssModificationPage: React.FC = () => {
 
   return (
     <div>
-      <Modal
-        modalHeading="Error"
+      <ComposedModal
         open={showErrorMessage}
-        primaryButtonText="Ok"
         passiveModal
-        onRequestClose={() => setShowErrorMessage(false)}
-        onRequestSubmit={() => {
-          setShowErrorMessage(false);
-        }}
+        onClose={() => setShowErrorMessage(false)}
       >
-        <p>Could not fulfill request because of an error</p>
+        <h2>Could not fulfill request because of an error</h2>
         <code>{errorMessage}</code>
-      </Modal>
+      </ComposedModal>
 
-      <Modal
-        modalHeading="Take action"
-        open={showArchiveConfirmationMessage}
-        primaryButtonText="Yes"
-        secondaryButtonText="No"
-        onRequestClose={() => {
-          setShowArchiveConfirmationMessage(false);
-          setConfirmationArchiveRuleId(null);
-        }}
-        onRequestSubmit={() => {
-          fulfillArchiveRuleRequest(confirmationArchiveRuleId);
-          setShowArchiveConfirmationMessage(false);
-        }}
-      >
+      <ComposedModal open={showArchiveConfirmationMessage}>
+        <h2>Take Action</h2>
         <p>Are you sure you want to archive this rule?</p>
-      </Modal>
+        <ModalFooter
+          primaryButtonText={"Yes"}
+          secondaryButtonText={"No"}
+          onRequestClose={() => {
+            setShowArchiveConfirmationMessage(false);
+            setConfirmationArchiveRuleId(null);
+          }}
+          onRequestSubmit={() => {
+            fulfillArchiveRuleRequest(confirmationArchiveRuleId);
+            setShowArchiveConfirmationMessage(false);
+          }}
+        ></ModalFooter>
+      </ComposedModal>
 
       <UploadRuleDialog
         isOpen={isUploadRuleDialogOpen}

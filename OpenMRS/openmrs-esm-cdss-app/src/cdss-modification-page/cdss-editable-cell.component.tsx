@@ -9,8 +9,6 @@ import { SelectItem, TableCell, TextInput } from "@carbon/react";
 import { TableCellProps } from "@carbon/react/lib/components/DataTable/TableCell";
 import CdssRuleParam from "./cdssRuleParam";
 import { EventEmitter } from "events";
-import { types } from "sass";
-import Boolean = types.Boolean;
 
 /**
  * Records a change in a parameter value for a specific rule.

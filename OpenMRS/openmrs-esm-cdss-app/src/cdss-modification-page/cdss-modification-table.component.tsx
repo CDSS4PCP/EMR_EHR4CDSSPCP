@@ -17,7 +17,7 @@ import {
   Toggle,
   Tooltip,
 } from "@carbon/react";
-import { DocumentAdd, DocumentSubtract } from "@carbon/react/icons";
+import { DocumentSubtract } from "@carbon/react/icons";
 
 import styles from "./cdss-modification-page.module.scss";
 import CdssEditableCell from "./cdss-editable-cell.component";
@@ -52,7 +52,6 @@ const CdssModificationTable = React.forwardRef<
     },
     ref
   ) => {
-    const [selectedRows, setSelectedRows] = useState([]);
     const [showDescription, setShowDescription] = React.useState(true);
 
     if (rules == null || columns == null) {
@@ -111,7 +110,6 @@ const CdssModificationTable = React.forwardRef<
                 <Table {...getTableProps()} style={{ marginTop: "1rem" }}>
                   <TableHead>
                     <TableRow>
-                      {/*<TableSelectAll {...getSelectionProps()} />*/}
                       {showDescription && (
                         <TableHeader key={"ruleDescriptionHeader"}>
                           Description
@@ -145,19 +143,6 @@ const CdssModificationTable = React.forwardRef<
                           row,
                         })}
                       >
-                        {/*<TableSelectRow*/}
-                        {/*  {...getSelectionProps({*/}
-                        {/*    row,*/}
-                        {/*    onChange: () => {*/}
-                        {/*      const isSelected = selectedRows.includes(row.id);*/}
-                        {/*      setSelectedRows((prevSelectedRows) =>*/}
-                        {/*        isSelected*/}
-                        {/*          ? prevSelectedRows.filter((id) => id !== row.id)*/}
-                        {/*          : [...prevSelectedRows, row.id]*/}
-                        {/*      );*/}
-                        {/*    },*/}
-                        {/*  })}*/}
-                        {/*/>*/}
                         {showDescription && (
                           <TableCell>{ruleDict[row.id]?.description}</TableCell>
                         )}

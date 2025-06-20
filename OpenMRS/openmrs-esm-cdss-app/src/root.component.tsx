@@ -8,29 +8,19 @@
  *   https://openmrs.github.io/openmrs-esm-core/#/main/config
  */
 
-import React, { useState } from "react";
+import React from "react";
 import { useTranslation } from "react-i18next";
-import { Boxes } from "./boxes/slot/boxes.component";
-import Greeter from "./greeter/greeter.component";
-import PatientGetter from "./patient-getter/patient-getter.component";
-import Resources from "./resources/resources.component";
 import styles from "./root.scss";
-import "./cdss.js";
-import { Button, Table, TableBody, TableCell, TableHead, TableRow } from "@carbon/react";
-
 
 const Root: React.FC = () => {
   const { t } = useTranslation();
 
-
   return (
     <div>
-
       <div className={styles.container}>
         <h3 className={styles.welcome}>
           {t("welcomeText", "Welcome to the CDSS app")}
         </h3>
-
       </div>
     </div>
   );

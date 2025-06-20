@@ -1,26 +1,17 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import {
   Accordion,
   AccordionItem,
   Button,
   IconButton,
-  Modal,
   Stack,
   Tooltip,
 } from "@carbon/react";
-import { openmrsFetch } from "@openmrs/esm-framework";
 
 import { EventEmitter } from "events";
-import styles from "./cdss-modification-page.module.scss";
-// import Select from "@carbon/react/lib/components/Select/Select";
-import CdssModificationTable from "./cdss-modification-table.component";
-import { recordRuleUsage } from "../cdssService";
-import UploadRuleDialog, { ParameterProps } from "./upload-rule-dialog";
-import { Buffer } from "buffer";
 import CdssEditableCell from "./cdss-editable-cell.component";
 import CdssRuleEnableCell from "./cdss-rule-enable-cell.component";
 import { DocumentSubtract } from "@carbon/react/icons";
-import { Text } from "@carbon/react/es/components/Text";
 
 interface CdssModificationListProps {
   rules?: Array<any>;

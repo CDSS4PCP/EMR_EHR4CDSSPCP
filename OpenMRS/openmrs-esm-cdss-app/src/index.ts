@@ -20,7 +20,6 @@ import cdssReportsPageComponent, {
 import CdssReportsLink from "./cdss-reports-link/cdss-reports-link.component";
 import { CdssModificationPage } from "./cdss-modification-page/cdss-modification-page.component";
 import { CdssArchivePage } from "./cdss-modification-page/cdss-archive-page/cdss-archive-page.component";
-import { CdssDebugPage } from "./cdss-debug-page/CdssDebugPage";
 import CdssArchiveLink from "./cdss-archive-link/cdss-archive-link.component";
 import CdssManagementLink from "./cdss-management-link/cdss-management-link.component";
 
@@ -65,22 +64,8 @@ export const root = getAsyncLifecycle(
 );
 
 /**
- * The following are named exports for the extensions defined in this frontend modules. See the `routes.json` file to see how these are used.
+ * The following are named exports for the extensions defined in this frontend modules for cdss. See the `routes.json` file to see how these are used.
  */
-// export const redBox = getAsyncLifecycle(
-//   () => import("./boxes/extensions/red-box.component"),
-//   options
-// );
-//
-// export const blueBox = getAsyncLifecycle(
-//   () => import("./boxes/extensions/blue-box.component"),
-//   options
-// );
-//
-// export const brandBox = getAsyncLifecycle(
-//   () => import("./boxes/extensions/brand-box.component"),
-//   options
-// );
 
 export const cdssChart = getSyncLifecycle(CdssChart, options);
 
@@ -102,5 +87,3 @@ export const cdssModificationPage = getSyncLifecycle(
   options
 );
 export const cdssArchivePage = getSyncLifecycle(CdssArchivePage, options);
-
-export const debugPage = getSyncLifecycle(CdssDebugPage, options);

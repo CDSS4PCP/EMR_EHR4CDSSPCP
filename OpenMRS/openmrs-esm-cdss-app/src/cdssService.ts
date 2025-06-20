@@ -1,9 +1,6 @@
 import { openmrsFetch } from "@openmrs/esm-framework";
 import "./cdss.js";
-import { types } from "sass";
-import List = types.List;
 import { CdssUsage } from "./cdssTypes";
-import { of } from "rxjs";
 
 const VSAC_API_KEY = ""; // Your api key goes here
 const SERVER_URL = "http://127.0.0.1:80";
@@ -30,18 +27,17 @@ async function loadRule(ruleId) {
   const url = `/cdss/elm-rule/idOrName/${ruleId}.form`;
 
   const result = await openmrsFetch(url, {});
-  // console.debug("Loaded rule", ruleId);
 
-  const pat = await result.json();
-  return pat;
+  const elm = await result.json();
+  return elm;
 }
 
 async function loadCqlRule(ruleId) {
   const url = `/cdss/cql-rule/idOrName/${ruleId}.form`;
 
   const result = await openmrsFetch(url, {});
-  const pat = await result.text();
-  return pat;
+  const cql = await result.text();
+  return cql;
 }
 
 async function loadMedicationRequest(patientId) {
@@ -49,8 +45,11 @@ async function loadMedicationRequest(patientId) {
     `/ws/fhir2/R4/MedicationRequest?patient=${patientId}`,
     {}
   );
-  const pat = await result.json();
-  return pat;
+  const medReqs = await result.json();
+  if (medReqs == undefined) {
+    return [];
+  }
+  return medReqs;
 }
 
 async function loadMedication(medicationId) {
@@ -58,17 +57,26 @@ async function loadMedication(medicationId) {
     `/ws/fhir2/R4/Medication/${medicationId}`,
     {}
   );
-  const pat = await result.json();
-  return pat;
+  const meds = await result.json();
+  if (meds == undefined) {
+    return [];
+  }
+  return meds;
 }
 
 async function loadMedicationStatement(patientId) {
+  // At development time of this project, OpenMRS did not implement MedicationStatements,
+  // so this function is mostly useless
   const result = await openmrsFetch(
     `/ws/fhir2/R4/MedicationStatement?patient=${patientId}`,
     {}
   );
-  const pat = await result.json();
-  return pat;
+
+  const medStats = await result.json();
+  if (medStats == undefined) {
+    return [];
+  }
+  return medStats;
 }
 
 async function loadImmunizations(patientId) {
@@ -76,7 +84,6 @@ async function loadImmunizations(patientId) {
     `/ws/fhir2/R4/Immunization?patient=${patientId}`,
     {}
   );
-  // console.debug("Loaded immunization for patient", patientId);
 
   const imm = await result.json();
   if (imm == undefined) {
@@ -90,41 +97,24 @@ async function loadConditions(patientId) {
     `/ws/fhir2/R4/Condition?patient=${patientId}`,
     {}
   );
-  const imm = await result.json();
-  if (imm == undefined) {
+  const conds = await result.json();
+  if (conds == undefined) {
     return [];
   }
-  return imm;
+  return conds;
 }
 
-// const recordRuleUsage = (
-//   ruleId: string,
-//   patientId: string,
-//   vaccine: string,
-//   recommendations: List,
-//   status: string
-// ) => {
-//   const ac: AbortController = new AbortController();
-//
-//   const payload = {
-//     vaccine: vaccine,
-//     patientId: patientId,
-//     timestamp: getCurrentTimestamp(),
-//     rule: ruleId,
-//     recommendations: recommendations,
-//     status: status
-//   };
-//
-//   console.log("Sending: ", payload);
-//   openmrsFetch(`/cdss/record-usage.form`, {
-//     signal: ac.signal,
-//     method: "POST",
-//     headers: { "Content-Type": "application/json" },
-//     body: payload
-//   })
-//     .then((result) => console.log("Received: ", result.data))
-//     .catch((error) => console.log(error));
-// };
+async function loadObservations(patientId) {
+  const result = await openmrsFetch(
+    `/ws/fhir2/R4/Observation?patient=${patientId}`,
+    {}
+  );
+  const obs = await result.json();
+  if (obs == undefined) {
+    return [];
+  }
+  return obs;
+}
 
 const recordRuleUsage = (usage: CdssUsage) => {
   const ac: AbortController = new AbortController();
@@ -138,13 +128,15 @@ const recordRuleUsage = (usage: CdssUsage) => {
     status: usage.status,
   };
 
-  // console.log("Sending: ", payload);
   openmrsFetch(`/cdss/record-usage.form`, {
     signal: ac.signal,
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: payload,
-  }).catch((error) => console.log(error));
+  }).catch((error) => {
+    // eslint-disable-next-line no-console
+    console.log(error);
+  });
 };
 
 async function getUsages() {
@@ -162,7 +154,7 @@ async function getRecommendations(patientUuid, ruleId) {
   const startTime = performance.now();
   const result = await global.cdss.executeRuleWithPatient(patientUuid, ruleId);
   const endTime = performance.now();
-
+  // eslint-disable-next-line no-console
   console.log(
     `The recommendations for ${ruleId} to ${endTime - startTime} ms`,
     result
@@ -184,10 +176,6 @@ async function getRules() {
   return await response.json();
 }
 
-async function debug() {
-  console.log(global.cdss);
-}
-
 async function getSvsValueset(oid, version, apikey) {
   const ac: AbortController = new AbortController();
 
@@ -202,13 +190,11 @@ async function getSvsValueset(oid, version, apikey) {
     method: "GET",
     headers: { "Content-Type": "application/json" },
   });
-  // console.debug("Loaded Svs valueset with oid", oid);
 
   return await response.json();
 }
 
 async function getFhirValueset(oid, version, offset = 0) {
-  // console.log(`Grab fhir valueset was called on ${oid}, version ${version}, offset: ${offset}`);
   const ac: AbortController = new AbortController();
   const params = new URLSearchParams();
   params.set("offset", String(offset));
@@ -221,7 +207,6 @@ async function getFhirValueset(oid, version, offset = 0) {
     method: "GET",
     headers: { "Content-Type": "application/json" },
   });
-  // console.debug("Loaded fhir valueset with oid", oid);
 
   return await response.json();
 }
@@ -271,7 +256,10 @@ function setupEndpointsMap() {
       method: "GET",
     },
     observationByPatientId: {
-      address: `${SERVER_URL}/openmrs/ws/fhir2/R4/Observation/{{patientId}}`,
+      // address: `${SERVER_URL}/openmrs/ws/fhir2/R4/Observation/{{patientId}}`,
+      address: async (patientId) => {
+        return await loadObservations(patientId);
+      },
       method: "GET",
     },
     ruleById: {
@@ -306,14 +294,12 @@ function setupEndpointsMap() {
       method: "POST",
     },
     vsacSvs: {
-      // address: `${SERVER_URL}/openmrs/cdss/RetrieveSvsValueSet.form`,
       address: async (oid, version, apikey) => {
         await getSvsValueset(oid, version, apikey);
       },
       method: "GET",
     },
     vsacFhir: {
-      // address: `${SERVER_URL}/openmrs/cdss/RetrieveFhirValueSet/{{oid}}.form`,
       address: async (oid, version, offset, apikey) => {
         return await getFhirValueset(oid, version, offset);
       },
@@ -328,12 +314,11 @@ export {
   setupEndpointsMap,
   recordRuleUsage,
   getUsages,
-  loadImmunizations,
-  loadConditions,
+  // loadImmunizations,
+  // loadConditions,
   loadPatient,
   loadRule,
   loadCqlRule,
   getRecommendations,
   getRules,
-  debug,
 };

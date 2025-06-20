@@ -1,10 +1,7 @@
 import React from "react";
 import {
   IconButton,
-  Button,
-  DataTable,
   Stack,
-  Link,
   ListItem,
   Table,
   TableBody,
@@ -14,8 +11,6 @@ import {
   TableRow,
   UnorderedList,
 } from "@carbon/react";
-import { types } from "sass";
-import List = types.List;
 import { CdssUsage } from "../cdssTypes";
 
 import { CloseOutline, CheckmarkOutline } from "@carbon/react/icons";

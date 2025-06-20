@@ -2,13 +2,10 @@ import React, { useEffect, useState } from "react";
 import {
   Accordion,
   AccordionItem,
-  ContainedList,
   ContainedListItem,
   IconButton,
-  ListItem,
   Modal,
   Stack,
-  UnorderedList,
 } from "@carbon/react";
 import { openmrsFetch } from "@openmrs/esm-framework";
 import { Restart } from "@carbon/react/icons";

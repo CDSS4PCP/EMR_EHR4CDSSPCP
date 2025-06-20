@@ -1,14 +1,7 @@
 import React, { useEffect, useState } from "react";
 import {
-  Button,
-  Column,
   DataTable,
-  Form,
-  Grid,
-  InlineNotification,
   ListItem,
-  OrderedList,
-  Row,
   Table,
   TableBody,
   TableCell,
@@ -16,10 +9,8 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-  Tile,
   UnorderedList,
 } from "@carbon/react";
-import { openmrsFetch, useConfig } from "@openmrs/esm-framework";
 
 import "./../cdss.js";
 import { getUsages } from "../cdssService";

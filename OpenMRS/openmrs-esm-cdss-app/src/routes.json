@@ -3,24 +3,9 @@
   "backendDependencies": {
     "fhir2": ">=1.2.0",
     "webservices.rest": ">=2.24.0",
-    "cdss": "1.0.0-SNAPSHOT"
+    "cdss": "1.0.0-ALPHA"
   },
   "extensions": [
-    {
-      "name": "Red box",
-      "component": "redBox",
-      "slot": "Boxes"
-    },
-    {
-      "name": "Blue box",
-      "component": "blueBox",
-      "slot": "Boxes"
-    },
-    {
-      "name": "Brand box",
-      "component": "blueBox",
-      "slot": "Boxes"
-    },
     {
       "name": "cdss-chart",
       "component": "cdssChart",
@@ -79,13 +64,6 @@
     {
       "component": "cdssArchivePage",
       "route": "cdss/archive",
-      "online": true,
-      "offline": true
-    },
-
-    {
-      "component": "debugPage",
-      "route": "cdss/debug",
       "online": true,
       "offline": true
     }
