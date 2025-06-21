@@ -9,6 +9,7 @@
       "description": "Helper functions for working with FHIR data types",
       "role": "support",
       "enabled": true,
+      "vaccine": "MMR",
       "derivedFrom": null,
       "params": {
       }
@@ -22,6 +23,7 @@
       "description": "Helper functions for MMR vaccines",
       "role": "support",
       "enabled": true,
+      "vaccine": "MMR",
       "derivedFrom": null
     },
     {
@@ -32,8 +34,8 @@
       "elmFilePath": "elm/MMR_Rule1.json",
       "description": "Regular and catch-up without prior vaccination records",
       "role": "rule",
-      "enabled": true
-,
+      "enabled": true,
+      "vaccine": "MMR",
       "derivedFrom": null,
       "params": {
         "$Age1": {
@@ -76,8 +78,8 @@
       "elmFilePath": "elm/MMR_Rule2.json",
       "description": "Regular and catch-up without prior vaccination records",
       "role": "rule",
-      "enabled": true
-,
+      "enabled": true,
+      "vaccine": "MMR",
       "derivedFrom": null,
       "params": {
         "$Age1": {
@@ -120,8 +122,8 @@
       "elmFilePath": "elm/MMR_Rule3.json",
       "description": "Regular and catch-up without prior vaccination records",
       "role": "rule",
-      "enabled": true
-,
+      "enabled": true,
+      "vaccine": "MMR",
       "derivedFrom": null,
       "params": {
         "$Age1": {
@@ -164,8 +166,8 @@
       "elmFilePath": "elm/MMR_Rule4.json",
       "description": "Recommendation for patients aged 12 months to 4 years with one dose of MMR vaccine administered.",
       "role": "rule",
-      "enabled": true
-,
+      "enabled": true,
+      "vaccine": "MMR",
       "derivedFrom": null,
       "params": {
         "$Age1": {
@@ -238,8 +240,8 @@
       "elmFilePath": "elm/MMR_Rule5.json",
       "description": "Recommendation for patients aged 12 months to 4 years with one dose of MMR vaccine administered outside the 12 to 15-month window.",
       "role": "rule",
-      "enabled": true
-,
+      "enabled": true,
+      "vaccine": "MMR",
       "derivedFrom": null,
       "params": {
         "$Age1": {
@@ -327,8 +329,8 @@
       "elmFilePath": "elm/MMR_Rule6.json",
       "description": "Recommendation for patients aged 12 months to 4 years with one dose of MMR vaccine administered outside the 12 to 15-month window and less than 4 weeks since the first dose.",
       "role": "rule",
-      "enabled": true
-,
+      "enabled": true,
+      "vaccine": "MMR",
       "derivedFrom": null,
       "params": {
         "$Age1": {
@@ -416,8 +418,8 @@
       "elmFilePath": "elm/MMR_Rule7.json",
       "description": "Recommendation for patients aged 4 to 18 years with one dose of MMR vaccine administered less than 4 weeks ago.",
       "role": "rule",
-      "enabled": true
-,
+      "enabled": true,
+      "vaccine": "MMR",
       "derivedFrom": null,
       "params": {
         "$Age1": {
@@ -475,8 +477,8 @@
       "elmFilePath": "elm/MMR_Rule8.json",
       "description": "Recommendation for patients aged 4 to 18 years with one dose of MMR vaccine administered less than 4 weeks ago.",
       "role": "rule",
-      "enabled": true
-,
+      "enabled": true,
+      "vaccine": "MMR",
       "derivedFrom": null,
       "params": {
         "$Age1": {
@@ -534,12 +536,11 @@
       "elmFilePath": "elm/MMR_Rule9.json",
       "description": "Recommendation for patients without MMR records who are pregnant.",
       "role": "rule",
-      "enabled": true
-,
+      "enabled": true,
+      "vaccine": "MMR",
       "derivedFrom": null,
       "params": {}
     }
-
   ],
   "archivedRules": []
 }

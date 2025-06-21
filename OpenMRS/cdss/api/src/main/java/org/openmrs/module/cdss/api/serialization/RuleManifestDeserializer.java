@@ -94,12 +94,14 @@ public class RuleManifestDeserializer extends StdDeserializer<RuleManifest> {
         String description = node.get("description").asText();
         RuleRole role = node.get("role").asText().equalsIgnoreCase("support") ? RuleRole.SUPPORT : RuleRole.RULE;
         Boolean enabled = node.get("enabled").asBoolean();
+        String vaccine = node.hasNonNull("vaccine") ? node.get("vaccine").asText() : null;
         String derivedFrom = node.get("derivedFrom").asText();
 
         RuleDescriptor descriptor = new RuleDescriptor(id, libraryName, version, cqlFilePath, elmFilePath, role);
         descriptor.setDescription(description);
         descriptor.setEnabled(enabled);
         descriptor.setDerivedFrom(derivedFrom);
+        descriptor.setVaccine(vaccine);
 
         Map<String, ParamDescriptor> paramDescriptors = new HashMap<>();
 

@@ -17,10 +17,11 @@ import java.util.Optional;
 public interface RuleManagerService extends CdssVaccineService {
 
     //    @Authorized({CDSSConfig.MODULE_PRIVILEGE})
-    List<String> getAllRules() throws APIAuthenticationException;
+    List<String> getAllRulesIds() throws APIAuthenticationException;
 
     List<RuleDescriptor> getAllRules(RuleCriteria ruleCriteria) throws APIAuthenticationException;
 
+    List<String> getVaccines() throws APIAuthenticationException;
 
     //    @Authorized({CDSSConfig.MODULE_PRIVILEGE})
     List<String> getEnabledRules() throws APIAuthenticationException;

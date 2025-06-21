@@ -64,6 +64,10 @@ const CdssModificationTable = React.forwardRef<
       ruleDict[r.id] = r;
     });
 
+    if (!columns || columns.length === 0) {
+      console.warn("Missing or empty columns");
+    }
+
     return (
       <div>
         <DataTable rows={rules} headers={columns}>

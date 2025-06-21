@@ -191,8 +191,21 @@ async function getRuleData() {
   return json;
 }
 
+/**
+ * Fetches vaccines from server
+ *
+ * @returns {Promise<any>} The JSON list containing vaccine list.
+ */
+async function getVaccines() {
+  const result = await openmrsFetch("/cdss/vaccines.form");
+  const json = await result.json();
+  return json;
+}
+
 export const CdssModificationPage: React.FC = () => {
   const [ruleData, setRuleData] = useState(null);
+  const [vaccines, setVaccines] = useState([]);
+  const [vaccine, setVaccine] = useState("noVaccine");
   const [columns, setColumns] = useState(null);
   const [showErrorMessage, setShowErrorMessage] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
@@ -252,18 +265,34 @@ export const CdssModificationPage: React.FC = () => {
 
   function loadAndProcessData() {
     getRuleData().then((r) => {
-      setRuleData(r);
+      const newRuleData = { rules: [] };
+      r.rules.forEach((rule) => {
+        if (
+          (vaccine == "noVaccine" && rule.vaccine == null) ||
+          rule.vaccine == vaccine
+        ) {
+          newRuleData.rules.push(rule);
+        }
+      });
+
+      setRuleData(newRuleData);
 
       const cols = {};
-      for (const rule of r.rules) {
-        const paramNames = Object.keys(rule.params);
-        for (const paramName of paramNames) {
-          const param = structuredClone(rule.params[paramName]);
-          param["name"] = paramName;
-          param["key"] = paramName;
-          param["header"] = paramName;
-          cols[paramName] = param;
-        }
+      for (const rule of newRuleData.rules) {
+        if (vaccine != null)
+          if (
+            (vaccine == "noVaccine" && rule.vaccine == null) ||
+            rule.vaccine == vaccine
+          ) {
+            const paramNames = Object.keys(rule.params);
+            for (const paramName of paramNames) {
+              const param = structuredClone(rule.params[paramName]);
+              param["name"] = paramName;
+              param["key"] = paramName;
+              param["header"] = paramName;
+              cols[paramName] = param;
+            }
+          }
       }
       const columnList: any[] = Object.values(cols);
       columnList.sort((a, b) => a?.name.localeCompare(b.name));
@@ -330,8 +359,19 @@ export const CdssModificationPage: React.FC = () => {
   });
   // Data structure to keep track of parameter changes
   useEffect(() => {
-    loadAndProcessData();
+    getVaccines().then((v) => {
+      setVaccines(v);
+      if (v && v.length && v.length > 0) {
+        setVaccine(vaccines[0]);
+      } else {
+        setVaccine("noVaccine");
+      }
+    });
   }, []);
+
+  useEffect(() => {
+    loadAndProcessData();
+  }, [vaccine]);
 
   const rules = ruleData?.rules
     ?.filter((r) => r.role.toLowerCase() == "rule")
@@ -388,7 +428,7 @@ export const CdssModificationPage: React.FC = () => {
 
       <h1 className={styles.modHeader}>Rule Management</h1>
 
-      <Form>
+      <Form style={{ marginLeft: "1rem", marginRight: "1rem" }}>
         <Stack
           orientation="horizontal"
           spacing={2}
@@ -414,6 +454,36 @@ export const CdssModificationPage: React.FC = () => {
               <SelectItem text="List" value="list" />
             </Select>
           </div>
+          <div style={{ flexShrink: 0 }}>
+            <Select
+              helperText="Select a Vaccine"
+              labelText="Select a Vaccine"
+              id={"vaccine-select"}
+              defaultValue={
+                vaccines && vaccines.length > 0 ? vaccines[0] : "noVaccine"
+              }
+              onChange={(e) => {
+                setVaccine(e.target.value);
+                loadAndProcessData();
+              }}
+              size="sm"
+            >
+              {vaccines &&
+                vaccines.map((vaccine) => (
+                  <SelectItem
+                    id={"vaccine-" + vaccine}
+                    text={vaccine}
+                    value={vaccine}
+                  ></SelectItem>
+                ))}
+              <SelectItem
+                id={"noVaccine"}
+                text={"No vaccine"}
+                value={"noVaccine"}
+              ></SelectItem>
+            </Select>
+          </div>
+
           <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
             <IconButton
               tooltip={"Upload a new Rule"}
@@ -436,7 +506,8 @@ export const CdssModificationPage: React.FC = () => {
           </div>
         </Stack>
       </Form>
-      {viewMode == "table" ? (
+
+      {viewMode == "table" && columns ? (
         <CdssModificationTable
           rules={rules}
           columns={columns}
