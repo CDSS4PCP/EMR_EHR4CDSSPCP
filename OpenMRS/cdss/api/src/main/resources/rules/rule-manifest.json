@@ -537,6 +537,7 @@
       "description": "Recommendation for patients without MMR records who are pregnant.",
       "role": "rule",
       "enabled": true,
+      "vaccine": "MMR",
       "derivedFrom": null,
       "params": {}
     }
