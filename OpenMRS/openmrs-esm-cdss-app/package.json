@@ -17,13 +17,12 @@
     "test": "jest --config jest.config.js --passWithNoTests",
     "verify": "turbo lint typescript coverage",
     "coverage": "yarn test --coverage",
-    "prepare": "husky install",
+    "prepare": "cd ../.. && husky install ./OpenMRS/openmrs-esm-cdss-app/.husky ",
     "extract-translations": "i18next 'src/**/*.component.tsx' --config ./i18next-parser.config.js",
     "test-e2e": "playwright test"
   },
   "husky": {
     "hooks": {
-      "pre-commit": "pretty-quick --staged && yarn verify"
     }
   },
   "browserslist": [
