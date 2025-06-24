@@ -28,6 +28,9 @@ public class CreateRuleRequest {
     @JsonProperty(value = "enabled", required = false)
     public Boolean enabled;
 
+    @JsonProperty(value = "vaccine", required = false)
+    public String vaccine;
+
     @JsonProperty(value = "cql", required = true)
     public String cql;
 
@@ -45,6 +48,7 @@ public class CreateRuleRequest {
                 ", libraryVersion='" + libraryVersion + '\'' +
                 ", description='" + description + '\'' +
                 ", ruleRole=" + ruleRole +
+                ", vaccine=" + vaccine +
                 ", cql='" + cql + '\'' +
                 ", elm='" + elm + '\'' +
                 ", params=" + params +

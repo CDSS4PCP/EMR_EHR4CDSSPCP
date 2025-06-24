@@ -95,7 +95,7 @@ You can also install CDSS module file by coping the `.omod` into the OpenMRS bac
 
 1. Find the container id of the backend container. Run  `docker container ps` and take note of the container id of container named `openmrs/openmrs-reference-application-3-backend` (or similar)
 
-2. Run `docker cp cdss-1.0.0-SNAPSHOT.omod backend_container_id:/openmrs/data/modules/cdss-1.0.0-SNAPSHOT.omod`to copy `cdss-1.0.0-SNAPSHOT.omod` into the backend container at directory `/openmrs/data/modules/` 
+2. Run `docker cp cdss-1.0.0-ALPHA.omod backend_container_id:/openmrs/data/modules/cdss-1.0.0-ALPHA.omod`to copy `cdss-1.0.0-ALPHA.omod` into the backend container at directory `/openmrs/data/modules/` 
 
 3. Run `docker container restart backend_container_id` to restart the backend
 

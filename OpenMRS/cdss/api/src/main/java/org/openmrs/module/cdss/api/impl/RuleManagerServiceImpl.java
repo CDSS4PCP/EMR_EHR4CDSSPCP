@@ -350,7 +350,6 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
 
         List<RuleDescriptor> rules = ruleManifest.getRules();
 
-        log.debug(rules.toString());
         List<String> vaccines = criteria.applyProjection(rules, new VaccineProjection());
         Set<String> vaccinesSet = new HashSet<>(vaccines);
         // Remove null values
@@ -665,7 +664,7 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
         File f = new File(RULE_MANIFEST_PATH);
         OutputStream outputStream = null;
 
-        log.debug("CDSS Writing rule manifest file: " + f.getAbsolutePath());
+        log.info("CDSS Writing rule manifest file: " + f.getAbsolutePath());
 
         try {
             outputStream = Files.newOutputStream(f.toPath());
@@ -674,7 +673,7 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        log.debug("CDSS Successfully wrote manifest file: " + f.getAbsolutePath());
+        log.info("CDSS Successfully wrote manifest file: " + f.getAbsolutePath());
     }
 
 
@@ -686,7 +685,7 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
     private void readManifest() {
         File f = new File(RULE_MANIFEST_PATH);
 
-        log.debug("CDSS Reading rule manifest file: " + f.getAbsolutePath());
+        log.info("CDSS Reading rule manifest file: " + f.getAbsolutePath());
 
         try (BufferedReader reader = new BufferedReader(new FileReader(f))) {
             String result = reader.lines().collect(Collectors.joining("\n"));
@@ -694,7 +693,7 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        log.debug("CDSS Successfully read manifest file: " + f.getAbsolutePath());
+        log.info("CDSS Successfully read manifest file: " + f.getAbsolutePath());
 
     }
 
@@ -726,7 +725,7 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
 
         readManifest();
         for (RuleDescriptor ruleDescriptor : ruleManifest.getRules()) {
-            log.debug("CDSS Attempting to copy " + ruleDescriptor.getId() + "-" + ruleDescriptor.getVersion());
+            log.info("CDSS Attempting to copy " + ruleDescriptor.getId() + "-" + ruleDescriptor.getVersion());
 
             URL elmUrl = classloader.getResource(RULE_DIRECTORY_PATH + ruleDescriptor.getElmFilePath());
             URL cqlUrl = classloader.getResource(RULE_DIRECTORY_PATH + ruleDescriptor.getCqlFilePath());
@@ -754,11 +753,10 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
      */
     public Optional<String> modifyRule(String originalRuleId, Map<String, ParamDescriptor> changedParameters) throws IOException {
 
-        log.debug("CDSS Attempting to modify rule " + originalRuleId);
+        log.info("CDSS Attempting to modify rule " + originalRuleId);
         String modificationServiceUrl = getRuleModificationServiceUrl();
 
         RuleDescriptor originalRule = getRuleDescriptorById(originalRuleId);
-
         if (originalRule == null) {
             throw new RuleNotFoundException(originalRuleId);
         }
@@ -767,6 +765,7 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
             throw new RuleNotFoundException(originalRuleId);
         }
         String cqlContent = cqlContentOptional.get();
+        String vaccine = originalRule.getVaccine();
 
         ModifyRuleRequest modifyRuleRequest = new ModifyRuleRequest();
         modifyRuleRequest.setRule(new ModifyRuleRequestRuleDescriptor(originalRuleId, originalRule.getLibraryName(), originalRule.getVersion(), encodeCql(cqlContent)));
@@ -776,7 +775,6 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
             String name = pair.getKey();
             ParamDescriptor paramDescriptor = pair.getValue();
             if (!changedParameters.containsKey(name)) {
-                log.debug(paramDescriptor);
                 changedParameters.put(name, paramDescriptor);
             }
         }
@@ -795,7 +793,7 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
         String elm = translate(originalRuleId, cql);
 
 
-        return createRule(originalRule.getLibraryName(), newVersion, originalRule.getDescription(), changedParameters, RuleRole.RULE, originalRuleId, cql, elm);
+        return createRule(originalRule.getLibraryName(), newVersion, originalRule.getDescription(), changedParameters, RuleRole.RULE, vaccine, originalRuleId, cql, elm);
     }
 
     /**
@@ -813,7 +811,7 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
      * @throws IOException      If an I/O error occurs during file operations.
      * @throws RuntimeException If any of the required parameters (ruleId, cql, elm) are null.
      */
-    public Optional<String> createRule(String libraryName, String libraryVersion, String description, Map<String, ParamDescriptor> params, RuleRole role, String derivedFrom, String cql, String elm) throws IOException {
+    public Optional<String> createRule(String libraryName, String libraryVersion, String description, Map<String, ParamDescriptor> params, RuleRole role, String vaccine, String derivedFrom, String cql, String elm) throws IOException {
 
         if (libraryName == null) {
             throw new RuntimeException("Rule id is null");
@@ -831,6 +829,7 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
         descriptor.setParams(params);
         descriptor.setDescription(description);
         descriptor.setDerivedFrom(derivedFrom);
+        descriptor.setVaccine(vaccine);
 
 
         File cqlFile = new File(RULE_DIRECTORY_PATH + cqlFilePath);
@@ -857,14 +856,14 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
 
         if (elmFile.exists()) {
             boolean success = elmFile.delete();
-            log.debug("Success in deleting " + elmFile.getAbsoluteFile() + " : " + success);
+            log.info("Success in deleting " + elmFile.getAbsoluteFile() + " : " + success);
         }
         if (!elmFile.exists()) {
-            log.debug("Creating new" + elmFile.getAbsoluteFile());
+            log.info("Creating new" + elmFile.getAbsoluteFile());
 
             Files.createDirectories(elmFile.getParentFile().toPath());
             boolean success = elmFile.createNewFile();
-            log.debug("Success in creating " + elmFile.getAbsoluteFile() + " : " + success);
+            log.info("Success in creating " + elmFile.getAbsoluteFile() + " : " + success);
         }
 
 
@@ -875,7 +874,7 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
 
         Boolean addSuccess = ruleManifest.addRule(descriptor);
         if (addSuccess) {
-            log.debug("Saving rule " + newRuleId + " --> " + descriptor.getLibraryName() + " to " + RULE_DIRECTORY_PATH);
+            log.info("Saving rule " + newRuleId + " --> " + descriptor.getLibraryName() + " to " + RULE_DIRECTORY_PATH);
 
             writeManifest();
         } else {
@@ -975,9 +974,6 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
 
         String stringBody = objectMapper.writeValueAsString(translateRuleRequest);
 
-
-//        log.debug("Sending this to translation ---> \n\n" + stringBody);
-
         String resultString = callModificationService(modificationServiceUrl + "api/translate", stringBody);
         return resultString;
     }
@@ -995,7 +991,6 @@ public class RuleManagerServiceImpl extends BaseOpenmrsService implements RuleMa
      */
     private String translate(String ruleId, String libraryName, String libraryVersion, String cql) throws IOException {
 
-        log.debug("Translating rule " + ruleId + " --> " + libraryName + " -> " + libraryVersion);
         String modificationServiceUrl = getRuleModificationServiceUrl();
         HashMap<String, ModifyRuleRequestRuleDescriptor> libraries = new HashMap<>();
         // TODO how to manage dependency libraries?

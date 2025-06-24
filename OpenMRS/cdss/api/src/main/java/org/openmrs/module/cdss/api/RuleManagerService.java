@@ -73,5 +73,5 @@ public interface RuleManagerService extends CdssVaccineService {
     Optional<String> modifyRule(String ruleId, Map<String, ParamDescriptor> changedParameters) throws IOException;
 
 
-    Optional<String> createRule(String libraryName, String libraryVersion, String description, Map<String, ParamDescriptor> params, RuleRole role, String derivedFrom, String cql, String elm) throws IOException;
+    Optional<String> createRule(String libraryName, String libraryVersion, String description, Map<String, ParamDescriptor> params, RuleRole role, String vaccine, String derivedFrom, String cql, String elm) throws IOException;
 }

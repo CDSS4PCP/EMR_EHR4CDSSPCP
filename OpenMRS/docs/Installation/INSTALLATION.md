@@ -75,7 +75,7 @@ The cdss module is the module that provides the api for the common module. It do
 
 5. Once the compilation has completed, navigate to `EMR_EHR4CDSSPCP/OpenMRS/cdss/omod/target`
 
-6. There will be a file with an extension of `.omod`. (Example: `cdss-1.0.0-SNAPSHOT.omod`) This is the compiled module. We will utilize it later when we install it into the OpenMRS system
+6. There will be a file with an extension of `.omod`. (Example: `cdss-1.0.0-ALPHA.omod`) This is the compiled module. We will utilize it later when we install it into the OpenMRS system
 
 ## Installing the CDSS module using the GUI
 
@@ -111,7 +111,7 @@ You can also install CDSS module file by coping the `.omod` into the OpenMRS bac
 
 1. Find the container id of the backend container. Run  `docker container ps` and take note of the container id of container named `openmrs/openmrs-reference-application-3-backend` (or similar)
 
-2. Run `docker cp cdss-1.0.0-SNAPSHOT.omod backend_container_id:/openmrs/data/modules/cdss-1.0.0-SNAPSHOT.omod`to copy `cdss-1.0.0-SNAPSHOT.omod` into the backend container at directory `/openmrs/data/modules/` 
+2. Run `docker cp cdss-1.0.0-ALPHA.omod backend_container_id:/openmrs/data/modules/cdss-1.0.0-SNAALPHAod`to copy `cdss-1.0.0-SNAPSHALPHA into the backend container at directory `/openmrs/data/modules/` 
 
 3. Run `docker container restart backend_container_id` to restart the backend
 
@@ -231,7 +231,7 @@ Normally, developers would publish their ESM modules on NPM (for example [@openm
      "extensions": [{"name":"cdss-chart","component":"cdssChart","slot":"patient-chart-cdss-dashboard-slot","meta":{"columnSpan":4},"order":8},{"name":"cdss-summary-dashboard","component":"cdssDashboardLink","slot":"patient-chart-dashboard-slot","meta":{"slot":"patient-chart-cdss-dashboard-slot","columns":1,"path":"Cdss"},"order":12},{"name":"cdss-reports-link","slot":"app-menu-slot","component":"cdssReportsLink","online":true,"offline":true},{"name":"cdss-management-link","slot":"app-menu-slot","component":"cdssManagementLink","online":true,"offline":true},{"name":"cdss-archive-link","slot":"app-menu-slot","component":"cdssArchiveLink","online":true,"offline":true}],
      "pages": [{"component":"cdssReportsPage","route":"cdss/reports","online":true,"offline":true},{"component":"cdssModificationPage","route":"cdss/edit","online":true,"offline":true},{"component":"cdssArchivePage","route":"cdss/archive","online":true,"offline":true}],
      "version": "1.0.0-ALPHA"
-	}
+    }
    }
    ```
 

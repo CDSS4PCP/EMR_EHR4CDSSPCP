@@ -38,7 +38,7 @@ public class RuleRestController extends CdssRestController {
     @Qualifier("webObjectMapper")
     protected ObjectMapper webObjectMapper;
 
-    private Logger log = Logger.getLogger(RuleRestController.class);
+    private final Logger log = Logger.getLogger(RuleRestController.class);
 
     /**
      * Retrieves an ELM rule by its ID or name, optionally considering the version.
@@ -248,12 +248,7 @@ public class RuleRestController extends CdssRestController {
      * @throws APIAuthenticationException if there is an issue with API authentication
      */
     @GetMapping(path = "/rule.form", produces = {"application/json"})
-    public ResponseEntity<List<String>> getRules(@RequestParam(required = false) Boolean allRules,
-                                                 @RequestParam(required = false) String role,
-                                                 @RequestParam(required = false) String vaccine,
-                                                 @RequestParam(required = false) Boolean noVaccine,
-                                                 @RequestParam(required = false) Boolean showNames,
-                                                 @RequestParam(required = false) Boolean showVersions) throws APIAuthenticationException {
+    public ResponseEntity<List<String>> getRules(@RequestParam(required = false) Boolean allRules, @RequestParam(required = false) String role, @RequestParam(required = false) String vaccine, @RequestParam(required = false) Boolean noVaccine, @RequestParam(required = false) Boolean showNames, @RequestParam(required = false) Boolean showVersions) throws APIAuthenticationException {
         checkAuthorizationAndPrivilege();
 
 
@@ -587,10 +582,9 @@ public class RuleRestController extends CdssRestController {
         String version = body.libraryVersion;
         try {
 
-            Optional<String> newRuleIdOptional = ruleManagerService.createRule(body.libraryName, body.libraryVersion, body.description, body.getParams(), body.ruleRole, null, body.getCqlContent(), null);
+            Optional<String> newRuleIdOptional = ruleManagerService.createRule(body.libraryName, body.libraryVersion, body.description, body.getParams(), body.ruleRole, body.getVaccine(), null, body.getCqlContent(), null);
             if (newRuleIdOptional.isPresent()) {
-                if (body.enabled != null && body.enabled)
-                    ruleManagerService.enableRuleById(newRuleIdOptional.get());
+                if (body.enabled != null && body.enabled) ruleManagerService.enableRuleById(newRuleIdOptional.get());
                 else ruleManagerService.disableRuleById(newRuleIdOptional.get());
                 return new ResponseEntity<>(newRuleIdOptional.get(), HttpStatus.CREATED);
             }
