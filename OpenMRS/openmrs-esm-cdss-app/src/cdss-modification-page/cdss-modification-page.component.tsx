@@ -237,6 +237,7 @@ export const CdssModificationPage: React.FC = () => {
     libraryVersion: string,
     description: string,
     enabled: boolean,
+    vaccine: string,
     file: File,
     params: Record<string, ParameterProps>
   ) => {
@@ -247,6 +248,7 @@ export const CdssModificationPage: React.FC = () => {
       libraryVersion: libraryVersion,
       description: description,
       ruleRole: "RULE",
+      vaccine: vaccine,
       cql: cqlEncoded,
       params: params,
     };
@@ -424,6 +426,7 @@ export const CdssModificationPage: React.FC = () => {
         isOpen={isUploadRuleDialogOpen}
         onClose={handleCloseUploadRuleDialog}
         onSubmit={handleUploadRuleSubmit}
+        vaccines={vaccines}
       />
 
       <h1 className={styles.modHeader}>Rule Management</h1>

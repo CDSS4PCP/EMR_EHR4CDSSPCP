@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import {
   ModalBody,
   TextInput,
@@ -9,6 +9,7 @@ import {
   ModalFooter,
   ContainedList,
   ContainedListItem,
+  ComboBox,
 } from "@carbon/react";
 
 interface ParameterProps {
@@ -25,11 +26,13 @@ interface LibraryNameProps {
 interface UploadRuleDialogProps {
   isOpen: boolean;
   onClose: () => void;
+  vaccines: string[];
   onSubmit: (
     libraryName: string,
     libraryVersion: string,
     description: string,
     enabled: boolean,
+    vaccine: string,
     file: File,
     params: { [key: string]: ParameterProps }
   ) => void; // Callback for form submission
@@ -39,7 +42,10 @@ const UploadRuleDialog: React.FC<UploadRuleDialogProps> = ({
   isOpen,
   onClose,
   onSubmit,
+  vaccines,
 }) => {
+  const fileUploaderRef = useRef(null);
+
   const [libraryName, setLibraryName] = useState("");
   const [libraryVersion, setLibraryVersion] = useState("");
   const [libraryNameAutomaticallySet, setLibraryNameAutomaticallySet] =
@@ -47,6 +53,8 @@ const UploadRuleDialog: React.FC<UploadRuleDialogProps> = ({
   const [libraryVersionAutomaticallySet, setLibraryVersionAutomaticallySet] =
     useState(false);
   const [description, setDescription] = useState("");
+  const [vaccine, setVaccine] = useState(null);
+  const [selectedVaccine, setSelectedVaccine] = useState(null);
   const [isEnabled, setIsEnabled] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [params, setParams] = useState<{ [key: string]: ParameterProps }>({});
@@ -131,6 +139,19 @@ const UploadRuleDialog: React.FC<UploadRuleDialogProps> = ({
     return foundParams;
   };
 
+  const extractVaccine = async (file: File) => {
+    const text: string = await file.text();
+    const vaccinePattern =
+      /define\s*"?VaccineName"?:\s*'([a-zA-Z0-9 _,.]*)'/gim;
+    const vaccines = [...text.matchAll(vaccinePattern)];
+
+    if (vaccines.length > 0)
+      return {
+        vaccineName: vaccines[0][1],
+      };
+    return null;
+  };
+
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
     if (!file) {
@@ -148,6 +169,7 @@ const UploadRuleDialog: React.FC<UploadRuleDialogProps> = ({
         libraryVersion,
         description,
         isEnabled,
+        vaccine,
         file,
         params
       );
@@ -164,7 +186,10 @@ const UploadRuleDialog: React.FC<UploadRuleDialogProps> = ({
     setLibraryNameAutomaticallySet(false);
     setLibraryVersionAutomaticallySet(false);
     setFile(null);
+    fileUploaderRef.current.clearFiles();
     setParams({});
+    setSelectedVaccine("");
+    setVaccine("");
 
     onClose(); // Close modal after form submission
   };
@@ -190,6 +215,15 @@ const UploadRuleDialog: React.FC<UploadRuleDialogProps> = ({
             }
           }
         );
+      }
+
+      if (vaccine == null || vaccine.trim() === "") {
+        extractVaccine(event.target.files[0]).then((vaccine) => {
+          if (vaccine && vaccine.vaccineName) {
+            setVaccine(vaccine.vaccineName);
+            setSelectedVaccine(vaccine.vaccineName);
+          }
+        });
       }
     } else {
       setFile(null);
@@ -247,6 +281,26 @@ const UploadRuleDialog: React.FC<UploadRuleDialogProps> = ({
               onChange={(e) => setDescription(e.target.value)}
               required
             />
+
+            <ComboBox
+              allowCustomValue={true}
+              items={vaccines}
+              id="vaccine"
+              titleText="Vaccine"
+              value={vaccine}
+              selectedValue={selectedVaccine}
+              onChange={(e) => {
+                setSelectedVaccine(e.selectedItem);
+                setVaccine(e.selectedItem ? e.selectedItem : "");
+              }}
+              onInputChange={(e) => {
+                setVaccine(e);
+                const match = vaccines.find((item) => item === e);
+                setSelectedVaccine(match || null);
+              }}
+              required
+            ></ComboBox>
+
             <Checkbox
               id="enabled"
               labelText="Enabled"
@@ -256,6 +310,7 @@ const UploadRuleDialog: React.FC<UploadRuleDialogProps> = ({
               }}
             />
             <FileUploader
+              ref={fileUploaderRef}
               accept={[".cql"]}
               buttonKind="primary"
               filenameStatus={"edit"}
@@ -307,6 +362,5 @@ const UploadRuleDialog: React.FC<UploadRuleDialogProps> = ({
     </React.Fragment>
   );
 };
-
 export default UploadRuleDialog;
 export { ParameterProps };
