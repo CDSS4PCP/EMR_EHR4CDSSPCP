@@ -9,7 +9,7 @@
       "description": "Helper functions for working with FHIR data types",
       "role": "support",
       "enabled": true,
-      "vaccine": "MMR",
+      "vaccine": "Measles, Mumps, and Rubella Virus Vaccine",
       "derivedFrom": null,
       "params": {
       }
@@ -23,7 +23,7 @@
       "description": "Helper functions for MMR vaccines",
       "role": "support",
       "enabled": true,
-      "vaccine": "MMR",
+      "vaccine": "Measles, Mumps, and Rubella Virus Vaccine",
       "derivedFrom": null
     },
     {
@@ -35,7 +35,7 @@
       "description": "Regular and catch-up without prior vaccination records",
       "role": "rule",
       "enabled": true,
-      "vaccine": "MMR",
+      "vaccine": "Measles, Mumps, and Rubella Virus Vaccine",
       "derivedFrom": null,
       "params": {
         "$Age1": {
@@ -79,7 +79,7 @@
       "description": "Regular and catch-up without prior vaccination records",
       "role": "rule",
       "enabled": true,
-      "vaccine": "MMR",
+      "vaccine": "Measles, Mumps, and Rubella Virus Vaccine",
       "derivedFrom": null,
       "params": {
         "$Age1": {
@@ -123,7 +123,7 @@
       "description": "Regular and catch-up without prior vaccination records",
       "role": "rule",
       "enabled": true,
-      "vaccine": "MMR",
+      "vaccine": "Measles, Mumps, and Rubella Virus Vaccine",
       "derivedFrom": null,
       "params": {
         "$Age1": {
@@ -167,7 +167,7 @@
       "description": "Recommendation for patients aged 12 months to 4 years with one dose of MMR vaccine administered.",
       "role": "rule",
       "enabled": true,
-      "vaccine": "MMR",
+      "vaccine": "Measles, Mumps, and Rubella Virus Vaccine",
       "derivedFrom": null,
       "params": {
         "$Age1": {
@@ -241,7 +241,7 @@
       "description": "Recommendation for patients aged 12 months to 4 years with one dose of MMR vaccine administered outside the 12 to 15-month window.",
       "role": "rule",
       "enabled": true,
-      "vaccine": "MMR",
+      "vaccine": "Measles, Mumps, and Rubella Virus Vaccine",
       "derivedFrom": null,
       "params": {
         "$Age1": {
@@ -330,7 +330,7 @@
       "description": "Recommendation for patients aged 12 months to 4 years with one dose of MMR vaccine administered outside the 12 to 15-month window and less than 4 weeks since the first dose.",
       "role": "rule",
       "enabled": true,
-      "vaccine": "MMR",
+      "vaccine": "Measles, Mumps, and Rubella Virus Vaccine",
       "derivedFrom": null,
       "params": {
         "$Age1": {
@@ -419,7 +419,7 @@
       "description": "Recommendation for patients aged 4 to 18 years with one dose of MMR vaccine administered less than 4 weeks ago.",
       "role": "rule",
       "enabled": true,
-      "vaccine": "MMR",
+      "vaccine": "Measles, Mumps, and Rubella Virus Vaccine",
       "derivedFrom": null,
       "params": {
         "$Age1": {
@@ -478,7 +478,7 @@
       "description": "Recommendation for patients aged 4 to 18 years with one dose of MMR vaccine administered less than 4 weeks ago.",
       "role": "rule",
       "enabled": true,
-      "vaccine": "MMR",
+      "vaccine": "Measles, Mumps, and Rubella Virus Vaccine",
       "derivedFrom": null,
       "params": {
         "$Age1": {
@@ -537,7 +537,7 @@
       "description": "Recommendation for patients without MMR records who are pregnant.",
       "role": "rule",
       "enabled": true,
-      "vaccine": "MMR",
+      "vaccine": "Measles, Mumps, and Rubella Virus Vaccine",
       "derivedFrom": null,
       "params": {}
     }
