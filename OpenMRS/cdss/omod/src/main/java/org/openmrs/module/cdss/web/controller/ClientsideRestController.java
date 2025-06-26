@@ -96,7 +96,6 @@ public class ClientsideRestController extends CdssRestController {
         checkAuthorizationAndPrivilege();
 
 
-
         List<CdssUsage> usages = ruleLoggerService.getRuleUsages();
 
         String out = null;
@@ -129,8 +128,11 @@ public class ClientsideRestController extends CdssRestController {
         final String apiKey = administrationService.getGlobalProperty("cdss.vsacApiKey");
         ValueSetResponse valueset = valueSetService.getSvsValueSet(apiKey, id, version);
 
-        if (valueset != null)
-            return new ResponseEntity<>(valueset.getContent(), HttpStatus.valueOf(valueset.getStatus()));
+        if (valueset != null && valueset.getStatus() != 200) {
+            return new ResponseEntity<>(valueset.getContent(), HttpStatus.INTERNAL_SERVER_ERROR);
+        } else if (valueset != null && valueset.getStatus() == 200) {
+            return new ResponseEntity<>(valueset.getContent(), HttpStatus.OK);
+        }
         return new ResponseEntity<>("Valueset was null", HttpStatus.INTERNAL_SERVER_ERROR);
 
     }
@@ -150,8 +152,11 @@ public class ClientsideRestController extends CdssRestController {
 
         final String apiKey = administrationService.getGlobalProperty("cdss.vsacApiKey");
         ValueSetResponse valueset = valueSetService.getFhirValueSet(apiKey, id, version, offset);
-        if (valueset != null)
-            return new ResponseEntity<>(valueset.getContent(), HttpStatus.valueOf(valueset.getStatus()));
+        if (valueset != null && valueset.getStatus() != 200) {
+            return new ResponseEntity<>(valueset.getContent(), HttpStatus.INTERNAL_SERVER_ERROR);
+        } else if (valueset != null && valueset.getStatus() == 200) {
+            return new ResponseEntity<>(valueset.getContent(), HttpStatus.OK);
+        }
         return new ResponseEntity<>("Valueset was null", HttpStatus.INTERNAL_SERVER_ERROR);
 
     }
