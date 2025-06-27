@@ -1,0 +1,3 @@
+[submodule "Common/cdss-common"]
+	path = Common/cdss-common
+	url = https://github.com/CDSS4PCP/cdss-common.git
