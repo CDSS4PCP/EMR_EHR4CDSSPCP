@@ -19,20 +19,27 @@ import {
   ModalFooter,
 } from "@carbon/react";
 
-async function loadResults(patientUuid, setResultsCallback) {
+async function loadResults(
+  patientUuid,
+  setResultsCallback,
+  setLoadingCallback
+) {
   const rules = await getRules();
   const results = [];
   for (const rule of rules) {
+    setLoadingCallback(true);
     try {
       const result = await getRecommendations(patientUuid, rule);
       results.push(result);
       setResultsCallback([...results]);
     } catch (error) {
+      results.push({});
       // eslint-disable-next-line no-console
       console.log("Ran into error getting Recommendation for ", rule, error);
     }
   }
   setResultsCallback([...results]);
+  setLoadingCallback(false);
   return results;
 }
 
@@ -45,6 +52,7 @@ export const CdssChart: React.FC<CdssChartComponentProps> = ({
 }) => {
   const [results, setResults] = useState([]);
   const [rules, setRules] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [usages, setExistingUsages] = useState([]);
   const [actionConfirmDialogOpen, setActionConfirmDialogOpen] = useState(false);
   const [actionDeclineDialogOpen, setActionDeclineDialogOpen] = useState(false);
@@ -54,7 +62,7 @@ export const CdssChart: React.FC<CdssChartComponentProps> = ({
   useEffect(() => {
     getRules().then((rules) => {
       setRules(rules);
-      loadResults(patientUuid, setResults);
+      loadResults(patientUuid, setResults, setLoading);
     });
   }, []);
 
@@ -133,27 +141,34 @@ export const CdssChart: React.FC<CdssChartComponentProps> = ({
         <hr />
       </CardHeader>
 
-      {results == null ||
-      (Array.isArray(results) && results.length != rules.length) ? (
-        <div style={{ justifyContent: "center" }}>
+      {loading && results && Array.isArray(results) && results.length === 0 ? (
+        <div style={{ justifySelf: "center" }}>
           <Loading withOverlay={false} small={true} active={true}></Loading>
           {results.length} of {rules.length} rules checked
         </div>
       ) : (
-        <CdssResultsTable
-          patientUuid={patientUuid}
-          patientResults={results}
-          existingUsages={usages}
-          visibleColumns={["VaccineName", "Recommendations"]}
-          takeAction={(usage) => {
-            setActionTaking(usage);
-            setActionConfirmDialogOpen(true);
-          }}
-          declineAction={(usage) => {
-            setActionTaking(usage);
-            setActionDeclineDialogOpen(true);
-          }}
-        ></CdssResultsTable>
+        <div>
+          {loading && (
+            <div style={{ justifySelf: "center" }}>
+              <Loading withOverlay={false} small={true} active={true}></Loading>
+              {results.length} of {rules.length} rules checked
+            </div>
+          )}
+          <CdssResultsTable
+            patientUuid={patientUuid}
+            patientResults={results}
+            existingUsages={usages}
+            visibleColumns={["VaccineName", "Recommendations"]}
+            takeAction={(usage) => {
+              setActionTaking(usage);
+              setActionConfirmDialogOpen(true);
+            }}
+            declineAction={(usage) => {
+              setActionTaking(usage);
+              setActionDeclineDialogOpen(true);
+            }}
+          ></CdssResultsTable>
+        </div>
       )}
     </div>
   );

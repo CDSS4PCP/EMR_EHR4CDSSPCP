@@ -29,246 +29,79 @@ public class DocsController extends CdssRestController {
     @ResponseBody
     public String ruleApi() {
 
-        return "openapi: 3.0.0\n" +
+        return "openapi: \"3.1.0\"\n" +
                 "info:\n" +
-                "  title: CDSS API\n" +
-                "  version: 1.0.0\n" +
-                "  description: API for managing CDSS rules\n" +
+                "  title: \"cdss API\"\n" +
+                "  description: \"cdss API\"\n" +
+                "  version: \"1.0.0\"\n" +
                 "servers:\n" +
-                "  - url: /cdss\n" +
+                "  - url: \"https://cdss\"\n" +
                 "paths:\n" +
-                "  /elm-rule/idOrName/{ruleId}.form:\n" +
+                "  /openmrs/cdss/cql-rule/id/{ruleId}.form:\n" +
                 "    get:\n" +
-                "      summary: Retrieves an ELM rule by its ID or name, optionally considering the version\n" +
-                "      parameters:\n" +
-                "        - name: ruleId\n" +
-                "          in: path\n" +
-                "          required: true\n" +
-                "          schema:\n" +
-                "            type: string\n" +
-                "        - name: version\n" +
-                "          in: query\n" +
-                "          required: false\n" +
-                "          schema:\n" +
-                "            type: string\n" +
+                "      summary: \"GET openmrs/cdss/cql-rule/id/{ruleId}.form\"\n" +
                 "      responses:\n" +
-                "        '200':\n" +
-                "          description: Rule retrieved successfully\n" +
-                "          content:\n" +
-                "            application/json:\n" +
-                "              schema:\n" +
-                "                type: string\n" +
-                "        '404':\n" +
-                "          description: Rule not found\n" +
-                "          content:\n" +
-                "            application/json:\n" +
-                "              schema:\n" +
-                "                type: string\n" +
-                "  /elm-rule/id/{ruleId}.form:\n" +
-                "    get:\n" +
-                "      summary: Retrieves an ELM rule by its ID\n" +
-                "      parameters:\n" +
-                "        - name: ruleId\n" +
-                "          in: path\n" +
-                "          required: true\n" +
-                "          schema:\n" +
-                "            type: string\n" +
-                "      responses:\n" +
-                "        '200':\n" +
-                "          description: Rule retrieved successfully\n" +
-                "          content:\n" +
-                "            application/json:\n" +
-                "              schema:\n" +
-                "                type: string\n" +
-                "        '404':\n" +
-                "          description: Rule not found\n" +
-                "          content:\n" +
-                "            application/json:\n" +
-                "              schema:\n" +
-                "                type: string\n" +
-                "  /cql-rule/id/{ruleId}.form:\n" +
-                "    get:\n" +
-                "      summary: Retrieves a CQL rule by its ID\n" +
-                "      parameters:\n" +
-                "        - name: ruleId\n" +
-                "          in: path\n" +
-                "          required: true\n" +
-                "          schema:\n" +
-                "            type: string\n" +
-                "      responses:\n" +
-                "        '200':\n" +
-                "          description: Rule retrieved successfully\n" +
-                "          content:\n" +
-                "            application/json:\n" +
-                "              schema:\n" +
-                "                type: string\n" +
-                "        '404':\n" +
-                "          description: Rule not found\n" +
-                "          content:\n" +
-                "            application/json:\n" +
-                "              schema:\n" +
-                "                type: string\n" +
-                "  /elm-rule/name/{libraryName}.form:\n" +
-                "    get:\n" +
-                "      summary: Retrieves an ELM rule by its library name, optionally considering the version\n" +
-                "      parameters:\n" +
-                "        - name: libraryName\n" +
-                "          in: path\n" +
-                "          required: true\n" +
-                "          schema:\n" +
-                "            type: string\n" +
-                "        - name: version\n" +
-                "          in: query\n" +
-                "          required: false\n" +
-                "          schema:\n" +
-                "            type: string\n" +
-                "      responses:\n" +
-                "        '200':\n" +
-                "          description: Rule retrieved successfully\n" +
-                "          content:\n" +
-                "            application/json:\n" +
-                "              schema:\n" +
-                "                type: string\n" +
-                "        '404':\n" +
-                "          description: Rule not found\n" +
-                "          content:\n" +
-                "            application/json:\n" +
-                "              schema:\n" +
-                "                type: string\n" +
-                "  /cql-rule/name/{libraryName}.form:\n" +
-                "    get:\n" +
-                "      summary: Retrieves a CQL rule by its library name, optionally considering the version\n" +
-                "      parameters:\n" +
-                "        - name: libraryName\n" +
-                "          in: path\n" +
-                "          required: true\n" +
-                "          schema:\n" +
-                "            type: string\n" +
-                "        - name: version\n" +
-                "          in: query\n" +
-                "          required: false\n" +
-                "          schema:\n" +
-                "            type: string\n" +
-                "      responses:\n" +
-                "        '200':\n" +
-                "          description: Rule retrieved successfully\n" +
-                "          content:\n" +
-                "            application/json:\n" +
-                "              schema:\n" +
-                "                type: string\n" +
-                "        '404':\n" +
-                "          description: Rule not found\n" +
-                "          content:\n" +
-                "            application/json:\n" +
-                "              schema:\n" +
-                "                type: string\n" +
-                "  /rule.form:\n" +
-                "    get:\n" +
-                "      summary: Retrieves a list of rules based on specified criteria\n" +
-                "      parameters:\n" +
-                "        - name: allRules\n" +
-                "          in: query\n" +
-                "          required: false\n" +
-                "          schema:\n" +
-                "            type: boolean\n" +
-                "        - name: role\n" +
-                "          in: query\n" +
-                "          required: false\n" +
-                "          schema:\n" +
-                "            type: string\n" +
-                "        - name: showNames\n" +
-                "          in: query\n" +
-                "          required: false\n" +
-                "          schema:\n" +
-                "            type: boolean\n" +
-                "        - name: showVersions\n" +
-                "          in: query\n" +
-                "          required: false\n" +
-                "          schema:\n" +
-                "            type: boolean\n" +
-                "      responses:\n" +
-                "        '200':\n" +
-                "          description: List of rules retrieved successfully\n" +
-                "          content:\n" +
-                "            application/json:\n" +
-                "              schema:\n" +
-                "                type: array\n" +
-                "                items:\n" +
-                "                  type: string\n" +
-                "  /enable-rule/id/{ruleId}.form:\n" +
+                "        \"200\":\n" +
+                "          description: \"OK\"\n" +
+                "  /openmrs/cdss/disable-rule/id/{ruleId}.form:\n" +
                 "    post:\n" +
-                "      summary: Enables a rule by its ID\n" +
-                "      parameters:\n" +
-                "        - name: ruleId\n" +
-                "          in: path\n" +
-                "          required: true\n" +
-                "          schema:\n" +
-                "            type: string\n" +
+                "      summary: \"POST openmrs/cdss/disable-rule/id/{ruleId}.form\"\n" +
                 "      responses:\n" +
-                "        '200':\n" +
-                "          description: Rule enabled successfully\n" +
-                "          content:\n" +
-                "            application/json:\n" +
-                "              schema:\n" +
-                "                type: string\n" +
-                "  /disable-rule/id/{ruleId}.form:\n" +
-                "    post:\n" +
-                "      summary: Disables a rule by its ID\n" +
-                "      parameters:\n" +
-                "        - name: ruleId\n" +
-                "          in: path\n" +
-                "          required: true\n" +
-                "          schema:\n" +
-                "            type: string\n" +
-                "      responses:\n" +
-                "        '200':\n" +
-                "          description: Rule disabled successfully\n" +
-                "          content:\n" +
-                "            application/json:\n" +
-                "              schema:\n" +
-                "                type: string\n" +
-                "  /rule-manifest.form:\n" +
+                "        \"200\":\n" +
+                "          description: \"OK\"\n" +
+                "  /openmrs/cdss/elm-rule/id/{ruleId}.form:\n" +
                 "    get:\n" +
-                "      summary: Retrieves the rule manifest as a JSON string\n" +
+                "      summary: \"GET openmrs/cdss/elm-rule/id/{ruleId}.form\"\n" +
                 "      responses:\n" +
-                "        '200':\n" +
-                "          description: Rule manifest retrieved successfully\n" +
-                "          content:\n" +
-                "            application/json:\n" +
-                "              schema:\n" +
-                "                type: string\n" +
-                "  /modify-rule.form:\n" +
+                "        \"200\":\n" +
+                "          description: \"OK\"\n" +
+                "  /openmrs/cdss/elm-rule/idOrName/{ruleId}.form:\n" +
+                "    get:\n" +
+                "      summary: \"GET openmrs/cdss/elm-rule/idOrName/{ruleId}.form\"\n" +
+                "      parameters:\n" +
+                "        - name: \"version\"\n" +
+                "          in: \"query\"\n" +
+                "          required: false\n" +
+                "      responses:\n" +
+                "        \"200\":\n" +
+                "          description: \"OK\"\n" +
+                "  /openmrs/cdss/enable-rule/id/{ruleId}.form:\n" +
                 "    post:\n" +
-                "      summary: Modifies an existing rule based on the provided request body\n" +
-                "      requestBody:\n" +
-                "        required: true\n" +
-                "        content:\n" +
-                "          application/json:\n" +
-                "            schema:\n" +
-                "              type: object\n" +
-                "              properties:\n" +
-                "                rule:\n" +
-                "                  type: object\n" +
-                "                  properties:\n" +
-                "                    id:\n" +
-                "                      type: string\n" +
-                "                    version:\n" +
-                "                      type: string\n" +
-                "                params:\n" +
-                "                  type: object\n" +
+                "      summary: \"POST openmrs/cdss/enable-rule/id/{ruleId}.form\"\n" +
                 "      responses:\n" +
-                "        '200':\n" +
-                "          description: Rule modified successfully\n" +
-                "          content:\n" +
-                "            application/json:\n" +
-                "              schema:\n" +
-                "                type: string\n" +
-                "        '500':\n" +
-                "          description: Error modifying rule\n" +
-                "          content:\n" +
-                "            application/json:\n" +
-                "              schema:\n" +
-                "                type: string";
+                "        \"200\":\n" +
+                "          description: \"OK\"\n" +
+                "  /openmrs/cdss/modify-rule.form:\n" +
+                "    post:\n" +
+                "      summary: \"POST openmrs/cdss/modify-rule.form\"\n" +
+                "      responses:\n" +
+                "        \"200\":\n" +
+                "          description: \"OK\"\n" +
+                "  /openmrs/cdss/rule-manifest.form:\n" +
+                "    get:\n" +
+                "      summary: \"GET openmrs/cdss/rule-manifest.form\"\n" +
+                "      responses:\n" +
+                "        \"200\":\n" +
+                "          description: \"OK\"\n" +
+                "  /openmrs/cdss/rule.form:\n" +
+                "    get:\n" +
+                "      summary: \"GET openmrs/cdss/rule.form\"\n" +
+                "      parameters:\n" +
+                "        - name: \"allRules\"\n" +
+                "          in: \"query\"\n" +
+                "          required: false\n" +
+                "        - name: \"role\"\n" +
+                "          in: \"query\"\n" +
+                "          required: false\n" +
+                "        - name: \"showNames\"\n" +
+                "          in: \"query\"\n" +
+                "          required: false\n" +
+                "        - name: \"showVersions\"\n" +
+                "          in: \"query\"\n" +
+                "          required: false\n" +
+                "      responses:\n" +
+                "        \"200\":\n" +
+                "          description: \"OK\"";
     }
 
     @GetMapping(value = "/cdss/docs/cdss-service-openapi.form", produces = MediaType.TEXT_PLAIN_VALUE)

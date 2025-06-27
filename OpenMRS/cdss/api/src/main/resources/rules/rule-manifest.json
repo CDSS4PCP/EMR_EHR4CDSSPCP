@@ -9,7 +9,7 @@
       "description": "Helper functions for working with FHIR data types",
       "role": "support",
       "enabled": true,
-      "vaccine": "Measles, Mumps, and Rubella Virus Vaccine",
+      "vaccine": null,
       "derivedFrom": null,
       "params": {
       }
