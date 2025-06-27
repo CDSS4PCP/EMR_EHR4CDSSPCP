@@ -24,20 +24,20 @@
    file. Enter this directory.
 
 6. We will use `docker-compose.yml` for this tutorial.
-
-    1. Optional: If you want easy access to the database, you can modify `docker-compose.yml` to add a public port
-       mapping to SQL port 3306
-
-        1. Open `docker-compose.yml`
-
-        2. Find the line that defines the `db `container
-
-        3. Add lines
-
-           ```
-           ports:
-             - "3306:3306"
-           ```
+   
+   1. Optional: If you want easy access to the database, you can modify `docker-compose.yml` to add a public port
+      mapping to SQL port 3306
+      
+      1. Open `docker-compose.yml`
+      
+      2. Find the line that defines the `db `container
+      
+      3. Add lines
+         
+         ```
+         ports:
+           - "3306:3306"
+         ```
 
 7. Run `docker compose up -d `in the repository root directory.
 
@@ -52,7 +52,7 @@
 ![](./Login.png)
 
 10. Log in with the following credentials:
-
+    
     ```
     Username: admin
     Password: Admin123
@@ -72,7 +72,7 @@ does create the data tables, API endpoints, configurations and other necessary c
 ## Installing the CDSS module using the GUI
 
 1. Log into OpenMRS.
-
+   
    ![](./Login.png )
 
 2. Find <u>Administration</u> in the top right of the main menu. Click it
@@ -149,25 +149,25 @@ The CDSS module requires a UMLS API key to download valuesets. Use
 the [UMLS Metathesaurus Browser](https://uts.nlm.nih.gov/uts/login) to create an API key.
 
 1. Log into OpenMRS.
-
+   
    ![](./Login.png)
 
 2. Find <u>Administration</u> in the top right of the main menu. Click it
-
+   
    ![](./AdministrationLink.png)
 
 3. Find <u>Advanced Settings</u>. Click it.
-
+   
    ![](./AdvancedSettingsLink.png)
 
 4. Scroll down and find the property named `cdss.vsacApiKey`. Alternatively, you can search for it.
-
+   
    ![](./CdssVsacApiKey.png)
 
 5. Change the value `No key set` to your VSAC API Key
 
 6. Click save in the yellow box in the lower right corner.
-
+   
    ![](./SaveGlobalProps.png)
 
 # Installing the CDSS ESM app
@@ -176,6 +176,7 @@ The CDSS ESM app is the GUI frontend component for CDSS in OpenMRS. It is compil
 likewise installed separately. The ESM app relies heavily on the CDSS module, and the ESM app must be installed after
 the CDSS module is installed and successfully running. The ESM module is built with React, Typescript. It uses Yarn as
 the dependency manager. For a design framework, it uses IBM's Carbon Design system
+
 > **Note:** The ESM app relies heavily on the CDSS module, and the ESM app must be installed ***after*** the CDSS module
 > is installed and successfully running.
 
@@ -201,28 +202,34 @@ manually.
    inside.
 
 3. Download the ESM App installer script into the same directory as `openmrs-esm-cdss-app-YOUR VERSION.zip`.
-
-   a. If on Linux,
-   use [Deploy-Cdss-ESM-App.sh](https://github.com/xjing16/EMR_EHR4CDSSPCP/blob/main/OpenMRS/utilities/Deploy-Cdss-Esm-App.sh)
-   b. If on Windows,
-   use [Deploy-Cdss-Esm-App.ps1](https://github.com/xjing16/EMR_EHR4CDSSPCP/blob/main/OpenMRS/utilities/Deploy-Cdss-Esm-App.ps1)
+   
+   - If on Linux, use [Deploy-Cdss-ESM-App.sh](https://github.com/xjing16/EMR_EHR4CDSSPCP/blob/main/OpenMRS/utilities/Deploy-Cdss-Esm-App.sh)
+   - If on Windows, use [Deploy-Cdss-Esm-App.ps1](https://github.com/xjing16/EMR_EHR4CDSSPCP/blob/main/OpenMRS/utilities/Deploy-Cdss-Esm-App.ps1)
 
 4. Run the ESM app installer script
-
-   a. If on Linux, run
-
-   ```bash
-   ./Deploy-Cdss-Esm-App.sh frontend_container_id openmrs-esm-cdss-app-YOUR VERSION.zip
-   ```
+   
+   - If on Linux, run
+     
+     ```bash
+     ./Deploy-Cdss-Esm-App.sh frontend_container_id openmrs-esm-cdss-app-YOUR VERSION.zip
+     ```
+   
+   - If on Windows, run
+     
+     ```bash
+     ./Deploy-Cdss-Esm-App.ps1 frontend_container_id openmrs-esm-cdss-app-YOUR VERSION.zip
+     ```
 
 > **NOTE:** Replace `frontend_container_id` with the id of the container of the frontend and
-`openmrs-esm-cdss-app-YOUR VERSION.zip` with the filename of your downloaded ESM CDSS zip file.
-> b. If on Windows, run
+> `openmrs-esm-cdss-app-YOUR VERSION.zip` with the filename of your downloaded ESM CDSS zip file.
 
-   ```bash
-   ./Deploy-Cdss-Esm-App.ps1 frontend_container_id openmrs-esm-cdss-app-YOUR VERSION.zip
-   ```
+## Verify that CDSS ESM app is installed
 
+1. Go to [http://localhost/openmrs/spa/home](http://localhost/openmrs/spa/home) and click on the *App menu*.
+   ![](./HomePage.png)
+
+2. If the app is installed successfully, then you will see *CDSS Reports*, *CDSS Rule Management*, and *CDSS Rule Archive*.
+    ![](./HomePage2.png)
 
 # Common Issues
 

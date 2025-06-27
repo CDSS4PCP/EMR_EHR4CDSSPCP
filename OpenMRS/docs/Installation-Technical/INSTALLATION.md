@@ -294,11 +294,17 @@ manually.
 9. Copy the updated `importmap.json` to the frontend container with
    `docker cp importmap.json  frontend_container_id:/usr/share/nginx/html/importmap.json`
    
-   # 
-   
-   # Common Issues
-   
-   ## HTTP 413 Request Entity Too Large
+   ## Verify that CDSS ESM app is installed
+
+10. Go to [http://localhost/openmrs/spa/home](http://localhost/openmrs/spa/home) and click on the *App menu*.
+    ![](./HomePage.png)
+
+11. If the app is installed successfully, then you will see *CDSS Reports*, *CDSS Rule Management*, and *CDSS Rule Archive*.
+     ![](./HomePage2.png) 
+
+# Common Issues
+
+## HTTP 413 Request Entity Too Large
 
 When uploading a new module `.omod` you might run into an `HTTP 413 Request Entity Too Large` error. By default,
 OpenMRS's server software, Nginx, limits uploads to a size of 1 Megabyte (

@@ -2,9 +2,11 @@ import React, { useEffect, useState } from "react";
 import {
   Accordion,
   AccordionItem,
+  ComposedModal,
   ContainedListItem,
   IconButton,
   Modal,
+  ModalFooter,
   Stack,
 } from "@carbon/react";
 import { openmrsFetch } from "@openmrs/esm-framework";
@@ -93,36 +95,31 @@ export const CdssArchivePage: React.FC = () => {
 
   return (
     <div>
-      <Modal
-        modalHeading="Error"
+      <ComposedModal
         open={showErrorMessage}
-        primaryButtonText="Ok"
         passiveModal
-        onRequestClose={() => setShowErrorMessage(false)}
-        onRequestSubmit={() => {
-          setShowErrorMessage(false);
-        }}
+        onClose={() => setShowErrorMessage(false)}
       >
-        <p>Could not fulfill request because of an error</p>
+        <h2>Could not fulfill request because of an error</h2>
         <code>{errorMessage}</code>
-      </Modal>
+      </ComposedModal>
 
-      <Modal
-        modalHeading="Take action"
-        open={showRestoreConfirmationMessage}
-        primaryButtonText="Yes"
-        secondaryButtonText="No"
-        onRequestClose={() => {
-          setShowRestoreConfirmationMessage(false);
-          setConfirmationRestoreRuleId(null);
-        }}
-        onRequestSubmit={() => {
-          fulfillRestoreRuleRequest(confirmationRestoreRuleId);
-          setShowRestoreConfirmationMessage(false);
-        }}
-      >
-        <p>Are you sure you want to restore this rule?</p>
-      </Modal>
+      <ComposedModal open={showRestoreConfirmationMessage}>
+        <h2>Take Action</h2>
+        <p>Are you sure you want to archive this rule?</p>
+        <ModalFooter
+          primaryButtonText={"Yes"}
+          secondaryButtonText={"No"}
+          onRequestClose={() => {
+            setShowRestoreConfirmationMessage(false);
+            setConfirmationRestoreRuleId(null);
+          }}
+          onRequestSubmit={() => {
+            fulfillRestoreRuleRequest(confirmationRestoreRuleId);
+            setShowRestoreConfirmationMessage(false);
+          }}
+        ></ModalFooter>
+      </ComposedModal>
 
       <Accordion label={"Archived Rules"} size={"lg"}>
         {rules && rules.length > 0 ? (
