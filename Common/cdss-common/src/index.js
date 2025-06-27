@@ -26,6 +26,8 @@ let endpoints = {
 
     }, 'patientById': {
         address: null, method: 'GET',
+    }, 'medicationByMedicationRequestId': {
+        address: null, method: 'GET',
     }, 'medicationRequestByPatientId': {
         address: null, method: 'GET',
     }, 'medicationStatementByPatientId': {
@@ -206,25 +208,25 @@ async function getFhirResource(resourceId, resourceType) {
     let response = null;
     let res = null;
     switch (resourceType) {
-        case ContainerTypes.LIST(FhirTypes.IMMUNIZATION):
-            if (typeof global.cdss.endpoints.immunizationByPatientId.address == 'string') response = await fetch(global.cdss.endpoints.immunizationByPatientId.address.replace('{{patientId}}', resourceId), endpoints.immunizationByPatientId); else if (typeof global.cdss.endpoints.immunizationByPatientId.address == 'function') res = await global.cdss.endpoints.immunizationByPatientId.address(resourceId);
-            break;
+    case ContainerTypes.LIST(FhirTypes.IMMUNIZATION):
+        if (typeof global.cdss.endpoints.immunizationByPatientId.address == 'string') response = await fetch(global.cdss.endpoints.immunizationByPatientId.address.replace('{{patientId}}', resourceId), endpoints.immunizationByPatientId); else if (typeof global.cdss.endpoints.immunizationByPatientId.address == 'function') res = await global.cdss.endpoints.immunizationByPatientId.address(resourceId);
+        break;
 
-        case ContainerTypes.LIST(FhirTypes.OBSERVATION):
-            if (typeof global.cdss.endpoints.observationByPatientId.address == 'string') response = await fetch(global.cdss.endpoints.observationByPatientId.address.replace('{{patientId}}', resourceId), endpoints.observationByPatientId); else if (typeof global.cdss.endpoints.observationByPatientId.address == 'function') res = await global.cdss.endpoints.observationByPatientId.address(resourceId);
-            break;
-        case ContainerTypes.LIST(FhirTypes.MEDICATION_REQUEST):
-            if (typeof global.cdss.endpoints.medicationRequestByPatientId.address == 'string') response = await fetch(global.cdss.endpoints.medicationRequestByPatientId.address.replace('{{patientId}}', resourceId), endpoints.medicationRequestByPatientId); else if (typeof global.cdss.endpoints.medicationRequestByPatientId.address == 'function') res = await global.cdss.endpoints.medicationRequestByPatientId.address(resourceId);
-            break;
-        case ContainerTypes.LIST(FhirTypes.MEDICATION_STATEMENT):
-            if (typeof global.cdss.endpoints.medicationStatementByPatientId.address == 'string') response = await fetch(global.cdss.endpoints.medicationStatementByPatientId.address.replace('{{patientId}}', resourceId), endpoints.medicationStatementByPatientId); else if (typeof global.cdss.endpoints.medicationStatementByPatientId.address == 'function') res = await global.cdss.endpoints.medicationStatementByPatientId.address(resourceId);
-            break;
-        case ContainerTypes.LIST(FhirTypes.CONDITION):
-            if (typeof global.cdss.endpoints.conditionByPatientId.address == 'string') response = await fetch(global.cdss.endpoints.conditionByPatientId.address.replace('{{patientId}}', resourceId), endpoints.conditionByPatientId); else if (typeof global.cdss.endpoints.conditionByPatientId.address == 'function') res = await global.cdss.endpoints.conditionByPatientId.address(resourceId);
-            break;
-        case FhirTypes.MEDICATION:
-            if (typeof global.cdss.endpoints.medicationById.address == 'string') response = await fetch(global.cdss.endpoints.medicationById.address.replace('{{medicationId}}', resourceId), endpoints.medicationById); else if (typeof global.cdss.endpoints.medicationById.address == 'function') res = await global.cdss.endpoints.medicationById.address(resourceId);
-            break;
+    case ContainerTypes.LIST(FhirTypes.OBSERVATION):
+        if (typeof global.cdss.endpoints.observationByPatientId.address == 'string') response = await fetch(global.cdss.endpoints.observationByPatientId.address.replace('{{patientId}}', resourceId), endpoints.observationByPatientId); else if (typeof global.cdss.endpoints.observationByPatientId.address == 'function') res = await global.cdss.endpoints.observationByPatientId.address(resourceId);
+        break;
+    case ContainerTypes.LIST(FhirTypes.MEDICATION_REQUEST):
+        if (typeof global.cdss.endpoints.medicationRequestByPatientId.address == 'string') response = await fetch(global.cdss.endpoints.medicationRequestByPatientId.address.replace('{{patientId}}', resourceId), endpoints.medicationRequestByPatientId); else if (typeof global.cdss.endpoints.medicationRequestByPatientId.address == 'function') res = await global.cdss.endpoints.medicationRequestByPatientId.address(resourceId);
+        break;
+    case ContainerTypes.LIST(FhirTypes.MEDICATION_STATEMENT):
+        if (typeof global.cdss.endpoints.medicationStatementByPatientId.address == 'string') response = await fetch(global.cdss.endpoints.medicationStatementByPatientId.address.replace('{{patientId}}', resourceId), endpoints.medicationStatementByPatientId); else if (typeof global.cdss.endpoints.medicationStatementByPatientId.address == 'function') res = await global.cdss.endpoints.medicationStatementByPatientId.address(resourceId);
+        break;
+    case ContainerTypes.LIST(FhirTypes.CONDITION):
+        if (typeof global.cdss.endpoints.conditionByPatientId.address == 'string') response = await fetch(global.cdss.endpoints.conditionByPatientId.address.replace('{{patientId}}', resourceId), endpoints.conditionByPatientId); else if (typeof global.cdss.endpoints.conditionByPatientId.address == 'function') res = await global.cdss.endpoints.conditionByPatientId.address(resourceId);
+        break;
+    case FhirTypes.MEDICATION:
+        if (typeof global.cdss.endpoints.medicationById.address == 'string') response = await fetch(global.cdss.endpoints.medicationById.address.replace('{{medicationId}}', resourceId), endpoints.medicationById); else if (typeof global.cdss.endpoints.medicationById.address == 'function') res = await global.cdss.endpoints.medicationById.address(resourceId);
+        break;
 
     }
 
@@ -264,7 +266,7 @@ async function getFhirResource(resourceId, resourceType) {
                             const newResource = await getFhirResource(id, fieldMapping.type);
 
 
-                            resource[fieldMapping.field] = newResource[fieldMapping.value]
+                            resource[fieldMapping.field] = newResource[fieldMapping.value];
 
                             if (fieldMapping.deleteOriginalReference) {
                                 console.warn(`Deleting resource[${reference}]`);
@@ -273,7 +275,7 @@ async function getFhirResource(resourceId, resourceType) {
                         } else {
                             console.warn(`WARING: ${urlOrId} is a url, will fetch with GET and empty body`);
                             try {
-                                response = await fetch(urlOrId, {method: "GET"});
+                                response = await fetch(urlOrId, {method: 'GET'});
                                 let newResource = await response.json();
                                 resource[fieldMapping.field] = newResource;
                             } catch (err) {

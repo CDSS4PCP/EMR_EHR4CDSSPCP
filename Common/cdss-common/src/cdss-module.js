@@ -112,7 +112,7 @@ var ReferenceMappings = {};
 ReferenceMappings[FhirTypes.MEDICATION_REQUEST] = {
     medicationReference: {
         field: 'medicationCodeableConcept', type: FhirTypes.MEDICATION,
-        value: "code",
+        value: 'code',
         deleteOriginalReference: true
     },
 };
@@ -120,7 +120,7 @@ ReferenceMappings[FhirTypes.MEDICATION_REQUEST] = {
 ReferenceMappings[ContainerTypes.LIST(FhirTypes.MEDICATION_REQUEST)] = {
     medicationReference: {
         field: 'medicationCodeableConcept', type: FhirTypes.MEDICATION,
-        value: "code",
+        value: 'code',
         deleteOriginalReference: true
 
     },
