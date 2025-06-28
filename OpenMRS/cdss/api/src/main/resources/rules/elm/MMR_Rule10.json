@@ -1,1 +1,164 @@
-{"library":{"annotation":[{"translatorOptions":"","type":"CqlToElmInfo"}],"identifier":{"id":"MMR10MedicalContraPrecautionMMRRecommendation","version":"1"},"schemaIdentifier":{"id":"urn:hl7-org:elm","version":"r1"},"usings":{"def":[{"localIdentifier":"System","uri":"urn:hl7-org:elm-types:r1"},{"localIdentifier":"FHIR","uri":"http://hl7.org/fhir","version":"4.0.1"}]},"includes":{"def":[{"localIdentifier":"Common","path":"MMR_Common_Library","version":"1"},{"localIdentifier":"FHIRHelpers","path":"FHIRHelpers","version":"4.0.1"}]},"parameters":{"def":[{"name":"Imm","accessLevel":"Public","parameterTypeSpecifier":{"type":"ListTypeSpecifier","elementType":{"name":"{http://hl7.org/fhir}Immunization","type":"NamedTypeSpecifier"}}},{"name":"Conditions","accessLevel":"Public","parameterTypeSpecifier":{"type":"ListTypeSpecifier","elementType":{"name":"{http://hl7.org/fhir}Condition","type":"NamedTypeSpecifier"}}}]},"contexts":{"def":[{"name":"Patient"}]},"statements":{"def":[{"name":"Patient","context":"Patient","expression":{"type":"SingletonFrom","operand":{"dataType":"{http://hl7.org/fhir}Patient","templateId":"http://hl7.org/fhir/StructureDefinition/Patient","type":"Retrieve"}}},{"name":"VaccineName","context":"Patient","accessLevel":"Public","expression":{"valueType":"{urn:hl7-org:elm-types:r1}String","value":"Measles, Mumps, and Rubella Virus Vaccine","type":"Literal"}},{"name":"MMR_Vaccine_OneDose","context":"Patient","accessLevel":"Public","expression":{"type":"Equal","operand":[{"type":"Count","source":{"name":"FindValidVaccines","libraryName":"Common","type":"FunctionRef","operand":[{"name":"Imm","type":"ParameterRef"}]}},{"valueType":"{urn:hl7-org:elm-types:r1}Integer","value":"1","type":"Literal"}]}},{"name":"Pregnant_Exist","context":"Patient","accessLevel":"Public","expression":{"type":"Greater","operand":[{"type":"Count","source":{"name":"FindValidPregnantCondition","libraryName":"Common","type":"FunctionRef","operand":[{"name":"Conditions","type":"ParameterRef"}]}},{"valueType":"{urn:hl7-org:elm-types:r1}Integer","value":"0","type":"Literal"}]}},{"name":"InPopulation","context":"Patient","accessLevel":"Public","expression":{"type":"And","operand":[{"name":"MMR_Vaccine_OneDose","type":"ExpressionRef"},{"name":"Pregnant_Exist","type":"ExpressionRef"}]}},{"name":"Recommendation1","context":"Patient","accessLevel":"Public","expression":{"type":"If","condition":{"name":"InPopulation","type":"ExpressionRef"},"then":{"valueType":"{urn:hl7-org:elm-types:r1}String","value":"Schedule/admininster 2nd dose after pregnancy, >= 4 wk of 1st dose","type":"Literal"},"else":{"asType":"{urn:hl7-org:elm-types:r1}String","type":"As","operand":{"type":"Null"}}}}]}},"path":"MMR10MedicalContraPrecautionMMRRecommendation\\MMR_Rule10_CQL20240730.cql"}
+{
+   "library" : {
+      "annotation" : [ {
+         "translatorVersion" : "3.2.0",
+         "translatorOptions" : "",
+         "type" : "CqlToElmInfo"
+      } ],
+      "identifier" : {
+         "id" : "MMR10MedicalContraPrecautionMMRRecommendation",
+         "version" : "1.0.0"
+      },
+      "schemaIdentifier" : {
+         "id" : "urn:hl7-org:elm",
+         "version" : "r1"
+      },
+      "usings" : {
+         "def" : [ {
+            "localIdentifier" : "System",
+            "uri" : "urn:hl7-org:elm-types:r1"
+         }, {
+            "localIdentifier" : "FHIR",
+            "uri" : "http://hl7.org/fhir",
+            "version" : "4.0.1"
+         } ]
+      },
+      "includes" : {
+         "def" : [ {
+            "localIdentifier" : "Common",
+            "path" : "MMR_Common_Library",
+            "version" : "1.0.0"
+         }, {
+            "localIdentifier" : "FHIRHelpers",
+            "path" : "FHIRHelpers",
+            "version" : "4.0.1"
+         } ]
+      },
+      "parameters" : {
+         "def" : [ {
+            "name" : "Imm",
+            "accessLevel" : "Public",
+            "parameterTypeSpecifier" : {
+               "type" : "ListTypeSpecifier",
+               "elementType" : {
+                  "name" : "{http://hl7.org/fhir}Immunization",
+                  "type" : "NamedTypeSpecifier"
+               }
+            }
+         }, {
+            "name" : "Conditions",
+            "accessLevel" : "Public",
+            "parameterTypeSpecifier" : {
+               "type" : "ListTypeSpecifier",
+               "elementType" : {
+                  "name" : "{http://hl7.org/fhir}Condition",
+                  "type" : "NamedTypeSpecifier"
+               }
+            }
+         } ]
+      },
+      "contexts" : {
+         "def" : [ {
+            "name" : "Patient"
+         } ]
+      },
+      "statements" : {
+         "def" : [ {
+            "name" : "Patient",
+            "context" : "Patient",
+            "expression" : {
+               "type" : "SingletonFrom",
+               "operand" : {
+                  "dataType" : "{http://hl7.org/fhir}Patient",
+                  "templateId" : "http://hl7.org/fhir/StructureDefinition/Patient",
+                  "type" : "Retrieve"
+               }
+            }
+         }, {
+            "name" : "MMR_Vaccine_OneDose",
+            "context" : "Patient",
+            "accessLevel" : "Public",
+            "expression" : {
+               "type" : "Equal",
+               "operand" : [ {
+                  "type" : "Count",
+                  "source" : {
+                     "name" : "FindValidVaccines",
+                     "libraryName" : "Common",
+                     "type" : "FunctionRef",
+                     "operand" : [ {
+                        "name" : "Imm",
+                        "type" : "ParameterRef"
+                     } ]
+                  }
+               }, {
+                  "valueType" : "{urn:hl7-org:elm-types:r1}Integer",
+                  "value" : "1",
+                  "type" : "Literal"
+               } ]
+            }
+         }, {
+            "name" : "Pregnant_Exist",
+            "context" : "Patient",
+            "accessLevel" : "Public",
+            "expression" : {
+               "type" : "Greater",
+               "operand" : [ {
+                  "type" : "Count",
+                  "source" : {
+                     "name" : "FindValidPregnantCondition",
+                     "libraryName" : "Common",
+                     "type" : "FunctionRef",
+                     "operand" : [ {
+                        "name" : "Conditions",
+                        "type" : "ParameterRef"
+                     } ]
+                  }
+               }, {
+                  "valueType" : "{urn:hl7-org:elm-types:r1}Integer",
+                  "value" : "0",
+                  "type" : "Literal"
+               } ]
+            }
+         }, {
+            "name" : "InPopulation",
+            "context" : "Patient",
+            "accessLevel" : "Public",
+            "expression" : {
+               "type" : "And",
+               "operand" : [ {
+                  "name" : "MMR_Vaccine_OneDose",
+                  "type" : "ExpressionRef"
+               }, {
+                  "name" : "Pregnant_Exist",
+                  "type" : "ExpressionRef"
+               } ]
+            }
+         }, {
+            "name" : "Recommendation1",
+            "context" : "Patient",
+            "accessLevel" : "Public",
+            "expression" : {
+               "type" : "If",
+               "condition" : {
+                  "name" : "InPopulation",
+                  "type" : "ExpressionRef"
+               },
+               "then" : {
+                  "valueType" : "{urn:hl7-org:elm-types:r1}String",
+                  "value" : "Schedule/admininster 2nd dose after pregnancy, >= 4 wk of 1st dose",
+                  "type" : "Literal"
+               },
+               "else" : {
+                  "asType" : "{urn:hl7-org:elm-types:r1}String",
+                  "type" : "As",
+                  "operand" : {
+                     "type" : "Null"
+                  }
+               }
+            }
+         } ]
+      }
+   }
+}
+

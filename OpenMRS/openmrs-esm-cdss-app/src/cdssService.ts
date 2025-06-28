@@ -1,5 +1,5 @@
 import { openmrsFetch } from "@openmrs/esm-framework";
-import "./cdss.js";
+import "./cdss.js"; // This is the compiled common-module (see https://github.com/CDSS4PCP/cdss-common)
 import { CdssUsage } from "./cdssTypes";
 
 const VSAC_API_KEY = ""; // Your api key goes here

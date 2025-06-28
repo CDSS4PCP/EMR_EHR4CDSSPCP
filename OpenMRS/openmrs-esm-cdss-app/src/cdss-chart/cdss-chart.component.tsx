@@ -142,14 +142,14 @@ export const CdssChart: React.FC<CdssChartComponentProps> = ({
       </CardHeader>
 
       {loading && results && Array.isArray(results) && results.length === 0 ? (
-        <div style={{ justifySelf: "center" }}>
+        <div style={{ justifySelf: "center", justifyContent: "center" }}>
           <Loading withOverlay={false} small={true} active={true}></Loading>
           {results.length} of {rules.length} rules checked
         </div>
       ) : (
         <div>
           {loading && (
-            <div style={{ justifySelf: "center" }}>
+            <div style={{ justifySelf: "center", justifyContent: "center" }}>
               <Loading withOverlay={false} small={true} active={true}></Loading>
               {results.length} of {rules.length} rules checked
             </div>

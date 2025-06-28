@@ -1,867 +1,594 @@
 {
-  "library": {
-    "annotation": [
-      {
-        "translatorVersion": "3.2.0",
-        "translatorOptions": "",
-        "type": "CqlToElmInfo"
+   "library" : {
+      "annotation" : [ {
+         "translatorVersion" : "3.2.0",
+         "translatorOptions" : "",
+         "type" : "CqlToElmInfo"
+      }, {
+         "libraryId" : "MMR5regular12months_4yrs_OneDoseOutOf12to15MonRecommendation",
+         "libraryVersion" : "1.0.0",
+         "startLine" : 61,
+         "startChar" : 17,
+         "endLine" : 61,
+         "endChar" : 58,
+         "message" : "List-valued expression was demoted to a singleton.",
+         "errorType" : "semantic",
+         "errorSeverity" : "warning",
+         "type" : "CqlToElmError"
+      } ],
+      "identifier" : {
+         "id" : "MMR5regular12months_4yrs_OneDoseOutOf12to15MonRecommendation",
+         "version" : "1.0.0"
       },
-      {
-        "libraryId": "MMR5regular12months_4yrs_OneDoseOutOf12to15MonRecommendation",
-        "libraryVersion": "1",
-        "startLine": 61,
-        "startChar": 17,
-        "endLine": 61,
-        "endChar": 58,
-        "message": "List-valued expression was demoted to a singleton.",
-        "errorType": "semantic",
-        "errorSeverity": "warning",
-        "type": "CqlToElmError"
+      "schemaIdentifier" : {
+         "id" : "urn:hl7-org:elm",
+         "version" : "r1"
+      },
+      "usings" : {
+         "def" : [ {
+            "localIdentifier" : "System",
+            "uri" : "urn:hl7-org:elm-types:r1"
+         }, {
+            "localIdentifier" : "FHIR",
+            "uri" : "http://hl7.org/fhir",
+            "version" : "4.0.1"
+         }, {
+            "localIdentifier" : "QUICK",
+            "uri" : "http://hl7.org/fhir"
+         } ]
+      },
+      "includes" : {
+         "def" : [ {
+            "localIdentifier" : "Common",
+            "path" : "MMR_Common_Library",
+            "version" : "1.0.0"
+         }, {
+            "localIdentifier" : "FHIRHelpers",
+            "path" : "FHIRHelpers",
+            "version" : "4.0.1"
+         } ]
+      },
+      "parameters" : {
+         "def" : [ {
+            "name" : "Imm",
+            "accessLevel" : "Public",
+            "parameterTypeSpecifier" : {
+               "type" : "ListTypeSpecifier",
+               "elementType" : {
+                  "name" : "{http://hl7.org/fhir}Immunization",
+                  "type" : "NamedTypeSpecifier"
+               }
+            }
+         } ]
+      },
+      "contexts" : {
+         "def" : [ {
+            "name" : "Patient"
+         } ]
+      },
+      "statements" : {
+         "def" : [ {
+            "name" : "Patient",
+            "context" : "Patient",
+            "expression" : {
+               "type" : "SingletonFrom",
+               "operand" : {
+                  "dataType" : "{http://hl7.org/fhir}Patient",
+                  "templateId" : "http://hl7.org/fhir/StructureDefinition/Patient",
+                  "type" : "Retrieve"
+               }
+            }
+         }, {
+            "name" : "$Age1",
+            "context" : "Patient",
+            "accessLevel" : "Public",
+            "expression" : {
+               "valueType" : "{urn:hl7-org:elm-types:r1}Integer",
+               "value" : "12",
+               "type" : "Literal"
+            }
+         }, {
+            "name" : "$Age1_unit",
+            "context" : "Patient",
+            "accessLevel" : "Public",
+            "expression" : {
+               "valueType" : "{urn:hl7-org:elm-types:r1}String",
+               "value" : "month",
+               "type" : "Literal"
+            }
+         }, {
+            "name" : "$Age2",
+            "context" : "Patient",
+            "accessLevel" : "Public",
+            "expression" : {
+               "valueType" : "{urn:hl7-org:elm-types:r1}Integer",
+               "value" : "4",
+               "type" : "Literal"
+            }
+         }, {
+            "name" : "$Age2_unit",
+            "context" : "Patient",
+            "accessLevel" : "Public",
+            "expression" : {
+               "valueType" : "{urn:hl7-org:elm-types:r1}String",
+               "value" : "year",
+               "type" : "Literal"
+            }
+         }, {
+            "name" : "$Dose1AdminMinAge",
+            "context" : "Patient",
+            "accessLevel" : "Public",
+            "expression" : {
+               "valueType" : "{urn:hl7-org:elm-types:r1}Integer",
+               "value" : "12",
+               "type" : "Literal"
+            }
+         }, {
+            "name" : "$Dose1AdminMinAge_unit",
+            "context" : "Patient",
+            "accessLevel" : "Public",
+            "expression" : {
+               "valueType" : "{urn:hl7-org:elm-types:r1}String",
+               "value" : "month",
+               "type" : "Literal"
+            }
+         }, {
+            "name" : "$Dose1AdminMaxAge",
+            "context" : "Patient",
+            "accessLevel" : "Public",
+            "expression" : {
+               "valueType" : "{urn:hl7-org:elm-types:r1}Integer",
+               "value" : "15",
+               "type" : "Literal"
+            }
+         }, {
+            "name" : "$Dose1AdminMaxAge_unit",
+            "context" : "Patient",
+            "accessLevel" : "Public",
+            "expression" : {
+               "valueType" : "{urn:hl7-org:elm-types:r1}String",
+               "value" : "month",
+               "type" : "Literal"
+            }
+         }, {
+            "name" : "$WeeksSinceDose",
+            "context" : "Patient",
+            "accessLevel" : "Public",
+            "expression" : {
+               "valueType" : "{urn:hl7-org:elm-types:r1}Integer",
+               "value" : "4",
+               "type" : "Literal"
+            }
+         }, {
+            "name" : "$WeeksSinceDose_unit",
+            "context" : "Patient",
+            "accessLevel" : "Public",
+            "expression" : {
+               "valueType" : "{urn:hl7-org:elm-types:r1}String",
+               "value" : "week",
+               "type" : "Literal"
+            }
+         }, {
+            "name" : "VaccineName",
+            "context" : "Patient",
+            "accessLevel" : "Public",
+            "expression" : {
+               "valueType" : "{urn:hl7-org:elm-types:r1}String",
+               "value" : "Measles, Mumps, and Rubella Virus Vaccine",
+               "type" : "Literal"
+            }
+         }, {
+            "name" : "CurrentAge",
+            "context" : "Patient",
+            "accessLevel" : "Public",
+            "expression" : {
+               "type" : "And",
+               "operand" : [ {
+                  "type" : "GreaterOrEqual",
+                  "operand" : [ {
+                     "name" : "GetAge",
+                     "libraryName" : "Common",
+                     "type" : "FunctionRef",
+                     "operand" : [ {
+                        "name" : "$Age1_unit",
+                        "type" : "ExpressionRef"
+                     } ]
+                  }, {
+                     "name" : "$Age1",
+                     "type" : "ExpressionRef"
+                  } ]
+               }, {
+                  "type" : "Less",
+                  "operand" : [ {
+                     "name" : "GetAge",
+                     "libraryName" : "Common",
+                     "type" : "FunctionRef",
+                     "operand" : [ {
+                        "name" : "$Age2_unit",
+                        "type" : "ExpressionRef"
+                     } ]
+                  }, {
+                     "name" : "$Age2",
+                     "type" : "ExpressionRef"
+                  } ]
+               } ]
+            }
+         }, {
+            "name" : "MMR_Vaccine_OneDose",
+            "context" : "Patient",
+            "accessLevel" : "Public",
+            "expression" : {
+               "type" : "Equal",
+               "operand" : [ {
+                  "type" : "Count",
+                  "source" : {
+                     "name" : "FindValidVaccines",
+                     "libraryName" : "Common",
+                     "type" : "FunctionRef",
+                     "operand" : [ {
+                        "name" : "Imm",
+                        "type" : "ParameterRef"
+                     } ]
+                  }
+               }, {
+                  "valueType" : "{urn:hl7-org:elm-types:r1}Integer",
+                  "value" : "1",
+                  "type" : "Literal"
+               } ]
+            }
+         }, {
+            "name" : "MMRVaccineDate",
+            "context" : "Patient",
+            "accessLevel" : "Public",
+            "type" : "FunctionDef",
+            "expression" : {
+               "type" : "Query",
+               "source" : [ {
+                  "alias" : "TemDate",
+                  "expression" : {
+                     "name" : "Imm",
+                     "type" : "ParameterRef"
+                  }
+               } ],
+               "relationship" : [ ],
+               "where" : {
+                  "type" : "In",
+                  "operand" : [ {
+                     "name" : "ToCode",
+                     "libraryName" : "FHIRHelpers",
+                     "type" : "FunctionRef",
+                     "operand" : [ {
+                        "type" : "SingletonFrom",
+                        "operand" : {
+                           "name" : "FindValidCodes",
+                           "libraryName" : "Common",
+                           "type" : "FunctionRef",
+                           "operand" : [ {
+                              "path" : "coding",
+                              "type" : "Property",
+                              "source" : {
+                                 "path" : "vaccineCode",
+                                 "scope" : "TemDate",
+                                 "type" : "Property"
+                              }
+                           } ]
+                        }
+                     } ]
+                  }, {
+                     "name" : "MMR_All_Valuesets",
+                     "libraryName" : "Common",
+                     "type" : "ExpressionRef"
+                  } ]
+               },
+               "return" : {
+                  "expression" : {
+                     "type" : "Tuple",
+                     "element" : [ {
+                        "name" : "Date",
+                        "value" : {
+                           "type" : "Date",
+                           "year" : {
+                              "precision" : "Year",
+                              "type" : "DateTimeComponentFrom",
+                              "operand" : {
+                                 "asType" : "{urn:hl7-org:elm-types:r1}DateTime",
+                                 "type" : "As",
+                                 "operand" : {
+                                    "path" : "value",
+                                    "type" : "Property",
+                                    "source" : {
+                                       "path" : "occurrence",
+                                       "scope" : "TemDate",
+                                       "type" : "Property"
+                                    }
+                                 }
+                              }
+                           },
+                           "month" : {
+                              "precision" : "Month",
+                              "type" : "DateTimeComponentFrom",
+                              "operand" : {
+                                 "asType" : "{urn:hl7-org:elm-types:r1}DateTime",
+                                 "type" : "As",
+                                 "operand" : {
+                                    "path" : "value",
+                                    "type" : "Property",
+                                    "source" : {
+                                       "path" : "occurrence",
+                                       "scope" : "TemDate",
+                                       "type" : "Property"
+                                    }
+                                 }
+                              }
+                           },
+                           "day" : {
+                              "precision" : "Day",
+                              "type" : "DateTimeComponentFrom",
+                              "operand" : {
+                                 "asType" : "{urn:hl7-org:elm-types:r1}DateTime",
+                                 "type" : "As",
+                                 "operand" : {
+                                    "path" : "value",
+                                    "type" : "Property",
+                                    "source" : {
+                                       "path" : "occurrence",
+                                       "scope" : "TemDate",
+                                       "type" : "Property"
+                                    }
+                                 }
+                              }
+                           }
+                        }
+                     } ]
+                  }
+               },
+               "sort" : {
+                  "by" : [ {
+                     "direction" : "asc",
+                     "path" : "Date",
+                     "type" : "ByColumn"
+                  } ]
+               }
+            },
+            "operand" : [ {
+               "name" : "Immunizations",
+               "operandTypeSpecifier" : {
+                  "type" : "ListTypeSpecifier",
+                  "elementType" : {
+                     "name" : "{http://hl7.org/fhir}Immunization",
+                     "type" : "NamedTypeSpecifier"
+                  }
+               }
+            } ]
+         }, {
+            "name" : "PrevDoseDate",
+            "context" : "Patient",
+            "accessLevel" : "Public",
+            "expression" : {
+               "path" : "Date",
+               "type" : "Property",
+               "source" : {
+                  "type" : "Indexer",
+                  "operand" : [ {
+                     "name" : "MMRVaccineDate",
+                     "type" : "FunctionRef",
+                     "operand" : [ {
+                        "name" : "Imm",
+                        "type" : "ParameterRef"
+                     } ]
+                  }, {
+                     "valueType" : "{urn:hl7-org:elm-types:r1}Integer",
+                     "value" : "0",
+                     "type" : "Literal"
+                  } ]
+               }
+            }
+         }, {
+            "name" : "PatientBirthDate",
+            "context" : "Patient",
+            "accessLevel" : "Public",
+            "expression" : {
+               "type" : "ToDate",
+               "operand" : {
+                  "type" : "ToDateTime",
+                  "operand" : {
+                     "path" : "value",
+                     "type" : "Property",
+                     "source" : {
+                        "path" : "birthDate",
+                        "type" : "Property",
+                        "source" : {
+                           "name" : "Patient",
+                           "type" : "ExpressionRef"
+                        }
+                     }
+                  }
+               }
+            }
+         }, {
+            "name" : "AgeFirstDoseMonths",
+            "context" : "Patient",
+            "accessLevel" : "Public",
+            "expression" : {
+               "precision" : "Month",
+               "type" : "DurationBetween",
+               "operand" : [ {
+                  "name" : "ToDate",
+                  "libraryName" : "FHIRHelpers",
+                  "type" : "FunctionRef",
+                  "operand" : [ {
+                     "path" : "birthDate",
+                     "type" : "Property",
+                     "source" : {
+                        "name" : "Patient",
+                        "type" : "ExpressionRef"
+                     }
+                  } ]
+               }, {
+                  "name" : "PrevDoseDate",
+                  "type" : "ExpressionRef"
+               } ]
+            }
+         }, {
+            "name" : "DiffInMinAdminUnit",
+            "context" : "Patient",
+            "accessLevel" : "Public",
+            "expression" : {
+               "type" : "Abs",
+               "operand" : {
+                  "name" : "GetDifferenceInUnit",
+                  "libraryName" : "Common",
+                  "type" : "FunctionRef",
+                  "operand" : [ {
+                     "name" : "PrevDoseDate",
+                     "type" : "ExpressionRef"
+                  }, {
+                     "name" : "PatientBirthDate",
+                     "type" : "ExpressionRef"
+                  }, {
+                     "name" : "$Dose1AdminMinAge_unit",
+                     "type" : "ExpressionRef"
+                  } ]
+               }
+            }
+         }, {
+            "name" : "DiffInMaxAdminUnit",
+            "context" : "Patient",
+            "accessLevel" : "Public",
+            "expression" : {
+               "type" : "Abs",
+               "operand" : {
+                  "name" : "GetDifferenceInUnit",
+                  "libraryName" : "Common",
+                  "type" : "FunctionRef",
+                  "operand" : [ {
+                     "name" : "PrevDoseDate",
+                     "type" : "ExpressionRef"
+                  }, {
+                     "name" : "PatientBirthDate",
+                     "type" : "ExpressionRef"
+                  }, {
+                     "name" : "$Dose1AdminMaxAge_unit",
+                     "type" : "ExpressionRef"
+                  } ]
+               }
+            }
+         }, {
+            "name" : "AgeFirstMMRIn",
+            "context" : "Patient",
+            "accessLevel" : "Public",
+            "expression" : {
+               "type" : "And",
+               "operand" : [ {
+                  "type" : "GreaterOrEqual",
+                  "operand" : [ {
+                     "name" : "DiffInMinAdminUnit",
+                     "type" : "ExpressionRef"
+                  }, {
+                     "name" : "$Dose1AdminMinAge",
+                     "type" : "ExpressionRef"
+                  } ]
+               }, {
+                  "type" : "LessOrEqual",
+                  "operand" : [ {
+                     "name" : "DiffInMaxAdminUnit",
+                     "type" : "ExpressionRef"
+                  }, {
+                     "name" : "$Dose1AdminMaxAge",
+                     "type" : "ExpressionRef"
+                  } ]
+               } ]
+            }
+         }, {
+            "name" : "TimeSinceFirstDose",
+            "context" : "Patient",
+            "accessLevel" : "Public",
+            "expression" : {
+               "name" : "GetDifferenceInUnit",
+               "libraryName" : "Common",
+               "type" : "FunctionRef",
+               "operand" : [ {
+                  "path" : "Date",
+                  "type" : "Property",
+                  "source" : {
+                     "type" : "Indexer",
+                     "operand" : [ {
+                        "name" : "MMRVaccineDate",
+                        "type" : "FunctionRef",
+                        "operand" : [ {
+                           "name" : "Imm",
+                           "type" : "ParameterRef"
+                        } ]
+                     }, {
+                        "valueType" : "{urn:hl7-org:elm-types:r1}Integer",
+                        "value" : "0",
+                        "type" : "Literal"
+                     } ]
+                  }
+               }, {
+                  "type" : "Today"
+               }, {
+                  "name" : "$WeeksSinceDose_unit",
+                  "type" : "ExpressionRef"
+               } ]
+            }
+         }, {
+            "name" : "InPopulation",
+            "context" : "Patient",
+            "accessLevel" : "Public",
+            "expression" : {
+               "type" : "And",
+               "operand" : [ {
+                  "type" : "And",
+                  "operand" : [ {
+                     "type" : "And",
+                     "operand" : [ {
+                        "name" : "MMR_Vaccine_OneDose",
+                        "type" : "ExpressionRef"
+                     }, {
+                        "name" : "AgeFirstMMRIn",
+                        "type" : "ExpressionRef"
+                     } ]
+                  }, {
+                     "name" : "CurrentAge",
+                     "type" : "ExpressionRef"
+                  } ]
+               }, {
+                  "type" : "GreaterOrEqual",
+                  "operand" : [ {
+                     "name" : "TimeSinceFirstDose",
+                     "type" : "ExpressionRef"
+                  }, {
+                     "name" : "$WeeksSinceDose",
+                     "type" : "ExpressionRef"
+                  } ]
+               } ]
+            }
+         }, {
+            "name" : "Recommendation1",
+            "context" : "Patient",
+            "accessLevel" : "Public",
+            "expression" : {
+               "type" : "If",
+               "condition" : {
+                  "name" : "InPopulation",
+                  "type" : "ExpressionRef"
+               },
+               "then" : {
+                  "valueType" : "{urn:hl7-org:elm-types:r1}String",
+                  "value" : "Administer 2nd dose MMR",
+                  "type" : "Literal"
+               },
+               "else" : {
+                  "asType" : "{urn:hl7-org:elm-types:r1}String",
+                  "type" : "As",
+                  "operand" : {
+                     "type" : "Null"
+                  }
+               }
+            }
+         } ]
       }
-    ],
-    "identifier": {
-      "id": "MMR5regular12months_4yrs_OneDoseOutOf12to15MonRecommendation",
-      "version": "1"
-    },
-    "schemaIdentifier": {
-      "id": "urn:hl7-org:elm",
-      "version": "r1"
-    },
-    "usings": {
-      "def": [
-        {
-          "localIdentifier": "System",
-          "uri": "urn:hl7-org:elm-types:r1"
-        },
-        {
-          "localIdentifier": "FHIR",
-          "uri": "http://hl7.org/fhir",
-          "version": "4.0.1"
-        },
-        {
-          "localIdentifier": "QUICK",
-          "uri": "http://hl7.org/fhir"
-        }
-      ]
-    },
-    "includes": {
-      "def": [
-        {
-          "localIdentifier": "Common",
-          "path": "MMR_Common_Library",
-          "version": "1"
-        },
-        {
-          "localIdentifier": "FHIRHelpers",
-          "path": "FHIRHelpers",
-          "version": "4.0.1"
-        }
-      ]
-    },
-    "parameters": {
-      "def": [
-        {
-          "name": "Imm",
-          "accessLevel": "Public",
-          "parameterTypeSpecifier": {
-            "type": "ListTypeSpecifier",
-            "elementType": {
-              "name": "{http://hl7.org/fhir}Immunization",
-              "type": "NamedTypeSpecifier"
-            }
-          }
-        }
-      ]
-    },
-    "contexts": {
-      "def": [
-        {
-          "name": "Patient"
-        }
-      ]
-    },
-    "statements": {
-      "def": [
-        {
-          "name": "Patient",
-          "context": "Patient",
-          "expression": {
-            "type": "SingletonFrom",
-            "operand": {
-              "dataType": "{http://hl7.org/fhir}Patient",
-              "templateId": "http://hl7.org/fhir/StructureDefinition/Patient",
-              "type": "Retrieve"
-            }
-          }
-        },
-        {
-          "name": "$Age1",
-          "context": "Patient",
-          "accessLevel": "Public",
-          "expression": {
-            "valueType": "{urn:hl7-org:elm-types:r1}Integer",
-            "value": "12",
-            "type": "Literal"
-          }
-        },
-        {
-          "name": "$Age1_unit",
-          "context": "Patient",
-          "accessLevel": "Public",
-          "expression": {
-            "valueType": "{urn:hl7-org:elm-types:r1}String",
-            "value": "month",
-            "type": "Literal"
-          }
-        },
-        {
-          "name": "$Age2",
-          "context": "Patient",
-          "accessLevel": "Public",
-          "expression": {
-            "valueType": "{urn:hl7-org:elm-types:r1}Integer",
-            "value": "4",
-            "type": "Literal"
-          }
-        },
-        {
-          "name": "$Age2_unit",
-          "context": "Patient",
-          "accessLevel": "Public",
-          "expression": {
-            "valueType": "{urn:hl7-org:elm-types:r1}String",
-            "value": "year",
-            "type": "Literal"
-          }
-        },
-        {
-          "name": "$Dose1AdminMinAge",
-          "context": "Patient",
-          "accessLevel": "Public",
-          "expression": {
-            "valueType": "{urn:hl7-org:elm-types:r1}Integer",
-            "value": "12",
-            "type": "Literal"
-          }
-        },
-        {
-          "name": "$Dose1AdminMinAge_unit",
-          "context": "Patient",
-          "accessLevel": "Public",
-          "expression": {
-            "valueType": "{urn:hl7-org:elm-types:r1}String",
-            "value": "month",
-            "type": "Literal"
-          }
-        },
-        {
-          "name": "$Dose1AdminMaxAge",
-          "context": "Patient",
-          "accessLevel": "Public",
-          "expression": {
-            "valueType": "{urn:hl7-org:elm-types:r1}Integer",
-            "value": "15",
-            "type": "Literal"
-          }
-        },
-        {
-          "name": "$Dose1AdminMaxAge_unit",
-          "context": "Patient",
-          "accessLevel": "Public",
-          "expression": {
-            "valueType": "{urn:hl7-org:elm-types:r1}String",
-            "value": "month",
-            "type": "Literal"
-          }
-        },
-        {
-          "name": "$WeeksSinceDose",
-          "context": "Patient",
-          "accessLevel": "Public",
-          "expression": {
-            "valueType": "{urn:hl7-org:elm-types:r1}Integer",
-            "value": "4",
-            "type": "Literal"
-          }
-        },
-        {
-          "name": "$WeeksSinceDose_unit",
-          "context": "Patient",
-          "accessLevel": "Public",
-          "expression": {
-            "valueType": "{urn:hl7-org:elm-types:r1}String",
-            "value": "week",
-            "type": "Literal"
-          }
-        },
-        {
-          "name": "VaccineName",
-          "context": "Patient",
-          "accessLevel": "Public",
-          "expression": {
-            "valueType": "{urn:hl7-org:elm-types:r1}String",
-            "value": "Measles, Mumps, and Rubella Virus Vaccine",
-            "type": "Literal"
-          }
-        },
-        {
-          "name": "CurrentAge",
-          "context": "Patient",
-          "accessLevel": "Public",
-          "expression": {
-            "type": "And",
-            "operand": [
-              {
-                "type": "GreaterOrEqual",
-                "signature": [
-                  {
-                    "name": "{urn:hl7-org:elm-types:r1}Integer",
-                    "type": "NamedTypeSpecifier"
-                  },
-                  {
-                    "name": "{urn:hl7-org:elm-types:r1}Integer",
-                    "type": "NamedTypeSpecifier"
-                  }
-                ],
-                "operand": [
-                  {
-                    "name": "GetAge",
-                    "libraryName": "Common",
-                    "type": "FunctionRef",
-                    "operand": [
-                      {
-                        "name": "$Age1_unit",
-                        "type": "ExpressionRef"
-                      }
-                    ]
-                  },
-                  {
-                    "name": "$Age1",
-                    "type": "ExpressionRef"
-                  }
-                ]
-              },
-              {
-                "type": "Less",
-                "signature": [
-                  {
-                    "name": "{urn:hl7-org:elm-types:r1}Integer",
-                    "type": "NamedTypeSpecifier"
-                  },
-                  {
-                    "name": "{urn:hl7-org:elm-types:r1}Integer",
-                    "type": "NamedTypeSpecifier"
-                  }
-                ],
-                "operand": [
-                  {
-                    "name": "GetAge",
-                    "libraryName": "Common",
-                    "type": "FunctionRef",
-                    "operand": [
-                      {
-                        "name": "$Age2_unit",
-                        "type": "ExpressionRef"
-                      }
-                    ]
-                  },
-                  {
-                    "name": "$Age2",
-                    "type": "ExpressionRef"
-                  }
-                ]
-              }
-            ]
-          }
-        },
-        {
-          "name": "MMR_Vaccine_OneDose",
-          "context": "Patient",
-          "accessLevel": "Public",
-          "expression": {
-            "type": "Equal",
-            "signature": [
-              {
-                "name": "{urn:hl7-org:elm-types:r1}Integer",
-                "type": "NamedTypeSpecifier"
-              },
-              {
-                "name": "{urn:hl7-org:elm-types:r1}Integer",
-                "type": "NamedTypeSpecifier"
-              }
-            ],
-            "operand": [
-              {
-                "type": "Count",
-                "source": {
-                  "name": "FindValidVaccines",
-                  "libraryName": "Common",
-                  "type": "FunctionRef",
-                  "operand": [
-                    {
-                      "name": "Imm",
-                      "type": "ParameterRef"
-                    }
-                  ]
-                }
-              },
-              {
-                "valueType": "{urn:hl7-org:elm-types:r1}Integer",
-                "value": "1",
-                "type": "Literal"
-              }
-            ]
-          }
-        },
-        {
-          "name": "MMRVaccineDate",
-          "context": "Patient",
-          "accessLevel": "Public",
-          "type": "FunctionDef",
-          "expression": {
-            "type": "Query",
-            "source": [
-              {
-                "alias": "TemDate",
-                "expression": {
-                  "name": "Imm",
-                  "type": "ParameterRef"
-                }
-              }
-            ],
-            "relationship": [],
-            "where": {
-              "type": "In",
-              "operand": [
-                {
-                  "name": "ToCode",
-                  "libraryName": "FHIRHelpers",
-                  "type": "FunctionRef",
-                  "operand": [
-                    {
-                      "type": "SingletonFrom",
-                      "operand": {
-                        "name": "FindValidCodes",
-                        "libraryName": "Common",
-                        "type": "FunctionRef",
-                        "operand": [
-                          {
-                            "path": "coding",
-                            "type": "Property",
-                            "source": {
-                              "path": "vaccineCode",
-                              "scope": "TemDate",
-                              "type": "Property"
-                            }
-                          }
-                        ]
-                      }
-                    }
-                  ]
-                },
-                {
-                  "name": "MMR_All_Valuesets",
-                  "libraryName": "Common",
-                  "type": "ExpressionRef"
-                }
-              ]
-            },
-            "return": {
-              "expression": {
-                "type": "Tuple",
-                "element": [
-                  {
-                    "name": "Date",
-                    "value": {
-                      "type": "Date",
-                      "year": {
-                        "precision": "Year",
-                        "type": "DateTimeComponentFrom",
-                        "signature": [
-                          {
-                            "name": "{urn:hl7-org:elm-types:r1}DateTime",
-                            "type": "NamedTypeSpecifier"
-                          }
-                        ],
-                        "operand": {
-                          "asType": "{urn:hl7-org:elm-types:r1}DateTime",
-                          "type": "As",
-                          "operand": {
-                            "path": "value",
-                            "type": "Property",
-                            "source": {
-                              "path": "occurrence",
-                              "scope": "TemDate",
-                              "type": "Property"
-                            }
-                          }
-                        }
-                      },
-                      "month": {
-                        "precision": "Month",
-                        "type": "DateTimeComponentFrom",
-                        "signature": [
-                          {
-                            "name": "{urn:hl7-org:elm-types:r1}DateTime",
-                            "type": "NamedTypeSpecifier"
-                          }
-                        ],
-                        "operand": {
-                          "asType": "{urn:hl7-org:elm-types:r1}DateTime",
-                          "type": "As",
-                          "operand": {
-                            "path": "value",
-                            "type": "Property",
-                            "source": {
-                              "path": "occurrence",
-                              "scope": "TemDate",
-                              "type": "Property"
-                            }
-                          }
-                        }
-                      },
-                      "day": {
-                        "precision": "Day",
-                        "type": "DateTimeComponentFrom",
-                        "signature": [
-                          {
-                            "name": "{urn:hl7-org:elm-types:r1}DateTime",
-                            "type": "NamedTypeSpecifier"
-                          }
-                        ],
-                        "operand": {
-                          "asType": "{urn:hl7-org:elm-types:r1}DateTime",
-                          "type": "As",
-                          "operand": {
-                            "path": "value",
-                            "type": "Property",
-                            "source": {
-                              "path": "occurrence",
-                              "scope": "TemDate",
-                              "type": "Property"
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
-                ]
-              }
-            },
-            "sort": {
-              "by": [
-                {
-                  "direction": "asc",
-                  "path": "Date",
-                  "type": "ByColumn"
-                }
-              ]
-            }
-          },
-          "operand": [
-            {
-              "name": "Immunizations",
-              "operandTypeSpecifier": {
-                "type": "ListTypeSpecifier",
-                "elementType": {
-                  "name": "{http://hl7.org/fhir}Immunization",
-                  "type": "NamedTypeSpecifier"
-                }
-              }
-            }
-          ]
-        },
-        {
-          "name": "PrevDoseDate",
-          "context": "Patient",
-          "accessLevel": "Public",
-          "expression": {
-            "path": "Date",
-            "type": "Property",
-            "source": {
-              "type": "Indexer",
-              "signature": [
-                {
-                  "type": "ListTypeSpecifier",
-                  "elementType": {
-                    "type": "TupleTypeSpecifier",
-                    "element": [
-                      {
-                        "name": "Date",
-                        "elementType": {
-                          "name": "{urn:hl7-org:elm-types:r1}Date",
-                          "type": "NamedTypeSpecifier"
-                        }
-                      }
-                    ]
-                  }
-                },
-                {
-                  "name": "{urn:hl7-org:elm-types:r1}Integer",
-                  "type": "NamedTypeSpecifier"
-                }
-              ],
-              "operand": [
-                {
-                  "name": "MMRVaccineDate",
-                  "type": "FunctionRef",
-                  "operand": [
-                    {
-                      "name": "Imm",
-                      "type": "ParameterRef"
-                    }
-                  ]
-                },
-                {
-                  "valueType": "{urn:hl7-org:elm-types:r1}Integer",
-                  "value": "0",
-                  "type": "Literal"
-                }
-              ]
-            }
-          }
-        },
-        {
-          "name": "PatientBirthDate",
-          "context": "Patient",
-          "accessLevel": "Public",
-          "expression": {
-            "type": "ToDate",
-            "signature": [
-              {
-                "name": "{urn:hl7-org:elm-types:r1}DateTime",
-                "type": "NamedTypeSpecifier"
-              }
-            ],
-            "operand": {
-              "type": "ToDateTime",
-              "signature": [
-                {
-                  "name": "{urn:hl7-org:elm-types:r1}Date",
-                  "type": "NamedTypeSpecifier"
-                }
-              ],
-              "operand": {
-                "path": "value",
-                "type": "Property",
-                "source": {
-                  "path": "birthDate",
-                  "type": "Property",
-                  "source": {
-                    "name": "Patient",
-                    "type": "ExpressionRef"
-                  }
-                }
-              }
-            }
-          }
-        },
-        {
-          "name": "AgeFirstDoseMonths",
-          "context": "Patient",
-          "accessLevel": "Public",
-          "expression": {
-            "precision": "Month",
-            "type": "DurationBetween",
-            "signature": [
-              {
-                "name": "{urn:hl7-org:elm-types:r1}Date",
-                "type": "NamedTypeSpecifier"
-              },
-              {
-                "name": "{urn:hl7-org:elm-types:r1}Date",
-                "type": "NamedTypeSpecifier"
-              }
-            ],
-            "operand": [
-              {
-                "name": "ToDate",
-                "libraryName": "FHIRHelpers",
-                "type": "FunctionRef",
-                "operand": [
-                  {
-                    "path": "birthDate",
-                    "type": "Property",
-                    "source": {
-                      "name": "Patient",
-                      "type": "ExpressionRef"
-                    }
-                  }
-                ]
-              },
-              {
-                "name": "PrevDoseDate",
-                "type": "ExpressionRef"
-              }
-            ]
-          }
-        },
-        {
-          "name": "DiffInMinAdminUnit",
-          "context": "Patient",
-          "accessLevel": "Public",
-          "expression": {
-            "type": "Abs",
-            "signature": [
-              {
-                "name": "{urn:hl7-org:elm-types:r1}Integer",
-                "type": "NamedTypeSpecifier"
-              }
-            ],
-            "operand": {
-              "name": "GetDifferenceInUnit",
-              "libraryName": "Common",
-              "type": "FunctionRef",
-              "operand": [
-                {
-                  "name": "PrevDoseDate",
-                  "type": "ExpressionRef"
-                },
-                {
-                  "name": "PatientBirthDate",
-                  "type": "ExpressionRef"
-                },
-                {
-                  "name": "$Dose1AdminMinAge_unit",
-                  "type": "ExpressionRef"
-                }
-              ]
-            }
-          }
-        },
-        {
-          "name": "DiffInMaxAdminUnit",
-          "context": "Patient",
-          "accessLevel": "Public",
-          "expression": {
-            "type": "Abs",
-            "signature": [
-              {
-                "name": "{urn:hl7-org:elm-types:r1}Integer",
-                "type": "NamedTypeSpecifier"
-              }
-            ],
-            "operand": {
-              "name": "GetDifferenceInUnit",
-              "libraryName": "Common",
-              "type": "FunctionRef",
-              "operand": [
-                {
-                  "name": "PrevDoseDate",
-                  "type": "ExpressionRef"
-                },
-                {
-                  "name": "PatientBirthDate",
-                  "type": "ExpressionRef"
-                },
-                {
-                  "name": "$Dose1AdminMaxAge_unit",
-                  "type": "ExpressionRef"
-                }
-              ]
-            }
-          }
-        },
-        {
-          "name": "AgeFirstMMRIn",
-          "context": "Patient",
-          "accessLevel": "Public",
-          "expression": {
-            "type": "And",
-            "operand": [
-              {
-                "type": "GreaterOrEqual",
-                "signature": [
-                  {
-                    "name": "{urn:hl7-org:elm-types:r1}Integer",
-                    "type": "NamedTypeSpecifier"
-                  },
-                  {
-                    "name": "{urn:hl7-org:elm-types:r1}Integer",
-                    "type": "NamedTypeSpecifier"
-                  }
-                ],
-                "operand": [
-                  {
-                    "name": "DiffInMinAdminUnit",
-                    "type": "ExpressionRef"
-                  },
-                  {
-                    "name": "$Dose1AdminMinAge",
-                    "type": "ExpressionRef"
-                  }
-                ]
-              },
-              {
-                "type": "LessOrEqual",
-                "signature": [
-                  {
-                    "name": "{urn:hl7-org:elm-types:r1}Integer",
-                    "type": "NamedTypeSpecifier"
-                  },
-                  {
-                    "name": "{urn:hl7-org:elm-types:r1}Integer",
-                    "type": "NamedTypeSpecifier"
-                  }
-                ],
-                "operand": [
-                  {
-                    "name": "DiffInMaxAdminUnit",
-                    "type": "ExpressionRef"
-                  },
-                  {
-                    "name": "$Dose1AdminMaxAge",
-                    "type": "ExpressionRef"
-                  }
-                ]
-              }
-            ]
-          }
-        },
-        {
-          "name": "TimeSinceFirstDose",
-          "context": "Patient",
-          "accessLevel": "Public",
-          "expression": {
-            "name": "GetDifferenceInUnit",
-            "libraryName": "Common",
-            "type": "FunctionRef",
-            "operand": [
-              {
-                "path": "Date",
-                "type": "Property",
-                "source": {
-                  "type": "Indexer",
-                  "signature": [
-                    {
-                      "type": "ListTypeSpecifier",
-                      "elementType": {
-                        "type": "TupleTypeSpecifier",
-                        "element": [
-                          {
-                            "name": "Date",
-                            "elementType": {
-                              "name": "{urn:hl7-org:elm-types:r1}Date",
-                              "type": "NamedTypeSpecifier"
-                            }
-                          }
-                        ]
-                      }
-                    },
-                    {
-                      "name": "{urn:hl7-org:elm-types:r1}Integer",
-                      "type": "NamedTypeSpecifier"
-                    }
-                  ],
-                  "operand": [
-                    {
-                      "name": "MMRVaccineDate",
-                      "type": "FunctionRef",
-                      "operand": [
-                        {
-                          "name": "Imm",
-                          "type": "ParameterRef"
-                        }
-                      ]
-                    },
-                    {
-                      "valueType": "{urn:hl7-org:elm-types:r1}Integer",
-                      "value": "0",
-                      "type": "Literal"
-                    }
-                  ]
-                }
-              },
-              {
-                "type": "Today"
-              },
-              {
-                "name": "$WeeksSinceDose_unit",
-                "type": "ExpressionRef"
-              }
-            ]
-          }
-        },
-        {
-          "name": "InPopulation",
-          "context": "Patient",
-          "accessLevel": "Public",
-          "expression": {
-            "type": "And",
-            "operand": [
-              {
-                "type": "And",
-                "operand": [
-                  {
-                    "type": "And",
-                    "operand": [
-                      {
-                        "name": "MMR_Vaccine_OneDose",
-                        "type": "ExpressionRef"
-                      },
-                      {
-                        "name": "AgeFirstMMRIn",
-                        "type": "ExpressionRef"
-                      }
-                    ]
-                  },
-                  {
-                    "name": "CurrentAge",
-                    "type": "ExpressionRef"
-                  }
-                ]
-              },
-              {
-                "type": "GreaterOrEqual",
-                "signature": [
-                  {
-                    "name": "{urn:hl7-org:elm-types:r1}Integer",
-                    "type": "NamedTypeSpecifier"
-                  },
-                  {
-                    "name": "{urn:hl7-org:elm-types:r1}Integer",
-                    "type": "NamedTypeSpecifier"
-                  }
-                ],
-                "operand": [
-                  {
-                    "name": "TimeSinceFirstDose",
-                    "type": "ExpressionRef"
-                  },
-                  {
-                    "name": "$WeeksSinceDose",
-                    "type": "ExpressionRef"
-                  }
-                ]
-              }
-            ]
-          }
-        },
-        {
-          "name": "Recommendation1",
-          "context": "Patient",
-          "accessLevel": "Public",
-          "expression": {
-            "type": "If",
-            "condition": {
-              "name": "InPopulation",
-              "type": "ExpressionRef"
-            },
-            "then": {
-              "valueType": "{urn:hl7-org:elm-types:r1}String",
-              "value": "Administer 2nd dose MMR",
-              "type": "Literal"
-            },
-            "else": {
-              "asType": "{urn:hl7-org:elm-types:r1}String",
-              "type": "As",
-              "operand": {
-                "type": "Null"
-              }
-            }
-          }
-        }
-      ]
-    }
-  }
+   }
 }
+
