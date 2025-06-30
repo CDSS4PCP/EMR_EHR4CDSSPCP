@@ -1,19 +1,22 @@
 openapi: 3.1.0
 info:
-  title: CDSS API
+  title: CDSS Rule API
   description: API for managing and retrieving Clinical Decision Support System (CDSS) rules.
   version: 1.0.0
 paths:
+  #  ELM Endpoints
   /openmrs/cdss/elm-rule/idOrName/{ruleId}.form:
     get:
-      summary: Retrieve an ELM rule by ID or name.
+      tags:
+        - ELM
+      summary: Retrieve an ELM rule by Id or name.
       parameters:
         - name: ruleId
           in: path
           required: true
           schema:
             type: string
-          description: The ID or name of the rule to retrieve. This will attempt to find the rule by it's rule id first. If none are found, ruleId parameter will be treated as a name, and will attempt to find the rule by name.
+          description: The Id or name of the rule to retrieve. This will attempt to find the rule by its rule id first. If none are found, ruleId parameter will be treated as a name, and will attempt to find the rule by name.
         - name: version
           in: query
           required: false
@@ -29,17 +32,23 @@ paths:
                 type: object
         404:
           description: Rule not found.
+        401:
+          description: Authentication required or authentication failed
+        500:
+          description: Internal error encountered during processing.
 
   /openmrs/cdss/elm-rule/id/{ruleId}.form:
     get:
-      summary: Retrieve an ELM rule by ID.
+      tags:
+        - ELM
+      summary: Retrieve an ELM rule by Id.
       parameters:
         - name: ruleId
           in: path
           required: true
           schema:
             type: string
-          description: The ID of the rule to retrieve.
+          description: The Id of the rule to retrieve.
       responses:
         200:
           description: Successfully retrieved the ELM rule.
@@ -50,16 +59,71 @@ paths:
         404:
           description: Rule not found.
 
+        401:
+          description: Authentication required or authentication failed
+
+        500:
+          description: Internal error encountered during processing.
+
+  /openmrs/cdss/elm-rule/name/{libraryName}.form:
+    get:
+      tags:
+        - ELM
+      summary: Retrieve ELM rule by library name
+      description: |
+        Retrieves an ELM rule by its library name, 
+        optionally considering the version. If no version is specified, returns 
+        the latest version of the rule.
+      operationId: getElmRuleByName
+      parameters:
+        - name: libraryName
+          in: path
+          description: The name of the library to retrieve the rule from
+          required: true
+          schema:
+            type: string
+        - name: version
+          in: query
+          description: The version of the rule (optional). If not provided, returns the latest version.
+          required: false
+          schema:
+            type: string
+      responses:
+        200:
+          description: Rule found and returned successfully
+          content:
+            application/json:
+              schema:
+                type: string
+                description: ELM rule content in JSON format
+        404:
+          description: Rule not found
+          content:
+            application/json:
+              schema:
+                type: string
+                description: Error message indicating the rule was not found
+        401:
+          description: Authentication required or authentication failed
+
+        500:
+          description: Internal error encountered during processing.
+
+
+
+  #  CQL Endpoints
   /openmrs/cdss/cql-rule/id/{ruleId}.form:
     get:
-      summary: Retrieve a CQL rule by ID.
+      tags:
+        - CQL
+      summary: Retrieve a CQL rule by Id.
       parameters:
         - name: ruleId
           in: path
           required: true
           schema:
             type: string
-          description: The ID of the rule to retrieve.
+          description: The Id of the rule to retrieve.
       responses:
         200:
           description: Successfully retrieved the CQL rule.
@@ -68,12 +132,115 @@ paths:
               schema:
                 type: string
         404:
+          description: Rule not found
+        401:
+          description: Authentication required or authentication failed
+        500:
+          description: Internal error encountered during processing.
+
+  /openmrs/cdss/cql-rule/name/{libraryName}.form:
+    get:
+      tags:
+        - CQL
+      summary: Retrieve CQL rule by library name
+      description: |
+        Retrieves an CQL rule by its library name, 
+        optionally considering the version. If no version is specified, returns 
+        the latest version of the rule.
+      operationId: getCqlRuleByName
+      parameters:
+        - name: libraryName
+          in: path
+          description: The name of the library to retrieve the rule from
+          required: true
+          schema:
+            type: string
+        - name: version
+          in: query
+          description: The version of the rule (optional). If not provided, returns the latest version.
+          required: false
+          schema:
+            type: string
+      responses:
+        200:
+          description: Rule found and returned successfully
+          content:
+            text/plain:
+              schema:
+                type: string
+                description: CQL rule content
+        404:
+          description: Rule not found
+          content:
+            application/json:
+              schema:
+                type: string
+                description: Error message indicating the rule was not found
+        401:
+          description: Authentication required or authentication failed
+
+        500:
+          description: Internal error encountered during processing.
+
+  /openmrs/cdss/cql-rule/idOrName/{ruleId}.form:
+    get:
+      tags:
+        - CQL
+      summary: Retrieve an CQL rule by Id or name.
+      parameters:
+        - name: ruleId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The Id or name of the rule to retrieve. This will attempt to find the rule by its rule id first. If none are found, ruleId parameter will be treated as a name, and will attempt to find the rule by name.
+        - name: version
+          in: query
+          required: false
+          schema:
+            type: string
+          description: The version of the rule.
+      responses:
+        200:
+          description: Successfully retrieved the ELM rule.
+          content:
+            text/plain:
+              schema:
+                type: string
+        401:
+          description: Authentication required or authentication failed
+        404:
           description: Rule not found.
+        500:
+          description: Internal error encountered during processing.
+
+
+
+  #  General Endpoints
+  /openmrs/cdss/rule-manifest.form:
+    get:
+      summary: Retrieve the manifest (metadata) file for all rules
+      responses:
+        200:
+          description: Manifest file successfully read and returned
+          content:
+            application/json:
+              schema:
+                type: object
+        401:
+          description: Authentication required or authentication failed
+        500:
+          description: Internal error encountered during processing.
 
   /openmrs/cdss/rule.form:
     get:
       summary: Retrieve a list of rules based on criteria.
+      description: |
+        Retrieves a list of rules based on specified criteria. Allows filtering by 
+        role, vaccine, enabled status, and controlling the output format to include 
+        names and/or versions.
       parameters:
+
         - name: allRules
           in: query
           required: false
@@ -101,6 +268,19 @@ paths:
           schema:
             type: boolean
           description: Include rule versions in the response.
+        - name: vaccine
+          in: query
+          description: Name of the vaccine to filter rules by
+          required: false
+          schema:
+            type: string
+        - name: noVaccine
+          in: query
+          description: Flag to include rules that are not associated with any vaccine
+          required: false
+          schema:
+            type: boolean
+
       responses:
         200:
           description: Successfully retrieved rules.
@@ -110,17 +290,79 @@ paths:
                 type: array
                 items:
                   type: string
+                description: List of rules based on the specified projection (Ids, names, versions, or name-version combinations)
 
+        401:
+          description: Authentication required or authentication failed
+
+        500:
+          description: Internal error encountered during processing.
+
+  /openmrs/cdss/vaccines.form:
+    get:
+      summary: Retrieve list of vaccines
+      description: Retrieves a list of vaccines that are mentioned in the rule manifest.
+      operationId: getVaccines
+      responses:
+        200:
+          description: List of vaccines retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                description: List of vaccine names
+        401:
+          description: Authentication required or authentication failed
+        500:
+          description: Internal error encountered during processing.
+
+  /openmrs/cdss/rule-archive.form:
+    get:
+      summary: Get archived rules
+      description: Retrieves a list of archived rules. Returns a list of Rule Ids
+      operationId: getArchivedRules
+      responses:
+        200:
+          description: Successfully retrieved archived rules
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                  description: Rule Id
+
+        404:
+          description: Rule not found
+          content:
+            application/json:
+              schema:
+                type: string
+                description: Error message indicating the rule was not found
+        401:
+          description: Authentication required or authentication failed
+        500:
+          description: Internal error encountered during processing.
+
+
+  #  Action Endpoints
   /openmrs/cdss/enable-rule/id/{ruleId}.form:
     post:
-      summary: Enable a rule by ID.
+      tags:
+        - Action
+      summary: Enable a rule by Id.
+      description: |
+        Enables a rule by its id.
+      operationId: enableRuleById
       parameters:
         - name: ruleId
           in: path
           required: true
           schema:
             type: string
-          description: The ID of the rule to enable.
+          description: The Id of the rule to enable.
       responses:
         200:
           description: Rule enabled successfully.
@@ -128,17 +370,66 @@ paths:
             application/json:
               schema:
                 type: boolean
+        500:
+          description: Internal error encountered during processing.
+
+  /openmrs/cdss/enable-rule/name/{libraryName}.form:
+    post:
+      tags:
+        - Action
+      summary: Enable rule by library name
+      description: |
+        Enables a rule by its library name, optionally considering the version.
+        If no version is specified, enables the latest version of the rule.
+      operationId: enableRuleByName
+      parameters:
+        - name: libraryName
+          in: path
+          description: The name of the library to enable the rule from
+          required: true
+          schema:
+            type: string
+        - name: version
+          in: query
+          description: The version of the rule (optional). If not provided, enables the latest version.
+          required: false
+          schema:
+            type: string
+      responses:
+        200:
+          description: Rule enabled successfully
+          content:
+            application/json:
+              schema:
+                type: string
+                description: Rule Id of the enabled rule
+        404:
+          description: Rule not found
+          content:
+            application/json:
+              schema:
+                type: string
+                description: Error message indicating the rule was not found
+        401:
+          description: Authentication required or authentication failed
+        500:
+          description: Internal error encountered during processing.
 
   /openmrs/cdss/disable-rule/id/{ruleId}.form:
     post:
-      summary: Disable a rule by ID.
+      tags:
+        - Action
+      summary: Disable a rule by Id.
+      description: |
+        Disable a rule by its id.
+      operationId: disableRuleById
       parameters:
         - name: ruleId
           in: path
           required: true
           schema:
-            type: boolean
-          description: The ID of the rule to disable.
+            type: string
+          description: The Id of the rule to disable.
       responses:
         200:
           description: Rule disabled successfully.
@@ -146,9 +437,132 @@ paths:
             application/json:
               schema:
                 type: boolean
+        500:
+          description: Internal error encountered during processing.
+
+  /openmrs/cdss/disable-rule/name/{libraryName}.form:
+    post:
+      tags:
+        - Action
+      summary: Disable rule by library name
+      description: |
+        Disable a rule by its library name, optionally considering the version.
+        If no version is specified, disables the latest version of the rule.
+      operationId: disableRuleByName
+      parameters:
+        - name: libraryName
+          in: path
+          description: The name of the library to disable the rule from
+          required: true
+          schema:
+            type: string
+        - name: version
+          in: query
+          description: The version of the rule (optional). If not provided, disables the latest version.
+          required: false
+          schema:
+            type: string
+      responses:
+        200:
+          description: Rule disabled successfully
+          content:
+            application/json:
+              schema:
+                type: string
+                description: Rule Id of the enabled rule
+        404:
+          description: Rule not found
+          content:
+            application/json:
+              schema:
+                type: string
+                description: Error message indicating the rule was not found
+        401:
+          description: Authentication required or authentication failed
+        500:
+          description: Internal error encountered during processing.
+
+
+  /openmrs/cdss/archive-rule/id/{ruleId}.form:
+    post:
+      tags:
+        - Action
+      summary: Archive rule by Id
+      description: |
+        Archives (disables) a rule by its Id. The rule will be disabled and 
+        moved to an archived state.
+      operationId: archiveRuleById
+      parameters:
+        - name: ruleId
+          in: path
+          description: The Id of the rule to archive
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Rule archived successfully
+          content:
+            application/json:
+              schema:
+                type: string
+                description: Rule Id of the archived rule
+        404:
+          description: Rule not found
+          content:
+            application/json:
+              schema:
+                type: string
+                description: Error message indicating the rule was not found
+        401:
+          description: Authentication required or authentication failed
+        500:
+          description: Internal error encountered during processing.
+
+  /openmrs/cdss/restore-rule/id/{ruleId}.form:
+    post:
+      tags:
+        - Action
+      summary: Restore an archived rule by Id
+      description: |
+        Restores an archived rule by moving it to a usable state
+      operationId: restoreRuleById
+      parameters:
+        - name: ruleId
+          in: path
+          description: The Id of the rule to restore
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Rule archived successfully
+          content:
+            application/json:
+              schema:
+                type: string
+                description: Rule Id of the restored rule
+        404:
+          description: Rule not found
+          content:
+            application/json:
+              schema:
+                type: string
+                description: Error message indicating the rule was not found
+        401:
+          description: Authentication required or authentication failed
+        500:
+          description: Internal error encountered during processing.
+
+
+
+
+
 
   /openmrs/cdss/modify-rule.form:
     post:
+      tags:
+        - Action
       summary: Modify an existing rule.
       requestBody:
         required: true
@@ -158,9 +572,9 @@ paths:
               $ref: '#/components/schemas/ModifyRuleRequest'
             example:
               {
-                rule: { id: "fe69e61e-3b51-4fe6-a9e6-1e3b511fe6ba", libraryName: "LibraryOne", version: "1.0.0", content: "bGlicmFyeSBSdWxlT25lCgp1c2luZyBGSElSIHZlcnNpb24gJzQuMC4xJwoKaW5jbHVkZSBGSElSSGVscGVycyB2ZXJzaW9uICc0LjAuMScKCmNvbnRleHQgUGF0aWVudAoKZGVmaW5lICIkTWluaW11bUFnZSI6IDEyCgpkZWZpbmUgSW5Qb3B1bGF0aW9uOiBBZ2VJbk1vbnRocyhQYXRpZW50LmJpcnRoZGF0ZSkgPiAiJE1pbmltdW1BZ2Ui" },
+                rule: { id: "fe69e61e-3b51-4fe6-a9e6-1e3b511fe6ba", libraryName: "LibraryOne", version: "1.0.0", content: "bGlicmFyeSBSdWxlT25lCgp1c2luZyBGSElSIHZlcnNpb24gJzQuMC4xJwoKaW5jbHVkZSBGSElSSGVscGVycyB2ZXJzaW9uICc0LjAuMScKCmNvbnRleHQgUGF0aWVudAoKZGVmaW5lICIkTWluaW11bUFnZSI6IdEyCgpkZWZpbmUgSW5Qb3B1bGF0aW9uOiBBZ2VJbk1vbnRocyhQYXRpZW50LmJpcnRoZGF0ZSkgPiAiJE1pbmltdW1BZ2Ui" },
                 params: { "$MinimumAge": { type: "Integer", value: 18 } },
-                libraries: { "LibraryOne": { id: "7ff03626-a2a8-48fc-b036-26a2a898fcaf", libraryName: "LibraryOne", version: "1.0.0", content: "bGlicmFyeSBMaWJyYXJ5T25lCgp1c2luZyBGSElSIHZlcnNpb24gJzQuMC4xJwoKaW5jbHVkZSBGSElSSGVscGVycyB2ZXJzaW9uICc0LjAuMScKCmNvbnRleHQgUGF0aWVudAoKZGVmaW5lIGZ1bmN0aW9uIEdldEFnZSh1bml0IFN0cmluZyk6CiAgICBpZiB1bml0ID0gJ3dlZWsnIHRoZW4KICAgICAgICBBZ2VJbldlZWtzKCkKICAgIGVsc2UgaWYgdW5pdCA9ICdtb250aCcgdGhlbgogICAgICAgIEFnZUluTW9udGhzKCkKICAgIGVsc2UgaWYgdW5pdCA9ICd5ZWFyJyB0aGVuCiAgICAgICAgQWdlSW5ZZWFycygpCiAgICBlbHNlCiAgICAgICAgbnVsbA" } }
+                libraries: { "LibraryOne": { id: "7ff03626-a2a8-48fc-b036-26a2a898fcaf", libraryName: "LibraryOne", version: "1.0.0", content: "bGlicmFyeSBMaWJyYXJ5T25lCgp1c2luZyBGSElSIHZlcnNpb24gJzQuMC4xJwoKaW5jbHVkZSBGSElSSGVscGVycyB2ZXJzaW9uICc0LjAuMScKCmNvbnRleHQgUGF0aWVudAoKZGVmaW5lIGZ1bmN0aW9uIEdldEFnZSh1bml0IFN0cmluZyk6CiAgICBpZiB1bml0Id0gJ3dlZWsnIHRoZW4KICAgICAgICBBZ2VJbldlZWtzKCkKICAgIGVsc2UgaWYgdW5pdCA9ICdtb250aCcgdGhlbgogICAgICAgIEFnZUluTW9udGhzKCkKICAgIGVsc2UgaWYgdW5pdCA9ICd5ZWFyJyB0aGVuCiAgICAgICAgQWdlSW5ZZWFycygpCiAgICBlbHNlCiAgICAgICAgbnVsbA" } }
               }
 
       responses:
@@ -171,21 +585,56 @@ paths:
               schema:
                 type: string
         500:
-          description: Server error while modifying the rule
-
-
-  /openmrs/cdss/rule-manifest.form:
-    get:
-      summary: Retrieve the manifest (metadata) file for all rules
+          description: Internal error encountered during processing.
+  /create-rule.form:
+    post:
+      tags:
+        - Action
+      summary: Create a new rule
+      description: Creates a new rule based on the provided request body containing rule descriptor and parameters
+      operationId: createRule
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateRuleRequest'
+            example:
+              libraryName: "covid-vaccine-eligibility"
+              libraryVersion: "1.0.0"
+              description: "Rule to determine COVId vaccine eligibility"
+              ruleRole: "rule"
+              vaccine: "COVId-19"
+              enabled: true
+              cql: "bGlicmFyeSBDb3ZpZFZhY2NpbmVFbGlnaWJpbGl0eSB2ZXJzaW9uICcxLjAuMCc="
+              params:
+                minAge:
+                  type: "Integer"
+                  value: 18
+                  default: 18
+                  allowedValues: [ 16, 18, 21, 65 ]
       responses:
-        200:
-          description: Manifest file successfully read and returned
+        '201':
+          description: Rule successfully created
           content:
             application/json:
               schema:
-                type: object
+                type: string
+                description: The Id of the newly created rule
+                example: "rule-12345-abc"
+        '400':
+          description: Bad request - unable to create rule
+          content:
+            application/json:
+              schema:
+                type: string
+
+        401:
+          description: Authentication required or authentication failed
+
         500:
-          description: Server error while reading the manifest file
+          description: Internal error encountered during processing.
+
 
 
 components:
@@ -204,7 +653,7 @@ components:
           type: object
           description: The current value of the parameter. Must be of the type specified under the "type" property
         allowedValues:
-          type: array
+          type: object
           items:
             type: object
           description: The allowed values for the parameter. Must be of the type specified under the "type" property
@@ -213,6 +662,8 @@ components:
           description: The default value of the parameter. Must be of the type specified under the "type" property
       required:
         - type
+        - value
+
     ModifyRuleRequest:
       type: "object"
       properties:
@@ -220,14 +671,24 @@ components:
           $ref: '#/components/schemas/CqlRule'
           description: Rule to be modified
         params:
-          type: "string"
+          type: "object"
+          description: A dictionary of parameter changes
           additionalProperties:
             $ref: '#/components/schemas/ParamDescriptor'
         libraries:
-          type: "string"
+          type: "object"
           additionalProperties:
             type: "object"
             $ref: "#/components/schemas/CqlRule"
+        newLibraryName:
+          type: "string"
+          description: Name of the library after it is modified
+        newLibraryVersion:
+          type: "string"
+          description: Version of the library after it is modified
+      required:
+        - rule
+        - params
 
     CqlRule:
       type: "object"
@@ -240,7 +701,7 @@ components:
           description: CQL rule library name
         version:
           type: "string"
-          description: CQL rule library version
+          description: CQL rule library version. Must follow SemVer format (https://semver.org/)
         content:
           type: "string"
           description: Base64 encoded CQL content
@@ -248,6 +709,49 @@ components:
         - id
         - libraryName
         - content
+
+    CreateRuleRequest:
+      type: "object"
+      properties:
+        libraryName:
+          type: "string"
+          description: CQL rule library name
+        libraryVersion:
+          type: "string"
+          description: CQL rule library version. Must follow SemVer format (https://semver.org/)
+        description:
+          type: "string"
+          description: Description or purpose for the rule
+        ruleRole:
+          type: "string"
+          description: The role that this rules serves, whether it an executable rule, or just a supporting library
+          enum:
+            - "rule"
+            - "support"
+        vaccine:
+          type: "string"
+          description: The name of the vaccine that this rule is for
+        enabled:
+          type: "boolean"
+          description: Whether this rule should be enabled by default
+        cql:
+          type: "string"
+          description: Base64 encoded CQL content
+        params:
+          type: "object"
+          additionalProperties:
+            $ref: '#/components/schemas/ParamDescriptor'
+        libraries:
+          type: "object"
+          additionalProperties:
+            type: "object"
+            $ref: "#/components/schemas/CqlRule"
+      required:
+        - libraryName
+        - libraryVersion
+        - ruleRole
+        - cql
+        - params
 
 
 

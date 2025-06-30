@@ -16,7 +16,7 @@ paths:
               $ref: "#/components/schemas/CdssUsage"
               description: JSON string representing the new CdssUsage to be recorded.
               example:
-                { vaccine: "MMR", patientId: "patientOne", timestamp: [2024, 4, 21, 9, 34, 23], rule: "MMR-Rule-One", recommendations: [], status: "ACCEPTED" }
+                { vaccine: "MMR", patientId: "patientOne", timestamp: [ 2024, 4, 21, 9, 34, 23 ], rule: "MMR-Rule-One", recommendations: [ ], status: "ACCEPTED" }
               required: true
       responses:
         '200':
@@ -26,6 +26,18 @@ paths:
               schema:
                 type: string
                 description: JSON string of the saved CdssUsage.
+        401:
+          description: Authentication required or authentication failed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  message:
+                    type: string
+
         '500':
           description: Internal error encountered during processing.
 
@@ -43,6 +55,9 @@ paths:
                 items:
                   $ref: "#/components/schemas/CdssUsage"
                   description: CdssUsage object.
+        401:
+          description: Authentication required or authentication failed
+
         '500':
           description: Internal error encountered during processing.
 
@@ -71,6 +86,9 @@ paths:
               schema:
                 type: string
                 description: The content of the retrieved valueset.
+        401:
+          description: Authentication required or authentication failed
+
         '500':
           description: Internal error encountered during processing.
 
@@ -105,6 +123,9 @@ paths:
               schema:
                 type: string
                 description: The content of the retrieved value set.
+        401:
+          description: Authentication required or authentication failed
+
         '500':
           description: Internal error encountered during processing.
 components:

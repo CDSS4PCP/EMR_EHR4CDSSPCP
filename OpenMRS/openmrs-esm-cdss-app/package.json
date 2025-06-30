@@ -1,6 +1,6 @@
 {
   "name": "@openmrs/esm-cdss-app",
-  "version": "1.0.2-ALPHA",
+  "version": "1.0.3-ALPHA",
   "license": "MPL-2.0",
   "description": "An OpenMRS GUI module for CDSS",
   "browser": "dist/openmrs-esm-cdss-app.js",

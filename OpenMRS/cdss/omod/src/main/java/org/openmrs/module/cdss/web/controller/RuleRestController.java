@@ -117,7 +117,7 @@ public class RuleRestController extends CdssRestController {
      * @return ResponseEntity containing the rule in JSON format if found, or a not found message
      * @throws APIAuthenticationException if there is an issue with API authentication
      */
-    @GetMapping(path = {"/cql-rule/id/{ruleId}.form", "/cql-rule/{ruleId}.form"}, produces = {"application/json"})
+    @GetMapping(path = {"/cql-rule/id/{ruleId}.form", "/cql-rule/{ruleId}.form"}, produces = {"text/plain"})
     public ResponseEntity<String> getCqlRuleById(@PathVariable(value = "ruleId") String ruleId) throws APIAuthenticationException {
         checkAuthorizationAndPrivilege();
 
@@ -173,7 +173,7 @@ public class RuleRestController extends CdssRestController {
      * @return ResponseEntity containing the rule in JSON format if found, or a not found message
      * @throws APIAuthenticationException if there is an issue with API authentication
      */
-    @GetMapping(path = "/cql-rule/name/{libraryName}.form", produces = {"application/json"})
+    @GetMapping(path = "/cql-rule/name/{libraryName}.form", produces = {"text/plain"})
     public ResponseEntity<String> getCqlRuleById(@PathVariable(value = "libraryName") String libraryName, @RequestParam(value = "version", required = false) String version) throws APIAuthenticationException {
         checkAuthorizationAndPrivilege();
 
@@ -203,7 +203,7 @@ public class RuleRestController extends CdssRestController {
      * @return ResponseEntity containing the rule in JSON format if found, or a not found message
      * @throws APIAuthenticationException if there is an issue with API authentication
      */
-    @GetMapping(path = {"/cql-rule/idOrName/{ruleId}.form", "/cql-rule/{ruleId}.form"}, produces = {"application/json"})
+    @GetMapping(path = {"/cql-rule/idOrName/{ruleId}.form", "/cql-rule/{ruleId}.form"}, produces = {"text/plain"})
     public ResponseEntity<String> getCqlRuleByIdOrName(@PathVariable(value = "ruleId") String ruleId, @RequestParam(value = "version", required = false) String version) throws APIAuthenticationException {
         checkAuthorizationAndPrivilege();
 
@@ -431,14 +431,7 @@ public class RuleRestController extends CdssRestController {
     }
 
 
-    /**
-     * Disables a rule by its ID.
-     *
-     * @param ruleId the ID of the rule to disable
-     * @return ResponseEntity containing "true" if the rule is successfully disabled
-     * @throws APIAuthenticationException if there is an issue with API authentication
-     * @throws RuntimeException           if the rule is not found or a file-related error occurs
-     */
+
     @PostMapping(path = {"/archive-rule/id/{ruleId}.form"}, produces = {"application/json"})
     public ResponseEntity<String> archiveRuleById(@PathVariable(value = "ruleId") String ruleId) throws APIAuthenticationException {
         checkAuthorizationAndPrivilege();
@@ -511,7 +504,7 @@ public class RuleRestController extends CdssRestController {
 
 
     /**
-     * Retrieves the rule manifest as a JSON string.
+     * Retrieves a list of archived rules. Returns a list of Rule IDs
      *
      * @return ResponseEntity containing the rule manifest in JSON format
      * @throws APIAuthenticationException if there is an issue with API authentication

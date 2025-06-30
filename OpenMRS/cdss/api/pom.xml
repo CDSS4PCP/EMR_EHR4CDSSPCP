@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.openmrs.module</groupId>
         <artifactId>cdss</artifactId>
-        <version>1.0.0-ALPHA</version>
+        <version>1.0.3-ALPHA</version>
     </parent>
 
     <artifactId>cdss-api</artifactId>

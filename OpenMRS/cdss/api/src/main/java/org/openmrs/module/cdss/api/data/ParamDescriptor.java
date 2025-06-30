@@ -16,17 +16,17 @@ public class ParamDescriptor implements Cloneable {
     @JsonIgnore
     String name;
 
-    @JsonProperty("type")
+    @JsonProperty(value = "type", required = true)
     @JsonView({InternalJsonView.class, WebJsonView.class})
     private String type;
 
     @Setter
-    @JsonProperty("value")
+    @JsonProperty(value = "value", required = true)
     @JsonView({InternalJsonView.class, WebJsonView.class})
     private Object value;
 
     @Setter
-    @JsonProperty("allowedValues")
+    @JsonProperty(value = "allowedValues", required = false)
     @JsonView({InternalJsonView.class, WebJsonView.class})
     private Object[] allowedValues;
 
