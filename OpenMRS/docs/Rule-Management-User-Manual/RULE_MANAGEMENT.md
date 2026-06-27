@@ -113,7 +113,7 @@ And as the following in the `rule-manifest.json` file.
 
 ## Upload a Rule
 
-To add a rule, the CQL rule MUST be compliant with the [CDSS4PCP Rule Standards (Comping Soon)](#)
+To add a rule, the CQL rule MUST be compliant with the [CDSS4PCP Rule Standards](https://github.com/CDSS4PCP/cdss-common/blob/d79e59d44dbc4c19b25d0281de044b743cdbf0c1/CQL%20Rule%20Standard%20Specification.md)
 
 1. Click *Upload a new Rule* button
    ![](./ManagementPage14.png)
