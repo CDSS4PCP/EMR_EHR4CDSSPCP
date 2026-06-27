@@ -9,22 +9,23 @@
   color: #161616;
 }
 
-.tableCellInput{
+.tableCellInput {
   vertical-align: top;
   display: inline-block;
 }
 
-.cdssEditableCell{
+.cdssEditableCell {
 
   margin: .1rem .2rem;
 
   padding: 0.1rem .2rem;
 }
 
-.cdssEnabledTableRow{
-
+.cdssEnabledTableRow {
+  font-weight: bold;
 }
 
 .cdssDisabledTableRow {
   background-color: #acacac;
+  font-weight: normal;
 }
